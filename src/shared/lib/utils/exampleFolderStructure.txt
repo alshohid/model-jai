@@ -1,0 +1,114 @@
+src/
+├─ app/
+│  ├─ (public)/
+│  │  ├─ page.tsx                      → /
+│  │  ├─ matches/
+│  │  │  ├─ page.tsx                   → /matches
+│  │  │  └─ [matchId]/
+│  │  │     └─ page.tsx                → /matches/:matchId
+│  │  ├─ buy-points/
+│  │  │  └─ page.tsx                   → /buy-points
+│  │  └─ _components/
+│  │     ├─ PublicHeader.tsx
+│  │     └─ HomeHero.tsx
+│  │
+│  ├─ (auth)/
+│  │  ├─ login/
+│  │  │  └─ page.tsx                   → /login
+│  │  ├─ register/
+│  │  │  └─ page.tsx                   → /register
+│  │  └─ _components/
+│  │     ├─ AuthCard.tsx
+│  │     └─ AuthHeader.tsx
+│  │
+│  ├─ (user)/
+│  │  ├─ layout.tsx                    → protects /dashboard, /withdraw
+│  │  ├─ dashboard/
+│  │  │  └─ page.tsx                   → /dashboard
+│  │  ├─ withdraw/
+│  │  │  └─ page.tsx                   → /withdraw
+│  │  └─ _components/
+│  │     ├─ UserSidebar.tsx
+│  │     └─ UserTopbar.tsx
+│  │
+│  ├─ (admin)/
+│  │  ├─ layout.tsx                    → protects /admin/*
+│  │  ├─ page.tsx                      → /admin
+│  │  ├─ matches/
+│  │  │  └─ page.tsx                   → /admin/matches
+│  │  ├─ withdrawals/
+│  │  │  └─ page.tsx                   → /admin/withdrawals
+│  │  └─ _components/
+│  │     ├─ AdminSidebar.tsx
+│  │     └─ AdminTopbar.tsx
+│  │
+│  ├─ api/
+│  │  └─ auth/
+│  │     ├─ refresh/
+│  │     │  └─ route.ts                → /api/auth/refresh
+│  │     └─ logout/
+│  │        └─ route.ts                → /api/auth/logout
+│  │
+│  ├─ providers.tsx
+│  ├─ layout.tsx
+│  └─ globals.css
+│
+├─ store/
+│  ├─ store.ts
+│  ├─ hooks.ts
+│  └─ rootReducer.ts
+│
+├─ services/
+│  ├─ api.ts                           → createApi base
+│  ├─ baseQueryWithReauth.ts           → token attach + refresh retry
+│  ├─ authApi.ts
+│  ├─ matchesApi.ts
+│  ├─ pointsApi.ts
+│  └─ withdrawalsApi.ts
+│
+├─ features/
+│  ├─ auth/
+│  │  ├─ authSlice.ts
+│  │  ├─ SessionBootstrap.tsx
+│  │  ├─ ProtectedClientGate.tsx
+│  │  └─ components/
+│  │     ├─ LoginForm.tsx
+│  │     └─ RegisterForm.tsx
+│  │
+│  ├─ matches/
+│  │  ├─ types.ts
+│  │  └─ components/
+│  │     ├─ MatchCard.tsx
+│  │     ├─ MatchStream.tsx
+│  │     ├─ MatchSupportPanel.tsx
+│  │     └─ Leaderboard.tsx
+│  │
+│  ├─ points/
+│  │  └─ components/
+│  │     ├─ BuyPointsCard.tsx
+│  │     └─ PointsBalance.tsx
+│  │
+│  └─ withdrawals/
+│     └─ components/
+│        ├─ WithdrawForm.tsx
+│        └─ WithdrawHistory.tsx
+│
+└─ shared/
+   ├─ ui/                              → dumb UI primitives
+   │  ├─ Button.tsx
+   │  ├─ Input.tsx
+   │  ├─ Modal.tsx
+   │  └─ index.ts
+   │
+   ├─ components/                      → global layout components
+   │  ├─ Container.tsx
+   │  ├─ AppShell.tsx
+   │  └─ Footer.tsx
+   │
+   └─ lib/
+      ├─ env.ts
+      └─ utils/
+         ├─ cn.ts
+         └─ format.ts
+
+middleware.ts

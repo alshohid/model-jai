@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Fonts */
+  --font-inter: var(--font-inter);
+  --font-manrope: var(--font-manrope);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Layout tokens */
+  --radius-12: 12px;
+  --radius-8: 8px;
+  --shadow-white-rgb: 255 255 255;
+  --shadow-black: 0 0 0; 
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Figma glass */
+  --glass: 0 0% 100% / 0.12;        /* #FFFFFF1F */
+  --glass-border: 0 0% 100% / 0.20; /* #FFFFFF33 */
+
+  /* Colors */
+  --nav-active: 335 100% 59%; /* #FF2EC8 */
+  --signup: 194 100% 50%;     /* #00C3FF */
+
+  /* Brand gradient text */
+  --brand-grad-start: 193 93% 54%; /* #1EC2F7 */
+  --brand-grad-end: 258 85% 64%;   /* #6E55F2 */
+
+  /* Shadow color */
+  --shadow-rgb: 15 15 15; /* #0F0F0F */
+
+  /* Page base (tune later if you want) */
+  --bg: 220 15% 8%;
+  --text: 0 0% 98%;
+  --muted: 0 0% 80%;
+}
+@layer utilities {
+  .navbar-border-ring {
+    position: relative;
+    border-radius: var(--radius-12);
+  }
+
+  .navbar-border-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px; /* border width */
+    background: linear-gradient(
+      90deg,
+      rgba(110, 196, 205, 0.04) -0.09%,
+      rgba(109, 193, 204, 0.04) 10.22%,
+      rgba(106, 184, 199, 0.04) 17.47%,
+      rgba(100, 168, 192, 0.04) 23.78%,
+      rgba(93, 146, 182, 0.04) 29.55%,
+      rgba(83, 118, 169, 0.04) 34.95%,
+      rgba(71, 84, 152, 0.04) 40.01%,
+      rgba(60, 53, 138, 0.04) 43.77%,
+      rgba(66, 54, 139, 0.04) 45.3%,
+      rgba(82, 59, 141, 0.04) 47.3%,
+      rgba(109, 66, 144, 0.04) 49.57%,
+      rgba(147, 75, 149, 0.04) 52.02%,
+      rgba(195, 87, 154, 0.04) 54.62%,
+      rgba(209, 91, 156, 0.04) 55.31%,
+      rgba(191, 84, 146, 0.038776) 56.67%,
+      rgba(146, 67, 120, 0.035492) 60.35%,
+      rgba(107, 52, 98, 0.031964) 64.31%,
+      rgba(74, 39, 80, 0.02824) 68.47%,
+      rgba(47, 29, 64, 0.02426) 72.93%,
+      rgba(27, 21, 53, 0.019932) 77.78%,
+      rgba(12, 15, 44, 0.015076) 83.21%,
+      rgba(4, 12, 39, 0.009276) 89.71%,
+      rgba(1, 11, 38, 0) 100.09%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+
+/* Tailwind v4 theme mapping => bg-glass, border-glassBorder, bg-navActive etc */
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-manrope);
+
+  --color-bg: hsl(var(--bg));
+  --color-text: hsl(var(--text));
+  --color-muted: hsl(var(--muted));
+
+  --color-glass: hsl(var(--glass));
+  --color-glassBorder: hsl(var(--glass-border));
+
+  --color-navActive: hsl(var(--nav-active));
+  --color-signup: hsl(var(--signup));
+
+  --color-brandGradStart: hsl(var(--brand-grad-start));
+  --color-brandGradEnd: hsl(var(--brand-grad-end));
+}
+
+@layer base {
+  html, body { height: 100%; }
+  body { @apply bg-bg text-text font-sans; }
 }
