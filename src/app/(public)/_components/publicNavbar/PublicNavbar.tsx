@@ -63,7 +63,7 @@ export default function PublicNavbar() {
                                     href={item.href}
                                     className={[
                                         "cursor-pointer rounded-md px-3 py-1.5 transition text-[1.125rem]",
-                                        active ? "bg-navActive text-white" : "text-white/85 hover:text-white hover:bg-white/10",
+                                        active ? "bg-navActive text-white" : "text-[#070707]",
                                     ].join(" ")}
                                 >
                                     {item.label}
@@ -74,7 +74,6 @@ export default function PublicNavbar() {
 
                     {/* Right side */}
                     <div className="flex items-center gap-2 overflow-visible">
-                        {/* Desktop auth */}
                         <div className="hidden sm:flex items-center gap-2">
                             <AuthButton href="/login" variant="login">Log In</AuthButton>
                             <AuthButton href="/register" variant="signup">Sign Up</AuthButton>

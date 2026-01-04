@@ -4,11 +4,11 @@ export default function BrandMark() {
             <span
                 className={[
                     "font-heading font-bold",
-                    "text-[32px] leading-[132%] tracking-[0px]",
+                    " text-[1.6rem] md:text-[2rem] leading-[132%] tracking-[0px]",
                     "bg-gradient-to-r from-brandGradStart to-brandGradEnd bg-clip-text text-transparent",
                 ].join(" ")}
             >
-                Model Boss Offers
+                Model Bet Offers
             </span>
         </div>
     );

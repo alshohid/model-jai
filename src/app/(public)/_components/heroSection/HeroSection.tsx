@@ -8,10 +8,13 @@ export default function HeroSection() {
             <div className="absolute inset-0">
                 <div
                     className="h-full w-full bg-cover bg-center"
-                    style={{ backgroundImage: "url('/images/home/herobg.png')" }}
+                    style={{ backgroundImage: "url('/images/home/modaljai_hero.jpg')" }}
                 />
-                <div className="absolute inset-0 bg-black/40" />
-                <div className="absolute inset-0 bg-linear-to-b from-black/15 via-black/35 to-black/60" />
+                <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: "url('/images/home/overlay.png')" }}
+                />
+
             </div>
 
             <div className="relative z-10 mx-auto w-full max-w-400 px-4 sm:px-6 lg:px-0">

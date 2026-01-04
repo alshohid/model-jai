@@ -14,6 +14,9 @@
   /* Figma glass */
   --glass: 0 0% 100% / 0.12;        /* #FFFFFF1F */
   --glass-border: 0 0% 100% / 0.20; /* #FFFFFF33 */
+  --match-card-bg: 0 0% 100% / 0.06;      /* #FFFFFF 6% */
+  --match-card-border: 0 0% 100% / 0.20;  /* #FFFFFF 20% */
+
 
   /* Colors */
   --nav-active: 335 100% 59%; /* #FF2EC8 */
@@ -95,6 +98,8 @@
 
   --color-brandGradStart: hsl(var(--brand-grad-start));
   --color-brandGradEnd: hsl(var(--brand-grad-end));
+  --color-matchCardBg: hsl(var(--match-card-bg));
+  --color-matchCardBorder: hsl(var(--match-card-border));
 }
 
 @layer base {
