@@ -1,11 +1,13 @@
-import MatchesGrid from "@/shared/components/grid/MatchesGrid";
+
 import HeroSection from "./_components/heroSection/HeroSection";
+import MatchesSection from "@/shared/components/home/MatchesSection";
 
 const Public = () => {
     return (
         <main>
             <HeroSection />
-            <MatchesGrid/>
+            <MatchesSection />
+
         </main>
     )
 }

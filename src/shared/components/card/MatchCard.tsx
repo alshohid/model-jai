@@ -1,3 +1,4 @@
+import WatchStreamButton from "@/shared/ui/button/WatchStreamButton";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -6,12 +7,12 @@ type MatchStatus = "Upcoming" | "Past" | "Live";
 type Props = {
     status: MatchStatus;
     title: string;
-    dateText: string; // e.g. "November 1, 2024"
-    timeText: string; // e.g. "4:30 pm"
-    gameLogoSrc: string; // "/images/games/2k26.png"
-    leftPlayerImg: string; // "/images/players/p1.png"
-    rightPlayerImg: string; // "/images/players/p2.png"
-    watchHref: string; // "/matches/123" or external
+    dateText: string;
+    timeText: string;
+    gameLogoSrc: string;
+    leftPlayerImg: string;
+    rightPlayerImg: string;
+    watchHref: string;
     voteRequired?: boolean;
     className?: string;
     versusImg: string;
@@ -28,7 +29,7 @@ export default function MatchCard({
     watchHref,
     voteRequired = true,
     className = "",
-    versusImg
+    versusImg,
 }: Props) {
     const statusStyle =
         status === "Live"
@@ -40,114 +41,104 @@ export default function MatchCard({
     return (
         <article
             className={[
-                "w-full max-w-[424px]",
+                "w-full max-w-[320px] sm:max-w-[360px] md:max-w-[400px] lg:max-w-[424px]",
                 "rounded-[16px]",
-                // Figma: bg #fff 6% + border #fff 20% + blur 16
                 "bg-matchCardBg border border-matchCardBorder backdrop-blur-[16px]",
-                // Figma: padding 32 + gap 32
-                "p-[32px] flex flex-col gap-[32px]",
+                "p-5 sm:p-8",
+                "flex flex-col",
                 className,
             ].join(" ")}
         >
-            <div className="rounded-[16px] bg-[#FFFFFF0D] border border-white/10 p-4">
-                <div className="flex items-center justify-between">
-                    {/* left player */}
-                    <div className="relative w-[150px] h-[197px] rounded-[1rem] overflow-hidden">
-                        <Image
-                            src={leftPlayerImg}
-                            alt="Player 1"
-                            fill
-                            className="object-cover"
-                            sizes="150px"
-                            priority={false}
-                        />
-                    </div>
-                    <div className="flex flex-col items-center justify-center w-[44px]">
-                        <Image
-                            src={versusImg}
-                            alt="versus"
-                            width={400 }
-                            height={400 }
-                            className="w-full"
-                            unoptimized
-                        />
+            <div>
+                {/* VS block */}
+                <div className="rounded-[16px] bg-[#FFFFFF0D] border border-white/10 p-3 sm:p-4">
+                    <div className="flex items-center justify-between gap-3">
+                        {/* left player */}
+                        <div className="relative overflow-hidden rounded-[16px]
+                          w-[clamp(80px,28vw,120px)] aspect-[150/197] shrink-0">
+                            <Image
+                                src={leftPlayerImg}
+                                alt="Player 1"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 640px) 28vw, 150px"
+                            />
+                        </div>
 
-                    </div>
+                        {/* vs */}
+                        <div className="shrink-0 w-[clamp(18px,6vw,44px)] flex items-center justify-center">
+                            <Image
+                                src={versusImg}
+                                alt="versus"
+                                width={120}
+                                height={120}
+                                className="w-full h-auto"
+                                unoptimized
+                            />
+                        </div>
 
-                    {/* right player */}
-                    <div className="relative w-[150px] h-[197px] rounded-[16px] overflow-hidden">
-                        <Image
-                            src={rightPlayerImg}
-                            alt="Player 2"
-                            fill
-                            className="object-cover"
-                            sizes="150px"
-                            priority={false}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex items-center justify-center h-[70px] w-full">
-                <Image
-                    src={gameLogoSrc}
-                    alt="Game Logo"
-                    width={460}
-                    height={448}
-                    className="w-full object-cover"
-                    priority={false}
-                />
-            </div>
-
-            <div className="flex flex-col gap-3">
-                {/* Status pill */}
-                <div className="flex items-center">
-                    <span className={["px-3 py-1 rounded-md text-xs", statusStyle].join(" ")}>
-                        {status}
-                    </span>
-                </div>
-
-                {/* Title */}
-                <h3 className="text-white font-semibold text-[20px] leading-tight">
-                    {title}
-                </h3>
-
-                {/* Meta row */}
-                <div className="flex items-center gap-6 text-white/75 text-sm">
-                    <div className="flex items-center gap-2">
-                        <span className="text-cyan-300">🗓</span>
-                        <span>{dateText}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-cyan-300">🕒</span>
-                        <span>{timeText}</span>
+                        {/* right player */}
+                        <div className="relative overflow-hidden rounded-[16px]
+                        w-[clamp(80px,28vw,120px)] aspect-[150/197] shrink-0">
+                            <Image
+                                src={rightPlayerImg}
+                                alt="Player 2"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 640px) 28vw, 150px"
+                            />
+                        </div>
                     </div>
                 </div>
+
+                {/* Game logo (no cropping) */}
+                <div className="relative w-full h-[100px]">
+                    <Image
+                        src={gameLogoSrc}
+                        alt="Game Logo"
+                        fill
+                        className="h-full w-full object-contain"
+                    // sizes="(max-width: 640px) 80vw, 360px"
+                    />
+                </div>
+
+                {/* Content */}
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center">
+                        <span className={["px-3 py-1 rounded-md text-xs", statusStyle].join(" ")}>
+                            {status}
+                        </span>
+                    </div>
+
+                    <h3 className="text-white font-semibold text-[18px] sm:text-[20px] leading-tight">
+                        {title}
+                    </h3>
+
+                    {/* ✅ wrap on small screens */}
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-white/75 text-sm">
+                        <div className="flex items-center gap-2">
+                            <span className="text-cyan-300">🗓</span>
+                            <span>{dateText}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-cyan-300">🕒</span>
+                            <span>{timeText}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className=" mt-3 md:mt-5">
+                    <WatchStreamButton href={watchHref} label="Watch Now" />
+                </div>
+
+                {voteRequired && (
+                    <p className="text-center text-[1rem] mt-2 md:mt-3 font-medium text-[#FF2EC8]">
+                        Tiktok Vote Required
+                    </p>
+                )}
+
             </div>
 
-            {/* Watch button */}
-            <Link
-                href={watchHref}
-                className={[
-                    "cursor-pointer inline-flex items-center justify-center gap-3",
-                    "h-[48px] rounded-[12px]",
-                    "bg-white/5 border border-white/12",
-                    "text-white/80 hover:text-white transition",
-                    "shadow-[0_0_0_1px_rgba(255,255,255,0.06)]",
-                ].join(" ")}
-            >
-                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/10">
-                    ▶
-                </span>
-                <span className="text-sm">Watch stream</span>
-            </Link>
-
-            {/* Footer note */}
-            {voteRequired && (
-                <p className="text-center text-[14px] text-fuchsia-400">
-                    Tiktok Vote Required
-                </p>
-            )}
         </article>
     );
 }
