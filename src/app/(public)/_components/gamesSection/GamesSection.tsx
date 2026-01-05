@@ -12,7 +12,7 @@ const items: GameCarouselItem[] = [
 
 export default function GamesSection() {
     return (
-        <section className="w-full max-w-7xl mx-auto overflow-x-hidden">
+        <section className="w-full pt-5 md:pt-15 max-w-7xl mx-auto overflow-x-hidden">
             <GameCarousel items={items} />
         </section>
     )
