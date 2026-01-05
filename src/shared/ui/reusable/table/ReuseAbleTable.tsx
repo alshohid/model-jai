@@ -58,7 +58,8 @@ const ReuseAbleTable = <T extends TableItem>({
             "rounded-[8px]",
             "border border-white/25",
             "overflow-hidden",
-            "bg-[#D2D2D51A]",
+            // "bg-[#D2D2D51A]",
+            " bg-gradient-to-br from-black via-[#120015] to-[#05000A]",
             "backdrop-blur-md",
         ].join(" ")
         : [

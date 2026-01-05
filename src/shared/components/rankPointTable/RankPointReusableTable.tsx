@@ -44,7 +44,7 @@ const RankPointReusableTable = () => {
     const columnWidths = [173, 356, 140, 651];
 
     return (
-        <div className="w-full flex justify-center p-6 bg-gradient-to-br from-black via-[#120015] to-[#05000A]">
+        <div>
             <ReuseAbleTable
                 isLoadings={false}
                 currentItems={currentItems}

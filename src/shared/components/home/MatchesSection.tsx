@@ -109,7 +109,7 @@ export default function MatchesSection({
                     width={702}
                     height={702}
                     alt="elips"
-                    className="w-[702px] h-[702px]"
+                    className="w-[1200px] h-[1200px]"
                 />
             </div>
 
@@ -130,11 +130,11 @@ export default function MatchesSection({
                     width={702}
                     height={702}
                     alt="elips"
-                    className="w-full h-auto"
+                    className="w-[1700px] h-[1400px]"
                 />
             </div>
         </section>
 
     );
 }
-//  className="max-w-7xl w-full m-auto"
+
