@@ -102,7 +102,7 @@ export default function MatchesSection({
     }, [matches, tab]);
 
     return (
-        <section className=" relative overflow-hidden  pt-5 md:pt-17.5">
+        <section className=" relative   pt-5 md:pt-17.5">
             <div className="pointer-events-none absolute left-0 top-0 -z-10">
                 <Image
                     src="/images/home/top_left.png"
@@ -124,7 +124,7 @@ export default function MatchesSection({
                 </div>
             </div>
 
-            <div className=" pointer-events-none absolute right-0 bottom-0 -z-10 translate-x-1/4 translate-y-1/4">
+            <div className=" pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">
                 <Image
                     src="/images/home/bottom_right.png"
                     width={702}
