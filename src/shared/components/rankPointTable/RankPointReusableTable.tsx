@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import ReuseAbleTable from "@/shared/ui/reusable/table/ReuseAbleTable";
+import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 
 type RankRowItem = {
     id: number;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import AuthButton from "@/shared/ui/button/AuthButton";
+import AuthButton from "@/shared/UI/button/AuthButton";
 
 type NavItem = { label: string; href: string };
 

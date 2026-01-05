@@ -1,4 +1,4 @@
-import StartStreamingButton from "@/shared/ui/button/StartStreamingButton";
+import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import PublicNavbar from "../publicNavbar/PublicNavbar";
 
 

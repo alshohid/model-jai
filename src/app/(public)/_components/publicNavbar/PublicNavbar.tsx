@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
-import AuthButton from "@/shared/ui/button/AuthButton";
+import AuthButton from "@/shared/UI/button/AuthButton";
 import MobileNavDrawer from "./MobileNavDrawer";
 
 const navItems = [

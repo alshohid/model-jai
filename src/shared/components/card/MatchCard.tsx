@@ -1,4 +1,4 @@
-import WatchStreamButton from "@/shared/ui/button/WatchStreamButton";
+import WatchStreamButton from "@/shared/UI/button/WatchStreamButton";
 import Image from "next/image";
 import Link from "next/link";
 
