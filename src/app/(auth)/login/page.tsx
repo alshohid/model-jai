@@ -1,7 +1,9 @@
+import AuthPage from "../_components/auth/AuthPage";
+
 const Login = () => {
     return (
         <div>
-            Login Page
+            <AuthPage />
         </div>
     )
 }
