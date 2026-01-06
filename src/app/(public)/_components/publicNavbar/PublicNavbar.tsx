@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import {  useRef } from "react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import AuthButton from "@/shared/UI/button/AuthButton";
 import MobileNavDrawer from "./MobileNavDrawer";
@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const navItems = [
     { label: "Home", href: "/" },
-    { label: "Live Stream Match", href: "/matches" },
+    { label: "Live Stream Match", href: "/live-stream" },
     { label: "Store", href: "/buy-points" },
 ];
 
@@ -30,7 +30,7 @@ export default function PublicNavbar() {
                         className="w-[200px]  opacity-100 pointer-events-none select-none"
                         sizes="100vw"
                     />
-                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    {/* <div className="absolute inset-0 bg-black/20 pointer-events-none" /> */}
                     <div
                         className={[
                             "flex items-center justify-between",
