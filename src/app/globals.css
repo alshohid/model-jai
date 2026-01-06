@@ -9,22 +9,21 @@
   --radius-12: 12px;
   --radius-8: 8px;
   --shadow-white-rgb: 255 255 255;
-  --shadow-black: 0 0 0; 
+  --shadow-black: 0 0 0;
 
   /* Figma glass */
-  --glass: 0 0% 100% / 0.12;        /* #FFFFFF1F */
-  --glass-border: 0 0% 100% / 0.20; /* #FFFFFF33 */
-  --match-card-bg: 0 0% 100% / 0.06;      /* #FFFFFF 6% */
-  --match-card-border: 0 0% 100% / 0.20;  /* #FFFFFF 20% */
-
+  --glass: 0 0% 100% / 0.12; /* #FFFFFF1F */
+  --glass-border: 0 0% 100% / 0.2; /* #FFFFFF33 */
+  --match-card-bg: 0 0% 100% / 0.06; /* #FFFFFF 6% */
+  --match-card-border: 0 0% 100% / 0.2; /* #FFFFFF 20% */
 
   /* Colors */
   --nav-active: 335 100% 59%; /* #FF2EC8 */
-  --signup: 194 100% 50%;     /* #00C3FF */
+  --signup: 194 100% 50%; /* #00C3FF */
 
   /* Brand gradient text */
   --brand-grad-start: 193 93% 54%; /* #1EC2F7 */
-  --brand-grad-end: 258 85% 64%;   /* #6E55F2 */
+  --brand-grad-end: 258 85% 64%; /* #6E55F2 */
 
   /* Shadow color */
   --shadow-rgb: 15 15 15; /* #0F0F0F */
@@ -33,6 +32,44 @@
   --bg: 220 15% 8%;
   --text: 0 0% 98%;
   --muted: 0 0% 80%;
+}
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #00C3FF transparent;
+  overflow-y: auto;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #00C3FF;
+  border-radius: 2px;
+}
+
+.custom-scroll::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Legacy Edge (pre-Chromium) */
+@supports (-ms-overflow-style: none) {
+  .custom-scroll {
+    -ms-overflow-style: none; /* Hides scrollbar in old Edge */
+  }
+}
+
+/* IE 10+ */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .custom-scroll {
+    -ms-overflow-style: none; /* Hides scrollbar in IE */
+  }
 }
 @layer utilities {
   .navbar-border-ring {
@@ -72,14 +109,22 @@
       rgba(4, 12, 39, 0.009276) 89.71%,
       rgba(1, 11, 38, 0) 100.09%
     );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask: linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
   }
 }
 
+@utility container {
+  padding-inline: 20px;
+  margin-inline: auto;
+}
 
+@theme {
+  --breakpoint-2xl: 85rem;
+}
 
 /* Tailwind v4 theme mapping => bg-glass, border-glassBorder, bg-navActive etc */
 @theme inline {
@@ -103,6 +148,11 @@
 }
 
 @layer base {
-  html, body { height: 100%; }
-  body { @apply bg-bg text-text font-sans; }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-bg text-text font-sans;
+  }
 }

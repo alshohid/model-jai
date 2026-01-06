@@ -113,16 +113,25 @@ export default function MatchesSection({
                 />
             </div>
 
-            <div className=" relative z-10 max-w-7xl w-full mx-auto px-4 lg:px-0">
+            <div className="relative z-10 max-w-7xl w-full mx-auto px-4 lg:px-0">
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                    <SectionHeading title={"Compete in epic\ntournaments"} className="whitespace-pre-line" />
-                    <MatchHistoryTabs value={tab} onChange={setTab} />
+                    <SectionHeading
+                        title={"Compete in epic\ntournaments"}
+                        className="whitespace-pre-line"
+                    />
+
+                    <MatchHistoryTabs
+                        className="lg:shrink-0"
+                        value={tab}
+                        onChange={setTab}
+                    />
                 </div>
 
                 <div className="mt-10">
                     <MatchesGrid matches={filtered} />
                 </div>
             </div>
+
 
             <div className=" pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">
                 <Image

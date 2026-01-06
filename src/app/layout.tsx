@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 // import localFont from "next/font/local";
 // @ts-ignore
 import "./globals.css";
+import PublicNavbar from "./(public)/_components/publicNavbar/PublicNavbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,10 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="custom-scroll">
       <body
-        className={`${inter.variable} ${manrope.variable} antialiased`}
+        className={`${inter.variable} ${manrope.variable} antialiased `}
       >
+        <PublicNavbar />
         {children}
       </body>
     </html>

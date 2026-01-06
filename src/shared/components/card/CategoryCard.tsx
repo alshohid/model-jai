@@ -33,11 +33,13 @@ export default function CategoryCard({ title, imageSrc, className, onClick }: Pr
                 sizes="306px"
                 priority={false}
             />
-
-            {/* Dark vignette overlay (radial-ish feel like screenshot) */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.15)_0%,rgba(0,0,0,0.75)_70%,rgba(0,0,0,0.95)_100%)]" />
-
-            {/* Label (bottom center) */}
+            <Image
+                src="/images/home/cat_overlay.png"
+                alt=""
+                fill
+                className="object-cover opacity-35 pointer-events-none select-none"
+                sizes="306px"
+            />
             <div className="absolute inset-x-0 bottom-6 flex justify-center px-4">
                 <div
                     className={cn(

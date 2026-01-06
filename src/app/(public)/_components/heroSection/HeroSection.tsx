@@ -1,5 +1,5 @@
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
-import PublicNavbar from "../publicNavbar/PublicNavbar";
+
 
 
 export default function HeroSection() {
@@ -26,7 +26,7 @@ export default function HeroSection() {
                         "lg:h-197.5",              
                     ].join(" ")}
                 >
-                    <PublicNavbar />
+                    {/* <PublicNavbar /> */}
 
                     <div className="flex-1 flex items-center justify-center">
                         <div className="text-center max-w-3xl px-2">

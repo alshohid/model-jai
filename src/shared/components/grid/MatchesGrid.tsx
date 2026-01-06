@@ -18,7 +18,7 @@ export type MatchItem = {
 
 export default function MatchesGrid({ matches }: { matches: MatchItem[] }) {
     return (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3 place-items-center">
+        <div className="grid gap-6 w-full sm:grid-cols-2 xl:grid-cols-3 place-items-center">
             {matches.map((m) => (
                 <MatchCard
                     key={m.id}
