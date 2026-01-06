@@ -1,9 +1,9 @@
-import AuthPage from "../_components/auth/AuthPage";
+import AuthContainer from "../_components/auth/AuthContainer";
 
 const Login = () => {
     return (
         <div>
-            <AuthPage />
+            <AuthContainer />
         </div>
     )
 }
