@@ -67,35 +67,21 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                 <div className="relative overflow-hidden rounded-2xl border border-white/10">
                     <Slider className="watchlive-slider" ref={(r) => { sliderRef.current = r; }} {...settings}>
                         {slides.map((s) => (
-                            <HeroSlide key={s.id} slide={s} onWatch={() => onWatch?.(s)} />
+                            <HeroSlide
+                                key={s.id}
+                                slide={s}
+                                activeIndex={active}
+                                onWatch={() => onWatch?.(s)}
+                                onPrev={() => sliderRef.current?.slickPrev()}
+                                onNext={() => sliderRef.current?.slickNext()}
+                                onThumbClick={(idx) => sliderRef.current?.slickGoTo(idx)}
+                            />
+
                         ))}
                     </Slider>
 
                     <div className="pointer-events-none absolute inset-0">
                         <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
-
-                        {/* Thumbnail rail + pink side buttons */}
-                        <div className="absolute right-4 sm:right-6 lg:right-10 bottom-6 sm:bottom-7 flex items-center gap-3 pointer-events-auto">
-                            {/* left pink */}
-                            <CircleNavButton
-                                dir="prev"
-                                onClick={() => sliderRef.current?.slickPrev()}
-                            />
-
-                            <ThumbRail
-                                thumbs={slide?.thumbs ?? []}
-                                activeIndex={active}
-                                onThumbClick={(idx) => sliderRef.current?.slickGoTo(idx)}
-                            />
-
-                            {/* right pink */}
-                            <CircleNavButton
-                                dir="next"
-                                onClick={() => sliderRef.current?.slickNext()}
-                            />
-                        </div>
-
-                        {/* Counter pill (center bottom) */}
                         <div className="absolute left-1/2 -translate-x-1/2 bottom-4 sm:bottom-5 pointer-events-auto">
                             <CounterPill
                                 current={current}
@@ -113,65 +99,92 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
 
 /* ---------------- Slide ---------------- */
 
-function HeroSlide({ slide, onWatch }: { slide: WatchLiveSlide; onWatch?: () => void }) {
+function HeroSlide({
+    slide,
+    activeIndex,
+    onWatch,
+    onPrev,
+    onNext,
+    onThumbClick,
+}: {
+    slide: WatchLiveSlide;
+    activeIndex: number;
+    onWatch?: () => void;
+    onPrev: () => void;
+    onNext: () => void;
+    onThumbClick: (i: number) => void;
+}) {
     return (
         <div className="relative">
-            {/* Responsive height via aspect */}
             <div className="relative w-full h-screen">
-
                 <Image src={slide.bg} alt={slide.title} fill priority className="object-cover" sizes="100vw" />
 
-                {/* left readability gradient like figma */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
                 <div className="absolute inset-0 bg-black/10" />
 
-                {/* Left content */}
                 <div className="absolute inset-0 flex items-center">
-                    <div className="container grid grid-cols-[6fr_6fr]">
-                        <div className="max-w-[520px]">
-                            {slide.isLive ? <LiveBadge /> : null}
+                    {/* ✅ Don’t use "container" if it messes padding; use your section max-width system */}
+                    <div className="container">
+                        {/* ✅ This is your “grid right side lagbe” */}
+                        <div className="grid grid-cols-1 lg:grid-cols-[6fr_6fr]">
+                            {/* Left column */}
+                            <div className="w-full">
+                                {slide.isLive ? <LiveBadge /> : null}
 
-                            <p className="mt-4 text-white/70 text-xs sm:text-sm">{slide.game}</p>
+                                <p className="mt-4 text-white/70 text-xs sm:text-sm">{slide.game}</p>
 
-                            <h2 className="mt-1 text-white font-semibold leading-tight text-[28px] sm:text-[44px] lg:text-[52px]">
-                                {slide.title}
-                            </h2>
+                                <h2 className="mt-1 text-white font-semibold leading-tight text-[28px] sm:text-[44px] lg:text-[52px]">
+                                    {slide.title}
+                                </h2>
 
-                            <div className="mt-3 flex items-center gap-3">
-                                {slide.avatars?.length ? <Avatars items={slide.avatars} /> : null}
-                                <p className="text-white/55 text-xs sm:text-sm">{slide.meta}</p>
+                                <div className="mt-3 flex items-center gap-3">
+                                    {slide.avatars?.length ? <Avatars items={slide.avatars} /> : null}
+                                    <p className="text-white/55 text-xs sm:text-sm">{slide.meta}</p>
+                                </div>
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={onWatch}
+                                        className={cn(
+                                            "cursor-pointer shrink-0",
+                                            "inline-flex items-center justify-center",
+                                            "h-10 sm:h-11 px-6",
+                                            "rounded-lg",
+                                            "bg-[#FF3DBB] hover:bg-[#ff2eb4]",
+                                            "text-white font-medium",
+                                            "border border-white/25",
+                                            "shadow-[0_14px_40px_rgba(0,0,0,0.45)]",
+                                            "transition"
+                                        )}
+                                    >
+                                        Watch
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="mt-6">
-                                <button
-                                    type="button"
-                                    onClick={onWatch}
-                                    className={cn(
-                                        "cursor-pointer",
-                                        "inline-flex items-center justify-center",
-                                        "h-10 sm:h-11 px-6",
-                                        "rounded-lg",
-                                        "bg-[#FF3DBB] hover:bg-[#ff2eb4]",
-                                        "text-white font-medium",
-                                        "border border-white/25",
-                                        "shadow-[0_14px_40px_rgba(0,0,0,0.45)]",
-                                        "transition"
-                                    )}
-                                >
-                                    Watch
-                                </button>
+                            <div className="flex items-center justify-start lg:justify-end gap-3 min-w-0">
+                                <CircleNavButton dir="prev" onClick={onPrev} />
+
+                                <div className="min-w-0 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                    <ThumbRail
+                                        thumbs={slide?.thumbs ?? []}
+                                        activeIndex={activeIndex}
+                                        onThumbClick={onThumbClick}
+                                    />
+                                </div>
+
+                                <CircleNavButton dir="next" onClick={onNext} />
                             </div>
                         </div>
-                    
                     </div>
                 </div>
 
-                {/* bottom dust (optional) */}
                 <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
             </div>
         </div>
     );
 }
+
 
 /* ---------------- Small UI pieces ---------------- */
 
