@@ -8,6 +8,7 @@ import GamesSection from "./_components/gamesSection/GamesSection";
 import ChooseCategorySection from "@/shared/components/home/ChooseCategorySection";
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
+import FooterSection from "@/shared/components/home/FooterSection";
 
 const Public = () => {
     return (
@@ -19,7 +20,8 @@ const Public = () => {
             <GamesSection />
             <ChooseCategorySection />
             <LatestNewsSection />
-            <TakeGameSection/>
+            <TakeGameSection />
+            <FooterSection/>
         </main>
     )
 }
