@@ -9,6 +9,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import "slick-carousel/slick/slick.css";
 // @ts-ignore
 import "slick-carousel/slick/slick-theme.css";
+import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 
 export type WatchLiveSlide = {
     id: string;
@@ -51,6 +52,11 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
     const total = slides.length;
     const current = active + 1;
     const slide = slides[active];
+    const railThumbs = useMemo(() => {
+        // প্রতিটা slide-এর জন্য একটা thumb pick করো
+        return slides.map((s) => s.thumbs?.[0] ?? s.bg);
+    }, [slides]);
+
 
     return (
         <section className="relative h-screen w-full overflow-hidden">
@@ -70,6 +76,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                             <HeroSlide
                                 key={s.id}
                                 slide={s}
+                                thumbs={railThumbs}
                                 activeIndex={active}
                                 onWatch={() => onWatch?.(s)}
                                 onPrev={() => sliderRef.current?.slickPrev()}
@@ -77,20 +84,10 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                 onThumbClick={(idx) => sliderRef.current?.slickGoTo(idx)}
                             />
 
+
                         ))}
                     </Slider>
 
-                    <div className="pointer-events-none absolute inset-0">
-                        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
-                        <div className="absolute left-1/2 -translate-x-1/2 bottom-4 sm:bottom-5 pointer-events-auto">
-                            <CounterPill
-                                current={current}
-                                total={total}
-                                onPrev={() => sliderRef.current?.slickPrev()}
-                                onNext={() => sliderRef.current?.slickNext()}
-                            />
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -101,6 +98,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
 
 function HeroSlide({
     slide,
+    thumbs,
     activeIndex,
     onWatch,
     onPrev,
@@ -108,6 +106,7 @@ function HeroSlide({
     onThumbClick,
 }: {
     slide: WatchLiveSlide;
+    thumbs: string[];
     activeIndex: number;
     onWatch?: () => void;
     onPrev: () => void;
@@ -118,64 +117,56 @@ function HeroSlide({
         <div className="relative">
             <div className="relative w-full h-screen">
                 <Image src={slide.bg} alt={slide.title} fill priority className="object-cover" sizes="100vw" />
-
-                <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
-                <div className="absolute inset-0 bg-black/10" />
-
-                <div className="absolute inset-0 flex items-center">
-                    {/* ✅ Don’t use "container" if it messes padding; use your section max-width system */}
-                    <div className="container">
-                        {/* ✅ This is your “grid right side lagbe” */}
-                        <div className="grid grid-cols-1 lg:grid-cols-[6fr_6fr]">
-                            {/* Left column */}
+                <div className="absolute inset-0 ">
+                    <div className="container h-full">
+                        {/* <div className="grid grid-cols-1 lg:grid-cols-[6fr_6fr]"> */}
+                        <div className="h-full flex flex-col-wrap items-end pb-20 sm:pb-24 lg:pb-28">
                             <div className="w-full">
                                 {slide.isLive ? <LiveBadge /> : null}
 
-                                <p className="mt-4 text-white/70 text-xs sm:text-sm">{slide.game}</p>
+                                <p className="mt-10 text-[#FFFFFF] font-bold text-xs lg:text-[21px] sm:text-sm">{slide.game}</p>
 
-                                <h2 className="mt-1 text-white font-semibold leading-tight text-[28px] sm:text-[44px] lg:text-[52px]">
+                                <h2 className="mt-1 text-white font-semibold leading-tight text-4xl  md:text-7xl">
                                     {slide.title}
                                 </h2>
 
                                 <div className="mt-3 flex items-center gap-3">
                                     {slide.avatars?.length ? <Avatars items={slide.avatars} /> : null}
-                                    <p className="text-white/55 text-xs sm:text-sm">{slide.meta}</p>
+                                    <p className="text-[#FFFFFF] text-xs sm:text-sm">{slide.meta}</p>
                                 </div>
-                                <div>
-                                    <button
+
+                                <div className="pt-10 pb-10">
+                                    <StartStreamingButton
                                         type="button"
                                         onClick={onWatch}
-                                        className={cn(
-                                            "cursor-pointer shrink-0",
-                                            "inline-flex items-center justify-center",
-                                            "h-10 sm:h-11 px-6",
-                                            "rounded-lg",
-                                            "bg-[#FF3DBB] hover:bg-[#ff2eb4]",
-                                            "text-white font-medium",
-                                            "border border-white/25",
-                                            "shadow-[0_14px_40px_rgba(0,0,0,0.45)]",
-                                            "transition"
-                                        )}
+                                        className="h-10 sm:h-11 px-6 py-0"
                                     >
                                         Watch
-                                    </button>
+                                    </StartStreamingButton>
+
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-start lg:justify-end gap-3 min-w-0">
-                                <CircleNavButton dir="prev" onClick={onPrev} />
+                            {/* Right column */}
+                            <div >
 
-                                <div className="min-w-0 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                                    <ThumbRail
-                                        thumbs={slide?.thumbs ?? []}
-                                        activeIndex={activeIndex}
-                                        onThumbClick={onThumbClick}
-                                    />
+                                <div className="flex items-end justify-start lg:justify-end gap-3 min-w-0">
+                                    <CircleNavButton dir="prev" onClick={onPrev} />
+
+                                    <div className="min-w-0 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                        <ThumbRail
+                                            thumbs={thumbs}
+                                            activeIndex={activeIndex}
+                                            onThumbClick={onThumbClick}
+                                        />
+
+                                    </div>
+
+                                    <CircleNavButton dir="next" onClick={onNext} />
                                 </div>
-
-                                <CircleNavButton dir="next" onClick={onNext} />
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -190,12 +181,44 @@ function HeroSlide({
 
 function LiveBadge() {
     return (
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#FF5A5A] px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-            <span className="text-white text-xs font-medium">Live</span>
-            <span className="w-3 h-3 rounded-full bg-white/80" />
-        </div>
+        <>
+            <div className="inline-flex items-center md:px-4 md:py-3 gap-4 rounded-lg bg-[#E85B5B] px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                {/* <Image
+                    src={"/images/home/wifi.png"}
+                    alt="wifi"
+                    width={200}
+                    height={200}
+                    className="h-8 w-8"
+                /> */}
+
+                <span className="text-white text-lg font-medium">Live</span>
+
+                {/* live pulse dot */}
+                <span className="relative inline-flex h-2.5 w-2.5">
+                    <span className="live-ping absolute inset-0 rounded-full bg-white/60" />
+                    <span className="relative h-2.5 w-2.5 rounded-full bg-white border border-black/10" />
+                </span>
+            </div>
+
+            <style jsx>{`
+            .live-ping {
+            animation: live 2s ease-in-out infinite;
+            }
+            @keyframes live {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(3.5);
+                opacity: 0;
+            }
+            }
+        `}</style>
+            </>
     );
 }
+
 
 function Avatars({ items }: { items: string[] }) {
     return (
@@ -205,7 +228,8 @@ function Avatars({ items }: { items: string[] }) {
                     key={i}
                     className="relative w-7 h-7 rounded-full overflow-hidden border border-white/25 bg-white/10"
                 >
-                    <Image src={src} alt="" fill className="h-screen object-cover" sizes="28px" />
+                    <Image src={src} alt="" fill className="object-cover" sizes="28px" />
+
                 </span>
             ))}
         </div>
@@ -236,31 +260,29 @@ function CircleNavButton({ dir, onClick }: { dir: "prev" | "next"; onClick: () =
 
 function ThumbRail({
     thumbs,
+    activeIndex,
     onThumbClick,
 }: {
     thumbs: string[];
     activeIndex: number;
     onThumbClick: (i: number) => void;
 }) {
-    // show last 4 thumbs like figma row (tune if needed)
     const visible = thumbs.slice(0, 4);
 
     return (
         <div className="flex items-center gap-3">
             {visible.map((src, i) => (
                 <button
-                    key={src + i}
+                    key={`${src}-${i}`}
                     type="button"
                     onClick={() => onThumbClick(i)}
                     className={cn(
-                        "pointer-events-auto cursor-pointer",
-                        "relative overflow-hidden",
-                        "w-[70px] h-[42px] sm:w-[92px] sm:h-[54px] lg:w-[110px] lg:h-[64px]",
-                        "rounded-xl",
-                        "border border-white/15",
-                        "bg-black/25 backdrop-blur",
-                        "shadow-[0_12px_35px_rgba(0,0,0,0.35)]",
-                        "transition"
+                        "pointer-events-auto cursor-pointer relative overflow-hidden",
+                        "w-[70px] h-[42px] sm:w-[92px] sm:h-[54px] lg:w-[122px] lg:h-[64px]",
+                        "rounded-2xl bg-black/25 backdrop-blur shadow-[0_12px_35px_rgba(0,0,0,0.35)] transition",
+                        i === activeIndex
+                            ? "border-2 border-white"
+                            : "border border-white/40 opacity-80"
                     )}
                 >
                     <Image src={src} alt="" fill className="object-cover" sizes="120px" />
@@ -270,49 +292,4 @@ function ThumbRail({
     );
 }
 
-function CounterPill({
-    current,
-    total,
-    onPrev,
-    onNext,
-}: {
-    current: number;
-    total: number;
-    onPrev: () => void;
-    onNext: () => void;
-}) {
-    return (
-        <div
-            className={cn(
-                "pointer-events-auto",
-                "flex items-center gap-4",
-                "px-4 py-2 rounded-xl",
-                "bg-black/35 backdrop-blur",
-                "border border-white/10",
-                "shadow-[0_14px_40px_rgba(0,0,0,0.35)]"
-            )}
-        >
-            <button
-                type="button"
-                onClick={onPrev}
-                className="cursor-pointer text-white/90 hover:text-white transition"
-                aria-label="Previous slide"
-            >
-                ‹
-            </button>
 
-            <p className="text-white/80 text-xs sm:text-sm tabular-nums">
-                {current} / {total}
-            </p>
-
-            <button
-                type="button"
-                onClick={onNext}
-                className="cursor-pointer text-white/90 hover:text-white transition"
-                aria-label="Next slide"
-            >
-                ›
-            </button>
-        </div>
-    );
-}
