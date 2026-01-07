@@ -1,5 +1,6 @@
 import { useRouter } from "next/navigation";
 import MatchCard from "../card/MatchCard";
+import { useAuth } from "@/shared/providers/auth/useAuth";
 
 export type MatchStatus = "Upcoming" | "Past" | "Live";
 
@@ -19,8 +20,8 @@ export type MatchItem = {
 
 export default function MatchesGrid({ matches }: { matches: MatchItem[] }) {
     const router = useRouter();
-    // const { isAuthenticated } = useAuth();
-    const isAuthenticated = true;
+    const { isAuthenticated } = useAuth();
+
     const handleWatch = (matchId: string) => {
         if (!isAuthenticated) {
             router.push(`/login?redirect=/match/${matchId}`);
@@ -44,6 +45,8 @@ export default function MatchesGrid({ matches }: { matches: MatchItem[] }) {
                     watchHref={m.watchHref}
                     voteRequired={m.voteRequired}
                     versusImg={m.versusImg}
+                    onWatch={handleWatch as any}
+
                 />
             ))}
         </div>

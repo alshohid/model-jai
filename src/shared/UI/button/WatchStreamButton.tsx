@@ -1,25 +1,25 @@
-import Link from "next/link";
+"use client";
+
 import * as React from "react";
 import { cn } from "@/shared/lib/utils/cn";
 
 type Props = {
-    href: string;
     label?: string;
     className?: string;
     icon?: React.ReactNode;
-} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">;
+    onClick?: () => void;
+};
 
 export default function WatchStreamButton({
-    href,
     label = "Watch stream",
     icon,
     className,
-    ...props
+    onClick,
 }: Props) {
     return (
-        <Link
-            href={href}
-            {...props}
+        <button
+            type="button"
+            onClick={onClick}
             className={cn(
                 "cursor-pointer inline-flex items-center justify-center gap-3",
                 "w-full h-[48px] rounded-[12px]",
@@ -33,6 +33,6 @@ export default function WatchStreamButton({
                 {icon ?? "▶"}
             </span>
             <span className="text-sm">{label}</span>
-        </Link>
+        </button>
     );
 }

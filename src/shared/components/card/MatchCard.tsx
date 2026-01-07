@@ -1,6 +1,6 @@
 import WatchStreamButton from "@/shared/UI/button/WatchStreamButton";
 import Image from "next/image";
-import Link from "next/link";
+
 
 type MatchStatus = "Upcoming" | "Past" | "Live";
 
@@ -16,6 +16,7 @@ type Props = {
     voteRequired?: boolean;
     className?: string;
     versusImg: string;
+    onWatch?: () => any;
 };
 
 export default function MatchCard({
@@ -30,6 +31,7 @@ export default function MatchCard({
     voteRequired = true,
     className = "",
     versusImg,
+    onWatch
 }: Props) {
     const statusStyle =
         status === "Live"
@@ -127,9 +129,13 @@ export default function MatchCard({
                     </div>
                 </div>
 
-                <div className=" mt-3 md:mt-5">
-                    <WatchStreamButton href={watchHref} label="Watch Now" />
+                <div className="mt-3 md:mt-5">
+                    <WatchStreamButton
+                        label="Watch Now"
+                        onClick={onWatch}
+                    />
                 </div>
+
 
                 {voteRequired && (
                     <p className="text-center text-[1rem] mt-2 md:mt-3 font-medium text-[#FF2EC8]">

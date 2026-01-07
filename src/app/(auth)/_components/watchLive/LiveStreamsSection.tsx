@@ -2,6 +2,7 @@ import LiveGameCard from "@/shared/components/card/LiveGameCard";
 import LiveSectionHeader from "./LiveSectionHeader";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/shared/providers/auth/useAuth";
 
 const dummyLiveGames = [
     {
@@ -38,8 +39,8 @@ const dummyLiveGames = [
 
 export default function LiveStreamsSection() {
     const router = useRouter();
-    // const { isAuthenticated } = useAuth();
-    const isAuthenticated = true;
+    const { isAuthenticated } = useAuth();
+
 
     const handleWatch = (matchId: string) => {
         if (!isAuthenticated) {

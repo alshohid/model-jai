@@ -1,14 +1,27 @@
+
+"use client"
+
+import { useAuth } from "@/shared/providers/auth/useAuth";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon } from "@/shared/UI/icon/icon";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const { login } = useAuth();
+
+    const redirect = searchParams.get("redirect") || "/";
     const { register, handleSubmit } = useForm();
 
     const onSubmit = (data: any) => {
         console.log("login", data);
+        login();
+        router.replace(redirect);
     };
 
     return (
