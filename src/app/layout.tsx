@@ -7,6 +7,7 @@ import PublicNavbar from "./(public)/_components/publicNavbar/PublicNavbar";
 import FooterSection from "@/shared/components/home/FooterSection";
 import { RouteProvider } from "@/shared/providers/route/RouteProvider";
 import NavbarWithRouteRules from "./(public)/_components/publicNavbar/NavbarWithRouteRules";
+import { TwScreenSize } from "@/shared/components/TwScreenSize";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
           {children}
           <FooterSection />
         </RouteProvider>
+        <TwScreenSize/>
       </body>
     </html>
   );

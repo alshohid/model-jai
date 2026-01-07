@@ -14,8 +14,8 @@ const slides: WatchLiveSlide[] = [
         title: "Warzone 3.0",
         meta: "Battle Royale • English (US)",
         isLive: true,
-        avatars: ["/images/home/watch_1.jpg"],
-        thumbs: ["/images/home/watch_1.jpg"],
+        avatars: ["/images/home/watch_main.png"],
+        thumbs: ["/images/home/watch_main.png"],
     },
     {
         id: "2",
