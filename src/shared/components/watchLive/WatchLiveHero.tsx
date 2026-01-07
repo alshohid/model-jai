@@ -55,26 +55,6 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
         };
     }, []);
 
-    // const settings = useMemo(() => {
-    //     return {
-    //         dots: false,
-    //         arrows: false,
-    //         infinite: true,
-    //         speed: 550,
-    //         slidesToShow: 1,
-    //         slidesToScroll: 1,
-    //         swipeToSlide: true,
-    //         beforeChange: (current: number, next: number) => {
-    //             setDir(next > current ? "next" : "prev");
-    //             setActive(next);
-    //         },
-    //         responsive: [
-    //             { breakpoint: 1024, settings: { speed: 500 } },
-    //             { breakpoint: 640, settings: { speed: 450 } },
-    //         ],
-    //     };
-    // }, []);
-
     const activeSlide = slides[active];
     const railThumbs = useMemo(() => {
         return slides.map((s) => s.thumbs?.[0] ?? s.bg);
