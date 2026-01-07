@@ -1,7 +1,8 @@
 
 "use client"
 
-import WatchLiveHeroCarousel, { WatchLiveSlide } from "@/shared/components/watchLive/WatchLiveHero";
+import WatchLiveHeroCarousel from "@/shared/components/watchLive/WatchLiveHero";
+import { WatchLiveSlide } from "@/types/watchLive/watchLiveTypes";
 
 
 
@@ -9,34 +10,33 @@ const slides: WatchLiveSlide[] = [
     {
         id: "1",
         bg: "/images/home/watch_main.png",
-        game: "Call Of Duty",
-        title: "Warzone 2.0",
-        meta: "Warzone • US English",
+        game: "Call of Duty: Warzone",
+        title: "Warzone 3.0",
+        meta: "Battle Royale • English (US)",
         isLive: true,
-        avatars: ["/images/home/watch_1.jpg", "/images/home/watch_2.jpg"],
-        thumbs: [
-            "/images/home/watch_1.jpg",
-           "/images/home/watch_1.jpg",
-            "/images/home/watch_1.jpg",
-           "/images/home/watch_1.jpg",
-        ],
+        avatars: ["/images/home/watch_1.jpg"],
+        thumbs: ["/images/home/watch_1.jpg"],
     },
     {
         id: "2",
-        bg: "/images/home/watch_main.png",
-        game: "Call Of Duty55",
-        title: "Warzone 2.0",
-        meta: "Warzone • US English",
+        bg: "/images/home/watch_2.jpg",
+        game: "The Witcher 3: Wild Hunt",
+        title: "Wild Hunt 2.0",
+        meta: "RPG • English (US)",
         isLive: true,
-        avatars: ["/images/home/watch_1.jpg", "/images/home/watch_2.jpg"],
-        thumbs: [
-            "/images/home/watch_1.jpg",
-            "/images/home/watch_1.jpg",
-            "/images/home/watch_1.jpg",
-            "/images/home/watch_1.jpg",
-        ],
+        avatars: ["/images/home/watch_2.jpg"],
+        thumbs: ["/images/home/watch_2.jpg"],
     },
-    
+    {
+        id: "3",
+        bg: "/images/home/watch_3.jpg",
+        game: "Cyberpunk 2077",
+        title: "Night City 5.0",
+        meta: "Action RPG • English (US)",
+        isLive: true,
+        avatars: ["/images/home/watch_3.jpg"],
+        thumbs: ["/images/home/watch_3.jpg"],
+    },
 ];
 
 export default function WatchLivePage() {
@@ -50,39 +50,3 @@ export default function WatchLivePage() {
 
 
 
-// "use client";
-
-// import WatchLiveHero from "@/shared/components/watchLive/WatchLiveHero";
-
-
-// const slides = [
-//     {
-//         id: "1",
-//         bg: "/images/home/watch_1.jpg",
-//         game: "Call Of Duty",
-//         title: "Warzone 2.0",
-//         meta: "Warzone • US English",
-//         isLive: true,
-//         thumbs: [{ id: "t1", src: "/images/home/watch_main.png", alt: "Warzone thumb" }],
-//     },
-//     {
-//         id: "2",
-//         bg: "/images/home/watch_2.jpg",
-//         game: "Valorant",
-//         title: "Episode Update",
-//         meta: "Valorant • EU",
-//         isLive: true,
-//         thumbs: [{ id: "t2", src: "/images/home/watch_2.jpg", alt: "Valorant thumb" }],
-//     },
-// ];
-
-// export default function WatchLiveContainer() {
-//     return (
-//         <div className="container ">
-//             <WatchLiveHero
-//                 slides={slides}
-//                 onWatch={(s) => console.log("watch:", s)}
-//             />
-//         </div>
-//     );
-// }
