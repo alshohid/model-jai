@@ -9,6 +9,7 @@ import {
     type CarouselApi,
 } from "@/components/ui/carousel"
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton"
+import { useRouter } from "next/navigation"
 const slides = [
     "/images/home/carousel1.jpg",
     "/images/home/herobg.png",
@@ -32,7 +33,7 @@ export default function WatchLivestreamSection() {
             api.off("select", onSelect)
         }
     }, [api])
-
+   
     return (
         <section className="w-full bg-transparent relative">
 

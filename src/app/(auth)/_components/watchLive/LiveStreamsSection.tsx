@@ -1,9 +1,11 @@
 import LiveGameCard from "@/shared/components/card/LiveGameCard";
 import LiveSectionHeader from "./LiveSectionHeader";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const dummyLiveGames = [
     {
+        id: "1",
         cover: "/images/home/livecard_1.jpg",
         isLive: true,
         watchingCount: "4.2K",
@@ -35,6 +37,19 @@ const dummyLiveGames = [
 ];
 
 export default function LiveStreamsSection() {
+    const router = useRouter();
+    // const { isAuthenticated } = useAuth();
+    const isAuthenticated = true;
+
+    const handleWatch = (matchId: string) => {
+        if (!isAuthenticated) {
+            router.push(`/login?redirect=/match/${matchId}`);
+            return;
+        }
+
+        router.push(`/match/${matchId}`);
+    };
+
     return (
         <section className="relative w-full overflow-hidden py-10 md:py-20">
             {/* Background ellipse */}
@@ -58,12 +73,13 @@ export default function LiveStreamsSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                     {dummyLiveGames.map((game, i) => (
                         <LiveGameCard
-                            key={i}
+                            key={game.id ?? i}
                             {...game}
-                            onWatch={() => console.log("Watch:", game.title)}
+                            onWatch={() => handleWatch(game.id)}
                         />
                     ))}
                 </div>
+
             </div>
         </section>
     );

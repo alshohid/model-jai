@@ -38,7 +38,7 @@ export default function RootLayout({
         className={`${inter.variable} ${manrope.variable} antialiased `}
       >
         <RouteProvider>
-          <NavbarWithRouteRules/>
+          {/* <NavbarWithRouteRules/> */}
           {children}
           <FooterSection />
         </RouteProvider>
