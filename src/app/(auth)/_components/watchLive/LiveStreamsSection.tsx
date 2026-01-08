@@ -44,11 +44,11 @@ export default function LiveStreamsSection() {
 
     const handleWatch = (matchId: string) => {
         if (!isAuthenticated) {
-            router.push(`/login?redirect=/match/${matchId}`);
+            router.push(`/login?redirect=/live-stream/match/${matchId}`);
             return;
         }
 
-        router.push(`/match/${matchId}`);
+        router.push(`/live-stream/match/${matchId}`);
     };
 
     return (

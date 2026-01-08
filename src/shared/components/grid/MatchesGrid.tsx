@@ -24,12 +24,13 @@ export default function MatchesGrid({ matches }: { matches: MatchItem[] }) {
 
     const handleWatch = (matchId: string) => {
         if (!isAuthenticated) {
-            router.push(`/login?redirect=/match/${matchId}`);
+            router.push(`/login?redirect=/live-stream/match/${matchId}`);
             return;
         }
 
-        router.push(`/match/${matchId}`);
+        router.push(`/live-stream/match/${matchId}`);
     };
+
     return (
         <div className="grid gap-6 w-full sm:grid-cols-2 xl:grid-cols-3 place-items-center">
             {matches.map((m) => (
