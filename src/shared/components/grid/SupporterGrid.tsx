@@ -52,7 +52,6 @@ export default function SupporterGrid({
                 {cells.slice(0, rows * cols).map((cell) => {
                     const isTaken = cell.status === "taken";
                     const isPending = pendingCellId === cell.id;
-
                     const isDisabled = gridDisabled || isTaken || isPending || !onCellClick;
 
                     return (

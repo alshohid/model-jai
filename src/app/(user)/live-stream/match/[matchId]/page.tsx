@@ -4,6 +4,8 @@ import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
+import LiveMatchTriplePanel from "@/shared/components/watchLive/LiveMatchTriplePanel";
+
 
 export default async function MatchDetails({
     params,
@@ -15,6 +17,22 @@ export default async function MatchDetails({
     return (
         <div>
             <PublicNavbar />
+            <LiveMatchTriplePanel
+                leftImage="/images/home/panel_left.png"
+                middleImage="/images/home/middle.png"
+                rightImage="/images/home/panel_right.png"
+                left={{
+                    name: "Jack",
+                    points: 1000,
+                    symbolSrc: "/images/home/taken_slot.png",
+                }}
+                right={{
+                    name: "Steve",
+                    points: 1000,
+                    symbolSrc: "/images/home/available_slot.png",
+                }}
+                middleLabel="Model"
+            />
 
             <MatchPointsSummarySection />
             <SupporterGridSection matchId={matchId} />

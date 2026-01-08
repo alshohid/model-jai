@@ -3,9 +3,13 @@
 import SupporterGridContainer from "./SupporterGridContainer";
 import LiveSectionHeader from "./LiveSectionHeader";
 
+
+
 export default function SupporterGridSection({ matchId }: { matchId: string }) {
     return (
-        <div className="py-10">
+        <div className=" py-5">
+
+    
             <LiveSectionHeader
                 title="Supporter Grid"
                 className="mb-8 md:mb-10 tracking-wide text-[48px]"
