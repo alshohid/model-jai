@@ -8,7 +8,7 @@ export default function SupporterGridSection({ matchId }: { matchId: string }) {
         <div className="py-10">
             <LiveSectionHeader
                 title="Supporter Grid"
-                className="mb-16 md:mb-20 tracking-wide text-[48px]"
+                className="mb-8 md:mb-10 tracking-wide text-[48px]"
             />
             <SupporterGridContainer matchId={matchId} matchStatus="Live" locked={false} />
         </div>
