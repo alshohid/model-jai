@@ -111,7 +111,7 @@ function PlayerPanel({
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-contain"
+                className="object-cover"
             />
 
             {/* ✅ overlay center */}
