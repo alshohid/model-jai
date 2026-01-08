@@ -23,7 +23,7 @@ export default function PublicNavbar() {
     const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
     const wrapperClass = isAuthenticated
-        ? "w-full border-none"
+        ? " w-full border-none"
         : "fixed top-[20px] z-[60] w-full";
 
     const navbarBg = isAuthenticated
