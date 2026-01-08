@@ -5,17 +5,19 @@ import TakeGameSection from "@/shared/components/home/TakeGameSection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 
-export default function MatchDetails({
+export default async function MatchDetails({
     params,
 }: {
-    params: { matchId: string };
+    params: Promise<{ matchId: string }>;
 }) {
+    const { matchId } = await params;
+
     return (
         <div>
             <PublicNavbar />
 
-            <MatchPointsSummarySection/>
-            <SupporterGridSection matchId={params.matchId} />
+            <MatchPointsSummarySection />
+            <SupporterGridSection matchId={matchId} />
             <RankingSection />
             <LatestNewsSection />
             <TakeGameSection />

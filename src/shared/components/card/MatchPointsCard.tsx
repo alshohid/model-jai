@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
