@@ -19,7 +19,7 @@ export default function ProfileDropdown({
     const items: AppDropdownItem[] = [
         { type: "label", label: "My Account" },
 
-        { label: "Profile", href: "/profile" },
+        { label: "Profile", href: "/user-profile" },
         { label: "Point Store", href: "/point-store" },
 
         { type: "separator" },

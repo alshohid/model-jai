@@ -41,7 +41,7 @@ const ReuseAbleTable = <T extends TableItem>({
     isBg = false,
     columnWidths,
     headerCellClasses,
-    minTableWidthPx = 1320,
+    minTableWidthPx,
     variant = "light",
 }: ReuseAbleTableProps<T>) => {
     const safeWidths =
@@ -54,7 +54,7 @@ const ReuseAbleTable = <T extends TableItem>({
 
     const wrapperClass = isRankDark
         ? [
-            "w-full max-w-7xl",
+            "w-full container",
             "rounded-[8px]",
             "border border-white/25",
             "overflow-hidden",
@@ -64,7 +64,7 @@ const ReuseAbleTable = <T extends TableItem>({
         ].join(" ")
         : [
             "w-full",
-            "max-w-7xl",
+            "container",
             "rounded-[8px]",
             "border border-[#D2D2D5]",
             "overflow-hidden",
@@ -110,10 +110,10 @@ const ReuseAbleTable = <T extends TableItem>({
                             ))}
                         </div>
                     ) : (
-                            <Table
-                                className="w-full table-fixed"
-                                style={{ minWidth: `${minTableWidthPx}px` }}
-                            >
+                        <Table
+                            className="w-full table-fixed"
+                            style={{ minWidth: `${minTableWidthPx}px` }}
+                        >
 
                             <TableCaption />
 

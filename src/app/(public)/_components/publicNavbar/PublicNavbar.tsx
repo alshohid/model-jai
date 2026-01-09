@@ -78,15 +78,7 @@ export default function PublicNavbar() {
                                     onClick={() => console.log("open buy points")}
                                 />
                                 <ProfileDropdown avatarSrc="/images/home/profile_img.png" />
-                                {/* <div className="overflow-hidden">
-                                    <Image
-                                        src={"/images/home/profile_img.png"}
-                                        alt="profile icon"
-                                        width={500}
-                                        height={500}
-                                        className="inline-block size-10 rounded-full ring-2 ring-gray-50 outline -outline-offset-1 outline-white/10"
-                                    />
-                                </div> */}
+
                             </div>
                         ) : (
                             <div className="flex items-center gap-2 overflow-visible">
