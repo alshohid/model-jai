@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {  useRef } from "react";
+import { useRef } from "react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import AuthButton from "@/shared/UI/button/AuthButton";
 import MobileNavDrawer from "./MobileNavDrawer";
@@ -14,7 +14,7 @@ import { cn } from "@/shared/lib/utils/cn";
 const navItems = [
     { label: "Home", href: "/" },
     { label: "Live Stream Match", href: "/live-stream" },
-    { label: "Store", href: "/buy-points" },
+    { label: "Store", href: "/point-store" },
 ];
 
 export default function PublicNavbar() {
@@ -28,11 +28,11 @@ export default function PublicNavbar() {
 
     const navbarBg = isAuthenticated
         ? "bg-[#FFEAFA] "
-        : "bg-glass backdrop-blur-md mx-5 navbar-border-ring ";
+        : "bg-glass backdrop-blur-md navbar-border-ring ";
 
     return (
         <>
-            <div className={wrapperClass}> 
+            <div className={wrapperClass}>
                 <div
                     className={cn(
                         "flex items-center h-[80px] ",
