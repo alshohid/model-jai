@@ -10,6 +10,7 @@ import Image from "next/image";
 import PointsButton from "@/shared/UI/button/PointsButton";
 import { useAuth } from "@/shared/providers/auth/useAuth";
 import { cn } from "@/shared/lib/utils/cn";
+import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -76,7 +77,8 @@ export default function PublicNavbar() {
                                     icon={"/images/home/point_icon.png" as any}
                                     onClick={() => console.log("open buy points")}
                                 />
-                                <div className="overflow-hidden">
+                                <ProfileDropdown avatarSrc="/images/home/profile_img.png" />
+                                {/* <div className="overflow-hidden">
                                     <Image
                                         src={"/images/home/profile_img.png"}
                                         alt="profile icon"
@@ -84,7 +86,7 @@ export default function PublicNavbar() {
                                         height={500}
                                         className="inline-block size-10 rounded-full ring-2 ring-gray-50 outline -outline-offset-1 outline-white/10"
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         ) : (
                             <div className="flex items-center gap-2 overflow-visible">
