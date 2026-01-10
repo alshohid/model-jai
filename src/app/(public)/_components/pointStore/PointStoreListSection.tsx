@@ -7,6 +7,7 @@ import LiveSectionHeader from "@/app/(auth)/_components/watchLive/LiveSectionHea
 import PointCard from "@/shared/components/card/PointCard";
 import BuyPointsDialog, { PointPack } from "@/shared/components/modal/BuyPointsDialog";
 import { useAuth } from "@/shared/providers/auth/useAuth";
+import Image from "next/image";
 
 export default function PointStoreListSection() {
     const { isAuthenticated } = useAuth();
@@ -60,7 +61,7 @@ export default function PointStoreListSection() {
         const found = packs.find((p) => p.id === packId);
         if (!found) return;
 
-        if (!isAuthenticated) return; 
+        if (!isAuthenticated) return;
 
         setSelected(found);
         setOpen(true);
@@ -75,30 +76,53 @@ export default function PointStoreListSection() {
     };
 
     return (
-        <div className="container">
-            <LiveSectionHeader title="Point Store" className="mb-8 tracking-wide text-[48px]" />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center">
-                {packs.map((p) => (
-                    <PointCard
-                        key={p.id}
-                        points={p.points}
-                        price={p.price}
-                        imageSrc={p.imageSrc}
-                        onBuy={() => handleBuy(p)}
-                    />
-                ))}
+        <div className="relative">
+            <div className="pointer-events-none absolute -left-[400px] -top-[400px] -z-10">
+                <Image
+                    src="/images/home/live_left_ellipse.png"
+                    width={1200}
+                    height={1200}
+                    alt="ellipse"
+                    className="h-[1200px] w- [1200px]"
+                />
+            </div>
+            <div className=" pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">
+                <Image
+                    src="/images/home/bottom_right.png"
+                    width={702}
+                    height={702}
+                    alt="elips"
+                    className="w-[1700px] h-[1400px]"
+                />
             </div>
 
-            <BuyPointsDialog
-                open={open}
-                onOpenChange={onOpenChange}
-                pack={selected}
-                onPay={(pack) => {
-                    console.log("Pay with Stripe clicked:", pack);
-                    // later: call /api/stripe/create-checkout-session with pack.id
-                }}
-            />
+            <div className="container py-10 md:py-15 lg:py-20">
+                <LiveSectionHeader title="Point Store" className="mb-8 tracking-wide text-[38px] md:text-[40] lg:text-[48px]" />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center">
+                    {packs.map((p) => (
+                        <PointCard
+                            key={p.id}
+                            points={p.points}
+                            price={p.price}
+                            imageSrc={p.imageSrc}
+                            onBuy={() => handleBuy(p)}
+                        />
+                    ))}
+                </div>
+
+                <BuyPointsDialog
+                    open={open}
+                    onOpenChange={onOpenChange}
+                    pack={selected}
+                    onPay={(pack) => {
+                        console.log("Pay with Stripe clicked:", pack);
+                        // later: call /api/stripe/create-checkout-session with pack.id
+                    }}
+                />
+
+            </div>
+
         </div>
     );
 }

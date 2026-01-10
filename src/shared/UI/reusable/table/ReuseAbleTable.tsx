@@ -54,7 +54,7 @@ const ReuseAbleTable = <T extends TableItem>({
 
     const wrapperClass = isRankDark
         ? [
-            "w-full container",
+            "w-full",
             "rounded-[8px]",
             "border border-white/25",
             "overflow-hidden",
@@ -64,7 +64,7 @@ const ReuseAbleTable = <T extends TableItem>({
         ].join(" ")
         : [
             "w-full",
-            "container",
+            // "container",
             "rounded-[8px]",
             "border border-[#D2D2D5]",
             "overflow-hidden",
@@ -111,8 +111,8 @@ const ReuseAbleTable = <T extends TableItem>({
                         </div>
                     ) : (
                         <Table
-                            className="w-full table-fixed"
-                            style={{ minWidth: `${minTableWidthPx}px` }}
+                            className="w-full"
+                            // style={{ minWidth: `${minTableWidthPx}px` }}
                         >
 
                             <TableCaption />

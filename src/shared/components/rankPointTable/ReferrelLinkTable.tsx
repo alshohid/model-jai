@@ -41,25 +41,27 @@ const ReferrelLinkTable = () => {
             (item) => <span className="text-[#FFFFFF]">{item.matchPoints}</span>,
         ];
 
-    // Screenshot-like widths (total ~1320)
-    const columnWidths = [173, 356, 140, 651];
+
 
     return (
-        <div>
+        <div className="container  py-8 md:py-10 lg:py-15 xl:py-20">
             <LiveSectionHeader
                 title="Referral Link Used By"
-                className="mb-8 md:mb-10 tracking-wide text-[48px]"
+                className="mb-8 md:mb-10 tracking-wide text[40px] md:text-[48px]"
             />
-            <ReuseAbleTable
-                isLoadings={false}
-                currentItems={currentItems}
-                tableHeader={tableHeader}
-                tableRowDataRenderers={tableRowDataRenderers}
-                isBg={false}
-                minTableWidthPx={1320}
-                columnWidths={columnWidths}
-                variant="rank-dark"
-            />
+            <div >
+                <ReuseAbleTable
+                    isLoadings={false}
+                    currentItems={currentItems}
+                    tableHeader={tableHeader}
+                    tableRowDataRenderers={tableRowDataRenderers}
+                    isBg={false}
+                    minTableWidthPx={1320}
+                    // columnWidths={columnWidths}
+                    variant="rank-dark"
+                />
+            </div>
+        
         </div>
     );
 };

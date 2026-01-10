@@ -24,8 +24,18 @@ const news: NewsItem[] = [
 
 export default function LatestNewsSection() {
     return (
-        <section className="w-full">
-            <div className="container">
+        <section className="w-full relative">
+            <div className="absolute top-0 left-0 -translate-y-2/3 ">
+                <Image
+                    src="/images/home/Ellipse2.png"
+                    alt="ellipse"
+                    width={1600}
+                    height={800}
+                    className="w-[1600px] h-[800px]"
+                    unoptimized
+                />
+            </div>
+            <div className="container py-8 md:py-15 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-[4fr_8fr] gap-10 lg:gap-16 items-start">
                     {/* Left */}
                     <div className="flex flex-col items-start gap-6">

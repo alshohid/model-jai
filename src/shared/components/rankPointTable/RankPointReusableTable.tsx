@@ -41,7 +41,7 @@ const RankPointReusableTable = () => {
         ];
 
     // Screenshot-like widths (total ~1320)
-    const columnWidths = [173, 356, 140, 651];
+    // const columnWidths = [173, 356, 140, 651];
 
     return (
         <div>
@@ -52,7 +52,7 @@ const RankPointReusableTable = () => {
                 tableRowDataRenderers={tableRowDataRenderers}
                 isBg={false}
                 minTableWidthPx={1320}
-                columnWidths={columnWidths}
+                // columnWidths={columnWidths}
                 variant="rank-dark"
             />
         </div>

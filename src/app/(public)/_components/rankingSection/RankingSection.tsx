@@ -30,7 +30,7 @@ const RankingSection = () => {
             </div>
 
             {/* Content */}
-            <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-0 py-20">
+            <div className="container py-20">
                 <div className="flex flex-col items-center gap-8">
                     <SupporterCard
                         imageSrc="/images/home/supported_cardimg.png"
