@@ -42,7 +42,7 @@ export default function ProfileDropdown({
                 <button
                     type="button"
                     className={cn(
-                        "cursor-pointer inline-flex items-center justify-center",
+                        "cursor-pointer  inline-flex items-center justify-center",
                         "rounded-full",
                         "focus:outline-none focus:ring-2 focus:ring-white/20",
                         className

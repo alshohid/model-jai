@@ -117,7 +117,7 @@ export default function MobileNavSheet({
 
                         <div className="mt-6">
                             {isAuthenticated ? (
-                                <div className="flex items-center justify-between gap-3">
+                                <div className="flex  items-center justify-between gap-3">
                                     <PointsButton
                                         points={points}
                                         icon={"/images/home/point_icon.png" as any}

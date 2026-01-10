@@ -49,7 +49,9 @@ export default function PublicNavbar() {
                     /> */}
 
                     <div className={cn("flex items-center justify-between", "container")}>
-                        <BrandMark />
+                        <Link href={'/'}>
+                            <BrandMark />
+                        </Link>
 
                         <nav className="hidden md:flex items-center gap-2">
                             {navItems.map((item) => {
