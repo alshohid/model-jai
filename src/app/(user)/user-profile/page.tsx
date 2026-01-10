@@ -1,3 +1,4 @@
+import MissionarySection from "@/app/(auth)/_components/myProfile/MissionarySection";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import MyProfileSection from "@/shared/components/myProfile/MyProfileSection";
 import PastMatchSupportedTable from "@/shared/components/rankPointTable/PastMatchSupportedTable";
@@ -10,6 +11,7 @@ const UserProfile = () => {
             <MyProfileSection />
             <PastMatchSupportedTable />
             <ReferrelLinkTable />
+            <MissionarySection/>
         </div>
     )
 }
