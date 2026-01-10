@@ -5,12 +5,11 @@ import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import AuthButton from "@/shared/UI/button/AuthButton";
-import MobileNavDrawer from "./MobileNavDrawer";
-import Image from "next/image";
 import PointsButton from "@/shared/UI/button/PointsButton";
 import { useAuth } from "@/shared/providers/auth/useAuth";
 import { cn } from "@/shared/lib/utils/cn";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
+import MobileNavSheet from "./MobileNavDrawer";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -76,6 +75,7 @@ export default function PublicNavbar() {
                                     points={35000}
                                     icon={"/images/home/point_icon.png" as any}
                                     onClick={() => console.log("open buy points")}
+
                                 />
                                 <ProfileDropdown avatarSrc="/images/home/profile_img.png" />
 
@@ -92,6 +92,12 @@ export default function PublicNavbar() {
                                 </div>
                             </div>
                         )}
+                        <MobileNavSheet
+                            navItems={navItems}
+                            points={35000}
+                            avatarSrc="/images/home/profile_img.png"
+                            tone={isAuthenticated ? "light" : "dark"}
+                        />
                     </div>
                 </div>
             </div>

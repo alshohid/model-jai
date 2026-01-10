@@ -52,7 +52,7 @@ export default function PointsButton({
                 
                 />  : "🪙"}
             </span>
-            <span>{points} Points</span>
+            <span>{points} </span>
         </button>
     );
 }

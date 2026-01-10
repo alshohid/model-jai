@@ -1,105 +1,159 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/shared/lib/utils/cn";
 import AuthButton from "@/shared/UI/button/AuthButton";
+import PointsButton from "@/shared/UI/button/PointsButton";
+import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
+import { useAuth } from "@/shared/providers/auth/useAuth";
+
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
+
+import { LuAlignRight } from "react-icons/lu";
 
 type NavItem = { label: string; href: string };
 
-export default function MobileNavDrawer({
-    open,
-    onClose,
+export default function MobileNavSheet({
     navItems,
-    activePath,
-    topPx,
+    points = 0,
+    avatarSrc,
+    tone = "dark",
 }: {
-    open: boolean;
-    onClose: () => void;
     navItems: NavItem[];
-    activePath: string;
-    topPx: number;
+    points?: number;
+    avatarSrc?: string;
+    tone?: "dark" | "light";
 }) {
+    const pathname = usePathname();
+    const { isAuthenticated } = useAuth();
+
+    const triggerStyles =
+        tone === "light"
+            ? "bg-black/5 border border-black/10 text-[#070707] hover:bg-black/10"
+            : "bg-white/10 border border-white/12 text-white hover:bg-white/12";
+
     return (
-        <>
-            {/* ✅ Backdrop must be FIXED */}
-            <div
-                onClick={onClose}
-                className={[
-                    "fixed inset-0 z-40 transition-opacity duration-200",
-                    open ? "opacity-100 bg-black/45" : "pointer-events-none opacity-0",
-                ].join(" ")}
-            />
+        <Sheet>
+            <SheetTrigger asChild>
+                <button
+                    type="button"
+                    className={cn(
+                        "md:hidden cursor-pointer inline-flex items-center justify-center",
+                        "h-10 w-10 rounded-[12px] p-2",
+                        triggerStyles,
+                        "transition"
+                    )}
+                    aria-label="Open menu"
+                >
+                    <LuAlignRight className="text-[28px]  leading-none" />
+                </button>
+            </SheetTrigger>
 
-            {/* ✅ Drawer must be FIXED (so it slides back exactly) */}
-            <aside
-                style={{
-                    top: -120,
-                    height: `calc(100dvh - ${topPx}px)`,
-                    right: -30, // ✅ slide in/out from right edge
-                }}
-                className={[
-                    "fixed z-50",
-                    open ? "pointer-events-auto" : "pointer-events-none",
-                    "w-[86%] max-w-[360px]",
-                    "bg-glass backdrop-blur-md",
-                    "navbar-border-ring rounded-[12px]",
-                    "shadow-[0_18px_60px_rgba(0,0,0,0.45)]",
-                    "transition-transform duration-200 ease-out",
-                    // ✅ closed অবস্থায় একদম ডান পাশে চলে যাবে, open হলে ফিরে আসবে
-                    open ? "translate-x-0" : "translate-x-full",
-                ].join(" ")}
+            <SheetContent
+                side="right"
+                className={cn(
+                    "p-0 border-0",
+                    "w-[86vw] max-w-[360px]",
+                    "bg-[#160F16]/92 backdrop-blur-xl",
+                    "text-white z-[70]",
+                    "shadow-[0_22px_70px_rgba(0,0,0,0.55)]"
+                )}
             >
-                <div className="h-full flex flex-col p-4">
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                        <p className="text-white/90 text-sm font-medium">Menu</p>
+                <div className="h-full flex flex-col">
+                    <SheetHeader className="px-5 pt-5 pb-4 border-b border-white/10">
+                        <div className="flex items-center justify-between gap-3">
+                            <SheetTitle className="text-white text-[18px] font-semibold">
+                                Menu
+                            </SheetTitle>
 
-                        <button
-                            onClick={onClose}
-                            className="cursor-pointer rounded-md px-3 py-2 text-white/80 hover:bg-white/10 transition"
-                            aria-label="Close menu"
-                        >
-                            ✕
-                        </button>
-                    </div>
+                            <SheetClose asChild>
+                                <button
+                                    type="button"
+                                    className={cn(
+                                        "cursor-pointer inline-flex items-center justify-center",
+                                        "h-10 w-10 rounded-[12px]",
+                                        "bg-white/10 border border-white/12",
+                                        "text-white/80 hover:text-white hover:bg-white/12 transition"
+                                    )}
+                                    aria-label="Close"
+                                >
+                                    ✕
+                                </button>
+                            </SheetClose>
+                        </div>
+                    </SheetHeader>
 
-                    {/* Links */}
-                    <nav className="mt-4 flex-1 overflow-y-auto">
-                        <div className="flex flex-col gap-2">
+                    <div className="flex-1 overflow-y-auto px-5 py-5">
+                        <nav className="flex flex-col gap-2">
                             {navItems.map((item) => {
-                                const active = activePath === item.href;
+                                const active = pathname === item.href;
                                 return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={onClose}
-                                        className={[
-                                            "cursor-pointer rounded-[8px] transition",
-                                            "h-[48px] px-4 inline-flex items-center",
-                                            active
-                                                ? "bg-navActive text-white"
-                                                : "text-white/75 hover:text-white hover:bg-white/10",
-                                        ].join(" ")}
-                                    >
-                                        {item.label}
-                                    </Link>
+                                    <SheetClose asChild key={item.href}>
+                                        <Link
+                                            href={item.href}
+                                            className={cn(
+                                                "cursor-pointer rounded-[12px] px-4 py-3",
+                                                "border border-white/10 bg-white/5 transition",
+                                                active
+                                                    ? "bg-white/12 text-white"
+                                                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                                            )}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    </SheetClose>
                                 );
                             })}
-                        </div>
-                    </nav>
+                        </nav>
 
-                    {/* Bottom auth */}
-                    <div className="pt-4">
-                        <div className="flex items-center gap-2">
-                            <AuthButton href="/login" variant="login" onClick={onClose}>
-                                Log In
-                            </AuthButton>
-                            <AuthButton href="/register" variant="signup" onClick={onClose}>
-                                Sign Up
-                            </AuthButton>
+                        <div className="mt-6">
+                            {isAuthenticated ? (
+                                <div className="flex items-center justify-between gap-3">
+                                    <PointsButton
+                                        points={points}
+                                        icon={"/images/home/point_icon.png" as any}
+                                        onClick={() => console.log("open buy points")}
+                                    />
+                                    {avatarSrc ? <ProfileDropdown avatarSrc={avatarSrc} /> : null}
+                                </div>
+                            ) : (
+                                <div className="grid gap-3">
+                                    <SheetClose asChild>
+                                        <div>
+                                            <AuthButton href="/login" variant="login" className="w-full justify-center">
+                                                Log In
+                                            </AuthButton>
+                                        </div>
+                                    </SheetClose>
+
+                                    <SheetClose asChild>
+                                        <div>
+                                            <AuthButton href="/register" variant="signup" className="w-full justify-center">
+                                                Sign Up
+                                            </AuthButton>
+                                        </div>
+                                    </SheetClose>
+                                </div>
+                            )}
                         </div>
                     </div>
+
+                    <div className="px-5 pb-5 pt-4 border-t border-white/10">
+                        <p className="text-xs text-white/45">
+                            © {new Date().getFullYear()} Model Boss
+                        </p>
+                    </div>
                 </div>
-            </aside>
-        </>
+            </SheetContent>
+        </Sheet>
     );
 }
