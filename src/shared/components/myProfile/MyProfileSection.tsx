@@ -1,8 +1,23 @@
 
 "use client"
+import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
 import MyProfilePanel from "./MyProfilePanel"
+import  { useState } from "react";
+import SendMoneyDialog from "@/app/(auth)/_components/myProfile/SendMoneyDialog";
 
 const MyProfileSection = () => {
+    const [openEdit, setOpenEdit] = useState(false);
+    const [sendMoneyOpen, setSendMoneyOpen] = useState(false);
+    const profile = {
+        name: "Michael Rohan",
+        email: "michael@gmail.com",
+        contact: "+636514165165",
+        nationality: "Nigerian",
+        avatar: "/images/home/pro_1.jpg",
+        posts: 125,
+        followers: "115k",
+        following: "225k",
+    };
     return (
         <div className="container py-5 md:py-10">
             <MyProfilePanel
@@ -11,7 +26,7 @@ const MyProfileSection = () => {
                     email: "michael@gmail.com",
                     contact: "+636514165165",
                     nationality: "Nigerian",
-                    avatar: "/images/home/profile_1.png",
+                    avatar: "/images/home/pro_1.jpg",
                     posts: 125,
                     followers: "115k",
                     following: "225k",
@@ -21,10 +36,31 @@ const MyProfileSection = () => {
                     { label: "Total Referral Earnings", value: "$ 8,400", icon: '/images/home/stat_button_2.png' },
                     { label: "Total Tip Recieved", value: "$ 1,311", icon: '/images/home/stat_button_3.png' },
                 ]}
-                onEditProfile={() => console.log("edit")}
-                onSendMoney={() => console.log("send")}
+                onEditProfile={() => setOpenEdit(true)}
+                onSendMoney={() => setSendMoneyOpen(true)}
                 onReferralLink={() => console.log("ref")}
                 onWithdrawRequest={() => console.log("withdraw")}
+            />
+            <EditProfileDialog
+                open={openEdit}
+                onOpenChange={setOpenEdit}
+                avatarSrc={profile.avatar}
+                defaultValues={{
+                    name: profile.name,
+                    email: profile.email,
+                    contact: profile.contact,
+                    nationality: profile.nationality,
+                }}
+                onSave={(data) => {
+                    console.log("FINAL SAVE payload:", data);
+                    // পরে backend আসলে এখানেই API call করবে
+                }}
+            />
+            <SendMoneyDialog
+                open={sendMoneyOpen}
+                onOpenChange={setSendMoneyOpen}
+                defaultValues={{ senderName: "Michael Rohan", email: "michael@gmail.com", amount: "100" }}
+                onSend={(data) => console.log("send money", data)}
             />
         </div>
 

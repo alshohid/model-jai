@@ -1,0 +1,176 @@
+"use client";
+
+import * as React from "react";
+import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { cn } from "@/shared/lib/utils/cn";
+import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
+import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
+import { MailIcon } from "@/shared/UI/icon/icon";
+import AppDialog from "@/shared/components/modal/AppDialog";
+
+type FormValues = {
+    name: string;
+    email: string;
+    contact: string;
+    nationality: string;
+};
+
+type Props = {
+    open: boolean;
+    onOpenChange: (v: boolean) => void;
+    defaultValues?: Partial<FormValues>;
+    avatarSrc: string;
+    onSave?: (data: FormValues & { avatarFile?: File | null }) => void;
+};
+
+export default function EditProfileDialog({
+    open,
+    onOpenChange,
+    defaultValues,
+    avatarSrc,
+    onSave,
+}: Props) {
+    const fileRef = React.useRef<HTMLInputElement | null>(null);
+    const [preview, setPreview] = React.useState<string>(avatarSrc);
+    const [file, setFile] = React.useState<File | null>(null);
+
+    const { register, handleSubmit, reset } = useForm<FormValues>({
+        defaultValues: {
+            name: defaultValues?.name ?? "",
+            email: defaultValues?.email ?? "",
+            contact: defaultValues?.contact ?? "",
+            nationality: defaultValues?.nationality ?? "",
+        },
+    });
+
+    // ✅ dialog open হলে values sync করো (না হলে stale থাকে)
+    React.useEffect(() => {
+        setPreview(avatarSrc);
+        reset({
+            name: defaultValues?.name ?? "",
+            email: defaultValues?.email ?? "",
+            contact: defaultValues?.contact ?? "",
+            nationality: defaultValues?.nationality ?? "",
+        });
+    }, [avatarSrc, defaultValues, reset, open]);
+
+    const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const f = e.target.files?.[0] ?? null;
+        if (!f) return;
+
+        setFile(f);
+        const url = URL.createObjectURL(f);
+        setPreview(url);
+    };
+
+    const submit = (data: FormValues) => {
+        onSave?.({ ...data, avatarFile: file });
+        onOpenChange(false);
+    };
+
+    return (
+        <AppDialog open={open} onOpenChange={onOpenChange} title="Edit Profile">
+            {/* ✅ Image card */}
+            <div className={cn("rounded-[16px] border border-white/10 bg-white/5 p-4")}>
+                <div className="relative overflow-hidden rounded-[16px] bg-white/5 border border-white/10">
+                    <div className="relative w-full h-[clamp(180px,32vh,320px)]">
+                        <Image
+                            src={preview}
+                            alt="Profile preview"
+                            fill
+                            priority
+                            sizes="(max-width: 520px) 92vw, 520px"
+                            className="object-cover rounded-lg"
+                        />
+                    </div>
+
+                    {/* upload button overlay */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 w-full flex justify-center">
+                        <button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={cn(
+                                "cursor-pointer",
+                                "h-[34px] px-5 rounded-[8px]",
+                                "bg-[#FF2EC8] text-white text-[13px] font-medium",
+                                "border border-white/35",
+                                "shadow-[0_6px_20px_rgba(255,46,200,0.25)]",
+                                "hover:opacity-95 transition"
+                            )}
+                        >
+                            Upload Profile Picture
+                        </button>
+                    </div>
+
+                    <input
+                        ref={fileRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={onPick}
+                    />
+                </div>
+            </div>
+
+            {/* ✅ Form card */}
+            <form
+                onSubmit={handleSubmit(submit)}
+                className={cn("mt-4 rounded-[16px] border border-white/10 bg-white/5 p-4")}
+            >
+                <Field label="Name">
+                    <AuthInput
+                        label="Name"
+                        name="name"
+                        type="text"
+                        register={register as any}
+                        icon={<span className="text-white/60">👤</span>}
+                    />
+                </Field>
+
+                <Field label="Email">
+                    <AuthInput
+                        label="Email"
+                        name="email"
+                        type="email"
+                        register={register as any}
+                        icon={<MailIcon />}
+                    />
+                </Field>
+
+                <Field label="Contact">
+                    <AuthInput
+                        label="Contact"
+                        name="contact"
+                        type="text"
+                        register={register as any}
+                        icon={<span className="text-white/60">📞</span>}
+                    />
+                </Field>
+
+                <Field label="Nationality">
+                    <AuthInput
+                        label="Nationality"
+                        name="nationality"
+                        type="text"
+                        register={register as any}
+                        icon={<span className="text-white/60">🌍</span>}
+                    />
+                </Field>
+
+                <StartStreamingButton className={cn("w-full mt-4 bg-[#FF2EC8] hover:opacity-95")}>
+                    Save
+                </StartStreamingButton>
+            </form>
+        </AppDialog>
+    );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div className="mt-3 first:mt-0">
+            <p className="mb-2 text-white/60 text-[12px]">{label}</p>
+            {children}
+        </div>
+    );
+}

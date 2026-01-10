@@ -6,14 +6,16 @@ const WalletDepositeSection = () => {
     const { isAuthenticated } = useAuth()
 
     return (
-        <WalletDepositPanel
-            locked={!isAuthenticated}
-            balance="35000"
-            withdrawable="0.00"
-            bonus="0.00"
-            onDeposit={(v) => console.log("deposit submit", v)}
-            onChangePaymentMethod={() => console.log("change payment method")}
-        />
+        <div className="container py-4 md:py-6">
+            <WalletDepositPanel
+                locked={!isAuthenticated}
+                balance="35000"
+                withdrawable="0.00"
+                bonus="0.00"
+                onDeposit={(v) => console.log("deposit submit", v)}
+                onChangePaymentMethod={() => console.log("change payment method")}
+            />
+      </div>
 
     )
 }

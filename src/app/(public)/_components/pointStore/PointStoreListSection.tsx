@@ -43,7 +43,6 @@ export default function PointStoreListSection() {
 
     const handleBuy = (pack: PointPack) => {
         if (!isAuthenticated) {
-            // redirect back with selected pack so we can auto-open modal after login
             const redirect = `${pathname}?pack=${encodeURIComponent(pack.id)}`;
             router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
             return;
@@ -54,7 +53,6 @@ export default function PointStoreListSection() {
         setPackInUrl(pack.id);
     };
 
-    // ✅ auto-open modal after redirect back (login success)
     useEffect(() => {
         const packId = searchParams.get("pack");
         if (!packId) return;
@@ -62,7 +60,7 @@ export default function PointStoreListSection() {
         const found = packs.find((p) => p.id === packId);
         if (!found) return;
 
-        if (!isAuthenticated) return; // logged out অবস্থায় modal খুলবে না
+        if (!isAuthenticated) return; 
 
         setSelected(found);
         setOpen(true);

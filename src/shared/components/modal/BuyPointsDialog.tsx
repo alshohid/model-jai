@@ -10,6 +10,7 @@ import {
     DialogTitle,
     DialogClose,
 } from "@/components/ui/dialog";
+import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 
 export type PointPack = {
     id: string;
@@ -137,20 +138,9 @@ export default function BuyPointsDialog({
                         </div>
                     </div>
 
-                    {/* CTA */}
-                    <button
-                        type="button"
-                        onClick={() => onPay?.(pack)}
-                        className={cn(
-                            "mt-5 w-full h-[52px] rounded-[12px]",
-                            "bg-[#FF2EC8] text-white font-semibold",
-                            "cursor-pointer",
-                            "shadow-[0_10px_25px_rgba(255,46,200,0.22)]",
-                            "hover:opacity-95 active:scale-[0.99] transition"
-                        )}
-                    >
+                    <StartStreamingButton className="w-full mt-2" onClick={() => onPay?.(pack)} >
                         Pay with Stripe
-                    </button>
+                    </StartStreamingButton>
                 </div>
             </DialogContent>
         </Dialog>

@@ -33,6 +33,9 @@
   --text: 0 0% 98%;
   --muted: 0 0% 80%;
 }
+.ring-offset-background{
+  display:none;
+}
 .custom-scroll {
   scrollbar-width: thin;
   scrollbar-color: #00C3FF transparent;
