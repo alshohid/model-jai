@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import PointStoreListSection from "../_components/pointStore/PointStoreListSection";
 import WalletDepositeSection from "../_components/pointStore/WalletDepositeSection";
@@ -7,7 +8,9 @@ const PointStore = () => {
     return (
         <div>
             <WalletDepositeSection />
-            <PointStoreListSection />
+            <Suspense fallback={<div>Loading...</div>}>
+                <PointStoreListSection />
+            </Suspense>
             <LatestNewsSection />
             <TakeGameSection />
         </div>
