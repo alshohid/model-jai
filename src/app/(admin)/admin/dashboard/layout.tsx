@@ -13,8 +13,6 @@ export default function DashBoardLayout({ children }: { children?: React.ReactNo
     return (
         <div className="min-h-screen bg-black">
             <AdminSidebar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen((s) => !s)} />
-
-            {/* content wrapper */}
             <div className="min-h-screen lg:ml-[300px] xl:ml-[350px]">
                 <AdminTopBar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen((s) => !s)} />
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export function useAuth() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
     useEffect(() => {
         const auth = localStorage.getItem("auth");
@@ -14,7 +15,14 @@ export function useAuth() {
         localStorage.setItem("auth", "true");
         setIsAuthenticated(true);
     };
-
+    const adminLogin = () => {
+        localStorage.setItem("admin_auth", "true");
+        setIsAdminAuthenticated(true);
+    }
+    const adminLogout = () => {
+        localStorage.removeItem("admin_auth");
+        setIsAdminAuthenticated(false);
+    };
     const logout = () => {
         localStorage.removeItem("auth");
         setIsAuthenticated(false);
@@ -24,5 +32,8 @@ export function useAuth() {
         isAuthenticated,
         login,
         logout,
+        adminLogin,
+        adminLogout,
+        isAdminAuthenticated
     };
 }
