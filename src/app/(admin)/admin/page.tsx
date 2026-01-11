@@ -1,7 +1,7 @@
 const AdminHome = () => {
     return (
         <div>
-            AdminHome Page
+            login page 
         </div>
     )
 }

@@ -5,6 +5,7 @@ import TakeGameSection from "@/shared/components/home/TakeGameSection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 import LiveMatchTriplePanel from "@/shared/components/watchLive/LiveMatchTriplePanel";
+import FooterSection from "@/shared/components/home/FooterSection";
 
 
 export default async function MatchDetails({
@@ -39,6 +40,7 @@ export default async function MatchDetails({
             <RankingSection />
             <LatestNewsSection />
             <TakeGameSection />
+            <FooterSection/>
         </div>
     );
 }

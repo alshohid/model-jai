@@ -1,3 +1,4 @@
+import FooterSection from "@/shared/components/home/FooterSection";
 import NavbarWithRouteRules from "./_components/publicNavbar/NavbarWithRouteRules";
 
 export default function UserLayout({
@@ -11,6 +12,7 @@ export default function UserLayout({
             <main >
                 <NavbarWithRouteRules />
                 {children}
+                <FooterSection />
             </main>
         </div>
     );

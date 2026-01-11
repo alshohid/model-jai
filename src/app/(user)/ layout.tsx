@@ -1,5 +1,6 @@
 
 
+
 export default function UserLayout({
     children,
 }: {
@@ -10,6 +11,7 @@ export default function UserLayout({
             <main className="py-6 ">
             
                 {children}
+                
             </main>
         </div>
     );

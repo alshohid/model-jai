@@ -40,7 +40,7 @@ export default function RootLayout({
         <RouteProvider>
           {/* <NavbarWithRouteRules/> */}
           {children}
-          <FooterSection />
+          {/* <FooterSection /> */}
         </RouteProvider>
         <TwScreenSize/>
       </body>
