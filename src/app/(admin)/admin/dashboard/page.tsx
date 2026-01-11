@@ -1,7 +1,10 @@
+import DashBoardManagement from "../_components/dashboard/DashBoardMangement";
+
+
 const Dashboard = () => {
     return (
         <div>
-            Dashboard Page
+            <DashBoardManagement/>
         </div>
     )
 }

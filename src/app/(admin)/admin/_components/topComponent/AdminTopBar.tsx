@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
-import { FiSearch } from "react-icons/fi";
 import { cn } from "@/shared/lib/utils/cn";
 import NotificationButton from "../reusable/NotificationButton";
 
@@ -54,20 +53,7 @@ export default function AdminTopBar({
                 </div>
 
                 {/* center search */}
-                <form className="hidden md:flex items-center relative w-[320px] lg:w-[420px]">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className={cn(
-                            "w-full h-10 rounded-[12px]",
-                            "bg-white/5 border border-white/10",
-                            "text-white/85 placeholder:text-white/40",
-                            "pl-10 pr-3 outline-none",
-                            "focus:border-[#FF2EC8]/40"
-                        )}
-                    />
-                    <FiSearch className="absolute left-3 text-white/55" />
-                </form>
+               
 
                 {/* right actions */}
                 <div className="flex items-center gap-3">
