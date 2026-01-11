@@ -13,7 +13,6 @@ const DashBoardManagement = () => {
         { id: "2", title: "Match Name", subtitle: "Bundle", amount: "$4500.99", timeAgo: "12 Min Ago" },
         { id: "3", title: "Match Name", subtitle: "Bundle", amount: "$4500.99", timeAgo: "12 Min Ago" },
         { id: "4", title: "Match Name", subtitle: "Bundle", amount: "$4500.99", timeAgo: "12 Min Ago" },
-      
     ];
 
     return (
