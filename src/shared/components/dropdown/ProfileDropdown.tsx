@@ -44,7 +44,7 @@ export default function ProfileDropdown({
                     className={cn(
                         "cursor-pointer  inline-flex items-center justify-center",
                         "rounded-full",
-                        "focus:outline-none focus:ring-2 focus:ring-white/20",
+                        "focus:outline-none focus:ring-2 p-2 focus:ring-white/20",
                         className
                     )}
                     aria-label="Open profile menu"
@@ -54,7 +54,7 @@ export default function ProfileDropdown({
                         alt="profile icon"
                         width={40}
                         height={40}
-                        className="size-10 rounded-full ring-2 ring-gray-50 outline -outline-offset-1 outline-white/10"
+                        className="size-10 rounded-full min-w-[40px] min-h-[40px]  ring-2 ring-gray-50 outline -outline-offset-1 outline-white/10"
                     />
                 </button>
             }

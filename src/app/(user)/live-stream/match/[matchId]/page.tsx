@@ -15,7 +15,7 @@ export default async function MatchDetails({
     const { matchId } = await params;
 
     return (
-        <div>
+        <div >
             <PublicNavbar />
             <LiveMatchTriplePanel
                 leftImage="/images/home/panel_left.png"

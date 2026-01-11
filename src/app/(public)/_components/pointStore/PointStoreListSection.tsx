@@ -96,7 +96,7 @@ export default function PointStoreListSection() {
                 />
             </div>
 
-            <div className="container py-10 md:py-15 lg:py-20">
+            <div className="container py-17 md:py-15 lg:py-20">
                 <LiveSectionHeader title="Point Store" className="mb-8 tracking-wide text-[38px] md:text-[40] lg:text-[48px]" />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center">

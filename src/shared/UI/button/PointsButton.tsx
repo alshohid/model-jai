@@ -20,9 +20,9 @@ export default function PointsButton({
 }: Props) {
     const base = cn(
         "inline-flex items-center justify-center whitespace-nowrap select-none cursor-pointer",
-        "h-[48px] px-[24px] py-[12px]",
+        "h-[40px] md:h-[48px] px-[24px] py-[12px]",
         "rounded-[8px]",
-        "text-[16px] leading-[24px] font-semibold text-white",
+        "text-[0.7rem] md:text-[1rem] leading-[24px] font-semibold text-white",
         "transition-transform transition-shadow duration-150 ease-out",
         "gap-3"
     );
@@ -43,7 +43,7 @@ export default function PointsButton({
             className={cn(base, shadowDefault, pressed, styles, className)}
             {...props}
         >
-            <span className="inline-flex items-center justify-center w-6 h-8 rounded-full bg-white/15">
+            <span className="inline-flex items-center justify-center w-4 h-4 md:w-6 md:h-8 rounded-full bg-white/15">
                 {icon ? <Image
                     src={icon}
                     alt="point icon"

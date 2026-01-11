@@ -38,7 +38,6 @@ const SheetOverlay = React.forwardRef<
     ref={ref}
     className={cn(
       "fixed inset-0 z-50",
-      // ✅ blur দেখাতে semi-transparent bg দরকার
       "bg-black/35 supports-[backdrop-filter]:bg-black/25",
       "backdrop-blur-md",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",

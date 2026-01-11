@@ -49,7 +49,7 @@ export default function AppDropdownMenu({
                 align={align}
                 sideOffset={sideOffset}
                 className={cn(
-                    "min-w-[230px] rounded-[14px]",
+                    "min-w-[230px] z-[100] rounded-[14px]",
                     "border border-white/10 bg-[#160F16]/95 text-white backdrop-blur-xl",
                     "shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
                     "p-2",

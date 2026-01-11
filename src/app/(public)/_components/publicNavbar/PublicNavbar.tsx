@@ -61,7 +61,7 @@ export default function PublicNavbar() {
                                         key={item.href}
                                         href={item.href}
                                         className={cn(
-                                            "cursor-pointer rounded-md px-3 py-1.5 transition text-[1.125rem]",
+                                            "cursor-pointer rounded-md px-3 py-1.5 transition text-[1rem] md:text-[1.125rem]",
                                             active ? "bg-navActive text-white" : "text-[#070707]"
                                         )}
                                     >
