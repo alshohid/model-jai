@@ -60,7 +60,16 @@
   height: 0;
   display: none;
 }
+  mux-player {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
+/* Make the internal video behave like object-cover */
+mux-player::part(video) {
+  object-fit: cover;
+}
 /* Legacy Edge (pre-Chromium) */
 @supports (-ms-overflow-style: none) {
   .custom-scroll {
@@ -79,6 +88,7 @@
     position: relative;
     border-radius: var(--radius-12);
   }
+
 
   .navbar-border-ring::before {
     content: "";

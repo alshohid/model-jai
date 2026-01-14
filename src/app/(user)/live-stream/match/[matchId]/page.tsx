@@ -1,46 +1,55 @@
+"use client";
+
+import { useState } from "react";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import RankingSection from "@/app/(public)/_components/rankingSection/RankingSection";
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
-import LiveMatchTriplePanel from "@/shared/components/watchLive/LiveMatchTriplePanel";
 import FooterSection from "@/shared/components/home/FooterSection";
+import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
+import { useMatchLiveStatus } from "@/shared/providers/hook/useMatchLiveStatus";
 
-
-export default async function MatchDetails({
+export default function MatchDetails({
     params,
 }: {
-    params: Promise<{ matchId: string }>;
+    params: { matchId: string };
 }) {
-    const { matchId } = await params;
+    const { matchId } = params;
+    const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
+    const [scheduledAt, setScheduledAt] = useState<string | null>(null);
+
+    const { isLive, timeLeft } = useMatchLiveStatus({
+        scheduledAt: scheduledAt ?? "", 
+    });
+
+    const handleStartStreaming = () => {
+        const oneMinuteLater = new Date(Date.now() + 60 * 1000).toISOString();
+        setScheduledAt(oneMinuteLater);
+    };
 
     return (
-        <div >
+        <div>
             <PublicNavbar />
-            <LiveMatchTriplePanel
-                leftImage="/images/home/panel_left.png"
-                middleImage="/images/home/middle.png"
-                rightImage="/images/home/panel_right.png"
-                left={{
-                    name: "Jack",
-                    points: 1000,
-                    symbolSrc: "/images/home/taken_slot.png",
-                }}
-                right={{
-                    name: "Steve",
-                    points: 1000,
-                    symbolSrc: "/images/home/available_slot.png",
-                }}
-                middleLabel="Model"
+
+            {isLive && (
+                <LiveMatchStage matchId={matchId} playbackId={playbackId} />
+            )}
+
+            <MatchPointsSummarySection
+                isLive={isLive}
+                timeLeft={timeLeft}
+                onStartStreaming={handleStartStreaming}
+                isScheduled={!!scheduledAt}
             />
 
-            <MatchPointsSummarySection />
-            <SupporterGridSection matchId={matchId} />
+            {!isLive && <SupporterGridSection matchId={matchId} />}
+
             <RankingSection />
             <LatestNewsSection />
             <TakeGameSection />
-            <FooterSection/>
+            <FooterSection />
         </div>
     );
 }
