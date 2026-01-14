@@ -25,7 +25,7 @@ export default function MatchDetails({
     });
 
     const handleStartStreaming = () => {
-        const oneMinuteLater = new Date(Date.now() + 60 * 1000).toISOString();
+        const oneMinuteLater = new Date(Date.now() + 20 * 1000).toISOString();
         setScheduledAt(oneMinuteLater);
     };
 
