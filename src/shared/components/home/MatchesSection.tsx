@@ -27,7 +27,7 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/gameLogoSrc.png",
+        gameLogoSrc: "/images/home/hunter.jpeg",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/2",
@@ -40,7 +40,7 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/gameLogoSrc.png",
+        gameLogoSrc: "/images/home/drug.jpeg",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/3",
@@ -53,7 +53,7 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/gameLogoSrc.png",
+        gameLogoSrc: "/images/home/freefire.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/1",
@@ -66,7 +66,7 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/gameLogoSrc.png",
+        gameLogoSrc: "/images/home/tictok_1.jpeg",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/2",
@@ -89,7 +89,7 @@ const MOCK_MATCHES: MatchItem[] = [
 ];
 
 export default function MatchesSection({
-    matches = MOCK_MATCHES, 
+    matches = MOCK_MATCHES,
 }: {
     matches?: MatchItem[];
 }) {

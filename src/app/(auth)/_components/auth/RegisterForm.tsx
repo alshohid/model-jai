@@ -15,16 +15,16 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         <form onSubmit={handleSubmit(onSubmit)} className="relative mt-10">
             <div className="text-center">
                 <h2 className="text-[22px] font-semibold text-white">
-                    Welcome 
+                    Welcome
                 </h2>
                 <p className="mt-2 text-[13px] text-white/55">
-                    Please enter your name, email and password
+                    Please enter your name or artist name , email and password
                 </p>
             </div>
 
             <div className="mt-8 space-y-4">
                 <AuthInput
-                    label="Full Name"
+                    label="Full name or artist name"
                     name="fullName"
                     register={register as any}
                     icon={<UserIcon />}

@@ -8,7 +8,7 @@ export default function BrandMark() {
                     "bg-gradient-to-r from-brandGradStart to-brandGradEnd bg-clip-text text-transparent",
                 ].join(" ")}
             >
-                Model Bet Offers
+                Model Boss Offers
             </span>
         </div>
     );

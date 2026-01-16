@@ -56,10 +56,10 @@ export default function AdminSidebar({
                                 className={cn(
                                     "text-[18px] md:text-[26px] font-extrabold",
                                     "bg-gradient-to-r from-brandGradStart to-brandGradEnd bg-clip-text text-transparent",
-                                    
+
                                 )}
                             >
-                                Model Bet Offers
+                                Model Boss Offers
                             </p>
                             <div className="mt-2 h-[2px] w-full bg-gradient-to-r from-[#FF2EC8]/70 to-transparent" />
                         </div>
