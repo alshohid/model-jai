@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import * as React from "react";
 import { cn } from "@/shared/lib/utils/cn";
-import { AnyARecord } from "dns";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import FavoriteButton from "@/shared/UI/button/FavoriteButton";
 import { StatCard } from "../card/StatCard";

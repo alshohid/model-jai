@@ -14,11 +14,11 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/gameLogoSrc.png",
+        gameLogoSrc: "/images/home/2k.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/1",
-        voteRequired: true,
+        voteRequired: false,
         versusImg: "/images/home/versus.png",
     },
     {
@@ -27,11 +27,11 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/hunter.jpeg",
+        gameLogoSrc: "/images/home/freestyle_1.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/2",
-        voteRequired: true,
+        voteRequired: false,
         versusImg: "/images/home/versus.png",
     },
     {
@@ -40,11 +40,11 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/drug.jpeg",
+        gameLogoSrc: "/images/home/mortal_1.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/3",
-        voteRequired: true,
+        voteRequired: false,
         versusImg: "/images/home/versus.png",
     },
     {
@@ -53,7 +53,7 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/freefire.png",
+        gameLogoSrc: "/images/home/freestyle.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/1",
@@ -66,11 +66,11 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/tictok_1.jpeg",
+        gameLogoSrc: "/images/home/fc26.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/2",
-        voteRequired: true,
+        voteRequired: false,
         versusImg: "/images/home/versus.png",
     },
     {
@@ -79,11 +79,37 @@ const MOCK_MATCHES: MatchItem[] = [
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/gameLogoSrc.png",
+        gameLogoSrc: "/images/home/fc26.png",
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
         watchHref: "/matches/3",
-        voteRequired: true,
+        voteRequired: false,
+        versusImg: "/images/home/versus.png",
+    },
+    {
+        id: "3",
+        status: "Upcoming",
+        title: "ShadowR vs Phoenix Force",
+        dateText: "November 1, 2024",
+        timeText: "4:30 pm",
+        gameLogoSrc: "/images/home/mortal_1.png",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+        watchHref: "/matches/3",
+        voteRequired: false,
+        versusImg: "/images/home/versus.png",
+    },
+    {
+        id: "4",
+        status: "Upcoming",
+        title: "ShadowR vs Phoenix Force",
+        dateText: "November 1, 2024",
+        timeText: "4:30 pm",
+        gameLogoSrc: "/images/home/freestyle.png",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+        watchHref: "/matches/1",
+        voteRequired: false,
         versusImg: "/images/home/versus.png",
     },
 ];
@@ -102,7 +128,7 @@ export default function MatchesSection({
     }, [matches, tab]);
 
     return (
-        <section className=" relative   pt-5 md:pt-17.5">
+        <section className=" relative  pt-5 md:pt-17.5">
             <div className="pointer-events-none absolute left-0 top-0 -z-10">
                 <Image
                     src="/images/home/top_left.png"
@@ -113,11 +139,11 @@ export default function MatchesSection({
                 />
             </div>
 
-            <div className="relative z-10 max-w-7xl w-full mx-auto px-4 lg:px-0">
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="relative z-10 container">
+                <div className="flex flex-col gap-5 sm:text-center lg:flex-row lg:items-center lg:justify-between">
                     <SectionHeading
                         title={"Compete in epic\ntournaments"}
-                        className="whitespace-pre-line"
+                        className="whitespace-pre-line sm:text-center lg:text-left"  
                     />
 
                     <MatchHistoryTabs
@@ -131,6 +157,7 @@ export default function MatchesSection({
                     <MatchesGrid matches={filtered} />
                 </div>
             </div>
+
 
 
             <div className=" pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">

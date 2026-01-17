@@ -4,10 +4,12 @@ import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDia
 import MyProfilePanel from "./MyProfilePanel"
 import  { useState } from "react";
 import SendMoneyDialog from "@/app/(auth)/_components/myProfile/SendMoneyDialog";
+import WithdrawalDialog from "@/app/(auth)/_components/myProfile/WithdrawalDalog";
 
 const MyProfileSection = () => {
     const [openEdit, setOpenEdit] = useState(false);
     const [sendMoneyOpen, setSendMoneyOpen] = useState(false);
+    const [withdrawal, setwithdrawalOpen] = useState(false);
     const profile = {
         name: "Michael Rohan",
         email: "michael@gmail.com",
@@ -24,7 +26,7 @@ const MyProfileSection = () => {
                 profile={{
                     name: "Michael Rohan",
                     email: "michael@gmail.com",
-                    contact: "+636514165165",
+                    contact: "",
                     nationality: "Nigerian",
                     avatar: "/images/home/pro_1.jpg",
                     posts: 125,
@@ -39,7 +41,7 @@ const MyProfileSection = () => {
                 onEditProfile={() => setOpenEdit(true)}
                 onSendMoney={() => setSendMoneyOpen(true)}
                 onReferralLink={() => console.log("ref")}
-                onWithdrawRequest={() => console.log("withdraw")}
+                onWithdrawRequest={() => setwithdrawalOpen(true)}
             />
             <EditProfileDialog
                 open={openEdit}
@@ -61,6 +63,13 @@ const MyProfileSection = () => {
                 onOpenChange={setSendMoneyOpen}
                 defaultValues={{ senderName: "Michael Rohan", email: "michael@gmail.com", amount: "100" }}
                 onSend={(data) => console.log("send money", data)}
+            />
+            <WithdrawalDialog
+                open={withdrawal}
+                withdrawableBalance={4000}
+                onOpenChange={setwithdrawalOpen}
+                defaultValues={{ email: "michael@gmail.com", amount: "100" }}
+                onSend={(data) => console.log("withdrawal data ", data)}
             />
         </div>
 

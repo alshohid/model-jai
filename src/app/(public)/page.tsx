@@ -15,8 +15,8 @@ const Public = () => {
         <main>
             <HeroSection />
             <MatchesSection />
-            <WatchLivestreamSection/>
             <RankingSection />
+            <WatchLivestreamSection/>
             <GamesSection />
             <ChooseCategorySection />
             <LatestNewsSection />

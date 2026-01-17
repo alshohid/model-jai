@@ -95,7 +95,7 @@ export default function GameCarousel({
                         onClick={() => api?.scrollTo(i)}
                         className={cn(
                             "cursor-pointer",
-                            "w-[40px] h-[8px] rounded-[3px]",
+                            " w-[30px] h-[7px] md:w-[40px] md:h-[8px] rounded-[3px]",
                             "transition-opacity",
                             current === i ? "bg-cyan-400 opacity-100" : "bg-white/30 opacity-70 hover:opacity-100"
                         )}

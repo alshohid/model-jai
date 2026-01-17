@@ -1,3 +1,6 @@
+
+import { SVGProps } from "react";
+
 export function MailIcon() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" className="text-white/70" fill="none">
@@ -72,3 +75,22 @@ export function FacebookIcon() {
         </svg>
     );
 }
+
+
+export const WatchIconPlay = (props: SVGProps<SVGSVGElement>) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={24}
+        height={24}
+        viewBox="0 0 24 24"
+        fill="black"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="feather feather-play"
+        {...props}
+    >
+        <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+);

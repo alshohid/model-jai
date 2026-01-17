@@ -71,7 +71,6 @@ export default function EditProfileDialog({
 
     return (
         <AppDialog open={open} onOpenChange={onOpenChange} title="Edit Profile">
-            {/* ✅ Image card */}
             <div className={cn("rounded-[16px] border border-white/10 bg-white/5 p-4")}>
                 <div className="relative overflow-hidden rounded-[16px] bg-white/5 border border-white/10">
                     <div className="relative w-full h-[clamp(180px,32vh,320px)]">
@@ -138,7 +137,7 @@ export default function EditProfileDialog({
                     />
                 </Field>
 
-                <Field label="Contact">
+                <Field label="Contact (optional)">
                     <AuthInput
                         label="Contact"
                         name="contact"

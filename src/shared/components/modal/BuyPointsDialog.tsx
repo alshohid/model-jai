@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import {
     Dialog,
@@ -42,7 +43,7 @@ export default function BuyPointsDialog({
     const code = pack.currencyCode ?? "USD";
 
     const subtotal = Number(pack.price || 0);
-    const tax = Number((subtotal * 0.025).toFixed(2)); // dummy tax 2.5%
+    const tax = Number((subtotal * 0.1).toFixed(2)); // dummy tax 2.5%
     const total = subtotal + tax;
 
     return (
@@ -69,7 +70,9 @@ export default function BuyPointsDialog({
                             <DialogTitle className="text-white text-[22px] font-semibold">
                                 Buy Points
                             </DialogTitle>
-
+                            <DialogClose className="text-white/80 cursor-pointer hover:text-white transition-colors">
+                                <X size={24} />
+                            </DialogClose>
                         </div>
                     </DialogHeader>
 

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/shared/lib/utils/cn";
+import { WatchIconPlay } from "../icon/icon";
 
 type Props = {
     label?: string;
@@ -12,7 +13,6 @@ type Props = {
 
 export default function WatchStreamButton({
     label = "Watch stream",
-    icon,
     className,
     onClick,
 }: Props) {
@@ -22,17 +22,17 @@ export default function WatchStreamButton({
             onClick={onClick}
             className={cn(
                 "cursor-pointer inline-flex items-center justify-center gap-3",
-                "w-full h-[48px] rounded-[12px]",
-                "bg-white/5 border border-white/12",
+                "w-full h-[30px] md:h-[48px] rounded-[12px]",
+                "bg-white/5 border border-[#D15B9C80]/50",
                 "text-white/80 hover:text-white transition",
-                "shadow-[inset_0_0_0_2px_rgba(209,91,156,0.25),0_0_0_1px_rgba(255,255,255,0.06)]",
+                "shadow-inner shadow-[inset_0_0_10px_#D15B9C40]",
                 className
             )}
         >
-            <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/10">
-                {icon ?? "▶"}
+            <span className="inline-flex items-center justify-center w-4 h-4 md:w-8 md:h-8 rounded-full bg-white/80">
+                <WatchIconPlay/>
             </span>
-            <span className="text-sm">{label}</span>
+            <span className=" text-xs md:text-sm font-extralight">{label}</span>
         </button>
     );
 }

@@ -2,6 +2,7 @@ import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon, UserIcon } from "@/shared/UI/icon/icon";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
@@ -58,6 +59,14 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                 <div className="mt-6 flex items-center justify-center gap-3">
                     <SocialButton kind="google" />
                     <SocialButton kind="facebook" />
+                    <Image
+                        src={'/images/home/email.png'}
+                        alt="email"
+                        width={600}
+                        height={600}
+                        className="w-12 h-12"
+                    
+                    />   
                 </div>
 
                 <p className="mt-6 text-center text-[13px] text-white/45">

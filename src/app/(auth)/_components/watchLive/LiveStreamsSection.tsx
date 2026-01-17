@@ -68,7 +68,7 @@ export default function LiveStreamsSection() {
             <div className="container mx-auto">
                 <LiveSectionHeader
                     title="Live Streams"
-                    className="mb-16 md:mb-20 tracking-wide text-[48px]"
+                    className="mb-16 md:mb-20 tracking-wide text-[35px] md:text-[44px] lg:text-[48px]"
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">

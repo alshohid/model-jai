@@ -13,9 +13,7 @@ export default function TakeGameSection() {
                 <PromoSplitCard>
                     <PromoSplitCard.Content>
                         <h2 className="text-[#FFFFFF] text-[40px] md:text-[48px]  leading-[1.05] font-light">
-                            Take the game with
-                            <br />
-                            you anywhere
+                            Become the Boss
                         </h2>
                     </PromoSplitCard.Content>
 
