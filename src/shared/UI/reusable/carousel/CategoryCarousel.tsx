@@ -53,7 +53,7 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                 <button
                     onClick={() => api?.scrollPrev()}
                     disabled={!api?.canScrollPrev()}
-                    className="absolute left-0 top-1/2 -translate-x-15 -translate-y-1/2 z-20 cursor-pointer disabled:opacity-50"
+                    className="absolute left-0 top-1/2 -translate-x-15 -translate-y-1/2 z-20 cursor-pointer disabled:opacity-50 hidden sm:block"
                 >
                     <Image src="/images/home/larrow.png" alt="Prev" width={24} height={24} />
                 </button>
@@ -62,7 +62,7 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                 <button
                     onClick={() => api?.scrollNext()}
                     disabled={!api?.canScrollNext()}
-                    className="absolute right-0 top-1/2 translate-x-15 cursor-pointer -translate-y-1/2 z-20 disabled:opacity-50"
+                    className="absolute right-0 top-1/2 translate-x-15 cursor-pointer -translate-y-1/2 z-20 disabled:opacity-50 hidden sm:block"
                 >
                     <Image src="/images/home/rarrow.png" alt="Next" width={24} height={24} />
                 </button>
