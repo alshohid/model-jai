@@ -1,14 +1,8 @@
 "use client";
 
-import * as React from "react";
+
+import Select, { StylesConfig } from "react-select";
 import { cn } from "@/shared/lib/utils/cn";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 
 export type AppSelectOption = {
     label: string;
@@ -23,12 +17,10 @@ type Props = {
     placeholder?: string;
     disabled?: boolean;
 
-    // ✅ expected design default = "rounded" (not pill)
     shape?: "rounded" | "pill";
     size?: "sm" | "md";
 
-    triggerClassName?: string;
-    contentClassName?: string;
+    className?: string;
 };
 
 export default function AppSelect({
@@ -39,65 +31,74 @@ export default function AppSelect({
     disabled,
     shape = "rounded",
     size = "sm",
-    triggerClassName,
-    contentClassName,
+    className,
 }: Props) {
-    const sizeClass = size === "md" ? "!h-[56px]" : "h-12"; // 48px
+    const selectedOption = options.find((o) => o.value === value) || null;
+
+    const height = size === "md" ? 70 : 48;
+    const radius = shape === "pill" ? 16 : 18;
+
+    const styles: StylesConfig<AppSelectOption, false> = {
+        control: (base, state) => ({
+            ...base,
+            minHeight: height,
+            height,
+            borderRadius: radius,
+            backgroundColor: "rgba(255,255,255,0.1)",
+            borderColor: "rgba(255,255,255,0.15)",
+            boxShadow: state.isFocused
+                ? "0 0 0 1px rgba(255,255,255,0.2)"
+                : "inset 0 1px 0 rgba(255,255,255,0.12)",
+            cursor: "pointer",
+        }),
+        valueContainer: (base) => ({
+            ...base,
+            padding: "0 16px",
+        }),
+        singleValue: (base) => ({
+            ...base,
+            color: "#fff",
+        }),
+        placeholder: (base) => ({
+            ...base,
+            color: "rgba(255,255,255,0.85)",
+        }),
+        menu: (base) => ({
+            ...base,
+            backgroundColor: "rgba(22,15,22,0.95)",
+            backdropFilter: "blur(16px)",
+            borderRadius: 16,
+            border: "1px solid rgba(255,255,255,0.1)",
+            overflow: "hidden",
+            zIndex: 80,
+        }),
+        option: (base, state) => ({
+            ...base,
+            backgroundColor: state.isFocused
+                ? "rgba(255,255,255,0.1)"
+                : "transparent",
+            color: "#fff",
+            cursor: "pointer",
+            borderRadius: 12,
+            margin: 4,
+        }),
+        indicatorSeparator: () => ({ display: "none" }),
+        dropdownIndicator: (base) => ({
+            ...base,
+            color: "#fff",
+        }),
+    };
 
     return (
-        <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-            <SelectTrigger
-                className={cn(
-                    "w-full justify-between",
-                    sizeClass,
-                    "px-4 py-3",
-                    // ✅ #FFFFFF1A
-                    "bg-white/10",
-                    "border border-white/15",
-                    // ✅ expected shape
-                    shape === "pill" ? "rounded-full" : "rounded-[18px]",
-                    // ✅ text
-                    "text-white",
-                    // placeholder color
-                    "[&_[data-placeholder]]:text-white/85",
-                    // subtle depth like screenshot
-                    "shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]",
-                    "hover:bg-white/12 transition",
-                    "focus:ring-0 focus:outline-none",
-                    "data-[state=open]:bg-white/12",
-                    triggerClassName
-                )}
-            >
-                <SelectValue placeholder={placeholder} />
-            </SelectTrigger>
-
-            <SelectContent
-                className={cn(
-                    "z-[80]",
-                    "bg-[#160F16]/95 backdrop-blur-xl",
-                    "border border-white/10",
-                    "rounded-[16px]",
-                    "p-1",
-                    "shadow-[0_22px_70px_rgba(0,0,0,0.55)]",
-                    contentClassName
-                )}
-            >
-                {options.map((o) => (
-                    <SelectItem
-                        key={o.value}
-                        value={o.value}
-                        disabled={o.disabled}
-                        className={cn(
-                            "cursor-pointer rounded-[12px]",
-                            "text-white/90 focus:text-white",
-                            "focus:bg-white/10",
-                            "data-[highlighted]:bg-white/10 data-[highlighted]:text-white"
-                        )}
-                    >
-                        {o.label}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+        <Select
+            className={cn("w-full text-sm", className)}
+            isDisabled={disabled}
+            value={selectedOption}
+            options={options}
+            placeholder={placeholder}
+            styles={styles}
+            onChange={(opt) => onValueChange?.(opt?.value || "")}
+            isOptionDisabled={(o) => o.disabled ?? false}
+        />
     );
 }

@@ -1,7 +1,10 @@
 import WatchStreamButton from "@/shared/UI/button/WatchStreamButton";
-import Image from "next/image";
-import Link from "next/link";
-
+import clsx from "clsx";
+import { SocialLinks } from "../cardComponent/SocialLinks";
+import { Meta } from "../cardComponent/Meta";
+import { GameLogo } from "../cardComponent/GameLogo";
+import { PlayerImage } from "../cardComponent/PlayerImage";
+import { Versus } from "../cardComponent/Versus";
 
 type MatchStatus = "Upcoming" | "Past" | "Live";
 
@@ -17,7 +20,7 @@ type Props = {
     voteRequired?: boolean;
     className?: string;
     versusImg: string;
-    onWatch?: () => any;
+    onWatch?: () => void;
 };
 
 export default function MatchCard({
@@ -28,135 +31,79 @@ export default function MatchCard({
     gameLogoSrc,
     leftPlayerImg,
     rightPlayerImg,
-    watchHref,
     voteRequired = true,
     className = "",
     versusImg,
-    onWatch
+    onWatch,
 }: Props) {
-    const statusStyle =
+    const statusStyle = clsx(
+        "px-2 md:px-3 py-0 md:py-1 rounded-md text-xs border",
         status === "Live"
-            ? "bg-red-500/25 text-red-100 border border-red-400/30"
-            : status === "Past"
-                ? "bg-white/10 text-white/70 border border-white/15"
-                : "bg-white/10 text-white/70 border border-white/15";
+            ? "bg-red-500/25 text-red-100 border-red-400/30"
+            : "bg-white/10 text-white/70 border-white/15"
+    );
 
     return (
         <article
-            className={[
-                "w-full ",
-                "rounded-[16px]",
+            className={clsx(
+                "w-full flex flex-col rounded-[16px]",
                 "bg-matchCardBg border border-matchCardBorder backdrop-blur-[16px]",
-                // "p-5 sm:p-4",
-                "flex flex-col",
-                className,
-            ].join(" ")}
+                className
+            )}
         >
-            <div className="w-full">
-                <div className=" overflow-hidden px-3 py-2 md:p-6">
-                    <div className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr] aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10">
-                        {/* left player */}
-                        <div className="relative overflow-hidden 
-                    ">
-                            <Image
-                                src={leftPlayerImg}
-                                alt="Player 1"
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 300px) 28vw, 150px"
-                            />
+            <div className="overflow-hidden px-3 py-2 md:p-6">
+                {/* PLAYERS */}
+                <div className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr]
+            aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10">
+                    <PlayerImage src={leftPlayerImg} />
+                    <Versus src={versusImg} />
+                    <PlayerImage src={rightPlayerImg} />
+                </div>
+
+                {/* INFO */}
+                <div className="mt-2">
+                    {/* MOBILE HEADER */}
+                    <div className="flex items-center gap-2 md:hidden">
+                        <span className={statusStyle}>{status}</span>
+                        <GameLogo src={gameLogoSrc} mobile />
+                    </div>
+
+                    {/* DESKTOP LOGO */}
+                    <div className="hidden md:block">
+                        <GameLogo src={gameLogoSrc} />
+                    </div>
+
+                    <div className="flex flex-col gap-2 md:gap-3">
+                        <div className="hidden md:flex">
+                            <span className={statusStyle}>{status}</span>
                         </div>
 
-                        {/* vs */}
-                        <div className="shrink-0 flex items-center justify-center">
-                            <Image
-                                src={versusImg}
-                                alt="versus"
-                                width={120}
-                                height={120}
-                                className="w-full h-auto "
-                                unoptimized
-                            />
-                        </div>
+                        <h3 className="text-white font-semibold text-[12px] md:text-[18px] leading-tight">
+                            {title}
+                        </h3>
 
-                        <div className="relative overflow-hidden shrink-0">
-                            <Image
-                                src={rightPlayerImg}
-                                alt="Player 2"
-                                fill
-                                className="object-cover "
-                                sizes="(max-width: 640px) 28vw, 150px"
-                            />
+                        <div className="flex gap-x-1 md:gap-x-6 text-white/75 text-xs md:text-sm">
+                            <Meta icon="🗓" text={dateText} />
+                            <Meta icon="🕒" text={timeText} />
                         </div>
                     </div>
-                    <div className="w-full ">
-                        <div className="aspect-[18/6] relative">
-                            <Image
-                                src={gameLogoSrc}
-                                alt="Game Logo"
-                                fill
-                                className="h-full w-full object-contain"
-                            // sizes="(max-width: 640px) 80vw, 360px"
-                            />
-                        </div>
 
-                        <div className="flex flex-col gap-2 md:gap-3">
-                            <div className="flex items-center">
-                                <span className={[" px-2 py-0 md:px-3 md:py-1 rounded-md text-xs", statusStyle].join(" ")}>
-                                    {status}
-                                </span>
-                            </div>
+                    {/* ACTION */}
+                    <div className="mt-2 md:mt-5">
+                        <WatchStreamButton label="Watch stream" onClick={onWatch} />
 
-                            <h3 className="text-white font-semibold text-[12px] md:text-[18px]  leading-tight">
-                                {title}
-                            </h3>
-                            <div className="flex  items-center gap-x-1 md:gap-x-6 gap-y-2 text-white/75 text-xs md:text-sm">
-                                <div className="flex items-center gap-2 ">
-                                    <span className="text-cyan-300 text-[10px] md:text-[14px]">🗓</span>
-                                    <span className="text-[9px] md:text-[14px]">{dateText}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-cyan-300 text-[10px] md:text-[14px]">🕒</span>
-                                    <span className="text-[10px] md:text-[14px]">{timeText}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-2 md:mt-5">
-                            <WatchStreamButton
-                                label="Watch stream"
-                                onClick={onWatch}
-                            />
-                            {voteRequired ? (
-                                <p className="text-center text-xs md:text-[1rem] mt-2 md:mt-3 font-medium text-[#FF2EC8]">
-                                    Tiktok Vote Required
-                                </p>) : (
-                                <div className="flex items-center justify-center ">
-                                    <Link href={'https://www.tiktok.com/'}>
-                                        <Image src={'/images/home/tiktok_1.png'}
-                                            width={400}
-                                            height={400}
-                                            alt="tiktok"
-                                            className="w-8 h-8 md:w-12 md:h-12"
-                                        />
-                                    </Link>
-                                    <Link href={'https://www.twitch.tv/'}>
-                                        <Image src={'/images/home/twitch.png'}
-                                            width={400}
-                                            height={400}
-                                            alt="tiktok"
-                                            className="w-6 h-6 md:w-8 md:h-8"
-
-                                        />
-
-                                    </Link>
-
-                                </div>
-                            )}
-                        </div>
+                        {voteRequired ? (
+                            <p className="mt-2 md:mt-3 text-center text-xs md:text-base font-medium text-[#FF2EC8]">
+                                Tiktok Vote Required
+                            </p>
+                        ) : (
+                            <SocialLinks />
+                        )}
                     </div>
                 </div>
             </div>
         </article>
     );
 }
+
+

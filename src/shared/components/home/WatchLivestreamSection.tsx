@@ -9,7 +9,7 @@ import {
     type CarouselApi,
 } from "@/components/ui/carousel"
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton"
-import { useRouter } from "next/navigation"
+
 const slides = [
     "/images/home/carousel1.jpg",
     "/images/home/herobg.png",
@@ -120,7 +120,7 @@ export default function WatchLivestreamSection() {
                                 alt="arrow left"
                                 width={30}
                                 height={30}
-                                className="!w-6 !h-6"
+                                className= "w-4 h-4 md:!w-6 md:!h-6"
 
                             />
                         </button>

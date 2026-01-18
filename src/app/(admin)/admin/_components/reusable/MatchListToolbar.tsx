@@ -62,17 +62,19 @@ export default function MatchListToolbar({
                     <div className={cn("w-full sm:w-[195px] focus:outline-none")}>
                         <AppSelect
                             value={matchType}
-                            onValueChange={onMatchTypeChange}
+                            onValueChange={(v) => {
+                                onMatchTypeChange?.(v);
+                            }}
                             placeholder={selectPlaceholder}
                             options={matchTypeOptions}
-                            shape={selectShape} 
-                            size="sm"
-                            triggerClassName={cn(
-                                "h-[200px]",
-                                "text-[18px] sm:text-[18px] leading-[132%]",
+                            shape={selectShape}   // "rounded" | "pill"
+                            size="sm"             // "sm" | "md"
+                            className={cn(
+                                "text-[18px] leading-[132%]"
                                 // "[font-family:Inter_Tight,Inter,system-ui,sans-serif]"
                             )}
                         />
+
                     </div>
                 ) : null}
 

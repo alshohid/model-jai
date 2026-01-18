@@ -30,7 +30,7 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
 
     React.useEffect(() => {
         if (!api) return;
-        setCount(api.slideNodes().length);
+        setCount(api.scrollSnapList().length)
         console.log("count set to", api.slideNodes().length);
 
         const onSelect = () => {
@@ -58,7 +58,6 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                     <Image src="/images/home/larrow.png" alt="Prev" width={24} height={24} />
                 </button>
 
-                {/* RIGHT */}
                 <button
                     onClick={() => api?.scrollNext()}
                     disabled={!api?.canScrollNext()}
