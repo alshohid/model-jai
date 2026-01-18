@@ -18,7 +18,7 @@ export default function TakeGameSection() {
                     </PromoSplitCard.Content>
 
                     <PromoSplitCard.Media
-                        src="/images/home/takegame.png"
+                        src="/images/home/boss.png"
                         alt="Take the game anywhere"
                     />
                 </PromoSplitCard>
