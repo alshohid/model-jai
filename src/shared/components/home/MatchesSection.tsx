@@ -128,7 +128,7 @@ export default function MatchesSection({
     }, [matches, tab]);
 
     return (
-        <section className=" relative  pt-5 md:pt-17.5">
+        <section className=" relative  pt-2 md:pt-17.5">
             <div className="pointer-events-none absolute left-0 top-0 -z-10">
                 <Image
                     src="/images/home/top_left.png"

@@ -53,7 +53,7 @@ export default function MatchCard({
             ].join(" ")}
         >
             <div className="w-full">
-                <div className=" overflow-hidden p-4 md:p-6">
+                <div className=" overflow-hidden px-3 py-2 md:p-6">
                     <div className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr] aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10">
                         {/* left player */}
                         <div className="relative overflow-hidden 
@@ -100,7 +100,7 @@ export default function MatchCard({
                             />
                         </div>
 
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-2 md:gap-3">
                             <div className="flex items-center">
                                 <span className={[" px-2 py-0 md:px-3 md:py-1 rounded-md text-xs", statusStyle].join(" ")}>
                                     {status}
@@ -110,13 +110,13 @@ export default function MatchCard({
                             <h3 className="text-white font-semibold text-[12px] md:text-[18px]  leading-tight">
                                 {title}
                             </h3>
-                            <div className="flex  items-center gap-x-6 gap-y-2 text-white/75 text-sm">
+                            <div className="flex  items-center gap-x-1 md:gap-x-6 gap-y-2 text-white/75 text-xs md:text-sm">
                                 <div className="flex items-center gap-2 ">
-                                    <span className="text-cyan-300">🗓</span>
+                                    <span className="text-cyan-300 text-[10px] md:text-[14px]">🗓</span>
                                     <span className="text-[9px] md:text-[14px]">{dateText}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-cyan-300 text-[10px]">🕒</span>
+                                    <span className="text-cyan-300 text-[10px] md:text-[14px]">🕒</span>
                                     <span className="text-[10px] md:text-[14px]">{timeText}</span>
                                 </div>
                             </div>
@@ -154,14 +154,9 @@ export default function MatchCard({
                                 </div>
                             )}
                         </div>
-
                     </div>
                 </div>
-
-              
-
             </div>
-
         </article>
     );
 }
