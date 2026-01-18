@@ -9,7 +9,7 @@ export default function TakeGameSection() {
     return (
         <section className="w-full relative">
 
-            <div className="container md:py-24 py-20">
+            <div className="container md:py-24 py-10">
                 <PromoSplitCard>
                     <PromoSplitCard.Content>
                         <h2 className="text-[#FFFFFF] text-[40px] md:text-[48px]  leading-[1.05] font-light">

@@ -4,9 +4,10 @@ import SectionHead from "@/shared/UI/reusable/head/SectionHead";
 import CategoryCarousel, { CategoryItem } from "@/shared/UI/reusable/carousel/CategoryCarousel";
 
 const items: CategoryItem[] = [
-    { id: "1", title: "DEVIL HUNTER", imageSrc: "/images/gm1.jpeg" },
-    { id: "2", title: "CALL OF DUTY", imageSrc: "/images/gm3.png" },
-    { id: "3", title: "THE WITCHER", imageSrc: "/images/gm6.png" },
+    { id: "1", title: "THE WITCHER", imageSrc: "/images/gm6.png" },
+    { id: "2", title: "DEVIL HUNTER", imageSrc: "/images/gm1.jpeg" },
+    { id: "3", title: "CALL OF DUTY", imageSrc: "/images/gm3.png" },
+    { id: "11", title: "THE WITCHER", imageSrc: "/images/gm6.png" },
     { id: "4", title: "DEVIL HUNTER", imageSrc: "/images/gm2.jpeg" },
     { id: "5", title: "CALL OF DUTY", imageSrc: "/images/gm5.jpeg" },
     { id: "6", title: "THE WITCHER", imageSrc: "/images/gm7.jpeg" },

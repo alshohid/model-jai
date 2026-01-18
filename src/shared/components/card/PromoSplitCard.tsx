@@ -31,7 +31,7 @@ type ContentProps = {
 
 function Content({ className, children }: ContentProps) {
     return (
-        <div className={cn("p-10 sm:p-14 lg:p-16 flex items-center", className)}>
+        <div className={cn("p-6 md:p-10 flex items-center", className)}>
             {children}
         </div>
     );
@@ -77,7 +77,6 @@ function Media({
     );
 }
 
-// attach as static properties for clean usage
 PromoSplitCard.Content = Content;
 PromoSplitCard.Media = Media;
 
