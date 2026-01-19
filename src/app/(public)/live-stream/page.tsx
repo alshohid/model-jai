@@ -14,8 +14,8 @@ const LiveStreamMatch = () => {
         <div>
             <WatchLivePage />
             <LiveStreamsSection />
-            <GameBrowseSection/>
             <ChooseCategorySection />
+            <GameBrowseSection/>
             <LatestNewsSection />
             <TakeGameSection />
         </div>

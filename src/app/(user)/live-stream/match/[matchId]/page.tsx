@@ -33,9 +33,9 @@ export default function MatchDetails({
         <div>
             <PublicNavbar />
 
-            {isLive && (
+            {/* {isLive && ( */}
                 <LiveMatchStage matchId={matchId} playbackId={playbackId} />
-            )}
+            {/* )} */}
 
             <MatchPointsSummarySection
                 isLive={isLive}
@@ -44,7 +44,8 @@ export default function MatchDetails({
                 isScheduled={!!scheduledAt}
             />
 
-            {!isLive && <SupporterGridSection matchId={matchId} />}
+            {/* {!isLive && <SupporterGridSection matchId={matchId} />} */}
+            <SupporterGridSection matchId={matchId} />
 
             <RankingSection />
             <LatestNewsSection />
