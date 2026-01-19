@@ -17,7 +17,6 @@ import { CircleNavButton } from "@/shared/UI/button/CircleNavButton";
 import { ThumbRail } from "./ThumbRail";
 import { WatchLiveSlide } from "@/types/watchLive/watchLiveTypes";
 
-
 type Props = {
     slides: WatchLiveSlide[];
     className?: string;
@@ -28,6 +27,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
     const sliderRef = useRef<any>(null);
     const [active, setActive] = useState(0);
     const [dir, setDir] = useState<"next" | "prev">("next");
+
     const settings = useMemo(() => {
         return {
             dots: false,
@@ -37,17 +37,14 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
             slidesToShow: 1,
             slidesToScroll: 1,
             swipeToSlide: true,
-
             autoplay: true,
             autoplaySpeed: 4500,
             pauseOnHover: true,
             pauseOnFocus: true,
-
             beforeChange: (current: number, next: number) => {
                 setDir(next > current ? "next" : "prev");
                 setActive(next);
             },
-
             responsive: [
                 { breakpoint: 1024, settings: { speed: 500 } },
                 { breakpoint: 640, settings: { speed: 450 } },
@@ -61,49 +58,50 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
     }, [slides]);
 
     return (
-        <section className={cn("relative h-screen w-full overflow-hidden", className)}>
+        <section className={cn("relative w-full overflow-hidden", className)}>
             <style jsx global>{`
-        .watchlive-slider,
-        .watchlive-slider .slick-list,
-        .watchlive-slider .slick-track,
-        .watchlive-slider .slick-slide > div {
-            height: 100%;
-            }
-            .live-ping {
-            animation: live 2s ease-in-out infinite;
-            }
-            @keyframes live {
-            0% {
-                transform: scale(1);
-                opacity: 0.6;
-            }
-            100% {
-                transform: scale(3.5);
-                opacity: 0;
-            }
-            }
-            .info-anim {
-                animation: infoFade 350ms ease both;
+                .watchlive-slider,
+                .watchlive-slider .slick-list,
+                .watchlive-slider .slick-track,
+                .watchlive-slider .slick-slide > div {
+                    height: 100%;
+                }
+                .live-ping {
+                    animation: live 2s ease-in-out infinite;
+                }
+                @keyframes live {
+                    0% {
+                        transform: scale(1);
+                        opacity: 0.6;
+                    }
+                    100% {
+                        transform: scale(3.5);
+                        opacity: 0;
+                    }
+                }
+                .info-anim {
+                    animation: infoFade 350ms ease both;
                 }
                 .info-next {
-                transform-origin: center;
+                    transform-origin: center;
                 }
                 .info-prev {
-                transform-origin: center;
+                    transform-origin: center;
                 }
                 @keyframes infoFade {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
                 }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-                }
-        `}</style>
+            `}</style>
 
-            <div className="relative h-full overflow-hidden rounded-2xl border border-white/10">
+            {/* Updated: responsive height instead of fixed h-screen */}
+            <div className="relative h-[90vh] lg:h-[85vh] xl:h-screen overflow-hidden rounded-2xl border border-white/10">
                 <Slider
                     className="watchlive-slider"
                     ref={(r) => {
@@ -112,8 +110,16 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                     {...settings}
                 >
                     {slides.map((s) => (
-                        <div key={s.id} className="relative w-full h-screen">
-                            <Image src={s.bg} alt={s.title} fill priority className="object-cover" sizes="100vw" />
+                        <div key={s.id} className="relative w-full h-full">
+                            {/* Updated: object-cover to object-contain for lg+ screens */}
+                            <Image
+                                src={s.bg}
+                                alt={s.title}
+                                fill
+                                priority
+                                className="object-cover "
+                                sizes="100vw"
+                            />
                             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
                         </div>
                     ))}
@@ -121,18 +127,18 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
 
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="container h-full pointer-events-auto">
-                        <div className="h-full flex items-end pb-20 sm:pb-24 lg:pb-28">
-                            <div className="w-full grid grid-cols-1 lg:grid-cols-[6fr_6fr] items-end gap-10">
+                        <div className="h-full flex items-end pb-12 sm:pb-16 lg:pb-20 xl:pb-28">
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-[6fr_6fr] items-end gap-6 lg:gap-10">
                                 <div className="w-full">
                                     <div
                                         key={activeSlide.id}
                                         className={cn("info-anim", dir === "next" ? "info-next" : "info-prev")}
                                     >
                                         {activeSlide.isLive ? <LiveBadge /> : null}
-                                        <p className="mt-10 text-white font-bold text-xs sm:text-sm lg:text-[21px]">
+                                        <p className="mt-6 lg:mt-10 text-white font-bold text-xs sm:text-sm lg:text-base xl:text-[21px]">
                                             {activeSlide.game}
                                         </p>
-                                        <h2 className="mt-1 text-white font-semibold leading-tight text-4xl md:text-7xl">
+                                        <h2 className="mt-1 text-white font-semibold leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
                                             {activeSlide.title}
                                         </h2>
                                         <div className="mt-3 flex items-center gap-3">
@@ -140,7 +146,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                             <p className="text-white text-xs sm:text-sm">{activeSlide.meta}</p>
                                         </div>
                                     </div>
-                                    <div className="pt-10 pb-10">
+                                    <div className="pt-6 lg:pt-10">
                                         <StartStreamingButton
                                             type="button"
                                             onClick={() => onWatch?.(activeSlide)}
@@ -173,12 +179,3 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
         </section>
     );
 }
-
-
-
-
-
-
-
-
-

@@ -7,7 +7,7 @@ const RankingSection = () => {
         <section className="relative w-full ">
             {/* Background layer (clipped) */}
             <div className="pointer-events-none absolute inset-0 -z-10 ">
-                <div className="absolute top-0 left-0 -translate-y-2/3 ">
+                <div className="absolute top-0 left-0 -translate-y-2/3 pointer-events-none">
                     <Image
                         src="/images/home/Ellipse2.png"
                         alt="ellipse"

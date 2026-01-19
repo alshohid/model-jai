@@ -3,41 +3,150 @@ import LiveSectionHeader from "./LiveSectionHeader";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/providers/auth/useAuth";
+import MatchCard from "@/shared/components/card/MatchCard";
+import { MatchItem } from "@/shared/components/grid/MatchesGrid";
 
-const dummyLiveGames = [
+// const dummyLiveGames = [
+//     {
+//         id: "1",
+//         cover: "/images/home/livecard_1.jpg",
+//         isLive: true,
+//         watchingCount: "4.2K",
+//         title: "2022 world champs gaming warzone",
+//         userName: "Guy Hawkins",
+//         gameName: "Call of Duty",
+//         avatar: "/images/home/avatar_1.png",
+//     },
+//     {
+//         id: "2",
+//         cover: "/images/home/livecard_2.jpg",
+//         isLive: true,
+//         watchingCount: "4.5K",
+//         title: "2022 world champs gaming warzone",
+//         userName: "Guy Hawkins",
+//         gameName: "Call of duty",
+//         avatar: "/images/home/avatar_1.png",
+//     },
+//     {
+//         id: "3",
+//         cover: "/images/home/livecard_3.jpg",
+//         isLive: true,
+//         watchingCount: "4.8K",
+//         title: "2022 world champs gaming warzone",
+//         userName: "Guy Hawkins",
+//         gameName: "Call of duty",
+//         avatar: "/images/home/avatar_1.png",
+//     },
+// ];
+const MOCK_MATCHES: MatchItem[] = [
     {
         id: "1",
-        cover: "/images/home/livecard_1.jpg",
-        isLive: true,
-        watchingCount: "4.2K",
-        title: "2022 world champs gaming warzone",
-        userName: "Guy Hawkins",
-        gameName: "Call of Duty",
-        avatar: "/images/home/avatar_1.png",
+        status: "Live",
+        title: "ShadowR vs Phoenix Force",
+        dateText: "November 1, 2024",
+        timeText: "4:30 pm",
+        gameLogoSrc: "/images/home/2k.png",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+        watchHref: "/matches/1",
+        voteRequired: false,
+        versusImg: "/images/home/versus.png",
     },
     {
         id: "2",
-        cover: "/images/home/livecard_2.jpg",
-        isLive: true,
-        watchingCount: "4.5K",
-        title: "2022 world champs gaming warzone",
-        userName: "Guy Hawkins",
-        gameName: "Call of duty",
-        avatar: "/images/home/avatar_1.png",
+        status: "Live",
+        title: "ShadowR vs Phoenix Force",
+        dateText: "November 1, 2024",
+        timeText: "4:30 pm",
+        gameLogoSrc: "/images/home/freestyle_1.png",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+        watchHref: "/matches/2",
+        voteRequired: false,
+        versusImg: "/images/home/versus.png",
     },
     {
         id: "3",
-        cover: "/images/home/livecard_3.jpg",
-        isLive: true,
-        watchingCount: "4.8K",
-        title: "2022 world champs gaming warzone",
-        userName: "Guy Hawkins",
-        gameName: "Call of duty",
-        avatar: "/images/home/avatar_1.png",
+        status: "Live",
+        title: "ShadowR vs Phoenix Force",
+        dateText: "November 1, 2024",
+        timeText: "4:30 pm",
+        gameLogoSrc: "/images/home/mortal_1.png",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+        watchHref: "/matches/3",
+        voteRequired: false,
+        versusImg: "/images/home/versus.png",
     },
+    {
+        id: "4",
+        status: "Live",
+        title: "ShadowR vs Phoenix Force",
+        dateText: "November 1, 2024",
+        timeText: "4:30 pm",
+        gameLogoSrc: "/images/home/freestyle.png",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+        watchHref: "/matches/1",
+        voteRequired: true,
+        versusImg: "/images/home/versus.png",
+    },
+    // {
+    //     id: "5",
+    //     status: "Upcoming",
+    //     title: "ShadowR vs Phoenix Force",
+    //     dateText: "November 1, 2024",
+    //     timeText: "4:30 pm",
+    //     gameLogoSrc: "/images/home/fc26.png",
+    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
+    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
+    //     watchHref: "/matches/2",
+    //     voteRequired: false,
+    //     versusImg: "/images/home/versus.png",
+    // },
+    // {
+    //     id: "6",
+    //     status: "Upcoming",
+    //     title: "ShadowR vs Phoenix Force",
+    //     dateText: "November 1, 2024",
+    //     timeText: "4:30 pm",
+    //     gameLogoSrc: "/images/home/fc26.png",
+    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
+    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
+    //     watchHref: "/matches/3",
+    //     voteRequired: false,
+    //     versusImg: "/images/home/versus.png",
+    // },
+    // {
+    //     id: "3",
+    //     status: "Upcoming",
+    //     title: "ShadowR vs Phoenix Force",
+    //     dateText: "November 1, 2024",
+    //     timeText: "4:30 pm",
+    //     gameLogoSrc: "/images/home/mortal_1.png",
+    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
+    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
+    //     watchHref: "/matches/3",
+    //     voteRequired: false,
+    //     versusImg: "/images/home/versus.png",
+    // },
+    // {
+    //     id: "4",
+    //     status: "Upcoming",
+    //     title: "ShadowR vs Phoenix Force",
+    //     dateText: "November 1, 2024",
+    //     timeText: "4:30 pm",
+    //     gameLogoSrc: "/images/home/freestyle.png",
+    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
+    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
+    //     watchHref: "/matches/1",
+    //     voteRequired: false,
+    //     versusImg: "/images/home/versus.png",
+    // },
 ];
 
 export default function LiveStreamsSection() {
+    const dummyLiveGames = MOCK_MATCHES;
     const router = useRouter();
     const { isAuthenticated } = useAuth();
 
@@ -71,13 +180,29 @@ export default function LiveStreamsSection() {
                     className="mb-16 md:mb-20 tracking-wide text-[35px] md:text-[44px] lg:text-[48px]"
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-                    {dummyLiveGames.map((game, i) => (
-                        <LiveGameCard
-                            key={game.id ?? i}
-                            {...game}
-                            onWatch={() => handleWatch(game.id)}
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10"> */}
+                <div className="grid gap-3 md:gap-6 w-full grid-cols-2 md:grid-cols-3 place-items-center">
+                    {dummyLiveGames.map((m) => (
+                        <MatchCard
+                            key={m.id}
+                            status={m.status}
+                            title={m.title}
+                            dateText={m.dateText}
+                            timeText={m.timeText}
+                            gameLogoSrc={m.gameLogoSrc}
+                            leftPlayerImg={m.leftPlayerImg}
+                            rightPlayerImg={m.rightPlayerImg}
+                            watchHref={m.watchHref}
+                            voteRequired={m.voteRequired}
+                            versusImg={m.versusImg}
+                            onWatch={handleWatch as any}
+
                         />
+                        // <LiveGameCard
+                        //     key={game.id ?? i}
+                        //     {...game}
+                        //     onWatch={() => handleWatch(game.id)}
+                        // />
                     ))}
                 </div>
 

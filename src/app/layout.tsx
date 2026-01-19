@@ -8,6 +8,7 @@ import FooterSection from "@/shared/components/home/FooterSection";
 import { RouteProvider } from "@/shared/providers/route/RouteProvider";
 import NavbarWithRouteRules from "./(public)/_components/publicNavbar/NavbarWithRouteRules";
 import { TwScreenSize } from "@/shared/components/TwScreenSize";
+import LenisProvider from "@/shared/providers/LenisProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,10 +38,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${manrope.variable} antialiased `}
       >
+
         <RouteProvider>
-          {/* <NavbarWithRouteRules/> */}
-          {children}
-          {/* <FooterSection /> */}
+          <LenisProvider>
+            {children}
+          </LenisProvider>
         </RouteProvider>
         <TwScreenSize/>
       </body>

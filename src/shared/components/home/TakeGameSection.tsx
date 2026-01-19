@@ -23,7 +23,7 @@ export default function TakeGameSection() {
                     />
                 </PromoSplitCard>
             </div>
-            <div className="absolute bottom-0 left-0 -translate-y-1/2 ">
+            <div className="absolute bottom-0 left-0 -translate-y-1/2  pointer-events-none">
                 <Image
                     src="/images/home/Ellipse2.png"
                     alt="ellipse"

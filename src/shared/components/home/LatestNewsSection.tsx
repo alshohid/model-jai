@@ -25,7 +25,7 @@ const news: NewsItem[] = [
 export default function LatestNewsSection() {
     return (
         <section className="w-full relative">
-            <div className="absolute top-0 left-0 -translate-y-2/3 ">
+            <div className="absolute top-0 left-0 -translate-y-2/3 pointer-events-none ">
                 <Image
                     src="/images/home/Ellipse2.png"
                     alt="ellipse"

@@ -1,15 +1,19 @@
+import Image from "next/image";
+import Link from "next/link";
+
 export default function BrandMark() {
     return (
-        <div className=" h-[42px]  flex items-center">
-            <span
-                className={[
-                    "font-heading font-bold",
-                    " text-[1.2rem] md:text-[2rem] leading-[132%] tracking-[0px]",
-                    "bg-gradient-to-r from-brandGradStart to-brandGradEnd bg-clip-text text-transparent",
-                ].join(" ")}
-            >
-                Model Boss Offers
-            </span>
-        </div>
+        <Link href={'/'} className="block">
+            <div className="relative flex items-center justify-center ">
+                <Image
+                    src={'/images/home/logo_4.png'}
+                    alt="logo"
+                    width={80}
+                    height={80}
+                    className="object-cover"
+                    priority
+                />
+            </div>
+        </Link>
     );
 }
