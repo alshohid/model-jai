@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
-// import type { DemoPlayer, SupportSide } from "@/shared/hooks/useMatchDemoStore";
+import type { Side } from "@/shared/hooks/useMatchDemoStore";
+
+type DemoPlayer = {
+    name: string;
+    points: number;
+    imageSrc: string;
+    teamLogoSrc: string;
+};
 
 export default function TriplePanelHUD({
     left,
@@ -14,7 +21,7 @@ export default function TriplePanelHUD({
     left: DemoPlayer;
     right: DemoPlayer;
     middle: { label: string; imageSrc: string };
-    bossSide: SupportSide | null;
+    bossSide: Side | null;
     className?: string;
 }) {
     return (
@@ -23,7 +30,7 @@ export default function TriplePanelHUD({
                 {/* LEFT */}
                 <div className="relative">
                     <Image src={left.imageSrc} alt={left.name} fill className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
                     {bossSide === "left" && (
                         <div className="absolute top-2 left-2 rounded-lg bg-yellow-400 text-black font-black px-3 py-1">
                             BOSS
@@ -39,7 +46,7 @@ export default function TriplePanelHUD({
                 {/* MIDDLE (fixed) */}
                 <div className="relative">
                     <Image src={middle.imageSrc} alt="middle" fill className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 font-extrabold text-2xl text-[#DD2E03]">
                         {middle.label}
                     </div>
@@ -48,7 +55,7 @@ export default function TriplePanelHUD({
                 {/* RIGHT */}
                 <div className="relative">
                     <Image src={right.imageSrc} alt={right.name} fill className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
                     {bossSide === "right" && (
                         <div className="absolute top-2 right-2 rounded-lg bg-yellow-400 text-black font-black px-3 py-1">
                             BOSS
