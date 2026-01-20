@@ -32,3 +32,26 @@ export type TriplePanelState = {
     };
     right: PanelSide;
 };
+
+export type WatchLiveHeroSlide = {
+    id: string;
+    bg: string;
+    game: string;
+    title: string;
+    meta: string;
+    isLive: boolean;
+    thumbs?: string[];
+    avatars?: string[];
+
+    // ✅ new fields for MatchCard overlay
+    dateText: string;
+    timeText: string;
+    status: "Upcoming" | "Past" | "Live";
+    gameLogoSrc: string;
+    leftPlayerImg: string;
+    rightPlayerImg: string;
+    versusImg: string;
+    watchHref: string;
+    voteRequired?: boolean;
+    platform?: "tiktok" | "twitch";
+};

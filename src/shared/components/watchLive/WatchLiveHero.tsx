@@ -2,7 +2,6 @@
 
 import { useMemo, useRef, useState } from "react";
 import Slider from "react-slick";
-import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 
 // @ts-ignore
@@ -15,12 +14,13 @@ import { LiveBadge } from "@/shared/UI/button/LiveBadge";
 import { Avatars } from "@/shared/UI/reusable/avatar/Avatar";
 import { CircleNavButton } from "@/shared/UI/button/CircleNavButton";
 import { ThumbRail } from "./ThumbRail";
-import { WatchLiveSlide } from "@/types/watchLive/watchLiveTypes";
+import { WatchLiveHeroSlide } from "@/types/watchLive/watchLiveTypes";
+import MatchHeroCard from "../card/MatchHeroCard";
 
 type Props = {
-    slides: WatchLiveSlide[];
+    slides: WatchLiveHeroSlide[];
     className?: string;
-    onWatch?: (slide: WatchLiveSlide) => void;
+    onWatch?: (slide: WatchLiveHeroSlide) => void;
 };
 
 export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Props) {
@@ -100,8 +100,8 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                 }
             `}</style>
 
-            {/* Updated: responsive height instead of fixed h-screen */}
-            <div className="relative h-[90vh] lg:h-[85vh] xl:h-screen overflow-hidden rounded-2xl border border-white/10">
+
+            <div className="relative h-[calc(100vh-64px)]  overflow-hidden">
                 <Slider
                     className="watchlive-slider"
                     ref={(r) => {
@@ -111,23 +111,33 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                 >
                     {slides.map((s) => (
                         <div key={s.id} className="relative w-full h-full">
-                            {/* Updated: object-cover to object-contain for lg+ screens */}
-                            <Image
-                                src={s.bg}
-                                alt={s.title}
-                                fill
-                                priority
-                                className="object-contain "
-                                sizes="100vw"
-                            />
-                            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
+                            <div key={s.id} className="w-full  ">
+                                <MatchHeroCard
+                                    status={s.status}
+                                    title={s.title}
+                                    dateText={s.dateText}
+                                    timeText={s.timeText}
+                                    gameLogoSrc={s.gameLogoSrc}
+                                    leftPlayerName="JACK"
+                                    rightPlayerName="STEEVE"
+                                    leftPlayerImg={s.leftPlayerImg}
+                                    rightPlayerImg={s.rightPlayerImg}
+                                    versusImg={s.versusImg}
+                                    voteRequired={s.voteRequired}
+                                    onWatch={() => console.log(s)}
+                                    className="w-full h-full max-w-none rounded-none"
+                                />
+                            </div>
+
                         </div>
                     ))}
                 </Slider>
 
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="container h-full pointer-events-auto">
-                        <div className="h-full flex items-end pb-12 sm:pb-16 lg:pb-20 xl:pb-28">
+
+                        <div className="h-full flex items-end pb-6 sm:pb-8">
+
                             <div className="w-full grid grid-cols-1 lg:grid-cols-[6fr_6fr] items-end gap-6 lg:gap-10">
                                 <div className="w-full">
                                     <div

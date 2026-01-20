@@ -185,7 +185,7 @@ export default function LiveStreamsSection() {
                 />
 
                 {/* <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10"> */}
-                <div className="grid gap-3 md:gap-6 w-full grid-cols-2 md:grid-cols-3 place-items-center">
+                <div className="grid gap-3 md:gap-6 w-full grid-cols-1 md:grid-cols-3 place-items-center">
                     {dummyLiveGames.map((m) => (
                         <MatchCard
                             key={m.id}
