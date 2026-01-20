@@ -20,6 +20,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/1",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform:"tiktok"
     },
     {
         id: "2",
@@ -33,6 +34,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/2",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
     {
         id: "3",
@@ -46,6 +48,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/3",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
     {
         id: "4",
@@ -59,6 +62,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/1",
         voteRequired: true,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
     {
         id: "5",
@@ -72,6 +76,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/2",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "tiktok"
     },
     {
         id: "6",
@@ -85,6 +90,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/3",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "tiktok"
     },
     {
         id: "3",
@@ -98,6 +104,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/3",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
     {
         id: "4",
@@ -111,6 +118,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/1",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
 ];
 

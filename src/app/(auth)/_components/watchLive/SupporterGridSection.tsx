@@ -1,87 +1,74 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
-import LiveSectionHeader from "./LiveSectionHeader";
+import { cn } from "@/shared/lib/utils/cn";
 import SupporterGridContainer from "./SupporterGridContainer";
-import type { DemoBossSupporter, SupportSide } from "@/shared/hooks/useMatchDemoStore";
-import type { SupportSide as GridSide } from "@/shared/components/grid/SupporterGrid";
+
 
 export default function SupporterGridSection({
     matchId,
-    layout,
-    leftPlayerName,
-    rightPlayerName,
+    isLive,
     leftBoss,
     rightBoss,
-    onSupport,
+    leftImg,
+    rightImg
 }: {
     matchId: string;
-    layout: "tiktok" | "twitch";
-    leftPlayerName: string;
-    rightPlayerName: string;
-    leftBoss: DemoBossSupporter;
-    rightBoss: DemoBossSupporter;
-    onSupport: (side: SupportSide, amount: number) => void;
+    isLive: boolean;
+    leftBoss: { name: string; total: number };
+        rightBoss: { name: string; total: number };
+        rightImg: string;
+        leftImg: string;
 }) {
-    const [selectedSide, setSelectedSide] = React.useState<GridSide>("left");
+    // ✅ Live হলে grid close (hide / locked)
+    if (isLive) {
+        return (
+            <section className="w-full bg-black">
+                <div className="mx-auto w-full px-3 md:px-4 py-6">
+                    <div className="grid grid-cols-2 gap-4 items-end">
+                        <BossCard name={leftBoss.name} img={leftImg} />
+                        <BossCard name={rightBoss.name} img={rightImg} />
+                    </div>
 
+                    <h2
+                        className={cn(
+                            "mt-6 text-center font-black text-[44px] md:text-[60px] tracking-widest",
+                            "text-transparent bg-clip-text bg-linear-to-r from-yellow-300 via-orange-500 to-yellow-300",
+                            "drop-shadow-[0_6px_0_rgba(0,0,0,0.75)]"
+                        )}
+                    >
+                        WHO IS THE BOSS
+                    </h2>
+                </div>
+            </section>
+        );
+    }
+
+    // Upcoming হলে grid open থাকবে
     return (
-        <div className={layout === "tiktok" ? "max-w-[520px] mx-auto px-4 py-6" : "max-w-[1200px] mx-auto px-4 py-6"}>
-            <LiveSectionHeader title="Supporter Grid" className="mb-6 tracking-wide text-[42px]" />
-
-            {/* side select */}
-            <div className="flex gap-3 justify-center mb-5">
-                <button
-                    onClick={() => setSelectedSide("left")}
-                    className={`px-4 py-2 rounded-xl border ${selectedSide === "left" ? "bg-white text-black" : "border-white/20 text-white"}`}
-                >
-                    Support {leftPlayerName} (X)
-                </button>
-
-                <button
-                    onClick={() => setSelectedSide("right")}
-                    className={`px-4 py-2 rounded-xl border ${selectedSide === "right" ? "bg-white text-black" : "border-white/20 text-white"}`}
-                >
-                    Support {rightPlayerName} (O)
-                </button>
+        <section className="w-full bg-black">
+            <div className="mx-auto w-full px-3 md:px-4 py-6">
+                <h3 className="text-white font-black text-[28px] text-center mb-4">Supporter Grid</h3>
+                <SupporterGridContainer matchId={matchId} matchStatus="Upcoming" locked={false} selectedSide="left" onSupport={() => {}} />
             </div>
+        </section>
+    );
+}
 
-            {/* boss + grid layout */}
-            <div className={layout === "twitch" ? "grid grid-cols-[240px_1fr_240px] gap-4 items-start" : "grid grid-cols-1 gap-4"}>
-                {/* left boss */}
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
-                    <div className="text-sm text-white/70">Big Boss Supporter</div>
-                    <div className="text-xl font-extrabold">{leftBoss.name}</div>
-                    <div className="text-white/80">Total: {leftBoss.total}</div>
-                    <div className="mt-3 w-full aspect-square relative rounded-xl overflow-hidden">
-                        <Image src={leftBoss.imageSrc} alt={leftBoss.name} fill className="object-cover" />
-                    </div>
-                </div>
-
-                {/* grid */}
-                <SupporterGridContainer
-                    matchId={matchId}
-                    matchStatus="Live"
-                    locked={false}
-                    selectedSide={selectedSide}
-                    onSupport={(side, amount) => onSupport(side, amount)}
+function BossCard({ name ,img}: { name: string,img:string }) {
+    return (
+        <div className="relative rounded-xl bg-black/40 border border-white/10 p-3">
+            <div className="w-full aspect-4/5 relative rounded-lg overflow-hidden bg-black">
+                <Image
+                    src={img}
+                    alt={name}
+                    fill
+                    className="object-cover"
                 />
-
-                {/* right boss */}
-                <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
-                    <div className="text-sm text-white/70">Big Boss Supporter</div>
-                    <div className="text-xl font-extrabold">{rightBoss.name}</div>
-                    <div className="text-white/80">Total: {rightBoss.total}</div>
-                    <div className="mt-3 w-full aspect-square relative rounded-xl overflow-hidden">
-                        <Image src={rightBoss.imageSrc} alt={rightBoss.name} fill className="object-cover" />
-                    </div>
-                </div>
             </div>
 
-            <h2 className="mt-8 text-center text-[44px] font-black tracking-widest text-white">
-                WHO IS THE BOSS
-            </h2>
+            <div className="mt-3 text-white/80 text-[12px] font-semibold">Big Boss Supporter</div>
+            <div className="text-white font-black text-[16px]">{name}</div>
         </div>
     );
 }

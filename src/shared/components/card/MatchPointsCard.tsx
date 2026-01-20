@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
@@ -10,6 +10,7 @@ type Props = {
     title: "Matched Points" | "Unmatched Points";
     points: number | string;
     onShare?: () => void;
+    compact?: boolean; // 👈 new
     className?: string;
 };
 
@@ -19,52 +20,72 @@ export default function MatchPointsCard({
     title,
     points,
     onShare,
+    compact = false,
     className,
 }: Props) {
     return (
         <div
             className={cn(
-                "w-full rounded-[20px] bg-white/5 border border-white/15 backdrop-blur-[16px]",
+                "w-full rounded-[16px] bg-white/5 border border-white/15 backdrop-blur-[16px]",
                 "shadow-[inset_0_0_0_2px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.06)]",
-                "px-6 py-6 md:px-10 md:py-10",
+                compact
+                    ? " p-4 md:p-8"
+                    : "px-6 py-6 md:px-10 md:py-10",
                 className
             )}
         >
-            <div className="flex items-center gap-5 md:gap-8">
-                {/* team logo */}
-                <div className="shrink-0 w-[64px] h-[64px] md:w-[80px] md:h-[80px] rounded-full overflow-hidden bg-white/5 flex items-center justify-center">
+            <div className="flex flex-col md:flex-row md:items-center  gap-3 md:gap-5">
+                {/* logo */}
+                <div
+                    className={cn(
+                        "shrink-0 rounded-full overflow-hidden bg-white/5 flex items-center justify-center",
+                        compact
+                            ? "w-[36px] h-[36px]"
+                            : "w-[64px] h-[64px] md:w-[80px] md:h-[80px]"
+                    )}
+                >
                     <Image
                         src={teamLogoSrc}
                         alt={`${playerName} team`}
-                        width={120}
-                        height={120}
+                        width={80}
+                        height={80}
                         className="w-full h-full object-cover"
                     />
                 </div>
 
-                <div className="flex-1 min-w-0">
-                    <span
+                <div className=" min-w-0">
+                    {/* name */}
+                    <div
                         className={cn(
-                            "inline-flex items-center justify-center",
-                            "font-bold text-[24px] leading-[32px]",
-                            "text-[#DD2E03] ",
-                            "mb-2",
-                            "[-webkit-text-stroke:2px_#F9C80E]"
+                            "font-extrabold truncate",
+                            compact ? "text-[12px]" : "text-[22px] md:text-[26px]",
+                            "text-[#DD2E03]",
+                            "[-webkit-text-stroke:1px_#F9C80E]"
                         )}
-                        style={{ fontFamily: "Manrope" }}
                     >
                         {playerName}
-                    </span>
+                    </div>
 
-
-                    {/* title */}
-                    <h3 className="text-white font-extrabold text-[22px] md:text-[30px] leading-tight truncate">
+                    {/* title + points */}
+                    <div
+                        className={cn(
+                            "font-bold text-white truncate",
+                            compact ? "text-[8px]" : "text-[18px] md:text-[26px]"
+                        )}
+                    >
                         {title} - {points}
-                    </h3>
+                    </div>
 
                     {/* button */}
-                    <div className="mt-4 md:mt-6">
-                        <StartStreamingButton onClick={onShare}>
+                    <div className={compact ? "mt-2" : "mt-4"}>
+                        <StartStreamingButton
+                            onClick={onShare}
+                            className={cn(
+                                compact
+                                    ? "h-[23px] md:h-[30px] text-[8px]  md:text-[14px] px-3 rounded-md"
+                                    : "h-[44px] text-[14px]"
+                            )}
+                        >
                             Share Referral
                         </StartStreamingButton>
                     </div>

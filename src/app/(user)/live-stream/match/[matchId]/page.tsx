@@ -1,140 +1,119 @@
-
-
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
 import { useMatchLiveStatus } from "@/shared/providers/hook/useMatchLiveStatus";
 import { useMatchDemoStore } from "@/shared/hooks/useMatchDemoStore";
-import { useOrientationLayout } from "@/shared/hooks/useOrientationLayout";
-// import { useOrientationLayout } from "@/shared/hooks/useOrientationLayout";
 
-export default function MatchDetails({ params }: { params: { matchId: string } }) {
-    const { matchId } = params;
+
+import { useSearchParams } from "next/navigation";
+import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
+
+export default function MatchDetails({ params }: { params: Promise<{ matchId: string }> }) {
+    const [isScheduling, setIsScheduling] = useState(false);
+    const [countdownSec, setCountdownSec] = useState<number>(0);
+    
+    const { matchId } = React.use(params);
+
+    const searchParams = useSearchParams(); 
+    const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
+
+    const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "tiktok";
+
     const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
 
     const [scheduledAt, setScheduledAt] = useState<string | null>(null);
-    const { isLive, timeLeft } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
-
-    const layout = useOrientationLayout(); // "tiktok" | "twitch"
-
-    // ✅ demo store
+    const { isLive } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
     const demo = useMatchDemoStore(matchId);
+    const supportClosed = isLive;
+    const startDemoLive = () => {
 
-    const handleStartStreaming = () => {
-        const twentySecLater = new Date(Date.now() + 20 * 1000).toISOString();
-        setScheduledAt(twentySecLater);
+        const seconds = 4;
+        const t = new Date(Date.now() + seconds * 1000).toISOString();
+        setScheduledAt(t);
+        setCountdownSec(seconds);
+        setIsScheduling(true);
     };
+
+
+    useEffect(() => {
+        if (!isScheduling) return;
+
+        const timer = setInterval(() => {
+            setCountdownSec((s) => {
+                if (s <= 1) {
+                    clearInterval(timer);
+                    setIsScheduling(false);
+                    return 0;
+                }
+                return s - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [isScheduling]);
 
     return (
         <div className="min-h-screen bg-black">
-            <LiveMatchStage
-                matchId={matchId}
-                playbackId={playbackId}
-                isLive={isLive}
-                layout={layout}
-                // ✅ clickable support
-                onSupportLeft={() => demo.support("left", 100)}
-                onSupportRight={() => demo.support("right", 100)}
-                // ✅ top panel data
-                leftPlayer={demo.leftPlayer}
-                rightPlayer={demo.rightPlayer}
-                middle={demo.middle}
-                bossSide={demo.bossSide}
-            />
+            <PublicNavbar/> 
+            <div className="container">
+                <LiveMatchStage
+                    matchId={matchId}
+                    playbackId={playbackId}
+                    isLive={isLive}
+                    mode={mode} 
+                    supportClosed={supportClosed}
+                    left={demo.left}
+                    right={demo.right}
+                    middle={demo.middle}
+                    bossSide={demo.bossSide}
+                    onSupportLeft={() => demo.support("left", 100)}
+                    onSupportRight={() => demo.support("right", 100)}
+                />
 
-            <MatchPointsSummarySection
-                layout={layout}
-                isLive={isLive}
-                timeLeft={timeLeft}
-                onStartStreaming={handleStartStreaming}
-                isScheduled={!!scheduledAt}
-                // ✅ summary data store থেকে
-                left={{
-                    playerName: demo.leftPlayer.name,
-                    teamLogoSrc: demo.leftPlayer.teamLogoSrc || "",
-                    points: demo.leftPlayer.points,
-                }}
-                right={{
-                    playerName: demo.rightPlayer.name,
-                    teamLogoSrc: demo.rightPlayer.teamLogoSrc || "",
-                    points: demo.rightPlayer.points,
-                }}
-                supportOpen={false} // demo: live থাকলেও closed রাখতে পারো
-            />
+                <MatchPointsSummarySection
+                    layout={mode}
+                    isLive={isLive}
+                    left={{
+                        playerName: demo.left.name,
+                        teamLogoSrc: demo.left.teamLogoSrc || "",
+                        points: demo.left.points,
+                    }}
+                    right={{
+                        playerName: demo.right.name,
+                        teamLogoSrc: demo.right.teamLogoSrc || "",
+                        points: demo.right.points,
+                    }}
+                    supportOpen={false} 
+                />
+                {!isLive && (
+                    <div className="flex justify-center pb-10">
+                        <button
+                            onClick={startDemoLive}
+                            disabled={isScheduling}
+                            className={[
+                                "px-6 py-3 rounded-xl transition font-semibold text-white shadow-lg",
+                                isScheduling ? "bg-white/10 cursor-not-allowed" : "bg-red-600 hover:bg-red-700",
+                            ].join(" ")}
+                        >
+                            {isScheduling ? `Live in ${countdownSec}s…` : "Start Live (Demo)"}
+                        </button>
+                    </div>
+                )}
 
-            <SupporterGridSection
-                matchId={matchId}
-                layout={layout}
-                leftPlayerName={demo.leftPlayer.name}
-                rightPlayerName={demo.rightPlayer.name}
-                leftBoss={demo.topLeftSupporter}
-                rightBoss={demo.topRightSupporter}
-                onSupport={demo.support} // ✅ grid click -> points update
-            />
+
+                <SupporterGridSection
+                    matchId={matchId}
+                    isLive={isLive}
+                    leftBoss={{ name: demo.topLeft.name, total: demo.topLeft.total }}
+                    rightBoss={{ name: demo.topRight.name, total: demo.topRight.total }}
+                    leftImg="/images/home/supported_cardimg.png"
+                    rightImg="/images/home/rightPlayer_1.png"
+                />
+            </div>
+    
         </div>
     );
 }
-
-
-
-
-
-// "use client";
-
-// import { useState } from "react";
-// import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
-// import RankingSection from "@/app/(public)/_components/rankingSection/RankingSection";
-// import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
-// import TakeGameSection from "@/shared/components/home/TakeGameSection";
-// import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
-// import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
-// import FooterSection from "@/shared/components/home/FooterSection";
-// import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
-// import { useMatchLiveStatus } from "@/shared/providers/hook/useMatchLiveStatus";
-
-// export default function MatchDetails({
-//     params,
-// }: {
-//     params: { matchId: string };
-// }) {
-//     const { matchId } = params;
-//     const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
-//     const [scheduledAt, setScheduledAt] = useState<string | null>(null);
-
-//     const { isLive, timeLeft } = useMatchLiveStatus({
-//         scheduledAt: scheduledAt ?? "", 
-//     });
-
-//     const handleStartStreaming = () => {
-//         const oneMinuteLater = new Date(Date.now() + 20 * 1000).toISOString();
-//         setScheduledAt(oneMinuteLater);
-//     };
-
-//     return (
-//         <div>
-//             <PublicNavbar />
-
-//             {/* {isLive && ( */}
-//                 <LiveMatchStage matchId={matchId} playbackId={playbackId} />
-//             {/* )} */}
-
-//             <MatchPointsSummarySection
-//                 isLive={isLive}
-//                 timeLeft={timeLeft}
-//                 onStartStreaming={handleStartStreaming}
-//                 isScheduled={!!scheduledAt}
-//             />
-
-//             {/* {!isLive && <SupporterGridSection matchId={matchId} />} */}
-//             <SupporterGridSection matchId={matchId} />
-
-//             <RankingSection />
-//             <LatestNewsSection />
-//             <TakeGameSection />
-//             <FooterSection />
-//         </div>
-//     );
-// }

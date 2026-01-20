@@ -1,114 +1,140 @@
 "use client";
 
+import Image from "next/image";
 import MuxPlayer from "@mux/mux-player-react";
 import { cn } from "@/shared/lib/utils/cn";
-import type { DemoPlayer, SupportSide } from "@/shared/hooks/useMatchDemoStore";
-import TriplePanelHUD from "./TriplePanelHUD";
+import type { Side } from "@/shared/hooks/useMatchDemoStore";
 
-type Props = {
+type StageProps = {
     matchId: string;
     playbackId: string;
     isLive: boolean;
-    layout: "tiktok" | "twitch";
 
-    leftPlayer: DemoPlayer;
-    rightPlayer: DemoPlayer;
+    mode?: "tiktok" | "twitch"; // tiktok=3 panel, twitch=mux
+    supportClosed: boolean;
+
+    left: { name: string; points: number; imageSrc: string };
+    right: { name: string; points: number; imageSrc: string };
     middle: { label: string; imageSrc: string };
-    bossSide: SupportSide | null;
+    bossSide: Side | null;
 
-    onSupportLeft: () => void;
-    onSupportRight: () => void;
+    onSupportLeft?: () => void;
+    onSupportRight?: () => void;
 };
 
 export default function LiveMatchStage({
     matchId,
     playbackId,
     isLive,
-    layout,
-    leftPlayer,
-    rightPlayer,
+    mode,
+    supportClosed,
+    left,
+    right,
     middle,
     bossSide,
     onSupportLeft,
     onSupportRight,
-}: Props) {
-    const playerId = `live-player-${matchId}`;
+}: StageProps) {
+    const playerId = `mux-${matchId}`;
 
     return (
         <section className="w-full bg-black text-white">
-            <div className={cn("mx-auto w-full", layout === "tiktok" ? "max-w-[520px]" : "max-w-[1200px] px-4")}>
-                {/* ✅ Top 3 panel */}
-                <TriplePanelHUD
-                    left={leftPlayer}
-                    right={rightPlayer}
-                    middle={middle}
-                    bossSide={bossSide}
-                />
-
-                {/* ✅ Main live video */}
-                <div className="relative w-full aspect-video bg-black overflow-hidden mt-2 rounded-xl">
-                    {isLive ? (
-                        <MuxPlayer
-                            id={playerId}
-                            playbackId={playbackId}
-                            autoPlay
-                            muted
-                            playsInline
-                            streamType="live"
-                            className="absolute inset-0 w-full h-full"
-                            style={
-                                {
-                                    // @ts-ignore
-                                    "--media-object-fit": "cover",
-                                } as any
-                            }
-                        />
+            <div className={cn("mx-auto w-full  px-3 md:px-4 pt-2")}>
+                {/* Stage */}
+                <div className="relative w-full aspect-video bg-black overflow-hidden rounded-md border border-white/10">
+                    {/* Content */}
+                    {mode === "twitch" ? (
+                        isLive ? (
+                            <MuxPlayer
+                                playbackId={playbackId}
+                                autoPlay
+                                muted
+                                playsInline
+                                streamType="live"
+                                className="absolute inset-0 w-full h-full"
+                                style={
+                                    {
+                                        // @ts-ignore
+                                        "--media-object-fit": "cover",
+                                    } as any
+                                }
+                            />
+                        ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-white/70">
+                                Live starts soon...
+                            </div>
+                        )
                     ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-white/70">
-                            Live starts soon…
+                        // tiktok 3-panel stage
+                        <div className="absolute inset-0 grid grid-cols-3">
+                            {/* left */}
+                            <div className="relative">
+                                <Image src={left.imageSrc} alt={left.name} fill className="object-cover" />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
+                                {/* <div className="absolute top-3 left-3 text-white font-black text-4xl drop-shadow">X</div> */}
+                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
+                                        <div>
+                                            <Image src={"/images/home/taken_slot.png"} alt="available" width={70} height={70}  />
+                                        </div>
+                                    <div className="text-[#B7FF4A] font-extrabold text-xl">{left.points}</div>
+                                    <div className="text-[#DD2E03] font-extrabold text-2xl">{left.name}</div>
+                                </div>
+                            </div>
+
+                            {/* middle fixed */}
+                            <div className="relative">
+                                <Image src={middle.imageSrc} alt="model" fill className="object-cover" />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
+                                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
+                                    <div className="text-[#DD2E03] font-extrabold text-2xl">{middle.label}</div>
+                                </div>
+                            </div>
+
+                            {/* right */}
+                            <div className="relative">
+                                <Image src={right.imageSrc} alt={right.name} fill className="object-cover" />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
+                                {/* {bossSide === "right" && (
+                                    <div className="absolute top-2 right-2 bg-[#F9C80E] text-black font-black px-3 py-1 rounded-lg">
+                                        BOSS
+                                    </div>
+                                )} */}
+                                {/* <div className="absolute top-3 right-3 text-white font-black text-4xl drop-shadow">O</div> */}
+                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
+                                        <div>
+                                            <Image src={"/images/home/available_slot.png"} alt="available" width={70} height={70}/>
+                                        </div>
+                                    <div className="text-[#B7FF4A] font-extrabold text-xl">{right.points}</div>
+                                    <div className="text-[#DD2E03] font-extrabold text-2xl">{right.name}</div>
+                                </div>
+                            </div>
                         </div>
                     )}
-
-                    {/* ✅ click-to-support overlay (client like “CLICK SUPPORT …”) */}
-                    <div className="absolute inset-0 z-20 grid grid-cols-2">
-                        <button
-                            type="button"
-                            onClick={onSupportLeft}
-                            className="relative"
-                            aria-label="Support Left"
-                        >
-                            <span className="absolute left-3 bottom-3 rounded-lg bg-black/60 px-3 py-2 text-xs font-bold">
-                                CLICK SUPPORT {leftPlayer.name}
-                            </span>
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={onSupportRight}
-                            className="relative"
-                            aria-label="Support Right"
-                        >
-                            <span className="absolute right-3 bottom-3 rounded-lg bg-black/60 px-3 py-2 text-xs font-bold">
-                                CLICK SUPPORT {rightPlayer.name}
-                            </span>
-                        </button>
-                    </div>
-
-                    {/* ✅ LIVE pill (একবারই দেখাও) */}
-                    {isLive && (
-                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-30">
-                            <span className="px-4 py-2 rounded-full bg-red-600 font-bold">LIVE</span>
-                        </div>
-                    )}
-
-                    {/* ✅ Fullscreen/Zoom */}
-                    <button
+                    {/* {mode === "twitch" && <button
                         type="button"
                         onClick={() => (document.getElementById(playerId) as any)?.requestFullscreen?.()}
-                        className="absolute top-3 right-3 z-30 rounded-xl bg-black/60 px-3 py-2 text-xs"
+                        className="absolute top-3 right-3 z-30 text-xs bg-black/50 px-3 py-2 rounded-lg"
                     >
                         Fullscreen
-                    </button>
+                    </button>} */}
+                    {/* Support overlay (Support Closed হলে hide) */}
+                    {!supportClosed && (
+                        <div className="absolute inset-0 z-20 grid grid-cols-2">
+                            <button type="button" onClick={onSupportLeft} className="relative">
+                                <span className="absolute left-3 bottom-3 rounded-lg bg-black/60 px-3 py-2 text-[12px] font-black">
+                                    CLICK SUPPORT {left.name}
+                                </span>
+                            </button>
+                            <button type="button" onClick={onSupportRight} className="relative">
+                                <span className="absolute right-3 bottom-3 rounded-lg bg-black/60 px-3 py-2 text-[12px] font-black">
+                                    CLICK SUPPORT {right.name}
+                                </span>
+                            </button>
+                        </div>
+                    )}
+
+                    {/* LIVE pill overlap (center bottom) */}
+                  
                 </div>
             </div>
         </section>

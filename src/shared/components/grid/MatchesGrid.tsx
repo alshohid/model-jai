@@ -16,19 +16,20 @@ export type MatchItem = {
     watchHref: string;
     voteRequired?: boolean;
     versusImg: string;
+    platform?: string;
 };
 
 export default function MatchesGrid({ matches }: { matches: MatchItem[] }) {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
 
-    const handleWatch = (matchId: string) => {
+    const handleWatch = (matchId:any, platform:any ) => {
         if (!isAuthenticated) {
-            router.push(`/login?redirect=/live-stream/match/${matchId}`);
+            router.push(`/login?redirect=/live-stream/match/${matchId}?platform=${platform}`);
             return;
         }
 
-        router.push(`/live-stream/match/${matchId}`);
+        router.push(`/live-stream/match/${matchId}?platform=${platform}`);
     };
 
     return (
@@ -46,7 +47,7 @@ export default function MatchesGrid({ matches }: { matches: MatchItem[] }) {
                     watchHref={m.watchHref}
                     voteRequired={m.voteRequired}
                     versusImg={m.versusImg}
-                    onWatch={handleWatch as any}
+                    onWatch={()=>handleWatch(m.id,m.platform) as any}
 
                 />
             ))}

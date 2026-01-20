@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
-import type { DemoPlayer, SupportSide } from "@/shared/hooks/useMatchDemoStore";
+// import type { DemoPlayer, SupportSide } from "@/shared/hooks/useMatchDemoStore";
 
 export default function TriplePanelHUD({
     left,

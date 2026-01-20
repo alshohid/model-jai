@@ -4,8 +4,8 @@ import * as React from "react";
 import SupporterGrid, { GridCell, SupportSide } from "@/shared/components/grid/SupporterGrid";
 
 type Props = {
-    matchId: string;
-    matchStatus: "Upcoming" | "Live" | "Past";
+    matchId?: string;
+    matchStatus?:any;
     locked?: boolean;
 
     selectedSide: SupportSide;

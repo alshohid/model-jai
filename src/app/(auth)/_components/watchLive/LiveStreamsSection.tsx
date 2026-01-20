@@ -51,6 +51,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/1",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform:"tiktok"
     },
     {
         id: "2",
@@ -64,6 +65,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/2",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
     {
         id: "3",
@@ -77,6 +79,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/3",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
+        platform: "tiktok"
     },
     {
         id: "4",
@@ -90,6 +93,7 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/1",
         voteRequired: true,
         versusImg: "/images/home/versus.png",
+        platform: "twitch"
     },
     // {
     //     id: "5",
@@ -151,13 +155,13 @@ export default function LiveStreamsSection() {
     const { isAuthenticated } = useAuth();
 
 
-    const handleWatch = (matchId: string) => {
+    const handleWatch = (matchId:any, platform:any) => {
         if (!isAuthenticated) {
-            router.push(`/login?redirect=/live-stream/match/${matchId}`);
+            router.push(`/login?redirect=/live-stream/match/${matchId}?platform=${platform}`);
             return;
         }
 
-        router.push(`/live-stream/match/${matchId}`);
+        router.push(`/live-stream/match/${matchId}?platform=${platform}`);
     };
 
     return (
@@ -195,7 +199,7 @@ export default function LiveStreamsSection() {
                             watchHref={m.watchHref}
                             voteRequired={m.voteRequired}
                             versusImg={m.versusImg}
-                            onWatch={handleWatch as any}
+                            onWatch={()=>handleWatch(m.id, m.platform) as any}
 
                         />
                         // <LiveGameCard

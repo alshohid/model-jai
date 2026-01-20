@@ -13,42 +13,51 @@ type Props = {
     layout: "tiktok" | "twitch";
     isLive: boolean;
     supportOpen?: boolean;
-    timeLeft?: { hours: number; minutes: number; seconds: number };
-    onStartStreaming?: () => void;
-    isScheduled?: boolean;
     left: SideInfo;
     right: SideInfo;
     className?: string;
 };
 
 export default function MatchPointsSummarySection({
-    layout,
     isLive,
     supportOpen = false,
-    timeLeft,
-    onStartStreaming,
-    isScheduled,
     left,
     right,
     className,
 }: Props) {
     return (
-        <section className={cn("px-4 py-6", className)}>
-            <div className={cn("mx-auto", layout === "tiktok" ? "max-w-[520px]" : "max-w-[1100px]")}>
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
+        <section className={cn("p-4 sm:p-6 py-4", className)}>
+            {isLive && (
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-40">
+                    <span className="px-4 py-2 rounded-full bg-red-600 font-black text-[12px] border border-white/20">
+                        LIVE
+                    </span>
+                </div>
+            )}
+            <div
+                className={cn(
+                    "mx-auto",
+                    " md:w-full"
+                    // layout === "tiktok" ? "max-w-[420px]" : "max-w-[1100px]"
+                )}
+            >
+                <div className="grid grid-cols-[1fr_auto_1fr]  gap-2 md:gap-4">
                     <MatchPointsCard
                         playerName={left.playerName}
                         teamLogoSrc={left.teamLogoSrc}
                         title="Matched Points"
                         points={left.points}
-                        onShare={() => { }}
+                        compact 
                     />
 
-                    <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md px-6 py-5 text-center flex flex-col justify-center">
-                        <div className="text-3xl font-extrabold">VS</div>
-                        <div className="mt-1 text-white/80">{isLive ? "Live Now" : "Upcoming"}</div>
-                        <div className="mt-1 text-white/70">
-                            {isLive ? (supportOpen ? "Support Open" : "Support Closed") : "Support Opens When Live"}
+                    {/* VS */}
+                    <div className="flex flex-col items-center justify-center p-0 md:px-2">
+                        <div className="text-[14px] sm:text-[22px] font-extrabold">VS</div>
+                        <div className="text-[10px] sm:text-[14px] text-white/80">
+                            {isLive ? "Live Now" : "Upcoming"}
+                        </div>
+                        <div className="text-[9px] sm:text-[13px] text-white/60">
+                            {isLive ? (supportOpen ? "Support Open" : "Support Closed") : ""}
                         </div>
                     </div>
 
@@ -57,42 +66,9 @@ export default function MatchPointsSummarySection({
                         teamLogoSrc={right.teamLogoSrc}
                         title="Unmatched Points"
                         points={right.points}
-                        onShare={() => { }}
+                        compact
                     />
                 </div>
-
-                {/* live না হলে countdown + dummy start button */}
-                {!isLive && (
-                    <div className="mt-6 text-center text-white/80">
-                        {timeLeft ? (
-                            <p>
-                                Match Live Almost Start In{" "}
-                                <span className="font-semibold">
-                                    {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
-                                </span>
-                            </p>
-                        ) : (
-                            <p>Streaming is currently offline</p>
-                        )}
-
-                        {onStartStreaming && !isScheduled && (
-                            <div className="mt-4 flex justify-center">
-                                <button
-                                    onClick={onStartStreaming}
-                                    className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 transition font-semibold text-white shadow-lg"
-                                >
-                                    Start Streaming (Demo)
-                                </button>
-                            </div>
-                        )}
-
-                        {isScheduled && (
-                            <p className="mt-3 text-sm text-yellow-300">
-                                Streaming scheduled. Please wait…
-                            </p>
-                        )}
-                    </div>
-                )}
             </div>
         </section>
     );
