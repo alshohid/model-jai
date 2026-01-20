@@ -48,8 +48,8 @@ export default function MatchHeroCard({
             className={clsx(
                 "w-full max-w-none", // ✅ hero full width
                 "rounded-[18px]",
-                "bg-black/35 border border-white/15 backdrop-blur-[18px]",
-                "shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
+                // "bg-black/35 border border-white/15 backdrop-blur-[18px]",
+                // "shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
                 className
             )}
         >
@@ -97,12 +97,12 @@ export default function MatchHeroCard({
                     </div>
                 </div>
 
-                {/* INFO */}
-                <div className="grid gap-2">
+             
+                {/* <div className="grid gap-2">
                     <h3 className="text-white font-semibold leading-tight text-[13px] sm:text-[15px] md:text-[18px]">
                         {title}
                     </h3>
-                </div>
+                </div> */}
             </div>
         </article>
     );
@@ -126,17 +126,17 @@ function PlayerBlock({
                 align === "right" ? "justify-items-end" : "justify-items-start"
             )}
         >
-            {/* image box */}
-            <div
-                className={clsx(
-                    "relative w-full rounded-[14px] overflow-hidden  md:p-8",
-                    // responsive height using aspect ratio
-                    "aspect-[4/3]"
-                )}
-            >
-                <Image src={img} alt={name} fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-transparent" />
+            <div className="relative w-full aspect-[16/10] sm:aspect-[4/3] md:aspect-[16/10] rounded-[14px] overflow-hidden bg-black/40">
+                <Image
+                    src={img}
+                    alt={name}
+                    fill
+                    sizes="(max-width: 640px) 45vw, (max-width: 1024px) 35vw, 30vw"
+                    className="object-contain p-2"  // ✅ no crop
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
             </div>
+
 
             {/* name tag */}
             <div

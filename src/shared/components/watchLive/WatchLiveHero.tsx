@@ -101,7 +101,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
             `}</style>
 
 
-            <div className="relative h-[calc(100vh-64px)]  overflow-hidden">
+            <div className="relative h-[90vh] md:h-[calc(100vh-64px)]  overflow-hidden">
                 <Slider
                     className="watchlive-slider"
                     ref={(r) => {
@@ -111,7 +111,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                 >
                     {slides.map((s) => (
                         <div key={s.id} className="relative w-full h-full">
-                            <div key={s.id} className="w-full  ">
+                            <div key={s.id} className="w-full h-[70vh] md:h-[calc(100vh-64px)]  ">
                                 <MatchHeroCard
                                     status={s.status}
                                     title={s.title}
@@ -133,8 +133,8 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                     ))}
                 </Slider>
 
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="container h-full pointer-events-auto">
+                <div className="absolute bottom-20 inset-0 pointer-events-none">
+                    <div className="container h-full pointer-events-auto ">
 
                         <div className="h-full flex items-end pb-6 sm:pb-8">
 
