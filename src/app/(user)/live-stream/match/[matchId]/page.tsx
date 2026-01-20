@@ -107,10 +107,12 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                 <SupporterGridSection
                     matchId={matchId}
                     isLive={isLive}
+                    mode={mode}
                     leftBoss={{ name: demo.topLeft.name, total: demo.topLeft.total }}
                     rightBoss={{ name: demo.topRight.name, total: demo.topRight.total }}
                     leftImg="/images/home/supported_cardimg.png"
                     rightImg="/images/home/rightPlayer_1.png"
+                    onSupport={demo.support} 
                 />
             </div>
     

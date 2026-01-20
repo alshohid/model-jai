@@ -68,7 +68,7 @@ export default function LiveMatchStage({
                         // tiktok 3-panel stage
                         <div className="absolute inset-0 grid grid-cols-3">
                             {/* left */}
-                            <div className="relative">
+                                <div className={`relative ${bossSide === "left" ? "border border-bold border-yellow-300":""}`}>
                                 <Image src={left.imageSrc} alt={left.name} fill className="object-cover" />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
                                 {/* <div className="absolute top-3 left-3 text-white font-black text-4xl drop-shadow">X</div> */}
@@ -91,7 +91,7 @@ export default function LiveMatchStage({
                             </div>
 
                             {/* right */}
-                            <div className="relative">
+                                <div className={`relative ${bossSide === "right" ? "border border-bold border-yellow-300" : ""}`}>
                                 <Image src={right.imageSrc} alt={right.name} fill className="object-cover" />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
                                 {/* {bossSide === "right" && (
@@ -118,7 +118,7 @@ export default function LiveMatchStage({
                         Fullscreen
                     </button>} */}
                     {/* Support overlay (Support Closed হলে hide) */}
-                    {!supportClosed && (
+                    {/* {!supportClosed && (
                         <div className="absolute inset-0 z-20 grid grid-cols-2">
                             <button type="button" onClick={onSupportLeft} className="relative">
                                 <span className="absolute left-3 bottom-3 rounded-lg bg-black/60 px-3 py-2 text-[12px] font-black">
@@ -131,7 +131,7 @@ export default function LiveMatchStage({
                                 </span>
                             </button>
                         </div>
-                    )}
+                    )} */}
 
                     {/* LIVE pill overlap (center bottom) */}
                   
