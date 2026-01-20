@@ -6,11 +6,15 @@ import Image from "next/image";
 
 export type GridCellStatus = "available" | "taken";
 
+export type SupportSide = "left" | "right";
+
 export type GridCell = {
     id: string;
-    status: GridCellStatus;
+    status: "available" | "taken";
     points: number;
+    ownerSide?: SupportSide; // ✅ নতুন
 };
+
 
 type Props = {
     rows: number;
