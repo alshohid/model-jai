@@ -58,7 +58,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
     return (
         <div className="min-h-screen bg-black">
             <PublicNavbar/> 
-            <div className="container">
+            <div className="w-full">
                 <LiveMatchStage
                     matchId={matchId}
                     playbackId={playbackId}
@@ -73,47 +73,49 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                     onSupportRight={() => demo.support("right", 100)}
                 />
 
-                <MatchPointsSummarySection
-                    layout={mode}
-                    isLive={isLive}
-                    left={{
-                        playerName: demo.left.name,
-                        teamLogoSrc: demo.left.teamLogoSrc || "",
-                        points: demo.left.points,
-                    }}
-                    right={{
-                        playerName: demo.right.name,
-                        teamLogoSrc: demo.right.teamLogoSrc || "",
-                        points: demo.right.points,
-                    }}
-                    supportOpen={false} 
-                />
-                {!isLive && (
-                    <div className="flex justify-center pb-10">
-                        <button
-                            onClick={startDemoLive}
-                            disabled={isScheduling}
-                            className={[
-                                "px-6 py-3 rounded-xl transition font-semibold text-white shadow-lg",
-                                isScheduling ? "bg-white/10 cursor-not-allowed" : "bg-red-600 hover:bg-red-700",
-                            ].join(" ")}
-                        >
-                            {isScheduling ? `Live in ${countdownSec}s…` : "Start Live (Demo)"}
-                        </button>
-                    </div>
-                )}
+                <div className="container">
+                    <MatchPointsSummarySection
+                        layout={mode}
+                        isLive={isLive}
+                        left={{
+                            playerName: demo.left.name,
+                            teamLogoSrc: demo.left.teamLogoSrc || "",
+                            points: demo.left.points,
+                        }}
+                        right={{
+                            playerName: demo.right.name,
+                            teamLogoSrc: demo.right.teamLogoSrc || "",
+                            points: demo.right.points,
+                        }}
+                        supportOpen={false}
+                    />
+                    {!isLive && !(mode === "tiktok") && (
+                        <div className="flex justify-center pb-10">
+                            <button
+                                onClick={startDemoLive}
+                                disabled={isScheduling}
+                                className={[
+                                    "px-6 py-3 rounded-xl transition font-semibold text-white shadow-lg",
+                                    isScheduling ? "bg-white/10 cursor-not-allowed" : "bg-red-600 hover:bg-red-700",
+                                ].join(" ")}
+                            >
+                                {isScheduling ? `Live in ${countdownSec}s…` : "Start Live (Demo)"}
+                            </button>
+                        </div>
+                    )}
 
 
-                <SupporterGridSection
-                    matchId={matchId}
-                    isLive={isLive}
-                    mode={mode}
-                    leftBoss={{ name: demo.topLeft.name, total: demo.topLeft.total }}
-                    rightBoss={{ name: demo.topRight.name, total: demo.topRight.total }}
-                    leftImg="/images/home/supported_cardimg.png"
-                    rightImg="/images/home/rightPlayer_1.png"
-                    onSupport={demo.support} 
-                />
+                    <SupporterGridSection
+                        matchId={matchId}
+                        isLive={isLive}
+                        mode={mode}
+                        leftBoss={{ name: demo.topLeft.name, total: demo.topLeft.total }}
+                        rightBoss={{ name: demo.topRight.name, total: demo.topRight.total }}
+                        leftImg="/images/home/supported_cardimg.png"
+                        rightImg="/images/home/rightPlayer_1.png"
+                        onSupport={demo.support}
+                    />
+            </div>
             </div>
     
         </div>

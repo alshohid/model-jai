@@ -117,7 +117,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                 alt={s.title}
                                 fill
                                 priority
-                                className="object-cover "
+                                className="object-contain "
                                 sizes="100vw"
                             />
                             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
