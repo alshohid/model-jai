@@ -6,10 +6,10 @@ export default function BrandMark() {
         <Link href={'/'} className="block">
             <div className="relative flex items-center justify-center ">
                 <Image
-                    src={'/images/home/logo_4.png'}
+                    src={'/images/home/main_logo.png'}
                     alt="logo"
-                    width={80}
-                    height={80}
+                    width={90}
+                    height={70}
                     className="object-cover"
                     priority
                 />
