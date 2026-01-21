@@ -3,11 +3,8 @@ import { Inter, Manrope } from "next/font/google";
 // import localFont from "next/font/local";
 // @ts-ignore
 import "./globals.css";
-import PublicNavbar from "./(public)/_components/publicNavbar/PublicNavbar";
-import FooterSection from "@/shared/components/home/FooterSection";
 import { RouteProvider } from "@/shared/providers/route/RouteProvider";
-import NavbarWithRouteRules from "./(public)/_components/publicNavbar/NavbarWithRouteRules";
-import { TwScreenSize } from "@/shared/components/TwScreenSize";
+
 import LenisProvider from "@/shared/providers/LenisProvider";
 
 const inter = Inter({
@@ -44,7 +41,7 @@ export default function RootLayout({
             {children}
           </LenisProvider>
         </RouteProvider>
-        <TwScreenSize/>
+        {/* <TwScreenSize/> */}
       </body>
     </html>
   );

@@ -10,14 +10,18 @@ import { useMatchDemoStore } from "@/shared/hooks/useMatchDemoStore";
 
 import { useSearchParams } from "next/navigation";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
+import RankingSection from "@/app/(public)/_components/rankingSection/RankingSection";
+import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
+import TakeGameSection from "@/shared/components/home/TakeGameSection";
+import FooterSection from "@/shared/components/home/FooterSection";
 
 export default function MatchDetails({ params }: { params: Promise<{ matchId: string }> }) {
     const [isScheduling, setIsScheduling] = useState(false);
     const [countdownSec, setCountdownSec] = useState<number>(0);
-    
+
     const { matchId } = React.use(params);
 
-    const searchParams = useSearchParams(); 
+    const searchParams = useSearchParams();
     const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
 
     const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "tiktok";
@@ -56,14 +60,14 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
     }, [isScheduling]);
 
     return (
-        <div className="min-h-screen bg-black">
-            <PublicNavbar/> 
+        <div className="min-h-screen ">
+            <PublicNavbar />
             <div className="w-full">
                 <LiveMatchStage
                     matchId={matchId}
                     playbackId={playbackId}
                     isLive={isLive}
-                    mode={mode} 
+                    mode={mode}
                     supportClosed={supportClosed}
                     left={demo.left}
                     right={demo.right}
@@ -89,7 +93,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         }}
                         supportOpen={false}
                     />
-                    {!isLive  && (
+                    {!isLive && (
                         <div className="flex justify-center pb-10">
                             <button
                                 onClick={startDemoLive}
@@ -115,9 +119,14 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         rightImg="/images/home/rightPlayer_1.png"
                         onSupport={demo.support}
                     />
+                </div>
+                <RankingSection />
+                <LatestNewsSection />
+                <TakeGameSection />
+                <FooterSection />
             </div>
-            </div>
-    
+
+
         </div>
     );
 }

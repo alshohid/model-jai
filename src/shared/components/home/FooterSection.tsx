@@ -11,9 +11,9 @@ type FooterLink = { label: string; href: string };
 
 const QUICK_LINKS: FooterLink[] = [
     { label: "Home", href: "/" },
-    { label: "Live Stream Match", href: "/matches" },
-    { label: "Store", href: "/buy-points" },
-    { label: "Contact", href: "/contact" },
+    { label: "Live Stream Match", href: "/live-stream" },
+    { label: "Store", href: "/point-store" },
+    { label: "Contact", href: "#" },
 ];
 
 const LEGAL_LINKS: FooterLink[] = [
