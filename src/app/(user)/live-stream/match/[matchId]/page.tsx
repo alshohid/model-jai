@@ -89,7 +89,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         }}
                         supportOpen={false}
                     />
-                    {!isLive && !(mode === "tiktok") && (
+                    {!isLive  && (
                         <div className="flex justify-center pb-10">
                             <button
                                 onClick={startDemoLive}
