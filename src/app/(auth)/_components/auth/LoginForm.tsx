@@ -29,7 +29,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
 
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="relative mt-10">
+        <form onSubmit={handleSubmit(onSubmit)} className="relative ">
             <div className="text-center">
                 <h2 className="text-[22px] font-semibold text-white">Welcome</h2>
                 <p className="mt-2 text-[13px] text-white/55">

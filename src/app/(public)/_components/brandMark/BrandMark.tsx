@@ -4,12 +4,12 @@ import Link from "next/link";
 export default function BrandMark() {
     return (
         <Link href={'/'} className="block">
-            <div className="relative flex items-center justify-center ">
+            <div className="w-full flex items-center justify-center">
                 <Image
-                    src={'/images/home/main_logo.png'}
+                    src={'/images/home/brand-logo.png'}
                     alt="logo"
-                    width={90}
-                    height={70}
+                    width={80}
+                    height={80}
                     className="object-cover"
                     priority
                 />

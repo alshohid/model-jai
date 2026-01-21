@@ -13,7 +13,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="relative mt-10">
+        <form onSubmit={handleSubmit(onSubmit)} className="relative ">
             <div className="text-center">
                 <h2 className="text-[22px] font-semibold text-white">
                     Welcome

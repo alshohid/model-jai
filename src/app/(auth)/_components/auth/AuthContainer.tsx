@@ -24,7 +24,7 @@ export default function AuthContainer() {
             "
             >
                 <div className="grid grid-cols-1 lg:grid-cols-[8fr_4fr]">
-                    <div className="hidden lg:block">
+                    <div className="hidden lg:block w-full">
                         <LeftHeroPanel />
                     </div>
 
