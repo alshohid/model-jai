@@ -8,6 +8,7 @@ import GamesSection from "./_components/gamesSection/GamesSection";
 import ChooseCategorySection from "@/shared/components/home/ChooseCategorySection";
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
+import VideosSection from "@/shared/components/home/VideosSection";
 
 
 const Public = () => {
@@ -16,7 +17,8 @@ const Public = () => {
             <HeroSection />
             <MatchesSection />
             <RankingSection />
-            <WatchLivestreamSection/>
+            <WatchLivestreamSection />
+            <VideosSection/>
             <GamesSection />
             <ChooseCategorySection />
             <LatestNewsSection />

@@ -35,12 +35,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${manrope.variable} antialiased `}
       >
-
+        <LenisProvider>
         <RouteProvider>
-          <LenisProvider>
+          
             {children}
-          </LenisProvider>
-        </RouteProvider>
+        
+          </RouteProvider>
+        </LenisProvider>
         {/* <TwScreenSize/> */}
       </body>
     </html>

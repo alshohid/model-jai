@@ -9,10 +9,12 @@ import {
     type CarouselApi,
 } from "@/components/ui/carousel"
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton"
+import NeonHeadline from "@/shared/UI/reusable/head/NeonHeadline"
 
 const slides = [
+    "/images/home/chose_1.png",
+    "/images/home/chose_2.png",
     "/images/home/carousel1.jpg",
-    "/images/home/herobg.png",
     "/images/home/carousel3.png",
 ]
 export default function WatchLivestreamSection() {
@@ -33,7 +35,7 @@ export default function WatchLivestreamSection() {
             api.off("select", onSelect)
         }
     }, [api])
-   
+
     return (
         <section className="w-full bg-transparent relative">
 
@@ -78,6 +80,7 @@ export default function WatchLivestreamSection() {
                         <StartStreamingButton>
                             Play Live
                         </StartStreamingButton>
+                        <NeonHeadline className="py-4" />
                     </div>
 
                     <div className="relative w-full lg:flex-1 lg:max-w-[850px]">

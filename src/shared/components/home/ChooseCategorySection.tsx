@@ -5,11 +5,11 @@ import CategoryCarousel, { CategoryItem } from "@/shared/UI/reusable/carousel/Ca
 
 const items: CategoryItem[] = [
     { id: "1", title: "MORTAL COMBAT", imageSrc: "/images/gm6.png" },
-    { id: "2", title: "EA SPORTS FC", imageSrc: "/images/gm1.jpeg" },
+    // { id: "2", title: "EA SPORTS FC", imageSrc: "/images/gm1.jpeg" },
     { id: "3", title: "FC26", imageSrc: "/images/gm3.png" },
     { id: "11", title: "MORTAL COMBAT", imageSrc: "/images/gm6.png" },
-    { id: "4", title: "EA SPORTS FC", imageSrc: "/images/gm2.jpeg" },
-    { id: "5", title: "EA SPORTS FC", imageSrc: "/images/gm5.jpeg" },
+    // { id: "4", title: "EA SPORTS FC", imageSrc: "/images/gm2.jpeg" },
+    // { id: "5", title: "EA SPORTS FC", imageSrc: "/images/gm5.jpeg" },
     { id: "6", title: "CAR RACING", imageSrc: "/images/gm7.jpeg" },
     { id: "7", title: "TRUCK RACING", imageSrc: "/images/home/cat_1.png" },
     { id: "8", title: "AIR CRAFT", imageSrc: "/images/home/cat_2.png" },

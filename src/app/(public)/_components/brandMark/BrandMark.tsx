@@ -8,8 +8,8 @@ export default function BrandMark() {
                 <Image
                     src={'/images/home/brand-logo.png'}
                     alt="logo"
-                    width={80}
-                    height={80}
+                    width={90}
+                    height={90}
                     className="object-cover"
                     priority
                 />
