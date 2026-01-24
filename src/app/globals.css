@@ -70,6 +70,10 @@
 mux-player::part(video) {
   object-fit: cover;
 }
+button:not(:disabled),
+[role="button"]:not(:disabled){
+  cursor: pointer;
+}
 /* Legacy Edge (pre-Chromium) */
 @supports (-ms-overflow-style: none) {
   .custom-scroll {

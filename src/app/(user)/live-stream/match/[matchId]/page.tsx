@@ -32,32 +32,37 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
     const { isLive } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
     const demo = useMatchDemoStore(matchId);
     const supportClosed = isLive;
-    const startDemoLive = () => {
-
-        const seconds = 4;
+    const startDemoLive = (seconds = 2) => {
         const t = new Date(Date.now() + seconds * 1000).toISOString();
         setScheduledAt(t);
         setCountdownSec(seconds);
         setIsScheduling(true);
     };
 
-
     useEffect(() => {
-        if (!isScheduling) return;
+        // page load er 2 sec pore auto "live" trigger
+        startDemoLive(4);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-        const timer = setInterval(() => {
-            setCountdownSec((s) => {
-                if (s <= 1) {
-                    clearInterval(timer);
-                    setIsScheduling(false);
-                    return 0;
-                }
-                return s - 1;
-            });
-        }, 1000);
 
-        return () => clearInterval(timer);
-    }, [isScheduling]);
+
+    // useEffect(() => {
+    //     if (!isScheduling) return;
+
+    //     const timer = setInterval(() => {
+    //         setCountdownSec((s) => {
+    //             if (s <= 1) {
+    //                 clearInterval(timer);
+    //                 setIsScheduling(false);
+    //                 return 0;
+    //             }
+    //             return s - 1;
+    //         });
+    //     }, 1000);
+
+    //     return () => clearInterval(timer);
+    // }, [isScheduling]);
 
     return (
         <div className="min-h-screen ">
@@ -93,7 +98,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         }}
                         supportOpen={false}
                     />
-                    {!isLive && (
+                    {/* {!isLive && (
                         <div className="flex justify-center pb-10">
                             <button
                                 onClick={startDemoLive}
@@ -106,7 +111,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                                 {isScheduling ? `Live in ${countdownSec}s…` : "Start Live (Demo)"}
                             </button>
                         </div>
-                    )}
+                    )} */}
 
 
                     <SupporterGridSection
@@ -116,7 +121,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         leftBoss={{ name: demo.topLeft.name, total: demo.topLeft.total }}
                         rightBoss={{ name: demo.topRight.name, total: demo.topRight.total }}
                         leftImg="/images/home/supported_cardimg.png"
-                        rightImg="/images/home/rightPlayer_1.png"
+                        rightImg="/images/home/rightSupport.jpg"
                         onSupport={demo.support}
                     />
                 </div>

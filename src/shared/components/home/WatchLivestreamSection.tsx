@@ -12,7 +12,7 @@ import StartStreamingButton from "@/shared/UI/button/StartStreamingButton"
 import NeonHeadline from "@/shared/UI/reusable/head/NeonHeadline"
 
 const slides = [
-    "/images/home/chose_1.png",
+    // "/images/home/chose_1.png",
     "/images/home/chose_2.png",
     "/images/home/carousel1.jpg",
     "/images/home/carousel3.png",
@@ -51,7 +51,7 @@ export default function WatchLivestreamSection() {
                 <div className="w-full flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-[60px]">
                     {/* LEFT CONTENT */}
                     <div className="w-full lg:w-[420px] text-white relative">
-                        
+
                         <button
                             onClick={() => api?.scrollPrev()}
                             className="cursor-pointer absolute left-3 hidden md:block top-1/2 -translate-y-1/2 z-20 text-gray-300 hover:text-white lg:-left-18"
@@ -123,7 +123,7 @@ export default function WatchLivestreamSection() {
                                 alt="arrow left"
                                 width={30}
                                 height={30}
-                                className= "w-4 h-4 md:!w-6 md:!h-6"
+                                className="w-4 h-4 md:!w-6 md:!h-6"
 
                             />
                         </button>

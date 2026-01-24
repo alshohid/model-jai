@@ -27,13 +27,13 @@ export default function MatchPointsSummarySection({
 }: Props) {
     return (
         <section className={cn("p-4 sm:p-6 py-4", className)}>
-            {isLive && (
+            {/* {isLive && (
                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-40">
                     <span className="px-4 py-2 rounded-full bg-red-600 font-black text-[12px] border border-white/20">
                         LIVE
                     </span>
                 </div>
-            )}
+            )} */}
             <div
                 className={cn(
                     "mx-auto",
@@ -48,6 +48,7 @@ export default function MatchPointsSummarySection({
                         title="Matched Points"
                         points={left.points}
                         compact 
+                        positive={true}
                     />
 
                     {/* VS */}
@@ -67,6 +68,7 @@ export default function MatchPointsSummarySection({
                         title="Unmatched Points"
                         points={right.points}
                         compact
+                        positive={false}
                     />
                 </div>
             </div>

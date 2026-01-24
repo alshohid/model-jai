@@ -20,7 +20,7 @@ export default function PointCard({
     currency = "$",
     imageSrc,
     onBuy,
-    buyLabel = "Buy Coins",
+    buyLabel = "Buy Points",
     className,
     disabled = false,
 }: Props) {

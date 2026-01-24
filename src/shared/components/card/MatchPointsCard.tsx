@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
+import { PhilippinePeso } from 'lucide-react';
 
 type Props = {
     playerName: string;
@@ -12,6 +13,7 @@ type Props = {
     onShare?: () => void;
     compact?: boolean; // 👈 new
     className?: string;
+    positive: boolean;
 };
 
 export default function MatchPointsCard({
@@ -20,9 +22,13 @@ export default function MatchPointsCard({
     title,
     points,
     onShare,
-    compact = false,
+    compact = true,
     className,
+    positive
 }: Props) {
+    
+    const sign = positive ? "+" : "-";
+
     return (
         <div
             className={cn(
@@ -66,15 +72,25 @@ export default function MatchPointsCard({
                         {playerName}
                     </div>
 
-                    {/* title + points */}
                     <div
                         className={cn(
                             "font-bold text-white truncate",
                             compact ? "text-[8px]" : "text-[18px] md:text-[26px]"
                         )}
                     >
-                        {title} - {points}
+                        {title}
+                        <div className="flex items-center">
+                            <span className="text-[1.5rem]">
+                                    {sign}
+                                {points}
+                            </span>
+                            <span className="ml-1">
+                                <PhilippinePeso size={20} />
+                            </span>
+                        </div>
+
                     </div>
+
 
                     {/* button */}
                     <div className={compact ? "mt-2" : "mt-4"}>

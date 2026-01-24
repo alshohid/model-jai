@@ -17,15 +17,15 @@ export default function PointStoreListSection() {
 
     const packs: PointPack[] = useMemo(
         () => [
-            { id: "pack-50", points: 50, price: "17.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-100", points: 100, price: "29.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-250", points: 250, price: "59.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-500", points: 500, price: "99.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-750", points: 750, price: "149.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-1000", points: 1000, price: "179.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-1500", points: 1500, price: "249.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-2000", points: 2000, price: "319.00", imageSrc: "/images/home/coin.png" },
-            { id: "pack-5000", points: 5000, price: "699.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-50", points: 50, price: "50.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-100", points: 100, price: "100.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-250", points: 250, price: "250.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-500", points: 500, price: "500.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-750", points: 750, price: "750.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-1000", points: 1000, price: "1000.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-1500", points: 1500, price: "1500.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-2000", points: 2000, price: "2000.00", imageSrc: "/images/home/coin.png" },
+            { id: "pack-5000", points: 5000, price: "5000.00", imageSrc: "/images/home/coin.png" },
         ],
         []
     );

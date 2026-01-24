@@ -13,15 +13,15 @@ export default function NeonHeadline({
                 className={cn(
                     "text-center font-extrabold uppercase",
                     "leading-[1.05]",
-                    "text-[18px] sm:text-[26px] md:text-[34px] lg:text-[44px]",
+                    "text-[18px] md:text-[20px] ",
                     "tracking-wider",
                     "text-[#22D3FF]"
                 )}
                 style={{
                     // stroke + glow combo
-                    WebkitTextStroke: "2px rgba(255, 0, 214, 0.85)",
+                    WebkitTextStroke: "2px rgba(151, 122, 189, 0.85)",
                     textShadow:
-                        "0 2px 0 rgba(0,0,0,0.75), 0 0 10px rgba(255,0,214,0.55), 0 0 22px rgba(34,211,255,0.45)",
+                        "0 2px 0 rgba(92, 34, 34, 0.75), 0 0 10px rgba(109, 56, 100, 0.55), 0 0 22px rgba(34,211,255,0.45)",
                 }}
             >
                 SUPPORT YOUR FAVORITE ARTIST
