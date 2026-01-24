@@ -18,7 +18,7 @@ export function useMatchDemoStore(matchId: string) {
 
     const [left, setLeft] = useState({
         name: "JACK",
-        points: 1000,
+        points: 2000,
         imageSrc: "/images/home/panel_left.png",
         teamLogoSrc: "/images/home/bayern.png",
     });
@@ -40,8 +40,8 @@ export function useMatchDemoStore(matchId: string) {
     );
 
     const [totals, setTotals] = useState<{ left: Totals; right: Totals }>({
-        left: { "Cameron Williamson": 1000 },
-        right: { "Cameron Williamson": 2000 },
+        left: { "Cameron Williamson": 4000 },
+        right: { "Mastor j@y model": 2000 },
     });
 
     const bossSide = useMemo(() => {

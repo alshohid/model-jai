@@ -4,6 +4,8 @@ import Image from "next/image";
 import MuxPlayer from "@mux/mux-player-react";
 import { cn } from "@/shared/lib/utils/cn";
 import type { Side } from "@/shared/hooks/useMatchDemoStore";
+import { PhilippinePeso } from 'lucide-react';
+
 
 type StageProps = {
     matchId: string;
@@ -71,12 +73,12 @@ export default function LiveMatchStage({
                                 <div className={`relative ${bossSide === "left" ? "border border-bold border-yellow-300":""}`}>
                                 <Image src={left.imageSrc} alt={left.name} fill className="object-cover" />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
-                                {/* <div className="absolute top-3 left-3 text-white font-black text-4xl drop-shadow">X</div> */}
+
                                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
                                         <div>
                                             <Image src={"/images/home/taken_slot.png"} alt="available" width={70} height={70}  />
                                         </div>
-                                    <div className="text-[#B7FF4A] font-extrabold text-xl">{left.points}</div>
+                                        <div className="text-[#B7FF4A] font-extrabold text-xl flex items-center"> <span className="text-2xl">{left.points} </span>  <span className="text-white"><PhilippinePeso  size={20}/></span></div>
                                     <div className="text-[#DD2E03] font-extrabold text-2xl">{left.name}</div>
                                 </div>
                             </div>
@@ -85,26 +87,28 @@ export default function LiveMatchStage({
                             <div className="relative">
                                 <Image src={middle.imageSrc} alt="model" fill className="object-cover" />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
-                                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
-                                    <div className="text-[#DD2E03] font-extrabold text-2xl">{middle.label}</div>
-                                </div>
+                                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
+                                        <div
+                                            className="text-[#80f03f] font-extrabold text-2xl"
+                                            style={{
+                                                textShadow: "0 2px 8px rgba(255, 193, 7, 0.5)",
+                                            }}
+                                        >
+                                            {middle.label}
+                                        </div>
+                                    </div>
+
                             </div>
 
                             {/* right */}
                                 <div className={`relative ${bossSide === "right" ? "border border-bold border-yellow-300" : ""}`}>
                                 <Image src={right.imageSrc} alt={right.name} fill className="object-cover" />
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
-                                {/* {bossSide === "right" && (
-                                    <div className="absolute top-2 right-2 bg-[#F9C80E] text-black font-black px-3 py-1 rounded-lg">
-                                        BOSS
-                                    </div>
-                                )} */}
-                                {/* <div className="absolute top-3 right-3 text-white font-black text-4xl drop-shadow">O</div> */}
                                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
                                         <div>
                                             <Image src={"/images/home/available_slot.png"} alt="available" width={70} height={70}/>
                                         </div>
-                                    <div className="text-[#B7FF4A] font-extrabold text-xl">{right.points}</div>
+                                        <div className="text-[#B7FF4A] font-extrabold text-xl flex items-center"> <span className="text-2xl">{right.points} </span>     <span className="text-white"><PhilippinePeso size={20} /></span></div>
                                     <div className="text-[#DD2E03] font-extrabold text-2xl">{right.name}</div>
                                 </div>
                             </div>
