@@ -14,11 +14,12 @@ import RankingSection from "@/app/(public)/_components/rankingSection/RankingSec
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
 import FooterSection from "@/shared/components/home/FooterSection";
+import {
+    useReferralRedirect,
+    ReferralRegistrationPrompt,
+} from "@/shared/hooks/useReferralRedirect";
 
 export default function MatchDetails({ params }: { params: Promise<{ matchId: string }> }) {
-    const [isScheduling, setIsScheduling] = useState(false);
-    const [countdownSec, setCountdownSec] = useState<number>(0);
-
     const { matchId } = React.use(params);
 
     const searchParams = useSearchParams();
@@ -28,22 +29,24 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
 
     const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
 
-    const [scheduledAt, setScheduledAt] = useState<string | null>(null);
+    // Initialize scheduledAt with a future time (4 seconds from now)
+    const [scheduledAt, setScheduledAt] = useState<string | null>(() => {
+        if (typeof window !== "undefined") {
+            return new Date(Date.now() + 4 * 1000).toISOString();
+        }
+        return null;
+    });
     const { isLive } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
     const demo = useMatchDemoStore(matchId);
     const supportClosed = isLive;
-    const startDemoLive = (seconds = 2) => {
-        const t = new Date(Date.now() + seconds * 1000).toISOString();
-        setScheduledAt(t);
-        setCountdownSec(seconds);
-        setIsScheduling(true);
-    };
 
-    useEffect(() => {
-        // page load er 2 sec pore auto "live" trigger
-        startDemoLive(4);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // Referral redirect handling
+    const {
+        showRegistrationPrompt,
+        handleRegister,
+        handleLogin,
+        handleSkip,
+    } = useReferralRedirect();
 
 
 
@@ -131,7 +134,14 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                 <FooterSection />
             </div>
 
-
+            {/* Referral Registration Prompt */}
+            <ReferralRegistrationPrompt
+                open={showRegistrationPrompt}
+                onRegister={handleRegister}
+                onLogin={handleLogin}
+                onSkip={handleSkip}
+                artistName={demo.left.name || demo.right.name}
+            />
         </div>
     );
 }

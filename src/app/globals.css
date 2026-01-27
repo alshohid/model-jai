@@ -173,3 +173,58 @@ button:not(:disabled),
     @apply bg-bg text-text font-sans;
   }
 }
+
+/* Fix react-select horizontal scrollbar */
+.react-select-no-horizontal-scroll .react-select__menu {
+  overflow-x: hidden !important;
+}
+
+.react-select-no-horizontal-scroll .react-select__menu-list {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  max-height: 300px;
+}
+
+/* Hide horizontal scrollbar in react-select menu */
+.react-select__menu-list::-webkit-scrollbar:horizontal {
+  display: none !important;
+  height: 0 !important;
+}
+
+.react-select__menu-list {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #00C3FF transparent;
+}
+
+.react-select__menu-list::-webkit-scrollbar {
+  width: 4px;
+  height: 0px !important; /* Hide horizontal scrollbar */
+}
+
+.react-select__menu-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.react-select__menu-list::-webkit-scrollbar-thumb {
+  background: #00C3FF;
+  border-radius: 2px;
+}
+
+/* Ensure options don't cause horizontal overflow */
+.react-select__option {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Fix for all react-select instances */
+div[id*="react-select"] .react-select__menu-list {
+  overflow-x: hidden !important;
+}
+
+div[id*="react-select"] .react-select__menu-list::-webkit-scrollbar:horizontal {
+  display: none !important;
+  height: 0 !important;
+}

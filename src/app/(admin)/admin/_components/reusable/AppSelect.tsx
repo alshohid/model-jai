@@ -54,9 +54,20 @@ export default function AppSelect({
         valueContainer: (base) => ({
             ...base,
             padding: "0 16px",
+            overflow: "hidden",
         }),
         singleValue: (base) => ({
             ...base,
+            color: "#fff",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "100%",
+        }),
+        input: (base) => ({
+            ...base,
+            margin: 0,
+            padding: 0,
             color: "#fff",
         }),
         placeholder: (base) => ({
@@ -72,6 +83,23 @@ export default function AppSelect({
             overflow: "hidden",
             zIndex: 80,
         }),
+        menuList: (base) => ({
+            ...base,
+            padding: "4px",
+            overflowX: "hidden", // Hide horizontal scrollbar
+            overflowY: "auto",
+            maxHeight: "300px",
+            "&::-webkit-scrollbar": {
+                width: "4px",
+            },
+            "&::-webkit-scrollbar-track": {
+                background: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+                background: "#00C3FF",
+                borderRadius: "2px",
+            },
+        }),
         option: (base, state) => ({
             ...base,
             backgroundColor: state.isFocused
@@ -81,6 +109,10 @@ export default function AppSelect({
             cursor: "pointer",
             borderRadius: 12,
             margin: 4,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: "100%",
         }),
         indicatorSeparator: () => ({ display: "none" }),
         dropdownIndicator: (base) => ({
@@ -90,15 +122,18 @@ export default function AppSelect({
     };
 
     return (
-        <Select
-            className={cn("w-full text-sm", className)}
-            isDisabled={disabled}
-            value={selectedOption}
-            options={options}
-            placeholder={placeholder}
-            styles={styles}
-            onChange={(opt) => onValueChange?.(opt?.value || "")}
-            isOptionDisabled={(o) => o.disabled ?? false}
-        />
+        <div className={cn("w-full", className)}>
+            <Select
+                className="text-sm react-select-no-horizontal-scroll"
+                classNamePrefix="react-select"
+                isDisabled={disabled}
+                value={selectedOption}
+                options={options}
+                placeholder={placeholder}
+                styles={styles}
+                onChange={(opt) => onValueChange?.(opt?.value || "")}
+                isOptionDisabled={(o) => o.disabled ?? false}
+            />
+        </div>
     );
 }

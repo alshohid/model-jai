@@ -32,6 +32,8 @@ type Props = {
     contentClassName?: string;
     align?: "start" | "center" | "end";
     sideOffset?: number;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 };
 
 export default function AppDropdownMenu({
@@ -40,9 +42,11 @@ export default function AppDropdownMenu({
     contentClassName,
     align = "end",
     sideOffset = 10,
+    open,
+    onOpenChange,
 }: Props) {
     return (
-        <DropdownMenu>
+        <DropdownMenu open={open} onOpenChange={onOpenChange}>
             <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
 
             <DropdownMenuContent

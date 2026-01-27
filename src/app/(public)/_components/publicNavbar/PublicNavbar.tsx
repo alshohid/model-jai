@@ -10,6 +10,7 @@ import { useAuth } from "@/shared/providers/auth/useAuth";
 import { cn } from "@/shared/lib/utils/cn";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
 import MobileNavSheet from "./MobileNavDrawer";
+import { Bell } from "lucide-react";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -71,9 +72,23 @@ export default function PublicNavbar() {
 
                         {isAuthenticated ? (
                             <div className="flex items-center gap-4">
+                                <Link
+                                    href="/notifications"
+                                    className={cn(
+                                        "relative inline-flex items-center justify-center",
+                                        "size-10 rounded-lg",
+                                        "bg-white/10 hover:bg-white/15 border border-white/20",
+                                        "text-white transition-all",
+                                        pathname === "/notifications" && "bg-[#FF2EC8]/20 border-[#FF2EC8]/30"
+                                    )}
+                                >
+                                    <Bell className="size-5" />
+                                    {/* Unread badge */}
+                                    <span className="absolute -top-1 -right-1 size-3 bg-[#FF2EC8] rounded-full border-2 border-black" />
+                                </Link>
                                 <PointsButton
                                     points={35000}
-                                    icon={"/images/home/point_icon.png" as any}
+                                    icon={"/images/home/point_icon.png" }
                                     onClick={() => console.log("open buy points")}
 
                                 />

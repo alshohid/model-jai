@@ -5,6 +5,7 @@ import MuxPlayer from "@mux/mux-player-react";
 import { cn } from "@/shared/lib/utils/cn";
 import type { Side } from "@/shared/hooks/useMatchDemoStore";
 import { PhilippinePeso } from 'lucide-react';
+import MatchGuidelinesDialog from "@/shared/components/match/MatchGuidelinesDialog";
 
 
 type StageProps = {
@@ -42,6 +43,10 @@ export default function LiveMatchStage({
     return (
         <section className="w-full bg-black text-white">
             <div className={cn("mx-auto w-full  px-3 md:px-4 pt-2")}>
+                {/* Guidelines Icon */}
+                <div className="flex justify-end mb-2">
+                    <MatchGuidelinesDialog matchId={matchId} />
+                </div>
                 {/* Stage */}
                 <div className="relative w-full aspect-video bg-black overflow-hidden rounded-md border border-white/10">
                     {/* Content */}
@@ -54,12 +59,7 @@ export default function LiveMatchStage({
                                 playsInline
                                 streamType="live"
                                 className="absolute inset-0 w-full h-full"
-                                style={
-                                    {
-                                        // @ts-ignore
-                                        "--media-object-fit": "cover",
-                                    } as any
-                                }
+                               
                             />
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-white/70">

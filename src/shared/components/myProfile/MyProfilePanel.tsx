@@ -7,6 +7,7 @@ import FavoriteButton from "@/shared/UI/button/FavoriteButton";
 import { StatCard } from "../card/StatCard";
 import { MiniStat } from "../card/MiniStat";
 import { InfoRow } from "../card/InfoRow";
+import BigBossIndicator from "@/shared/components/user/BigBossIndicator";
 
 type ProfileInfo = {
     name: string;
@@ -28,6 +29,7 @@ type StatItem = {
 type Props = {
     profile: ProfileInfo;
     stats: StatItem[];
+    isBigBoss?: boolean;
     onEditProfile?: () => void;
     onSendMoney?: () => void;
     onReferralLink?: () => void;
@@ -38,6 +40,7 @@ type Props = {
 export default function MyProfilePanel({
     profile,
     stats,
+    isBigBoss = false,
     onEditProfile,
     onSendMoney,
     onReferralLink,
@@ -58,9 +61,12 @@ export default function MyProfilePanel({
             <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6 lg:gap-10">
                 {/* LEFT: Profile image */}
                 <div>
-                    <h3 className="text-white font-semibold text-[22px] text-center mb-4">
-                        My Profile
-                    </h3>
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <h3 className="text-white font-semibold text-[22px] text-center">
+                            My Profile
+                        </h3>
+                        <BigBossIndicator isBigBoss={isBigBoss} size="md" />
+                    </div>
 
                     <div className="overflow-hidden rounded-[24px]">
                         <div className="relative w-full aspect-[4/5]">
@@ -92,7 +98,10 @@ export default function MyProfilePanel({
                     <div>
                         <div className="flex justify-between items-start gap-4">
                             <div className="space-y-2 py-3 md:py-8">
-                                <InfoRow label="Name" value={profile.name} />
+                                <div className="flex items-center gap-2">
+                                    <InfoRow label="Name" value={profile.name} />
+                                    <BigBossIndicator isBigBoss={isBigBoss} size="sm" />
+                                </div>
                                 <InfoRow label="Email" value={profile.email} />
                                 <InfoRow label="Contact" value={profile.contact} />
                                 <InfoRow label="Nationality" value={profile.nationality} />
