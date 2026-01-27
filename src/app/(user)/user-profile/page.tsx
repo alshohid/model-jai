@@ -16,7 +16,7 @@ const UserProfile = () => {
             <MyProfileSection />
             
             {/* Instagram-Style User Search Section */}
-            <div className="py-5 md:py-10">
+            <div className="container py-5 md:py-10">
                 <InstagramStyleUserSearch
                     onUserClick={(user) => {
                         console.log("User clicked:", user);

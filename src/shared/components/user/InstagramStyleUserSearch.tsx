@@ -120,7 +120,7 @@ export default function InstagramStyleUserSearch({
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-white/50" />
                         <input
                             type="text"
-                            placeholder="Search with Meta AI"
+                            placeholder="Search artist name or something.."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className={cn(

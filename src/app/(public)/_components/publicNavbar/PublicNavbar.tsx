@@ -71,13 +71,13 @@ export default function PublicNavbar() {
                         </nav>
 
                         {isAuthenticated ? (
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 md:gap-4">
                                 <Link
                                     href="/notifications"
                                     className={cn(
                                         "relative inline-flex items-center justify-center",
-                                        "size-10 rounded-lg",
-                                        "bg-white/10 hover:bg-white/15 border border-white/20",
+                                        " size-6 md:size-10 rounded-lg",
+                                        "bg-[#FF2EC8]/20 border-[#FF2EC8]/30",
                                         "text-white transition-all",
                                         pathname === "/notifications" && "bg-[#FF2EC8]/20 border-[#FF2EC8]/30"
                                     )}
