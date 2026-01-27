@@ -79,7 +79,8 @@ export default function InstagramStyleUserSearch({
         : [];
 
     const handleUserClick = (user: User) => {
-        router.push(`/user-profile?user=${user.id}`);
+        // Navigate to artist profile page
+        router.push(`/artist/${user.id}`);
         onUserClick?.(user);
     };
 
