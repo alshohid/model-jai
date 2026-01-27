@@ -53,13 +53,13 @@ export default function SupporterGridSection({
     // }
 
     return (
-        <section className="w-full bg-black">
+        <section className="w-full ">
 
-            <div className="mx-auto w-full px-3 md:px-4 py-6">
+            <div className="bg-black mx-auto w-full px-3 md:px-4 py-6">
                 <div className="grid grid-cols-[1fr_auto_1fr] md:grid-cols-[1fr_100px_1fr] gap-4 items-center">
-                    <BossCard name={leftBoss.name} img={leftImg} supportPlayerName="TEAM JACK" />
+                    <BossCard name={leftBoss.name} img={leftImg} supportPlayerName="TEAM JACK" total={leftBoss.total} />
                     <div className="text-[14px] sm:text-[22px] font-extrabold text-center">VS</div>
-                    <BossCard name={rightBoss.name} img={rightImg} supportPlayerName="TEAM STEEVE" />
+                    <BossCard name={rightBoss.name} img={rightImg} supportPlayerName="TEAM STEEVE" total={rightBoss.total} />
                 </div>
 
                 <h2
@@ -168,12 +168,29 @@ function SelectSideCard({
 }
 
 
-function BossCard({ name, img, supportPlayerName }: { name: string; img: string, supportPlayerName :string}) {
+function BossCard({ name, img, supportPlayerName, total }: { name: string; img: string, supportPlayerName :string, total :number}) {
     return (
         <div className="relative"
         >
-            <div className="text-center">
-                <h3 className=" text-[1rem] font-extrabold md:text-[1.8rem] pb-2 md:pb-4">{supportPlayerName}</h3>
+            <div className="text-center flex flex-col items-center justify-center mb-2 md:mb-4">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                    <div className="text-white font-black text-[0.9rem] md:text-[1.2rem]">{total}</div>
+                    <div className="text-[#6EC1FF] flex items-center justify-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" className="text-[#6EC1FF]" fill="none">
+                            <path
+                                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                            />
+                            <path
+                                d="M4 20a8 8 0 0 1 16 0"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                            />
+                        </svg>
+                    </div>
+                </div>
+                <h3 className="text-white font-extrabold text-[1rem] md:text-[1.8rem] uppercase">{supportPlayerName}</h3>
             </div>
             <div className=" rounded-xl bg-black/40 border border-white/10 p-3">
 
