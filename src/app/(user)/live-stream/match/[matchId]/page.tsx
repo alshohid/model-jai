@@ -92,6 +92,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                     <MatchPointsSummarySection
                         layout={mode}
                         isLive={isLive}
+                        matchId={matchId}
                         left={{
                             playerName: demo.left.name,
                             teamLogoSrc: demo.left.teamLogoSrc || "",

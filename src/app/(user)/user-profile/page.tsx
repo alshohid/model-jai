@@ -16,21 +16,6 @@ const UserProfile = () => {
         <div>
             <PublicNavbar />
             <MyProfileSection />
-            
-            {/* Instagram-Style User Search Section */}
-            {/* <div className="container py-5 md:py-10">
-                <InstagramStyleUserSearch
-                    onUserClick={(user) => {
-                        // Navigate to artist profile page
-                        router.push(`/artist/${user.id}`);
-                    }}
-                    onSubscribe={(userId) => {
-                        console.log("Subscribed to user:", userId);
-                        // Handle subscription
-                    }}
-                />
-            </div> */}
-
             <PastMatchSupportedTable />
             <ReferrelLinkTable />
             <MissionarySection />

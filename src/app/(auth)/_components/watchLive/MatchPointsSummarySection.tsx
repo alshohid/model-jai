@@ -15,6 +15,7 @@ type Props = {
     supportOpen?: boolean;
     left: SideInfo;
     right: SideInfo;
+    matchId?: string;
     className?: string;
 };
 
@@ -23,6 +24,7 @@ export default function MatchPointsSummarySection({
     supportOpen = false,
     left,
     right,
+    matchId,
     className,
 }: Props) {
     return (
@@ -47,8 +49,11 @@ export default function MatchPointsSummarySection({
                         teamLogoSrc={left.teamLogoSrc}
                         title="Matched Points"
                         points={left.points}
-                        compact 
+                        compact
                         positive={true}
+                        shareTitle={`Support ${left.playerName}`}
+                        matchId={matchId}
+                        playerRef="left"
                     />
 
                     {/* VS */}
@@ -69,6 +74,9 @@ export default function MatchPointsSummarySection({
                         points={right.points}
                         compact
                         positive={false}
+                        shareTitle={`Support ${right.playerName}`}
+                        matchId={matchId}
+                        playerRef="right"
                     />
                 </div>
             </div>

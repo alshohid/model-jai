@@ -213,9 +213,8 @@ function FlyingPeso({
                 left: "50%",
                 transform: "translateX(-50%)",
                 animation: "pesoFly 0.9s ease-out forwards",
-                // @ts-ignore
-                ["--tx" ]: `${xPercent - 50}%`,
-            }}
+                ["--tx" as string]: `${xPercent - 50}%`,
+            } as React.CSSProperties}
         >
             <div className="h-10 w-10 rounded-full bg-white/10 border border-white/15 backdrop-blur-md flex items-center justify-center">
                 <span className="text-white text-lg font-black">₱</span>
@@ -246,16 +245,12 @@ export default function LiveMatchStage({
     playbackId,
     isLive,
     mode,
-    supportClosed,
     left,
     right,
     middle,
     bossSide,
-    onSupportLeft,
-    onSupportRight,
     tipEnabled = false,
 }: StageProps) {
-    const playerId = `mux-${matchId}`;
 
     const showTipUI = tipEnabled && mode === "tiktok";
 

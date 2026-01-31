@@ -5,14 +5,28 @@ import MyProfilePanel from "./MyProfilePanel"
 import  { useState } from "react";
 import SendMoneyDialog from "@/app/(auth)/_components/myProfile/SendMoneyDialog";
 import WithdrawalDialog from "@/app/(auth)/_components/myProfile/WithdrawalDalog";
-import ArtistReferralLink from "@/shared/components/user/ArtistReferralLink";
-import AppDialog from "@/shared/components/modal/AppDialog";
+import ReferralShareSheet from "./ReferralShareSheet";
+
+const REFERRAL_ARTIST_ID = "michael-rohan";
+const REFERRAL_ARTIST_NAME = "Michael Rohan";
+const REFERRAL_NEXT_MATCH_ID = "demo-match-123";
 
 const MyProfileSection = () => {
     const [openEdit, setOpenEdit] = useState(false);
     const [sendMoneyOpen, setSendMoneyOpen] = useState(false);
     const [withdrawal, setwithdrawalOpen] = useState(false);
     const [referralLinkOpen, setReferralLinkOpen] = useState(false);
+    const [referralShareUrl, setReferralShareUrl] = useState("");
+
+    const openReferralSheet = () => {
+        if (typeof window !== "undefined") {
+            setReferralShareUrl(
+                `${window.location.origin}/live-stream/match/${REFERRAL_NEXT_MATCH_ID}?ref=ref_${REFERRAL_ARTIST_ID}_${Date.now()}`
+            );
+        }
+        setReferralLinkOpen(true);
+    };
+
     const isBigBoss = true; // TODO: Get from API/user data
     const profile = {
         name: "Michael Rohan",
@@ -45,7 +59,7 @@ const MyProfileSection = () => {
                 isBigBoss={isBigBoss}
                 onEditProfile={() => setOpenEdit(true)}
                 onSendMoney={() => setSendMoneyOpen(true)}
-                onReferralLink={() => setReferralLinkOpen(true)}
+                onReferralLink={openReferralSheet}
                 onWithdrawRequest={() => setwithdrawalOpen(true)}
             />
             <EditProfileDialog
@@ -77,18 +91,15 @@ const MyProfileSection = () => {
                 onSend={(data) => console.log("withdrawal data ", data)}
             />
 
-            {/* Referral Link Dialog */}
-            <AppDialog open={referralLinkOpen} onOpenChange={setReferralLinkOpen}>
-                <div className="p-4 md:p-6">
-                    <ArtistReferralLink
-                        artistId="michael-rohan"
-                        artistName="Michael Rohan"
-                        nextMatchId="demo-match-123"
-                        onCopy={(link) => console.log("Copied:", link)}
-                        onShare={(link) => console.log("Shared:", link)}
-                    />
-                </div>
-            </AppDialog>
+            {/* Referral Link: নিচ থেকে শেয়ার শীট খুলবে, লিংক শেয়ার করা যাবে */}
+            <ReferralShareSheet
+                open={referralLinkOpen}
+                onOpenChange={setReferralLinkOpen}
+                title={`Support ${REFERRAL_ARTIST_NAME}`}
+                shareUrl={referralShareUrl}
+                onCopy={(link) => console.log("Copied:", link)}
+                onShare={(link) => console.log("Shared:", link)}
+            />
         </div>
 
     )

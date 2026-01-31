@@ -116,6 +116,22 @@ export default function MobileNavSheet({
                                 );
                             })}
                         </nav>
+
+                        {isAuthenticated && (
+                            <SheetClose asChild>
+                                <Link
+                                    href="/support-history"
+                                    className={cn(
+                                        "mt-4 block w-full rounded-[12px] px-4 py-3 text-left",
+                                        "border border-white/10 bg-black/40 transition",
+                                        "text-white font-medium hover:bg-white/10"
+                                    )}
+                                >
+                                    Support History
+                                </Link>
+                            </SheetClose>
+                        )}
+
                         <div className="mt-5">
                             <TipShortcutToggle
                                 storageKey="tip_shortcut_enabled"

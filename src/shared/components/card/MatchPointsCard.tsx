@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
-import { PhilippinePeso } from 'lucide-react';
+import { PhilippinePeso } from "lucide-react";
+import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet";
 
 type Props = {
     playerName: string;
@@ -11,7 +13,11 @@ type Props = {
     title: "Matched Points" | "Unmatched Points";
     points: number | string;
     onShare?: () => void;
-    compact?: boolean; // 👈 new
+    /** নিচ থেকে শেয়ার শীট খুলবে – মোবাইলে লিংক শেয়ার */
+    shareTitle?: string;
+    matchId?: string;
+    playerRef?: string;
+    compact?: boolean;
     className?: string;
     positive: boolean;
 };
@@ -22,12 +28,30 @@ export default function MatchPointsCard({
     title,
     points,
     onShare,
+    shareTitle,
+    matchId,
+    playerRef,
     compact = true,
     className,
-    positive
+    positive,
 }: Props) {
-    
+    const [shareSheetOpen, setShareSheetOpen] = useState(false);
+    const [shareUrl, setShareUrl] = useState("");
+
     const sign = positive ? "+" : "-";
+
+    const showShareSheet = Boolean(shareTitle && matchId && playerRef);
+
+    const handleShareClick = () => {
+        if (showShareSheet && typeof window !== "undefined" && matchId && playerRef) {
+            setShareUrl(
+                `${window.location.origin}/live-stream/match/${matchId}?ref=ref_${playerRef}_${Date.now()}`
+            );
+            setShareSheetOpen(true);
+        } else {
+            onShare?.();
+        }
+    };
 
     return (
         <div
@@ -95,7 +119,7 @@ export default function MatchPointsCard({
                     {/* button */}
                     <div className={compact ? "mt-2" : "mt-4"}>
                         <StartStreamingButton
-                            onClick={onShare}
+                            onClick={handleShareClick}
                             className={cn(
                                 compact
                                     ? "h-[23px] md:h-[30px] text-[8px]  md:text-[14px] px-3 rounded-md"
@@ -107,6 +131,15 @@ export default function MatchPointsCard({
                     </div>
                 </div>
             </div>
+
+            {showShareSheet && (
+                <ReferralShareSheet
+                    open={shareSheetOpen}
+                    onOpenChange={setShareSheetOpen}
+                    title={shareTitle ?? ""}
+                    shareUrl={shareUrl}
+                />
+            )}
         </div>
     );
 }
