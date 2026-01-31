@@ -214,7 +214,7 @@ function FlyingPeso({
                 transform: "translateX(-50%)",
                 animation: "pesoFly 0.9s ease-out forwards",
                 // @ts-ignore
-                ["--tx" as any]: `${xPercent - 50}%`,
+                ["--tx" ]: `${xPercent - 50}%`,
             }}
         >
             <div className="h-10 w-10 rounded-full bg-white/10 border border-white/15 backdrop-blur-md flex items-center justify-center">
