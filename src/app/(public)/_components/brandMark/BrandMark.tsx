@@ -8,7 +8,7 @@ export default function BrandMark({
 }) {
     return (
         <Link href={'/'} className="block">
-            <div className="w-full flex items-center justify-center">
+            <div className="flex items-center justify-center">
                 <Image
                     src={'/images/home/brand-logo.png'}
                     alt="logo"

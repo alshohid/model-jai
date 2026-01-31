@@ -48,14 +48,14 @@ export default function MobileNavSheet({
                 <button
                     type="button"
                     className={cn(
-                        "md:hidden cursor-pointer inline-flex items-center justify-center",
-                        "h-10 w-10 rounded-[12px] p-2",
+                        "md:hidden cursor-pointer inline-flex items-center justify-center shrink-0",
+                        "h-8 w-8 sm:h-9 sm:w-9 rounded-[10px] p-1.5",
                         triggerStyles,
                         "transition"
                     )}
                     aria-label="Open menu"
                 >
-                    <LuAlignRight className="text-[28px]  leading-none" />
+                    <LuAlignRight className="text-xl sm:text-[26px] leading-none" />
                 </button>
             </SheetTrigger>
 
