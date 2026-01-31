@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useRef } from "react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import AuthButton from "@/shared/UI/button/AuthButton";
@@ -11,6 +11,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
 import MobileNavSheet from "./MobileNavDrawer";
 import { Bell } from "lucide-react";
+import InstagramStyleUserSearch from "@/shared/components/user/InstagramStyleUserSearch";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -21,6 +22,7 @@ const navItems = [
 export default function PublicNavbar() {
     const { isAuthenticated } = useAuth();
     const pathname = usePathname();
+        const router = useRouter();
     const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
     const wrapperClass = isAuthenticated
@@ -69,6 +71,16 @@ export default function PublicNavbar() {
                                 );
                             })}
                         </nav>
+                        {/* {isAuthenticated && <InstagramStyleUserSearch
+                                            onUserClick={(user) => {
+                                                // Navigate to artist profile page
+                                                router.push(`/artist/${user.id}`);
+                                            }}
+                                            onSubscribe={(userId) => {
+                                                console.log("Subscribed to user:", userId);
+                                                // Handle subscription
+                                            }}
+                                        />} */}
 
                         {isAuthenticated ? (
                             <div className="flex items-center gap-2 md:gap-4">

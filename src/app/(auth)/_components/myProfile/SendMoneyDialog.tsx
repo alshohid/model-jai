@@ -7,6 +7,7 @@ import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import { MailIcon } from "@/shared/UI/icon/icon";
 import { cn } from "@/shared/lib/utils/cn";
+import { PhilippinePeso } from "lucide-react";
 
 type FormValues = {
     senderName: string;
@@ -63,7 +64,7 @@ export default function SendMoneyDialog({
     };
 
     return (
-        <AppDialog open={open} onOpenChange={onOpenChange} title="Send Money">
+        <AppDialog open={open} onOpenChange={onOpenChange} title="Send Point">
             <div
                 className={cn(
                     "rounded-[16px] border border-white/12 bg-white/5",
@@ -97,7 +98,7 @@ export default function SendMoneyDialog({
                             name="amount"
                             type="number"
                             register={register as any}
-                            icon={<span className="text-white/60">💸</span>}
+                            icon={<span className="text-white/60"><PhilippinePeso size={20} /></span>}
                         />
                     </Field>
 

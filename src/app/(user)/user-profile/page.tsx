@@ -18,7 +18,7 @@ const UserProfile = () => {
             <MyProfileSection />
             
             {/* Instagram-Style User Search Section */}
-            <div className="container py-5 md:py-10">
+            {/* <div className="container py-5 md:py-10">
                 <InstagramStyleUserSearch
                     onUserClick={(user) => {
                         // Navigate to artist profile page
@@ -29,7 +29,7 @@ const UserProfile = () => {
                         // Handle subscription
                     }}
                 />
-            </div>
+            </div> */}
 
             <PastMatchSupportedTable />
             <ReferrelLinkTable />
