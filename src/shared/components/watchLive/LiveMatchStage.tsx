@@ -59,7 +59,6 @@ export default function LiveMatchStage({
                                 playsInline
                                 streamType="live"
                                 className="absolute inset-0 w-full h-full"
-                               
                             />
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-white/70">
