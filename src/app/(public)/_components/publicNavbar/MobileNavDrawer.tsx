@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet";
 
 import { LuAlignRight } from "react-icons/lu";
+import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
 
 type NavItem = { label: string; href: string };
 
@@ -93,6 +94,7 @@ export default function MobileNavSheet({
                     </SheetHeader>
 
                     <div className="flex-1 overflow-y-auto px-5 py-5">
+                        
                         <nav className="flex flex-col gap-2">
                             {navItems.map((item) => {
                                 const active = pathname === item.href;
@@ -114,13 +116,21 @@ export default function MobileNavSheet({
                                 );
                             })}
                         </nav>
+                        <div className="mt-5">
+                            <TipShortcutToggle
+                                storageKey="tip_shortcut_enabled"
+                                defaultOn={false}
+                                onChange={(v) => console.log("Tip shortcut (parent):", v)}
+                            />
+                        </div>
+
 
                         <div className="mt-6">
                             {isAuthenticated ? (
                                 <div className="flex  items-center justify-between gap-3">
                                     <PointsButton
                                         points={points}
-                                        icon={"/images/home/point_icon.png" as any}
+                                        icon={"/images/home/point_icon.png" }
                                         onClick={() => console.log("open buy points")}
                                     />
                                     {avatarSrc ? <ProfileDropdown avatarSrc={avatarSrc} /> : null}

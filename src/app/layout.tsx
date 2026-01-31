@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 // import localFont from "next/font/local";
-// @ts-ignore
+
 import "./globals.css";
 import { RouteProvider } from "@/shared/providers/route/RouteProvider";
 
