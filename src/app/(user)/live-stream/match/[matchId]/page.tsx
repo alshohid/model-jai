@@ -21,7 +21,6 @@ import {
 
 export default function MatchDetails({ params }: { params: Promise<{ matchId: string }> }) {
     const { matchId } = React.use(params);
-
     const searchParams = useSearchParams();
     const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
 
@@ -47,6 +46,9 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
         handleLogin,
         handleSkip,
     } = useReferralRedirect();
+    const tipEnabled =
+        typeof window !== "undefined" &&
+        localStorage.getItem("tip_shortcut_enabled") === "true";
 
 
 
@@ -75,6 +77,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                     matchId={matchId}
                     playbackId={playbackId}
                     isLive={isLive}
+                    tipEnabled={tipEnabled}
                     mode={mode}
                     supportClosed={supportClosed}
                     left={demo.left}
