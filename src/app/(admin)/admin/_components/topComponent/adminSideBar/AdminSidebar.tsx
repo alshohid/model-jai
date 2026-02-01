@@ -51,7 +51,7 @@ export default function AdminSidebar({
                     {/* header */}
                     <div className="flex items-center justify-between">
                         <div>
-                           <BrandMark width={130} height={90} />
+                        <BrandMark width={130} height={90} />
                             <div className="mt-2 h-[2px] w-full bg-gradient-to-r from-[#FF2EC8]/70 to-transparent" />
                         </div>
 
