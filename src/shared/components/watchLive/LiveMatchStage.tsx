@@ -256,89 +256,89 @@ export default function LiveMatchStage({
 }: StageProps) {
     const showTipUI = tipEnabled && mode === "tiktok";
 
-    // Support dialog: player name click → pop-up → amount → confirm
+    /* ---------------- SUPPORT DIALOG ---------------- */
     const [supportDialogOpen, setSupportDialogOpen] = React.useState(false);
-    const [supportDialogSide, setSupportDialogSide] = React.useState<"left" | "right">("left");
+    const [supportDialogSide, setSupportDialogSide] =
+        React.useState<"left" | "right">("left");
 
     const openSupportDialog = (side: "left" | "right") => {
         setSupportDialogSide(side);
         setSupportDialogOpen(true);
     };
 
-    const handleSupportConfirm = (side: "left" | "right", supporterName: string, amount: number) => {
-        if (side === "left") onSupportLeft?.(amount, supporterName);
-        else onSupportRight?.(amount, supporterName);
+    const handleSupportConfirm = (
+        side: "left" | "right",
+        supporterName: string,
+        amount: number
+    ) => {
+        side === "left"
+            ? onSupportLeft?.(amount, supporterName)
+            : onSupportRight?.(amount, supporterName);
         triggerFly(side);
     };
 
-    // popover state
+    /* ---------------- TIP STATE ---------------- */
     const [tipOpen, setTipOpen] = React.useState<TipSide | null>(null);
     const [tipView, setTipView] = React.useState<TipView>("menu");
 
-    // outside click close (no backdrop/blur)
-    const stageRef = React.useRef<HTMLDivElement | null>(null);
-    React.useEffect(() => {
-        const onDown = (e: MouseEvent) => {
-            if (!tipOpen) return;
-            const el = stageRef.current;
-            if (!el) return;
-            if (!el.contains(e.target as Node)) {
-                setTipOpen(null);
-                setTipView("menu");
-            }
-        };
-        document.addEventListener("mousedown", onDown);
-        return () => document.removeEventListener("mousedown", onDown);
-    }, [tipOpen]);
+    /* ---------------- FLYING MONEY ---------------- */
+    const [flying, setFlying] = React.useState<
+        Array<{ id: string; side: TipSide }>
+    >([]);
 
-    // flying tips
-    const [flying, setFlying] = React.useState<Array<{ id: string; side: TipSide }>>(
-        []
-    );
-
-    const sideToX = (side: TipSide) => {
-        if (side === "left") return 16.6; // left panel center
-        if (side === "middle") return 50; // middle
-        return 83.4; // right
-    };
+    const sideToX = (side: TipSide) =>
+        side === "left" ? 16.6 : side === "middle" ? 50 : 83.4;
 
     const triggerFly = (side: TipSide) => {
-        const id = `${Date.now()}-${Math.random()}`;
-        setFlying((p) => [...p, { id, side }]);
+        setFlying((p) => [
+            ...p,
+            { id: `${Date.now()}-${Math.random()}`, side },
+        ]);
     };
 
-    const sendPesto = (side: TipSide) => {
-        console.log("[Pesto Tip] send:", side);
-        triggerFly(side);
-    };
-
-    const sendCustom = (side: TipSide, name: string, amount: number) => {
-        if (side === "left") onSupportLeft?.(amount, name);
-        else if (side === "right") onSupportRight?.(amount, name);
-        triggerFly(side);
-    };
-
-    const openSide = (side: TipSide) => {
-        setTipView("menu");
-        setTipOpen((prev) => (prev === side ? null : side));
-    };
-
+    /* ========================================================= */
     return (
         <section className="w-full bg-black text-white">
-            <div className={cn("mx-auto w-full px-3 md:px-4 pt-2")}>
-                {/* Guidelines Icon */}
-                <div className="flex justify-end mb-2">
-                    <MatchGuidelinesDialog matchId={matchId} />
-                </div>
+            <div className="mx-auto w-full  pt-2">
 
-                {/* Stage */}
-                <div
-                    ref={stageRef}
-                    className="relative w-full aspect-video bg-black overflow-visible rounded-md border border-white/10"
-                >
-                    {/* Content */}
-                    {mode === "twitch" ? (
-                        isLive ? (
+                {/* Guidelines */}
+                {/* <div className="flex justify-end mb-2">
+                    <MatchGuidelinesDialog matchId={matchId} />
+                </div> */}
+
+                {/* ================= MOBILE TOP PLAYERS ================= */}
+                <div className="grid grid-cols-3 gap-1 mb-2">
+                    {/* LEFT */}
+                    <PlayerCard
+                        image={left.imageSrc}
+                        name={left.name}
+                        points={left.points}
+                        status="lose"
+                        onClick={() => openSupportDialog("left")}
+                    />
+
+                    {/* MIDDLE */}
+                    <div className="relative aspect-[3/4]  overflow-hidden">
+                        <Image src={middle.imageSrc} fill className="object-cover" alt="host" />
+                        <div className="absolute inset-0 bg-black/30" />
+                        <div className="absolute bottom-2 w-full text-center text-[#80f03f] font-extrabold">
+                            {middle.label}
+                        </div>
+                    </div>
+
+                    {/* RIGHT */}
+                    <PlayerCard
+                        image={right.imageSrc}
+                        name={right.name}
+                        points={right.points}
+                        status="win"
+                        onClick={() => openSupportDialog("right")}
+                    />
+                </div>
+                {/* ================= LIVE VIDEO ================= */}
+                {!isLive && <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10">
+                    {(mode === "twitch") || (mode === "tiktok") ? (
+                        !isLive ? (
                             <MuxPlayer
                                 playbackId={playbackId}
                                 autoPlay
@@ -348,223 +348,38 @@ export default function LiveMatchStage({
                                 className="absolute inset-0 w-full h-full"
                             />
                         ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-white/70">
+                            <div className="absolute inset-0 flex items-center justify-center text-white/60">
                                 Live starts soon...
                             </div>
                         )
                     ) : (
-                        <div className="absolute inset-0 grid grid-cols-3">
-                            {/* LEFT */}
-                            <div
-                                className={cn(
-                                    "relative",
-                                    bossSide === "left" ? "border border-bold border-yellow-300" : ""
-                                )}
-                            >
-                                <Image src={left.imageSrc} alt={left.name} fill className="object-cover" />
-                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
-
-                                {/* bottom info + caret */}
-                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center z-30">
-                                    <div>
-                                        <Image
-                                            src={"/images/home/taken_slot.png"}
-                                            alt="available"
-                                            width={70}
-                                            height={70}
-                                        />
-                                    </div>
-
-                                    <div className="text-[#B7FF4A] font-extrabold text-xl flex items-center justify-center">
-                                        <span className="text-2xl">{left.points} </span>
-                                        <span className="text-white">
-                                            <PhilippinePeso size={20} />
-                                        </span>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => openSupportDialog("left")}
-                                        className="text-[#DD2E03] font-extrabold text-2xl hover:underline cursor-pointer focus:outline-none"
-                                    >
-                                        {left.name}
-                                    </button>
-
-                                    {showTipUI && (
-                                        <div className="relative mt-1 flex justify-center">
-                                            <button
-                                                type="button"
-                                                onClick={() => openSide("left")}
-                                                className={cn(
-                                                    "h-7 w-10 rounded-full",
-                                                    "bg-black/55 border border-white/10 backdrop-blur-md",
-                                                    "flex items-center justify-center",
-                                                    "hover:bg-black/65 transition"
-                                                )}
-                                                aria-label="Tip menu"
-                                            >
-                                                <ChevronDown className="h-5 w-5 text-white/90" />
-                                            </button>
-
-                                            <TipPopover
-                                                open={tipOpen === "left"}
-                                                side="left"
-                                                view={tipView}
-                                                align="left"
-                                                onClose={() => {
-                                                    setTipOpen(null);
-                                                    setTipView("menu");
-                                                }}
-                                                onPesto={() => sendPesto("left")}
-                                                onOpenCustom={() => setTipView("custom")}
-                                                onBackToMenu={() => setTipView("menu")}
-                                                onSendCustom={(name, amount) => sendCustom("left", name, amount)}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* MIDDLE */}
-                            <div className="relative">
-                                <Image src={middle.imageSrc} alt="model" fill className="object-cover" />
-                                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
-
-                                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center z-30">
-                                    <div
-                                        className="text-[#80f03f] font-extrabold text-2xl"
-                                        style={{ textShadow: "0 2px 8px rgba(255, 193, 7, 0.5)" }}
-                                    >
-                                        {middle.label}
-                                    </div>
-
-                                    {showTipUI && (
-                                        <div className="relative mt-2 flex justify-center">
-                                            <button
-                                                type="button"
-                                                onClick={() => openSide("middle")}
-                                                className={cn(
-                                                    "h-7 w-10 rounded-full",
-                                                    "bg-black/55 border border-white/10 backdrop-blur-md",
-                                                    "flex items-center justify-center",
-                                                    "hover:bg-black/65 transition"
-                                                )}
-                                                aria-label="Tip menu"
-                                            >
-                                                <ChevronDown className="h-5 w-5 text-white/90" />
-                                            </button>
-
-                                            <TipPopover
-                                                open={tipOpen === "middle"}
-                                                side="middle"
-                                                view={tipView}
-                                                align="center"
-                                                onClose={() => {
-                                                    setTipOpen(null);
-                                                    setTipView("menu");
-                                                }}
-                                                onPesto={() => sendPesto("middle")}
-                                                onOpenCustom={() => setTipView("custom")}
-                                                onBackToMenu={() => setTipView("menu")}
-                                                onSendCustom={(name, amount) =>
-                                                    sendCustom("middle", name, amount)
-                                                }
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* RIGHT */}
-                            <div
-                                className={cn(
-                                    "relative",
-                                    bossSide === "right" ? "border border-bold border-yellow-300" : ""
-                                )}
-                            >
-                                <Image src={right.imageSrc} alt={right.name} fill className="object-cover" />
-                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
-
-                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center z-30">
-                                    <div>
-                                        <Image
-                                            src={"/images/home/available_slot.png"}
-                                            alt="available"
-                                            width={70}
-                                            height={70}
-                                        />
-                                    </div>
-
-                                    <div className="text-[#B7FF4A] font-extrabold text-xl flex items-center justify-center">
-                                        <span className="text-2xl">{right.points} </span>
-                                        <span className="text-white">
-                                            <PhilippinePeso size={20} />
-                                        </span>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => openSupportDialog("right")}
-                                        className="text-[#DD2E03] font-extrabold text-2xl hover:underline cursor-pointer focus:outline-none"
-                                    >
-                                        {right.name}
-                                    </button>
-
-                                    {showTipUI && (
-                                        <div className="relative mt-1 flex justify-center">
-                                            <button
-                                                type="button"
-                                                onClick={() => openSide("right")}
-                                                className={cn(
-                                                    "h-7 w-10 rounded-full",
-                                                    "bg-black/55 border border-white/10 backdrop-blur-md",
-                                                    "flex items-center justify-center",
-                                                    "hover:bg-black/65 transition"
-                                                )}
-                                                aria-label="Tip menu"
-                                            >
-                                                <ChevronDown className="h-5 w-5 text-white/90" />
-                                            </button>
-
-                                            <TipPopover
-                                                open={tipOpen === "right"}
-                                                side="right"
-                                                view={tipView}
-                                                align="right"
-                                                onClose={() => {
-                                                    setTipOpen(null);
-                                                    setTipView("menu");
-                                                }}
-                                                onPesto={() => sendPesto("right")}
-                                                onOpenCustom={() => setTipView("custom")}
-                                                onBackToMenu={() => setTipView("menu")}
-                                                onSendCustom={(name, amount) =>
-                                                    sendCustom("right", name, amount)
-                                                }
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <Image
+                            src="/images/home/demo_pitch.jpg"
+                            alt="match"
+                            fill
+                            className="object-cover"
+                        />
                     )}
 
-                    {/* Flying ₱ overlay */}
+                    {/* Flying Peso */}
                     {showTipUI && (
-                        <div className="absolute inset-0 z-50 pointer-events-none">
-                            {flying.map((t) => (
+                        <div className="absolute inset-0 pointer-events-none z-50">
+                            {flying.map((f) => (
                                 <FlyingPeso
-                                    key={t.id}
-                                    id={t.id}
-                                    xPercent={sideToX(t.side)}
-                                    onDone={(id) => setFlying((p) => p.filter((x) => x.id !== id))}
+                                    key={f.id}
+                                    id={f.id}
+                                    xPercent={sideToX(f.side)}
+                                    onDone={(id) =>
+                                        setFlying((p) => p.filter((x) => x.id !== id))
+                                    }
                                 />
                             ))}
                         </div>
                     )}
-                </div>
+                </div>}
             </div>
 
+            {/* ================= SUPPORT POPUP ================= */}
             <SupportDialog
                 open={supportDialogOpen}
                 onOpenChange={setSupportDialogOpen}
@@ -577,3 +392,48 @@ export default function LiveMatchStage({
         </section>
     );
 }
+
+/* ================= PLAYER CARD ================= */
+function PlayerCard({
+    image,
+    name,
+    points,
+    status,
+    onClick,
+}: {
+    image: string;
+    name: string;
+    points: number;
+    status: "win" | "lose";
+    onClick: () => void;
+}) {
+    return (
+        <div className="relative aspect-[3/4]  overflow-hidden">
+            <Image src={image} fill className="object-cover" alt={name} />
+            <div className="absolute inset-0 bg-black/40" />
+
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
+                <div
+                    className={cn(
+                        "text-xl font-extrabold",
+                        status === "win" ? "text-green-400" : "text-red-500"
+                    )}
+                >
+                    {status === "win" ? "O" : "X"}
+                </div>
+
+                <button
+                    onClick={onClick}
+                    className="text-white font-bold text-sm hover:underline"
+                >
+                    {name}
+                </button>
+
+                <div className="text-yellow-400 text-sm flex items-center justify-center gap-1">
+                    {points} <PhilippinePeso size={14} />
+                </div>
+            </div>
+        </div>
+    );
+}
+
