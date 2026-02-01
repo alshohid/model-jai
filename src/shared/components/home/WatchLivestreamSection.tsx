@@ -20,16 +20,14 @@ const slides = [
 export default function WatchLivestreamSection() {
     const [api, setApi] = useState<CarouselApi | null>(null)
     const [current, setCurrent] = useState(0)
-    const [count, setCount] = useState(0)
+
+    const count = api ? api.scrollSnapList().length : slides.length
+
     useEffect(() => {
         if (!api) return
 
-        const snaps = api.scrollSnapList()
-        setCount(snaps.length)
-
         const onSelect = () => setCurrent(api.selectedScrollSnap())
-        onSelect()
-
+        queueMicrotask(() => onSelect())
         api.on("select", onSelect)
         return () => {
             api.off("select", onSelect)
@@ -63,7 +61,7 @@ export default function WatchLivestreamSection() {
                                 alt="arrow left"
                                 width={30}
                                 height={30}
-                                className="!w-6 !h-6"
+                                className="w-6! h-6!"
 
                             />
                         </button>
@@ -94,7 +92,7 @@ export default function WatchLivestreamSection() {
                                         <div
                                             className={[
                                                 "relative w-full overflow-hidden rounded-[24px]",
-                                                "aspect-[757/484]",
+                                                "aspect-757/484",
                                                 "xl:w-[850px] xl:h-[484px] xl:aspect-auto",
                                             ].join(" ")}
                                         >
@@ -123,7 +121,7 @@ export default function WatchLivestreamSection() {
                                 alt="arrow left"
                                 width={30}
                                 height={30}
-                                className="w-4 h-4 md:!w-6 md:!h-6"
+                                className="w-4 h-4 md:w-6! md:h-6!"
 
                             />
                         </button>

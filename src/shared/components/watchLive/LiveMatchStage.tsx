@@ -7,6 +7,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import type { Side } from "@/shared/hooks/useMatchDemoStore";
 import { ChevronDown, PhilippinePeso } from "lucide-react";
 import MatchGuidelinesDialog from "@/shared/components/match/MatchGuidelinesDialog";
+import SupportDialog from "@/shared/components/watchLive/SupportDialog";
 
 type TipSide = "left" | "middle" | "right";
 type TipView = "menu" | "custom";
@@ -25,8 +26,8 @@ type StageProps = {
     middle: { label: string; imageSrc: string };
     bossSide: Side | null;
 
-    onSupportLeft?: () => void;
-    onSupportRight?: () => void;
+    onSupportLeft?: (amount: number, supporterName?: string) => void;
+    onSupportRight?: (amount: number, supporterName?: string) => void;
 };
 
 function TipPopover({
@@ -250,9 +251,25 @@ export default function LiveMatchStage({
     middle,
     bossSide,
     tipEnabled = false,
+    onSupportLeft,
+    onSupportRight,
 }: StageProps) {
-
     const showTipUI = tipEnabled && mode === "tiktok";
+
+    // Support dialog: player name click → pop-up → amount → confirm
+    const [supportDialogOpen, setSupportDialogOpen] = React.useState(false);
+    const [supportDialogSide, setSupportDialogSide] = React.useState<"left" | "right">("left");
+
+    const openSupportDialog = (side: "left" | "right") => {
+        setSupportDialogSide(side);
+        setSupportDialogOpen(true);
+    };
+
+    const handleSupportConfirm = (side: "left" | "right", supporterName: string, amount: number) => {
+        if (side === "left") onSupportLeft?.(amount, supporterName);
+        else onSupportRight?.(amount, supporterName);
+        triggerFly(side);
+    };
 
     // popover state
     const [tipOpen, setTipOpen] = React.useState<TipSide | null>(null);
@@ -296,7 +313,8 @@ export default function LiveMatchStage({
     };
 
     const sendCustom = (side: TipSide, name: string, amount: number) => {
-        console.log("[Custom Tip] send:", { side, name, amount });
+        if (side === "left") onSupportLeft?.(amount, name);
+        else if (side === "right") onSupportRight?.(amount, name);
         triggerFly(side);
     };
 
@@ -364,9 +382,13 @@ export default function LiveMatchStage({
                                         </span>
                                     </div>
 
-                                    <div className="text-[#DD2E03] font-extrabold text-2xl">
+                                    <button
+                                        type="button"
+                                        onClick={() => openSupportDialog("left")}
+                                        className="text-[#DD2E03] font-extrabold text-2xl hover:underline cursor-pointer focus:outline-none"
+                                    >
                                         {left.name}
-                                    </div>
+                                    </button>
 
                                     {showTipUI && (
                                         <div className="relative mt-1 flex justify-center">
@@ -480,9 +502,13 @@ export default function LiveMatchStage({
                                         </span>
                                     </div>
 
-                                    <div className="text-[#DD2E03] font-extrabold text-2xl">
+                                    <button
+                                        type="button"
+                                        onClick={() => openSupportDialog("right")}
+                                        className="text-[#DD2E03] font-extrabold text-2xl hover:underline cursor-pointer focus:outline-none"
+                                    >
                                         {right.name}
-                                    </div>
+                                    </button>
 
                                     {showTipUI && (
                                         <div className="relative mt-1 flex justify-center">
@@ -538,6 +564,16 @@ export default function LiveMatchStage({
                     )}
                 </div>
             </div>
+
+            <SupportDialog
+                open={supportDialogOpen}
+                onOpenChange={setSupportDialogOpen}
+                playerName={supportDialogSide === "left" ? left.name : right.name}
+                side={supportDialogSide}
+                defaultSupporterName="Michael Rohan"
+                defaultAmount={100}
+                onConfirm={handleSupportConfirm}
+            />
         </section>
     );
 }

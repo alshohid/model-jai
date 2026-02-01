@@ -8,25 +8,24 @@ export default function NeonHeadline({
     className?: string;
 }) {
     return (
-        <div className={cn("w-full flex justify-center", className)}>
+        <div className={cn("w-full flex justify-center text-center", className)}>
             <h2
                 className={cn(
-                    "text-center font-extrabold uppercase",
-                    "leading-[1.05]",
-                    "text-[18px] md:text-[20px] ",
-                    "tracking-wider",
-                    "text-[#22D3FF]"
+                    "font-black uppercase tracking-wide sm:tracking-wider",
+                    "leading-tight",
+                    "text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl",
+                    "max-w-[90vw] mx-auto"
                 )}
                 style={{
-                    // stroke + glow combo
-                    WebkitTextStroke: "2px rgba(151, 122, 189, 0.85)",
+                    color: "#4040FF",
+                    WebkitTextStroke: "2px #00C3FF",
+                    paintOrder: "stroke fill",
                     textShadow:
-                        "0 2px 0 rgba(92, 34, 34, 0.75), 0 0 10px rgba(109, 56, 100, 0.55), 0 0 22px rgba(34,211,255,0.45)",
+                        "0 0 2px #FF40FF, 0 0 4px rgba(255, 64, 255, 0.8), 0 0 6px rgba(204, 51, 204, 0.5)",
                 }}
             >
-                SUPPORT YOUR FAVORITE ARTIST
-                <br />
-                WHILE THEY PLAY LIVE
+                <span className="block">SUPPORT YOUR FAVORITE ARTIST</span>
+                <span className="block mt-1 sm:mt-2">WHILE THEY PLAY LIVE</span>
             </h2>
         </div>
     );

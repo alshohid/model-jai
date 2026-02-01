@@ -7,6 +7,7 @@ import {
     CarouselItem,
     type CarouselApi,
 } from "@/components/ui/carousel";
+import { Play } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 
 export type VideoCarouselItem = {
@@ -37,40 +38,67 @@ export default function VideoCarousel({
 }: Props) {
     const [api, setApi] = React.useState<CarouselApi | null>(null);
     const [current, setCurrent] = React.useState(0);
-    const [count, setCount] = React.useState(items.length);
+    const count = api ? api.scrollSnapList().length : items.length;
+    const [playingIndex, setPlayingIndex] = React.useState<number | null>(autoPlay ? 0 : null);
 
-    // Keep refs to all video nodes (for play/pause control)
     const videoRefs = React.useRef<(HTMLVideoElement | null)[]>([]);
 
     React.useEffect(() => {
         if (!api) return;
 
-        setCount(api.scrollSnapList().length);
-
         const onSelect = () => {
             const idx = api.selectedScrollSnap();
             setCurrent(idx);
 
-            // ✅ Only active slide plays; others pause
-            videoRefs.current.forEach((v, i) => {
-                if (!v) return;
-                if (i === idx) {
-                    // try play (can fail on some browsers if not muted)
-                    v.currentTime = 0;
-                    v.play().catch(() => { });
-                } else {
-                    v.pause();
-                }
-            });
+            if (autoPlay) {
+                videoRefs.current.forEach((v, i) => {
+                    if (!v) return;
+                    if (i === idx) {
+                        v.currentTime = 0;
+                        v.play().catch(() => {});
+                    } else {
+                        v.pause();
+                    }
+                });
+                setPlayingIndex(idx);
+            } else {
+                videoRefs.current.forEach((v) => {
+                    if (v) v.pause();
+                });
+                setPlayingIndex(null);
+            }
         };
 
-        onSelect();
+        queueMicrotask(() => onSelect());
         api.on("select", onSelect);
 
         return () => {
             api.off("select", onSelect);
         };
-    }, [api]);
+    }, [api, autoPlay]);
+
+    const isPaused = (idx: number) =>
+        autoPlay ? idx !== current : playingIndex !== idx;
+
+    const handleCardClick = (item: VideoCarouselItem, idx: number) => {
+        if (!autoPlay) {
+            const video = videoRefs.current[idx];
+            if (video) {
+                if (playingIndex === idx) {
+                    video.pause();
+                    setPlayingIndex(null);
+                } else {
+                    videoRefs.current.forEach((v, i) => {
+                        if (v && i !== idx) v.pause();
+                    });
+                    video.currentTime = 0;
+                    video.play().catch(() => {});
+                    setPlayingIndex(idx);
+                }
+            }
+        }
+        onCardClick?.(item, idx);
+    };
 
     return (
         <div className={cn("w-full", className)}>
@@ -80,7 +108,7 @@ export default function VideoCarousel({
                         <CarouselItem key={item.id} className="flex-[0_0_auto] p-0">
                             <button
                                 type="button"
-                                onClick={() => onCardClick?.(item, idx)}
+                                onClick={() => handleCardClick(item, idx)}
                                 className={cn(
                                     "cursor-pointer select-none",
                                     "relative overflow-hidden rounded-[25px]",
@@ -90,7 +118,7 @@ export default function VideoCarousel({
                                     cardClassName
                                 )}
                             >
-                                {/* ✅ Video */}
+                                {/* Video */}
                                 <video
                                     ref={(el) => {
                                         videoRefs.current[idx] = el;
@@ -105,8 +133,30 @@ export default function VideoCarousel({
                                     preload="metadata"
                                 />
 
+                                {/* Play icon when video is paused (video off) */}
+                                {isPaused(idx) && (
+                                    <div
+                                        className={cn(
+                                            "absolute inset-0 flex items-center justify-center",
+                                            " z-10"
+                                        )}
+                                        aria-hidden
+                                    >
+                                        <div
+                                            className={cn(
+                                                "flex items-center justify-center",
+                                                "w-16 h-16 rounded-full",
+                                                "bg-white/20 backdrop-blur-sm border-2 border-white/40",
+                                                "text-white"
+                                            )}
+                                        >
+                                            <Play className="size-8 fill-white ml-1" />
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Overlay */}
-                                <div className="absolute inset-0 bg-black/35" />
+                                <div className="absolute inset-0 bg-black/35 pointer-events-none" />
 
                                 {/* Title */}
                                 <div className="absolute inset-0 flex items-center justify-center px-[38px] py-[164px]">

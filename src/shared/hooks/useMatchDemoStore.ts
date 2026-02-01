@@ -53,7 +53,8 @@ export function useMatchDemoStore(matchId: string) {
     const topRight = useMemo(() => getTop(totals.right), [totals.right]);
 
     const support = useCallback(
-        (side: Side, amount: number) => {
+        (side: Side, amount: number, supporterName?: string) => {
+            const name = supporterName ?? viewerName;
             if (side === "left") setLeft((p) => ({ ...p, points: p.points + amount }));
             else setRight((p) => ({ ...p, points: p.points + amount }));
 
@@ -61,12 +62,12 @@ export function useMatchDemoStore(matchId: string) {
                 if (side === "left") {
                     return {
                         ...prev,
-                        left: { ...prev.left, [viewerName]: (prev.left[viewerName] ?? 0) + amount },
+                        left: { ...prev.left, [name]: (prev.left[name] ?? 0) + amount },
                     };
                 }
                 return {
                     ...prev,
-                    right: { ...prev.right, [viewerName]: (prev.right[viewerName] ?? 0) + amount },
+                    right: { ...prev.right, [name]: (prev.right[name] ?? 0) + amount },
                 };
             });
         },

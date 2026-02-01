@@ -84,8 +84,8 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                     right={demo.right}
                     middle={demo.middle}
                     bossSide={demo.bossSide}
-                    onSupportLeft={() => demo.support("left", 100)}
-                    onSupportRight={() => demo.support("right", 100)}
+                    onSupportLeft={(amount, supporterName) => demo.support("left", amount, supporterName)}
+                    onSupportRight={(amount, supporterName) => demo.support("right", amount, supporterName)}
                 />
 
                 <div className="container">
