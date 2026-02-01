@@ -8,10 +8,9 @@ import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
 import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIcon";
 import { WalletIcon } from "lucide-react";
+import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 
-type NavItem = { label: string; href: string; icon: any };
-
-const menuItems: NavItem[] = [
+const menuItems = [
     { label: "Dashboard", href: "/admin/dashboard", icon: DashboardIcon },
     { label: "Match Management", href: "/admin/dashboard/matches", icon: MatchManagementMenuIcon },
     { label: "User Management", href: "/admin/dashboard/users", icon: UserManagementMenuIcon },
@@ -52,15 +51,7 @@ export default function AdminSidebar({
                     {/* header */}
                     <div className="flex items-center justify-between">
                         <div>
-                            <p
-                                className={cn(
-                                    "text-[18px] md:text-[26px] font-extrabold",
-                                    "bg-gradient-to-r from-brandGradStart to-brandGradEnd bg-clip-text text-transparent",
-
-                                )}
-                            >
-                                Model Boss Offers
-                            </p>
+                           <BrandMark width={130} height={90} />
                             <div className="mt-2 h-[2px] w-full bg-gradient-to-r from-[#FF2EC8]/70 to-transparent" />
                         </div>
 
