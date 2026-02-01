@@ -336,9 +336,9 @@ export default function LiveMatchStage({
                     />
                 </div>
                 {/* ================= LIVE VIDEO ================= */}
-                {!isLive && <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10">
+                {isLive && <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10">
                     {(mode === "twitch") || (mode === "tiktok") ? (
-                        !isLive ? (
+                        isLive ? (
                             <MuxPlayer
                                 playbackId={playbackId}
                                 autoPlay

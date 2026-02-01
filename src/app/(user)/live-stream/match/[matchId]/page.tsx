@@ -31,7 +31,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
     // Initialize scheduledAt with a future time (4 seconds from now)
     const [scheduledAt, setScheduledAt] = useState<string | null>(() => {
         if (typeof window !== "undefined") {
-            return new Date(Date.now() + 4 * 1000).toISOString();
+            return new Date(Date.now() + 1000 * 1000).toISOString();
         }
         return null;
     });
