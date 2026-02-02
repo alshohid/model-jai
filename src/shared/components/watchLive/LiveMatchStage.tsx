@@ -99,6 +99,11 @@ export default function LiveMatchStage({
                         status="win"
                         bossSide={bossSide === "right"}
                         onClick={() => openSupportDialog("right")}
+                          topRightBadge={
+    <div className="rounded-full bg-black/70 px-2 py-1 text-[11px] font-bold border border-white/10 backdrop-blur">
+      6K watching
+    </div>
+  }
                     />
                 </div>
                 {/* ================= LIVE VIDEO ================= */}
@@ -156,6 +161,9 @@ function PlayerCard({
     status,
     onClick,
     bossSide,
+    topRightBadge
+    
+
 }: {
     image: string;
     name: string;
@@ -163,11 +171,17 @@ function PlayerCard({
         bossSide: any;
     status: "win" | "lose";
     onClick: () => void;
+     topRightBadge?: React.ReactNode
 }) {
     return (
         <div className={`relative aspect-[3/4]  overflow-hidden ${bossSide ? "border border-amber-400" : ""} ` }>
             <Image src={image} fill className="object-cover" alt={name} />
             <div className="absolute inset-0 bg-black/40" />
+            {topRightBadge ? (
+        <div className="absolute top-2 right-2 z-20">
+          {topRightBadge}
+        </div>
+      ) : null}
 
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
                 <div
