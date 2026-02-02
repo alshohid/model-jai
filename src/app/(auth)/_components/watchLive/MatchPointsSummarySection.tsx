@@ -19,10 +19,16 @@ type TipView = "menu" | "custom";
 function FlyingPeso({
     id,
     xPercent,
+    ty,
+    rot,
+    dur,
     onDone,
 }: {
     id: string;
     xPercent: number;
+    ty?: number;
+    rot?: number;
+    dur?: number;
     onDone: (id: string) => void;
 }) {
     React.useEffect(() => {
@@ -35,8 +41,11 @@ function FlyingPeso({
             className="fixed bottom-1/2 left-1/2 pointer-events-none z-[9999]"
             style={{
                 transform: "translateX(-50%)",
-                animation: "pesoFly 0.9s ease-out forwards",
+                animation: "pesoFly var(--dur) ease-out forwards",
                 ["--tx" as string]: `${xPercent - 50}%`,
+                ["--ty" as string]: `${ty ?? -400}px`,
+                ["--rot" as string]: `${rot ?? 0}deg`,
+                ["--dur" as string]: `${dur ?? 900}ms`,
             } as React.CSSProperties}
         >
             <div className="h-10 w-10 rounded-full bg-yellow-400/80 border-2 border-yellow-300 flex items-center justify-center shadow-lg">
@@ -47,11 +56,11 @@ function FlyingPeso({
                 @keyframes pesoFly {
                     0% {
                         opacity: 1;
-                        transform: translateX(-50%) translateY(0) scale(1);
+                        transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
                     }
                     100% {
                         opacity: 0;
-                        transform: translateX(calc(-50% + var(--tx))) translateY(-400px) scale(0.5);
+                        transform: translateX(calc(-50% + var(--tx))) translateY(var(--ty)) scale(0.5) rotate(var(--rot));
                     }
                 }
             `}</style>
@@ -260,16 +269,36 @@ export default function MatchPointsSummarySection({
     const [supportDialogSide, setSupportDialogSide] =
         React.useState<"left" | "right">("left");
         const [flying, setFlying] = React.useState<
-            Array<{ id: string; side: TipSide }>
+            Array<{
+                id: string;
+                side: TipSide;
+                txJitter?: number; // percent
+                ty?: number; // px (negative)
+                rot?: number; // deg
+                dur?: number; // ms
+            }>
         >([]);
     
         const sideToX = (side: TipSide) =>
             side === "left" ? 16.6 : side === "middle" ? 50 : 83.4;
     
         const triggerFly = (side: TipSide) => {
+            // randomize jitter, vertical distance, rotation and duration
+            const txJitter = Math.round((Math.random() * 16 - 8) * 10) / 10; // -8 .. 8 percent
+            const ty = -(300 + Math.round(Math.random() * 200)); // -300 .. -500 px
+            const rot = Math.round(Math.random() * 40 - 20); // -20 .. 20 deg
+            const dur = 700 + Math.round(Math.random() * 600); // 700 .. 1300 ms
+
             setFlying((p) => [
                 ...p,
-                { id: `${Date.now()}-${Math.random()}`, side },
+                {
+                    id: `${Date.now()}-${Math.random()}`,
+                    side,
+                    txJitter,
+                    ty,
+                    rot,
+                    dur,
+                },
             ]);
         };
 
@@ -326,7 +355,10 @@ export default function MatchPointsSummarySection({
                     <FlyingPeso
                         key={f.id}
                         id={f.id}
-                        xPercent={sideToX(f.side)}
+                        xPercent={sideToX(f.side) + (f.txJitter ?? 0)}
+                        ty={f.ty}
+                        rot={f.rot}
+                        dur={f.dur}
                         onDone={(id) =>
                             setFlying((p) => p.filter((x) => x.id !== id))
                         }
