@@ -16,6 +16,51 @@ type SideInfo = {
 type TipSide = "left" | "middle" | "right";
 type TipView = "menu" | "custom";
 
+function FlyingPeso({
+    id,
+    xPercent,
+    onDone,
+}: {
+    id: string;
+    xPercent: number;
+    onDone: (id: string) => void;
+}) {
+    React.useEffect(() => {
+        const t = setTimeout(() => onDone(id), 900);
+        return () => clearTimeout(t);
+    }, [id, onDone]);
+
+    return (
+        <div
+            className="fixed bottom-1/2 left-1/2 pointer-events-none z-[9999]"
+            style={{
+                transform: "translateX(-50%)",
+                animation: "pesoFly 0.9s ease-out forwards",
+                ["--tx" as string]: `${xPercent - 50}%`,
+            } as React.CSSProperties}
+        >
+            <div className="h-10 w-10 rounded-full bg-yellow-400/80 border-2 border-yellow-300 flex items-center justify-center shadow-lg">
+                <span className="text-white text-lg font-black">₱</span>
+            </div>
+
+            <style jsx>{`
+                @keyframes pesoFly {
+                    0% {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0) scale(1);
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: translateX(calc(-50% + var(--tx))) translateY(-400px) scale(0.5);
+                    }
+                }
+            `}</style>
+        </div>
+    );
+}
+
+// type TipSide = "left" | "middle" | "right";
+
 type Props = {
     layout: "tiktok" | "twitch";
     isLive: boolean;
@@ -43,6 +88,7 @@ function TipPopover({
     onOpenCustom,
     onBackToMenu,
     onSendCustom,
+    triggerFly,
 }: {
     open: boolean;
     side: TipSide;
@@ -53,6 +99,7 @@ function TipPopover({
     onOpenCustom: () => void;
     onBackToMenu: () => void;
     onSendCustom: (name: string, amount: number) => void;
+    triggerFly: (side: TipSide) => void;
 }) {
     const [name, setName] = React.useState("Michael Rohan");
     const [amount, setAmount] = React.useState<number>(100);
@@ -73,7 +120,7 @@ function TipPopover({
                 : "left-1/2 -translate-x-1/2";
 
     return (
-        <div className={cn("absolute z-[9999] top-full mt-2", pos)}>
+        <div data-tip-popover className={cn("absolute z-[9999] top-full mt-2", pos)} onClick={(e) => e.stopPropagation()}>
             <div
                 className={cn(
                     "rounded-2xl",
@@ -88,7 +135,11 @@ function TipPopover({
                         <button
                             type="button"
                             onClick={() => {
-                                // onPesto();
+                                console.log("Peso tip clicked - multiple coins");
+                                // Trigger 5 coins at once
+                                for (let i = 0; i < 5; i++) {
+                                    setTimeout(() => triggerFly(side), i * 100);
+                                }
                                 // onClose();
                             }}
                             className={cn(
@@ -221,6 +272,27 @@ export default function MatchPointsSummarySection({
                 { id: `${Date.now()}-${Math.random()}`, side },
             ]);
         };
+
+        // Prevent outside clicks from closing the TipPopover while it's open.
+        // We use a capture-phase mousedown listener to stop other handlers
+        // from reacting to outside clicks. Allow clicks that are on the
+        // caret button for the currently open side or inside the popover.
+        React.useEffect(() => {
+            function handleDocMouseDown(e: MouseEvent) {
+                if (!tipOpen) return;
+                const target = e.target as Element | null;
+                if (!target) return;
+                // allow clicks inside the popover
+                if (target.closest('[data-tip-popover]')) return;
+                // allow clicks on the caret button that toggles this popover
+                if (target.closest(`[data-tip-caret="${tipOpen}"]`)) return;
+                // otherwise block other handlers from closing popovers
+                e.stopImmediatePropagation();
+            }
+
+            document.addEventListener("mousedown", handleDocMouseDown, true);
+            return () => document.removeEventListener("mousedown", handleDocMouseDown, true);
+        }, [tipOpen]);
     
 
     const openSupportDialog = (side: "left" | "right") => {
@@ -235,7 +307,10 @@ export default function MatchPointsSummarySection({
         side === "left"
             ? onSupportLeft?.(amount, supporterName)
             : onSupportRight?.(amount, supporterName);
-        triggerFly(side);
+        // Trigger 5 coins sequentially
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => triggerFly(side as TipSide), i * 100);
+        }
     };
 
     const openSide = (side: TipSide) => {
@@ -244,7 +319,20 @@ export default function MatchPointsSummarySection({
     };
 
     return (
-        <section className={cn(" text-white", className)}>
+        <section className={cn(" text-white relative", className)}>
+            {/* Flying Coins Container */}
+            <div className="fixed inset-0 pointer-events-none z-[9999]">
+                {flying.map((f) => (
+                    <FlyingPeso
+                        key={f.id}
+                        id={f.id}
+                        xPercent={sideToX(f.side)}
+                        onDone={(id) =>
+                            setFlying((p) => p.filter((x) => x.id !== id))
+                        }
+                    />
+                ))}
+            </div>
             {/* ================= TOP PLAYERS WITH TIP CARETS ================= */}
             {tipEnabled && <div className="px-2 md:px-4 md:py-4">
                 <div className="flex justify-between">
@@ -253,6 +341,7 @@ export default function MatchPointsSummarySection({
                         {/* TIP CARET */}
                         <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[20]">
                             <button
+                                data-tip-caret="left"
                                 type="button"
                                 onClick={() => openSide("left")}
                                 className={cn(
@@ -271,12 +360,14 @@ export default function MatchPointsSummarySection({
                                 side="left"
                                 view={tipView}
                                 align="left"
+                                triggerFly={triggerFly}
                                 onClose={() => {
                                     setTipOpen(null);
                                     setTipView("menu");
                                 }}
                                 onPesto={() => {
                                     console.log("Pesto tip left");
+                                    triggerFly("left");
                                     setTipOpen(null);
                                 }}
                                 onOpenCustom={() => setTipView("custom")}
@@ -293,6 +384,7 @@ export default function MatchPointsSummarySection({
                         {/* TIP CARET */}
                         <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[20]">
                             <button
+                                data-tip-caret="middle"
                                 type="button"
                                 onClick={() => openSide("middle")}
                                 className={cn(
@@ -311,12 +403,14 @@ export default function MatchPointsSummarySection({
                                 side="middle"
                                 view={tipView}
                                 align="center"
+                                triggerFly={triggerFly}
                                 onClose={() => {
                                     setTipOpen(null);
                                     setTipView("menu");
                                 }}
                                 onPesto={() => {
                                     console.log("Pesto tip middle");
+                                    triggerFly("middle");
                                     setTipOpen(null);
                                 }}
                                 onOpenCustom={() => setTipView("custom")}
@@ -335,6 +429,7 @@ export default function MatchPointsSummarySection({
                         {/* TIP CARET */}
                         <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[20]">
                             <button
+                                data-tip-caret="right"
                                 type="button"
                                 onClick={() => openSide("right")}
                                 className={cn(
@@ -353,12 +448,14 @@ export default function MatchPointsSummarySection({
                                 side="right"
                                 view={tipView}
                                 align="right"
+                                triggerFly={triggerFly}
                                 onClose={() => {
                                     setTipOpen(null);
                                     setTipView("menu");
                                 }}
                                 onPesto={() => {
                                     console.log("Pesto tip right");
+                                    triggerFly("right");
                                     setTipOpen(null);
                                 }}
                                 onOpenCustom={() => setTipView("custom")}
