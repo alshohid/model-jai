@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import FooterSection from "@/shared/components/home/FooterSection";
+import SupportCard from "@/shared/components/card/SupportCard";
 import { cn } from "@/shared/lib/utils/cn";
 
 const TABS = [
@@ -14,12 +15,107 @@ const TABS = [
     { id: "all", label: "All" },
 ] as const;
 
+type Support = {
+    id: string;
+    status: "live" | "unsettled" | "settled";
+    supporterName: string;
+    playerName: string;
+    amount: number;
+    dateText: string;
+    timeText: string;
+    leftPlayerImg: string;
+    rightPlayerImg: string;
+};
+
+const MOCK_SUPPORTS: Support[] = [
+    {
+        id: "1",
+        status: "live",
+        supporterName: "John Doe",
+        playerName: "ShadowR",
+        amount: 5000,
+        dateText: "November 15, 2024",
+        timeText: "2:30 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+    {
+        id: "2",
+        status: "live",
+        supporterName: "Jane Smith",
+        playerName: "Phoenix Force",
+        amount: 3500,
+        dateText: "November 15, 2024",
+        timeText: "1:45 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+    {
+        id: "3",
+        status: "unsettled",
+        supporterName: "Michael Chen",
+        playerName: "ShadowR",
+        amount: 8000,
+        dateText: "November 14, 2024",
+        timeText: "6:15 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+    {
+        id: "4",
+        status: "unsettled",
+        supporterName: "Sarah Williams",
+        playerName: "Phoenix Force",
+        amount: 2500,
+        dateText: "November 14, 2024",
+        timeText: "3:30 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+    {
+        id: "5",
+        status: "settled",
+        supporterName: "Alex Rodriguez",
+        playerName: "ShadowR",
+        amount: 12000,
+        dateText: "November 13, 2024",
+        timeText: "5:00 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+    {
+        id: "6",
+        status: "settled",
+        supporterName: "Emma Davis",
+        playerName: "Phoenix Force",
+        amount: 6500,
+        dateText: "November 13, 2024",
+        timeText: "2:20 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+    {
+        id: "7",
+        status: "settled",
+        supporterName: "Chris Wilson",
+        playerName: "ShadowR",
+        amount: 4200,
+        dateText: "November 12, 2024",
+        timeText: "7:45 pm",
+        leftPlayerImg: "/images/home/leftPlayerImg.png",
+        rightPlayerImg: "/images/home/rightPlayerImg.png",
+    },
+];
+
 export default function SupportHistoryPage() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<(typeof TABS)[number]["id"]>("live");
 
-    // TODO: Replace with real data from API
-    const supports: unknown[] = [];
+    // Filter supports based on active tab
+    const filteredSupports =
+        activeTab === "all"
+            ? MOCK_SUPPORTS
+            : MOCK_SUPPORTS.filter((s) => s.status === activeTab);
 
     return (
         <div className="min-h-screen bg-[#0d0d0d]">
@@ -62,19 +158,32 @@ export default function SupportHistoryPage() {
             </div>
 
             {/* Content */}
-            <div className="container w-full max-w-[100vw] px-4 py-6 sm:px-6 min-w-0 overflow-hidden">
-                {supports.length === 0 ? (
+            <div className="container w-full  py-6 sm:px-6 min-w-0 overflow-hidden">
+                {filteredSupports.length === 0 ? (
                     <div className="py-12 sm:py-16 text-center">
                         <p className="text-white font-semibold text-base sm:text-lg mb-2 wrap-break-word">
-                            There are currently no bets to display.
+                            There are currently no support to display.
                         </p>
                         <p className="text-white/50 text-sm sm:text-base max-w-md mx-auto wrap-break-word">
-                            Bets that can be cashed out appear here.
+                            Support that can be cashed out appear here.
                         </p>
                     </div>
                 ) : (
-                    <div className="space-y-3">
-                        {/* TODO: List support/bet cards when data exists */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+                        {filteredSupports.map((support) => (
+                            <SupportCard
+                                key={support.id}
+                                status={support.status}
+                                supporterName={support.supporterName}
+                                playerName={support.playerName}
+                                amount={support.amount}
+                                dateText={support.dateText}
+                                timeText={support.timeText}
+                                leftPlayerImg={support.leftPlayerImg}
+                                rightPlayerImg={support.rightPlayerImg}
+                                versusImg="/images/home/versus.png"
+                            />
+                        ))}
                     </div>
                 )}
             </div>
