@@ -428,7 +428,7 @@ export default function NavbarSearch() {
                 className="hidden md:block relative flex-1 min-w-0 max-w-[280px] lg:max-w-[320px]"
             >
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#070707]/50 pointer-events-none" />
+                    <Search className="absolute  left-3 top-1/2 -translate-y-1/2 size-4 text-[#070707]/50 pointer-events-none" />
                     <input
                         ref={inputRef}
                         type="text"
@@ -468,12 +468,12 @@ export default function NavbarSearch() {
             </div>
 
             {/* Mobile: search icon on the right (opens modal) */}
-            <div className="md:hidden flex items-center shrink-0">
+            <div className="md:hidden  flex items-center shrink-0">
                 <button
                     type="button"
                     onClick={openModal}
                     className={cn(
-                        "flex items-center justify-center size-7 sm:size-8 rounded-lg shrink-0",
+                        "flex items-center  justify-center size-7 sm:size-8 rounded-lg shrink-0",
                         "bg-black/5 border border-black/10 text-[#070707]",
                         "hover:bg-black/10 active:bg-black/15 transition"
                     )}

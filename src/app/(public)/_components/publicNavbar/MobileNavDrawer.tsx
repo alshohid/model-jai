@@ -20,6 +20,7 @@ import {
 
 import { LuAlignRight } from "react-icons/lu";
 import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
+import NavbarSearch from "./NavbarSearch";
 
 type NavItem = { label: string; href: string };
 
@@ -44,21 +45,25 @@ export default function MobileNavSheet({
 
     return (
         <Sheet>
-            <SheetTrigger asChild>
-                <button
-                    type="button"
-                    className={cn(
-                        "md:hidden cursor-pointer inline-flex items-center justify-center shrink-0",
-                        "h-8 w-8 sm:h-9 sm:w-9 rounded-[10px] p-1.5",
-                        triggerStyles,
-                        "transition"
-                    )}
-                    aria-label="Open menu"
-                >
-                    <LuAlignRight className="text-xl sm:text-[26px] leading-none" />
-                </button>
-            </SheetTrigger>
-
+            <div className="relative">
+                <div className="py-2 ml-2 flex md:hidden ">
+                    <NavbarSearch />
+                </div>
+                <SheetTrigger asChild>
+                    <button
+                        type="button"
+                        className={cn(
+                            "md:hidden cursor-pointer inline-flex items-center justify-center shrink-0",
+                            "h-8 w-8 sm:h-9 sm:w-9 rounded-[10px] p-1.5",
+                            triggerStyles,
+                            "transition"
+                        )}
+                        aria-label="Open menu"
+                    >
+                        <LuAlignRight className="text-xl sm:text-[26px] leading-none" />
+                    </button>
+                </SheetTrigger>
+            </div>
             <SheetContent
                 side="right"
                 className={cn(
@@ -123,8 +128,8 @@ export default function MobileNavSheet({
                                     href="/support-history"
                                     className={cn(
                                         "mt-4 block w-full rounded-[12px] px-4 py-3 text-left",
-                                        "border border-white/10 bg-black/40 transition",
-                                        "text-white font-medium hover:bg-white/10"
+                                        "border border-white/10 bg-white/5  transition",
+                                        "text-white font-medium hover:bg-white/40"
                                     )}
                                 >
                                     Support History
@@ -143,6 +148,7 @@ export default function MobileNavSheet({
 
                         <div className="mt-6">
                             {isAuthenticated ? (
+                                
                                 <div className="flex  items-center justify-between gap-3">
                                     <PointsButton
                                         points={points}

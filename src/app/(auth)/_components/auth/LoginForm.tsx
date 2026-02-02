@@ -66,6 +66,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
 
                 <div className="mt-6 flex items-center justify-center gap-3">
                     <SocialButton kind="google" />
+                    <SocialButton kind="apple" />
                     <SocialButton kind="facebook" />
                 </div>
 

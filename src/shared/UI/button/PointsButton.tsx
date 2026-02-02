@@ -22,10 +22,7 @@ export default function PointsButton({
     ...props
 }: Props) {
     const isCompact = size === "compact";
-    const displayPoints =
-        isCompact && typeof points === "number" && points >= 1000
-            ? `${Math.round(points / 1000)}k`
-            : String(points);
+   
     const base = cn(
         "inline-flex items-center justify-center whitespace-nowrap select-none cursor-pointer",
         "rounded-[8px]",
@@ -64,7 +61,7 @@ export default function PointsButton({
                     className="object-contain size-full"
                 />  : "🪙"}
             </span>
-            <span>{displayPoints}</span>
+            <span>{points}</span>
         </button>
     );
 }

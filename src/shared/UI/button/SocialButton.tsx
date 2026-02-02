@@ -1,11 +1,13 @@
-import { FacebookIcon, GoogleIcon } from "../icon/icon";
+import { FacebookIcon, GoogleIcon, AppleIcon } from "../icon/icon";
 
-export function SocialButton({ kind }: { kind: "google" | "facebook" }) {
+export function SocialButton({ kind }: { kind: "google" | "facebook" | "apple" }) {
     const isGoogle = kind === "google";
+    const isApple = kind === "apple";
+
     return (
         <button
             type="button"
-            className="
+            className={`
         cursor-pointer
         h-[44px] w-[54px]
         rounded-[10px]
@@ -15,10 +17,11 @@ export function SocialButton({ kind }: { kind: "google" | "facebook" }) {
         backdrop-blur-[6px]
         hover:bg-white/15
         transition
-        "
-            aria-label={isGoogle ? "Continue with Google" : "Continue with Facebook"}
+        ${isApple ? "bg-black text-white border-transparent hover:brightness-110" : ""}
+        `}
+            aria-label={isGoogle ? "Continue with Google" : isApple ? "Continue with Apple" : "Continue with Facebook"}
         >
-            {isGoogle ? <GoogleIcon /> : <FacebookIcon />}
+            {isGoogle ? <GoogleIcon /> : isApple ? <AppleIcon /> : <FacebookIcon />}
         </button>
     );
 }
