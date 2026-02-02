@@ -28,6 +28,7 @@ type Props = {
     rightImage?: string;
     middleImage?: string;
     middleLabel?: string;
+    tipEnabled?: boolean;
     onSupportLeft?: (amount: number, supporterName?: string) => void;
     onSupportRight?: (amount: number, supporterName?: string) => void;
 };
@@ -189,6 +190,7 @@ function TipPopover({
 export default function MatchPointsSummarySection({
     isLive,
     supportOpen = false,
+    tipEnabled,
     left,
     right,
     matchId,
@@ -226,7 +228,7 @@ export default function MatchPointsSummarySection({
         setSupportDialogOpen(true);
     };
     const handleSupportConfirm = (
-        side: "left" | "right",
+        side: "left" | "right" | "middle",
         supporterName: string,
         amount: number
     ) => {
@@ -244,12 +246,12 @@ export default function MatchPointsSummarySection({
     return (
         <section className={cn(" text-white", className)}>
             {/* ================= TOP PLAYERS WITH TIP CARETS ================= */}
-            <div className="px-2 md:px-4 md:py-4">
+            {tipEnabled && <div className="px-2 md:px-4 md:py-4">
                 <div className="flex justify-between">
                     {/* LEFT PLAYER */}
                     <div className="relative">
                         {/* TIP CARET */}
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[10000]">
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[20]">
                             <button
                                 type="button"
                                 onClick={() => openSide("left")}
@@ -287,11 +289,51 @@ export default function MatchPointsSummarySection({
                             />
                         </div>
                     </div>
+                    <div className="relative">
+                        {/* TIP CARET */}
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[20]">
+                            <button
+                                type="button"
+                                onClick={() => openSide("middle")}
+                                className={cn(
+                                    "h-7 w-10 rounded-full",
+                                    "bg-black/55 border border-white/10 backdrop-blur-md",
+                                    "flex items-center justify-center",
+                                    "hover:bg-black/65 transition"
+                                )}
+                                aria-label="Tip menu"
+                            >
+                                <ChevronDown className="h-5 w-5 text-white/90" />
+                            </button>
+
+                            <TipPopover
+                                open={tipOpen === "middle"}
+                                side="middle"
+                                view={tipView}
+                                align="center"
+                                onClose={() => {
+                                    setTipOpen(null);
+                                    setTipView("menu");
+                                }}
+                                onPesto={() => {
+                                    console.log("Pesto tip middle");
+                                    setTipOpen(null);
+                                }}
+                                onOpenCustom={() => setTipView("custom")}
+                                onBackToMenu={() => setTipView("menu")}
+                                onSendCustom={(name, amount) => {
+                                    console.log("Custom tip middle:", name, amount);
+                                    setTipOpen(null);
+                                    setTipView("menu");
+                                }}
+                            />
+                        </div>
+                    </div>
                     {/* RIGHT PLAYER */}
                     <div className="relative">
 
                         {/* TIP CARET */}
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[10000]">
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[20]">
                             <button
                                 type="button"
                                 onClick={() => openSide("right")}
@@ -330,7 +372,7 @@ export default function MatchPointsSummarySection({
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> }
 
             {/* ================= MATCH POINTS CARDS ================= */}
             <div >

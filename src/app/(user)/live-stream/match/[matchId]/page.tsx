@@ -31,7 +31,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
     // Initialize scheduledAt with a future time (4 seconds from now)
     const [scheduledAt, setScheduledAt] = useState<string | null>(() => {
         if (typeof window !== "undefined") {
-            return new Date(Date.now() + 50 * 1000).toISOString();
+            return new Date(Date.now() + 1000 * 1000).toISOString();
         }
         return null;
     });
@@ -58,7 +58,6 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                     matchId={matchId}
                     playbackId={playbackId}
                     isLive={isLive}
-                    tipEnabled={tipEnabled}
                     mode={mode}
                     supportClosed={supportClosed}
                     left={demo.left}
@@ -74,6 +73,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         layout={mode}
                         isLive={isLive}
                         matchId={matchId}
+                        tipEnabled={tipEnabled}
                         left={{
                             playerName: demo.left.name,
                             teamLogoSrc: demo.left.teamLogoSrc || "",

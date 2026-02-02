@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
@@ -44,7 +44,8 @@ export default function MatchPointsCard({
 
     const showShareSheet = Boolean(shareTitle && matchId && playerRef);
 
-    const handleShareClick = () => {
+    const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
+        e?.stopPropagation();
         if (showShareSheet && typeof window !== "undefined" && matchId && playerRef) {
             setShareUrl(
                 `${window.location.origin}/live-stream/match/${matchId}?ref=ref_${playerRef}_${Date.now()}`
