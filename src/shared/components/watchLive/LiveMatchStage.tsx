@@ -80,6 +80,7 @@ export default function LiveMatchStage({
                         name={left.name}
                         points={left.points}
                         status="lose"
+                        bossSide={bossSide === "left"}
                         onClick={() => openSupportDialog("left")}
                     />
 
@@ -98,6 +99,7 @@ export default function LiveMatchStage({
                         name={right.name}
                         points={right.points}
                         status="win"
+                        bossSide={bossSide === "right"}
                         onClick={() => openSupportDialog("right")}
                     />
                 </div>
@@ -155,15 +157,17 @@ function PlayerCard({
     points,
     status,
     onClick,
+    bossSide,
 }: {
     image: string;
     name: string;
-    points: number;
+        points: number;
+        bossSide: any;
     status: "win" | "lose";
     onClick: () => void;
 }) {
     return (
-        <div className="relative aspect-[3/4]  overflow-hidden">
+        <div className={`relative aspect-[3/4]  overflow-hidden ${bossSide ? "border border-amber-400" : ""} ` }>
             <Image src={image} fill className="object-cover" alt={name} />
             <div className="absolute inset-0 bg-black/40" />
 
