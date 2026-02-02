@@ -105,22 +105,6 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         }}
                         supportOpen={false}
                     />
-                    {/* {!isLive && (
-                        <div className="flex justify-center pb-10">
-                            <button
-                                onClick={startDemoLive}
-                                disabled={isScheduling}
-                                className={[
-                                    "px-6 py-3 rounded-xl transition font-semibold text-white shadow-lg",
-                                    isScheduling ? "bg-white/10 cursor-not-allowed" : "bg-red-600 hover:bg-red-700",
-                                ].join(" ")}
-                            >
-                                {isScheduling ? `Live in ${countdownSec}s…` : "Start Live (Demo)"}
-                            </button>
-                        </div>
-                    )} */}
-
-
                     <SupporterGridSection
                         matchId={matchId}
                         isLive={isLive}

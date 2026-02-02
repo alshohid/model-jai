@@ -69,7 +69,7 @@ function TipPopover({
                 : "left-1/2 -translate-x-1/2";
 
     return (
-        <div className={cn("absolute z-500 top-full mt-2", pos)}>
+        <div className={cn("absolute z-[9999] top-full mt-2", pos)}>
             <div
                 className={cn(
                     "rounded-2xl",
@@ -80,20 +80,20 @@ function TipPopover({
                 )}
             >
                 {view === "menu" ? (
-                    <div className="p-3 flex items-center gap-2">
+                    <div className="p-1 md:p-3 flex items-center gap-2">
                         <button
                             type="button"
                             onClick={() => {
-                                onPesto();
-                                onClose();
+                                // onPesto();
+                                // onClose();
                             }}
                             className={cn(
-                                "h-9 px-4 rounded-full",
+                                "h-7 px-3 rounded-full",
                                 "bg-white/10 hover:bg-white/15 transition",
                                 "text-white text-sm font-semibold whitespace-nowrap"
                             )}
                         >
-                            ₱ Pesto
+                            ₱ 
                         </button>
 
                         <button
@@ -111,7 +111,7 @@ function TipPopover({
                 ) : (
                     <div
                         className={cn(
-                            "w-[84vw] max-w-[360px] sm:max-w-[420px]",
+                            "w-[84vw] max-w-[350px] sm:max-w-[420px]",
                             "p-3 sm:p-4",
                             "space-y-2 sm:space-y-3"
                         )}
@@ -212,7 +212,7 @@ export default function MatchPointsSummarySection({
                     {/* LEFT PLAYER */}
                     <div className="relative">
                         {/* TIP CARET */}
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 relative">
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[10000]">
                             <button
                                 type="button"
                                 onClick={() => openSide("left")}
@@ -254,7 +254,7 @@ export default function MatchPointsSummarySection({
                     <div className="relative">
                         
                         {/* TIP CARET */}
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 relative">
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[10000]">
                             <button
                                 type="button"
                                 onClick={() => openSide("right")}
@@ -303,7 +303,7 @@ export default function MatchPointsSummarySection({
                         " md:w-full"
                     )}
                 >
-                    <div className="grid grid-cols-[1fr_auto_1fr]  gap-2 md:gap-4">
+                    <div className="grid grid-cols-[1fr_auto_1fr] py-6  gap-2 md:gap-4">
                         <MatchPointsCard
                             playerName={left.playerName}
                             teamLogoSrc={left.teamLogoSrc}

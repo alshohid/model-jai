@@ -336,7 +336,11 @@ export default function LiveMatchStage({
                     />
                 </div>
                 {/* ================= LIVE VIDEO ================= */}
-                {isLive && <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10">
+                {isLive && <div className={cn(
+                    // portrait: tall, landscape: standard video
+                    (mode === "tiktok") ? "w-full max-w-[420px] mx-auto aspect-[9/16]" : "w-full aspect-video",
+                    "relative rounded-xl overflow-hidden border border-white/10"
+                )}>
                     {(mode === "twitch") || (mode === "tiktok") ? (
                         isLive ? (
                             <MuxPlayer
@@ -346,6 +350,7 @@ export default function LiveMatchStage({
                                 playsInline
                                 streamType="live"
                                 className="absolute inset-0 w-full h-full"
+                                style={{ objectFit: (mode === "tiktok") ? "contain" : "cover" }}
                             />
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-white/60">

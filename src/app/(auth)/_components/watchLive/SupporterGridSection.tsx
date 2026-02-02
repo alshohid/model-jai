@@ -55,17 +55,17 @@ export default function SupporterGridSection({
     return (
         <section className="w-full ">
 
-            <div className=" mx-auto w-full px-1 md:px-4 py-6">
+            <div className=" mx-auto w-full px-1 md:px-4 py-2 md:py-6">
                 <div className="grid grid-cols-[1fr_auto_1fr] md:grid-cols-[1fr_100px_1fr] gap-4 items-center">
                     <BossCard name={leftBoss.name} img={leftImg} supportPlayerName="TEAM JACK" total={leftBoss.total} />
-                    <div className="text-[14px] sm:text-[22px] font-extrabold text-center">VS</div>
+                    <div className="text-[12px] sm:text-[22px] font-extrabold text-center">VS</div>
                     <BossCard name={rightBoss.name} img={rightImg} supportPlayerName="TEAM STEEVE" total={rightBoss.total} />
                 </div>
 
                 <h2
                     className={cn(
-                        "mt-6 text-center font-black text-[44px] md:text-[60px] tracking-widest",
-                        "text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-500 to-yellow-300",
+                        "mt-2 md:mt-6 text-center font-black text-[24px] md:text-[60px] tracking-widest",
+                        "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-white to-pink-300",
                         "drop-shadow-[0_6px_0_rgba(0,0,0,0.75)]"
                     )}
                 >
@@ -170,7 +170,7 @@ function SelectSideCard({
 
 function BossCard({ name, img, supportPlayerName, total }: { name: string; img: string, supportPlayerName :string, total :number}) {
     return (
-        <div className="relative"
+        <div className="relative z-10"
         >
             <div className="text-center flex flex-col items-center justify-center mb-2 md:mb-4">
                 <div className="flex items-center justify-center gap-2 mb-1">
