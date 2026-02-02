@@ -5,6 +5,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import Image from "next/image";
 import { ChevronDown, PhilippinePeso } from "lucide-react";
 import * as React from "react";
+import SupportDialog from "@/shared/components/watchLive/SupportDialog";
 
 type SideInfo = {
     playerName: string;
@@ -27,6 +28,8 @@ type Props = {
     rightImage?: string;
     middleImage?: string;
     middleLabel?: string;
+    onSupportLeft?: (amount: number, supporterName?: string) => void;
+    onSupportRight?: (amount: number, supporterName?: string) => void;
 };
 
 function TipPopover({
@@ -93,7 +96,7 @@ function TipPopover({
                                 "text-white text-sm font-semibold whitespace-nowrap"
                             )}
                         >
-                            ₱ 
+                            ₱
                         </button>
 
                         <button
@@ -195,9 +198,43 @@ export default function MatchPointsSummarySection({
     rightImage = "/images/home/player_right.jpg",
     middleImage = "/images/home/host.jpg",
     middleLabel = "HOST",
+    onSupportLeft,
+    onSupportRight,
 }: Props) {
     const [tipOpen, setTipOpen] = React.useState<TipSide | null>(null);
     const [tipView, setTipView] = React.useState<TipView>("menu");
+    const [supportDialogOpen, setSupportDialogOpen] = React.useState(false);
+    const [supportDialogSide, setSupportDialogSide] =
+        React.useState<"left" | "right">("left");
+        const [flying, setFlying] = React.useState<
+            Array<{ id: string; side: TipSide }>
+        >([]);
+    
+        const sideToX = (side: TipSide) =>
+            side === "left" ? 16.6 : side === "middle" ? 50 : 83.4;
+    
+        const triggerFly = (side: TipSide) => {
+            setFlying((p) => [
+                ...p,
+                { id: `${Date.now()}-${Math.random()}`, side },
+            ]);
+        };
+    
+
+    const openSupportDialog = (side: "left" | "right") => {
+        setSupportDialogSide(side);
+        setSupportDialogOpen(true);
+    };
+    const handleSupportConfirm = (
+        side: "left" | "right",
+        supporterName: string,
+        amount: number
+    ) => {
+        side === "left"
+            ? onSupportLeft?.(amount, supporterName)
+            : onSupportRight?.(amount, supporterName);
+        triggerFly(side);
+    };
 
     const openSide = (side: TipSide) => {
         setTipView("menu");
@@ -252,7 +289,7 @@ export default function MatchPointsSummarySection({
                     </div>
                     {/* RIGHT PLAYER */}
                     <div className="relative">
-                        
+
                         {/* TIP CARET */}
                         <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-[10000]">
                             <button
@@ -314,8 +351,8 @@ export default function MatchPointsSummarySection({
                             shareTitle={`Support ${left.playerName}`}
                             matchId={matchId}
                             playerRef="left"
+                            onClick={() => openSupportDialog("left")}
                         />
-
                         {/* VS */}
                         <div className="flex flex-col items-center justify-center p-0 md:px-2">
                             <div className="text-[14px] sm:text-[22px] font-extrabold">VS</div>
@@ -337,9 +374,20 @@ export default function MatchPointsSummarySection({
                             shareTitle={`Support ${right.playerName}`}
                             matchId={matchId}
                             playerRef="right"
+                            onClick={() => openSupportDialog("right")}
                         />
                     </div>
                 </div>
+                
+                <SupportDialog
+                    open={supportDialogOpen}
+                    onOpenChange={setSupportDialogOpen}
+                    playerName={supportDialogSide === "left" ? left.playerName : right.playerName}
+                    side={supportDialogSide}
+                    defaultSupporterName="Michael Rohan"
+                    defaultAmount={100}
+                    onConfirm={handleSupportConfirm}
+                />
             </div>
         </section>
     );

@@ -39,7 +39,6 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
     const demo = useMatchDemoStore(matchId);
     const supportClosed = isLive;
 
-    // Referral redirect handling
     const {
         showRegistrationPrompt,
         handleRegister,
@@ -50,24 +49,6 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
         typeof window !== "undefined" &&
         localStorage.getItem("tip_shortcut_enabled") === "true";
 
-
-
-    // useEffect(() => {
-    //     if (!isScheduling) return;
-
-    //     const timer = setInterval(() => {
-    //         setCountdownSec((s) => {
-    //             if (s <= 1) {
-    //                 clearInterval(timer);
-    //                 setIsScheduling(false);
-    //                 return 0;
-    //             }
-    //             return s - 1;
-    //         });
-    //     }, 1000);
-
-    //     return () => clearInterval(timer);
-    // }, [isScheduling]);
 
     return (
         <div className="min-h-screen ">
@@ -104,6 +85,9 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                             points: demo.right.points,
                         }}
                         supportOpen={false}
+                        onSupportLeft={(amount, supporterName) => demo.support("left", amount, supporterName)}
+                        onSupportRight={(amount, supporterName) => demo.support("right", amount, supporterName)}
+                        
                     />
                     <SupporterGridSection
                         matchId={matchId}
@@ -121,8 +105,6 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                 <TakeGameSection />
                 <FooterSection />
             </div>
-
-            {/* Referral Registration Prompt */}
             <ReferralRegistrationPrompt
                 open={showRegistrationPrompt}
                 onRegister={handleRegister}

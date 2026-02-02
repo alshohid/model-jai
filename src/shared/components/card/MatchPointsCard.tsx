@@ -20,6 +20,7 @@ type Props = {
     compact?: boolean;
     className?: string;
     positive: boolean;
+    onClick: () => void;
 };
 
 export default function MatchPointsCard({
@@ -34,6 +35,7 @@ export default function MatchPointsCard({
     compact = true,
     className,
     positive,
+    onClick
 }: Props) {
     const [shareSheetOpen, setShareSheetOpen] = useState(false);
     const [shareUrl, setShareUrl] = useState("");
@@ -64,7 +66,7 @@ export default function MatchPointsCard({
                 className
             )}
         >
-            <div className="flex flex-col md:flex-row md:items-center  gap-3 md:gap-5">
+            <div onClick={onClick} className="flex flex-col md:flex-row md:items-center  gap-3 md:gap-5">
                 {/* logo */}
                 <div
                     className={cn(
