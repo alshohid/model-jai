@@ -65,13 +65,11 @@ export default function LiveMatchStage({
 
     return (
         <section className="w-full bg-black text-white">
-            <div className="mx-auto w-full  pt-2">
-
-                {/* Guidelines */}
-                {/* <div className="flex justify-end mb-2">
+        
+            {/* <div className="flex justify-end mb-2">
                     <MatchGuidelinesDialog matchId={matchId} />
                 </div> */}
-
+            <div className="mx-auto w-full  pt-2">
                 {/* ================= MOBILE TOP PLAYERS ================= */}
                 <div className="grid grid-cols-3 gap-1 mb-2">
                     {/* LEFT */}
@@ -195,7 +193,7 @@ function PlayerCard({
 
                 <button
                     onClick={onClick}
-                    className="text-white font-bold text-sm md:text-lg hover:underline"
+                    className="text-red-700 font-extrabold text-md md:text-2xl hover:underline"
                 >
                     {name}
                 </button>
