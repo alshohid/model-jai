@@ -55,7 +55,7 @@ export default function SupporterGridSection({
     return (
         <section className="w-full ">
 
-            <div className="bg-black mx-auto w-full px-3 md:px-4 py-6">
+            <div className=" mx-auto w-full px-1 md:px-4 py-6">
                 <div className="grid grid-cols-[1fr_auto_1fr] md:grid-cols-[1fr_100px_1fr] gap-4 items-center">
                     <BossCard name={leftBoss.name} img={leftImg} supportPlayerName="TEAM JACK" total={leftBoss.total} />
                     <div className="text-[14px] sm:text-[22px] font-extrabold text-center">VS</div>

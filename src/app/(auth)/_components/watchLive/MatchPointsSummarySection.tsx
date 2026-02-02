@@ -205,9 +205,9 @@ export default function MatchPointsSummarySection({
     };
 
     return (
-        <section className={cn("bg-black text-white", className)}>
+        <section className={cn(" text-white", className)}>
             {/* ================= TOP PLAYERS WITH TIP CARETS ================= */}
-            <div className="px-2 md:px-4 py-4">
+            <div className="px-2 md:px-4 md:py-4">
                 <div className="flex justify-between">
                     {/* LEFT PLAYER */}
                     <div className="relative">
