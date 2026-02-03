@@ -7,6 +7,7 @@ type SupportStatus = "live" | "unsettled" | "settled";
 
 type Props = {
     status: SupportStatus;
+    result?: "win" | "loss"; 
     supporterName: string;
     playerName: string;
     amount: number;
@@ -18,6 +19,7 @@ type Props = {
     className?: string;
 };
 
+
 export default function SupportCard({
     status,
     supporterName,
@@ -28,19 +30,29 @@ export default function SupportCard({
     leftPlayerImg,
     rightPlayerImg,
     versusImg,
+    result,
     className = "",
 }: Props) {
+    const statusLabel =
+        status === "live"
+            ? "Live Now"
+            : status === "unsettled"
+                ? "Unsettled"
+                : result === "win"
+                    ? "Settled Win"
+                    : "Settled Loss";
+
     const statusStyle = clsx(
         "px-2 md:px-3 py-0 md:py-1 rounded-md text-xs border",
         status === "live"
             ? "bg-red-500/25 text-red-100 border-red-400/30"
             : status === "unsettled"
-              ? "bg-yellow-500/25 text-yellow-100 border-yellow-400/30"
-              : "bg-green-500/25 text-green-100 border-green-400/30"
+                ? "bg-yellow-500/25 text-yellow-100 border-yellow-400/30"
+                : result === "win"
+                    ? "bg-green-500/25 text-green-100 border-green-400/30"
+                    : "bg-red-500/25 text-red-100 border-red-400/30"
     );
 
-    const statusLabel =
-        status === "live" ? "Live Now" : status === "unsettled" ? "Unsettled" : "Settled";
 
     return (
         <article
@@ -76,12 +88,25 @@ export default function SupportCard({
                         <p className="text-white/75 text-xs md:text-sm">
                             Supporting <span className="font-semibold text-white">{playerName}</span>
                         </p>
-                        <div className="flex items-center gap-1">
+
+                        {status === "settled" ? (
+                            <span
+                                className={clsx(
+                                    "font-bold text-sm md:text-base",
+                                    result === "win" ? "text-green-400" : "text-red-400"
+                                )}
+                            >
+                                {result === "win"
+                                    ? `You won ₱${amount.toLocaleString()}`
+                                    : `You lost ₱${amount.toLocaleString()}`}
+                            </span>
+                        ) : (
                             <span className="text-[#80f03f] font-bold text-sm md:text-base">
                                 ₱{amount.toLocaleString()}
                             </span>
-                        </div>
+                        )}
                     </div>
+
 
                     {/* META INFO */}
                     <div className="flex gap-x-1 md:gap-x-6 text-white/75 text-xs md:text-sm">

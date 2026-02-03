@@ -2,7 +2,6 @@
 
 import MatchPointsCard from "@/shared/components/card/MatchPointsCard";
 import { cn } from "@/shared/lib/utils/cn";
-import Image from "next/image";
 import { ChevronDown, PhilippinePeso } from "lucide-react";
 import * as React from "react";
 import SupportDialog from "@/shared/components/watchLive/SupportDialog";
@@ -301,11 +300,6 @@ export default function MatchPointsSummarySection({
                 },
             ]);
         };
-
-        // Prevent outside clicks from closing the TipPopover while it's open.
-        // We use a capture-phase mousedown listener to stop other handlers
-        // from reacting to outside clicks. Allow clicks that are on the
-        // caret button for the currently open side or inside the popover.
         React.useEffect(() => {
             function handleDocMouseDown(e: MouseEvent) {
                 if (!tipOpen) return;

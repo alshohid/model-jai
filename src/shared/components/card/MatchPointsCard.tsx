@@ -42,6 +42,11 @@ export default function MatchPointsCard({
 
     const sign = positive ? "+" : "-";
 
+    const numericPoints =
+        typeof points === "string"
+            ? Number(points.toString().replace(/,/g, ""))
+            : points;
+    const canFormatNumber = typeof numericPoints === "number" && !Number.isNaN(numericPoints);
     const showShareSheet = Boolean(shareTitle && matchId && playerRef);
 
     const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
@@ -86,7 +91,8 @@ export default function MatchPointsCard({
                     />
                 </div>
 
-                <div className=" min-w-0">
+                <div className="min-w-0 flex-1">
+
                     {/* name */}
                     <div
                         className={cn(
@@ -106,15 +112,29 @@ export default function MatchPointsCard({
                         )}
                     >
                         {title}
-                        <div className="flex items-center">
-                            <span className="text-[1.5rem]">
-                                    {sign}
-                                {points}
+                        <div className="flex items-center gap-1 max-w-full overflow-hidden">
+                            <span
+                                className={cn(
+                                    "font-extrabold tabular-nums truncate number-safe",
+                                    compact
+                                        ? "text-[12px]"
+                                        : "text-[18px] md:text-[22px] lg:text-[26px]"
+                                )}
+                            >
+                                {canFormatNumber
+                                    ? numericPoints > 9_999_999
+                                        ? `${sign}${(numericPoints / 1_000_000).toFixed(1)}M`
+                                        : `${sign}${numericPoints.toLocaleString()}`
+                                    : `${sign}${points}`}
                             </span>
-                            <span className="ml-1">
-                                <PhilippinePeso size={20} />
-                            </span>
+
+
+                            <PhilippinePeso
+                                size={compact ? 14 : 20}
+                                className="shrink-0"
+                            />
                         </div>
+
 
                     </div>
 

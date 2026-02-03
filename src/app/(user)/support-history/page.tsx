@@ -18,6 +18,7 @@ const TABS = [
 type Support = {
     id: string;
     status: "live" | "unsettled" | "settled";
+    result?: "win" | "loss";
     supporterName: string;
     playerName: string;
     amount: number;
@@ -26,6 +27,7 @@ type Support = {
     leftPlayerImg: string;
     rightPlayerImg: string;
 };
+
 
 const MOCK_SUPPORTS: Support[] = [
     {
@@ -75,6 +77,7 @@ const MOCK_SUPPORTS: Support[] = [
     {
         id: "5",
         status: "settled",
+        result: "win",
         supporterName: "Alex Rodriguez",
         playerName: "ShadowR",
         amount: 12000,
@@ -86,6 +89,7 @@ const MOCK_SUPPORTS: Support[] = [
     {
         id: "6",
         status: "settled",
+        result: "loss",
         supporterName: "Emma Davis",
         playerName: "Phoenix Force",
         amount: 6500,
@@ -94,6 +98,7 @@ const MOCK_SUPPORTS: Support[] = [
         leftPlayerImg: "/images/home/leftPlayerImg.png",
         rightPlayerImg: "/images/home/rightPlayerImg.png",
     },
+
     {
         id: "7",
         status: "settled",
@@ -182,6 +187,7 @@ export default function SupportHistoryPage() {
                                 leftPlayerImg={support.leftPlayerImg}
                                 rightPlayerImg={support.rightPlayerImg}
                                 versusImg="/images/home/versus.png"
+                                result={support.result}
                             />
                         ))}
                     </div>

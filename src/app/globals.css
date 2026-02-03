@@ -65,6 +65,12 @@
   height: 100%;
   display: block;
 }
+.number-safe {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Make the internal video behave like object-cover */
 mux-player::part(video) {

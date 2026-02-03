@@ -3,6 +3,7 @@
 
 import WatchLiveHeroCarousel from "@/shared/components/watchLive/WatchLiveHero";
 import { WatchLiveHeroSlide } from "@/types/watchLive/watchLiveTypes";
+import { useRouter } from "next/navigation";
 
 
 const slides: WatchLiveHeroSlide[] = [
@@ -90,9 +91,10 @@ const slides: WatchLiveHeroSlide[] = [
 
 
 export default function WatchLivePage() {
+    const router = useRouter()
     return (
         <div className="w-full ">
-            <WatchLiveHeroCarousel slides={slides} onWatch={(s) => console.log(s)} />
+            <WatchLiveHeroCarousel slides={slides} onWatch={(s) => router.push(`live-stream/match/${s.id!}?platform=tiktok`)} />
         </div>
     );
 }

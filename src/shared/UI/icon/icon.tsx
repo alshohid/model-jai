@@ -1,5 +1,6 @@
 
 import { SVGProps } from "react";
+import { BsApple } from "react-icons/bs";
 
 export function MailIcon() {
     return (
@@ -78,11 +79,7 @@ export function FacebookIcon() {
 
 export function AppleIcon() {
     return (
-        <svg width="20" height="22" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.365 1.5c0 1.1-.4 2.2-1.05 3.05-.7.9-1.95 1.9-3.15 1.9-.1-1.2.35-2.5 1.05-3.35.7-.85 1.85-1.65 3.15-1.6z" fill="currentColor"/>
-            <path d="M12.07 6.5c1.55 0 3.15-.95 4.25-2.05 1.1-1.1 2.05-2.75 2.05-4.35-1.35-.05-3.05.85-4.1 2.05C13.6 3.95 12.1 5.6 12.07 6.5z" fill="currentColor"/>
-            <path d="M20.25 9.7c-1.25-1.45-2.95-2.35-4.75-2.35-1.6 0-2.95.7-4 1.9-1.1 1.3-1.95 1.3-3.05 1.3-1.05 0-2.2-.35-3.65-1.3-1.6-1.05-3.6-1.15-5.6-.05C.8 9.6.1 12 .1 15.15c0 4 2.4 8.1 5.75 10.6 1.6 1.25 3.35 2.35 5.5 2.35 1.35 0 2.35-.4 3.45-.4 1 0 2 .4 3.45.4 2.1 0 3.8-1.1 5.4-2.35 1.7-1.35 3.2-3.45 4.3-5.9-4.85-1.95-6.7-7.35-5.85-10.9z" fill="currentColor"/>
-        </svg>
+        <BsApple  size={18}/>
     );
 }
 

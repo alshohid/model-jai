@@ -58,15 +58,8 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
 
                 <div className="mt-6 flex items-center justify-center gap-3">
                     <SocialButton kind="google" />
-                    <SocialButton kind="facebook" />
-                    <Image
-                        src={'/images/home/email.png'}
-                        alt="email"
-                        width={600}
-                        height={600}
-                        className="w-12 h-12"
-                    
-                    />   
+                    <SocialButton kind="apple" />
+                    <SocialButton kind="facebook" />  
                 </div>
 
                 <p className="mt-6 text-center text-[13px] text-white/45">
