@@ -99,11 +99,11 @@ export default function LiveMatchStage({
                         status="win"
                         bossSide={bossSide === "right"}
                         onClick={() => openSupportDialog("right")}
-                          topRightBadge={
-    <div className="rounded-full bg-black/70 px-2 py-1 text-[11px] font-bold border border-white/10 backdrop-blur">
-      6K watching
-    </div>
-  }
+                        topRightBadge={
+                        <div className="rounded-full bg-black/70 px-2 py-1 text-[11px] font-bold border border-white/10 backdrop-blur">
+                        6K watching
+                            </div>
+                    }
                     />
                 </div>
                 {/* ================= LIVE VIDEO ================= */}
