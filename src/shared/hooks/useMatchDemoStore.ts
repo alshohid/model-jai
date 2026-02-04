@@ -14,7 +14,7 @@ function getTop(map: Totals) {
 }
 
 export function useMatchDemoStore(matchId: string) {
-    const [viewerName] = useState("Cameron Williamson"); 
+    const [viewerName] = useState("Fatt Le Sage"); 
 
     const [left, setLeft] = useState({
         name: "JACK",

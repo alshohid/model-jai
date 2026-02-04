@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -8,10 +9,12 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/shared/lib/utils/cn";
+import type { SupportSide } from "@/shared/components/watchLive/types";
 
-export type SupportSide = "left" | "right";
+const DEFAULT_SUPPORTER_NAME = "Michael Rohan";
+const DEFAULT_AMOUNT = 100;
 
-type Props = {
+interface SupportDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     playerName: string;
@@ -19,17 +22,18 @@ type Props = {
     defaultSupporterName?: string;
     defaultAmount?: number;
     onConfirm: (side: SupportSide, supporterName: string, amount: number) => void;
-};
+}
+
 
 export default function SupportDialog({
     open,
     onOpenChange,
     playerName,
     side,
-    defaultSupporterName = "Michael Rohan",
-    defaultAmount = 100,
+    defaultSupporterName = DEFAULT_SUPPORTER_NAME,
+    defaultAmount = DEFAULT_AMOUNT,
     onConfirm,
-}: Props) {
+}: SupportDialogProps) {
     const [supporterName, setSupporterName] = React.useState(defaultSupporterName);
     const [amount, setAmount] = React.useState<string>(String(defaultAmount));
     const [success, setSuccess] = React.useState(false);
@@ -48,7 +52,7 @@ export default function SupportDialog({
         onConfirm(side, supporterName, num);
         setSuccess(true);
         setTimeout(() => {
-            onOpenChange(false);
+            onOpenChange?.(false);
         }, 800);
     };
 
