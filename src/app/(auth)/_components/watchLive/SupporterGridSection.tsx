@@ -148,7 +148,7 @@ function SelectSideCard({
                     "font-extrabold leading-none truncate",
                     "text-[18px] sm:text-[22px]",
                     selected 
-                        ? "text-white" :"text-[#DD2E03] [-webkit-text-stroke:2px_#F9C80E]"
+                        ? "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-white to-pink-300" :"text-[#DD2E03] [-webkit-text-stroke:1px_#F9C80E]"
 
                 )}
                 style={{ fontFamily: "Manrope" }}
