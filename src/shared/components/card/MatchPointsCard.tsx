@@ -13,7 +13,6 @@ type Props = {
     title: "Matched Points" | "Unmatched Points";
     points: number | string;
     onShare?: () => void;
-    /** নিচ থেকে শেয়ার শীট খুলবে – মোবাইলে লিংক শেয়ার */
     shareTitle?: string;
     matchId?: string;
     playerRef?: string;
@@ -44,9 +43,18 @@ export default function MatchPointsCard({
 
     const numericPoints =
         typeof points === "string"
-            ? Number(points.toString().replace(/,/g, ""))
+            ? Number(points.replace(/,/g, ""))
             : points;
-    const canFormatNumber = typeof numericPoints === "number" && !Number.isNaN(numericPoints);
+
+    const canFormatNumber =
+        typeof numericPoints === "number" && !Number.isNaN(numericPoints);
+
+    const formattedPoints = canFormatNumber
+        ? numericPoints >= 1_000_000_000
+            ? `${sign}${(numericPoints / 1_000_000_000).toFixed(1)}B`
+            : `${sign}${numericPoints.toLocaleString()}`
+        : `${sign}${points}`;
+
     const showShareSheet = Boolean(shareTitle && matchId && playerRef);
 
     const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
@@ -66,14 +74,15 @@ export default function MatchPointsCard({
             className={cn(
                 "w-full rounded-[16px] bg-white/5 border border-white/15 backdrop-blur-[16px]",
                 "shadow-[inset_0_0_0_2px_rgba(0,0,0,0.35),0_0_0_1px_rgba(255,255,255,0.06)]",
-                compact
-                    ? " p-4 md:p-8"
-                    : "px-6 py-6 md:px-10 md:py-10",
+                compact ? "p-2 md:p-8" : "px-3 py-6 md:px-10 md:py-10",
                 className
             )}
         >
-            <div onClick={onClick} className="flex flex-col md:flex-row md:items-center  gap-3 md:gap-5">
-                {/* logo */}
+            <div
+                onClick={onClick}
+                className="flex flex-col md:flex-row md:items-center gap-2 md:gap-5"
+            >
+                {/* Logo */}
                 <div
                     className={cn(
                         "shrink-0 rounded-full overflow-hidden bg-white/5 flex items-center justify-center",
@@ -92,19 +101,18 @@ export default function MatchPointsCard({
                 </div>
 
                 <div className="min-w-0 flex-1">
-
-                    {/* name */}
+                    {/* Player name */}
                     <div
                         className={cn(
-                            "font-extrabold truncate",
+                            "font-extrabold truncate text-[#DD2E03]",
                             compact ? "text-[12px]" : "text-[22px] md:text-[26px]",
-                            "text-[#DD2E03]",
                             "[-webkit-text-stroke:1px_#F9C80E]"
                         )}
                     >
                         {playerName}
                     </div>
 
+                    {/* Title + points */}
                     <div
                         className={cn(
                             "font-bold text-white truncate",
@@ -112,40 +120,33 @@ export default function MatchPointsCard({
                         )}
                     >
                         {title}
+
                         <div className="flex items-center gap-1 max-w-full overflow-hidden">
                             <span
                                 className={cn(
                                     "font-extrabold tabular-nums truncate number-safe",
                                     compact
-                                        ? "text-[12px]"
-                                        : "text-[18px] md:text-[22px] lg:text-[26px]"
+                                        ? "text-[14px] md:text-[16px]"
+                                        : "text-[20px] md:text-[24px] lg:text-[28px]"
                                 )}
                             >
-                                {canFormatNumber
-                                    ? numericPoints > 9_999_999
-                                        ? `${sign}${(numericPoints / 1_000_000).toFixed(1)}M`
-                                        : `${sign}${numericPoints.toLocaleString()}`
-                                    : `${sign}${points}`}
+                                {formattedPoints}
                             </span>
 
-
                             <PhilippinePeso
-                                size={compact ? 14 : 20}
+                                size={compact ? 16 : 22}
                                 className="shrink-0"
                             />
                         </div>
-
-
                     </div>
 
-
-                    {/* button */}
+                    {/* Share button */}
                     <div className={compact ? "mt-2" : "mt-4"}>
                         <StartStreamingButton
                             onClick={handleShareClick}
                             className={cn(
                                 compact
-                                    ? "h-[23px] md:h-[30px] text-[8px]  md:text-[14px] px-3 rounded-md"
+                                    ? "h-[23px] md:h-[30px] text-[8px] md:text-[14px] px-3 rounded-md"
                                     : "h-[44px] text-[14px]"
                             )}
                         >

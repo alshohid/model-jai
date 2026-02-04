@@ -58,7 +58,7 @@ export default function SupporterGridSection({
             <div className=" mx-auto w-full px-1 md:px-4 py-2 md:py-6">
                 <div className="grid grid-cols-[1fr_auto_1fr] md:grid-cols-[1fr_100px_1fr] gap-4 items-center">
                     <BossCard name={leftBoss.name} img={leftImg} supportPlayerName="TEAM JACK" total={leftBoss.total} />
-                    <div className="text-[12px] sm:text-[22px] font-extrabold text-center">VS</div>
+                    <div className="text-[12px] sm:text-[22px] font-extrabold rotate-45 text-center">VS</div>
                     <BossCard name={rightBoss.name} img={rightImg} supportPlayerName="TEAM STEEVE" total={rightBoss.total} />
                 </div>
 
@@ -130,9 +130,7 @@ function SelectSideCard({
                 "border transition text-left",
                 "bg-black/35 backdrop-blur-md",
                 selected
-                    ? mode === "tiktok"
-                        ? "border-4 border-yellow-400 shadow-[0_0_0_2px_rgba(0,0,0,0.45)]"
-                        : "border-2 border-yellow-400"
+                    ?  "border-2 border-yellow-400"
                     : "border border-white/15 opacity-85 hover:opacity-100"
             )}
             aria-pressed={selected}
@@ -148,11 +146,10 @@ function SelectSideCard({
             <div
                 className={cn(
                     "font-extrabold leading-none truncate",
-                    "text-[#DD2E03]",
-                    "[-webkit-text-stroke:2px_#F9C80E]",
-                    mode === "tiktok"
-                        ? "text-[18px] sm:text-[22px]"
-                        : "text-[18px] sm:text-[24px]"
+                    "text-[18px] sm:text-[22px]",
+                    selected 
+                        ? "text-white" :"text-[#DD2E03] [-webkit-text-stroke:2px_#F9C80E]"
+
                 )}
                 style={{ fontFamily: "Manrope" }}
             >

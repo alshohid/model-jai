@@ -520,13 +520,15 @@ export default function MatchPointsSummarySection({
                         />
                         {/* VS */}
                         <div className="flex flex-col items-center justify-center p-0 md:px-2">
-                            <div className="text-[14px] sm:text-[22px] font-extrabold">VS</div>
-                            <div className="text-[10px] sm:text-[14px] text-white/80">
-                                {isLive ? "Live Now" : "Upcoming"}
+                            <div className="rotate-45 out translate-x-1 flex flex-col items-center origin-center">
+                                <div className="text-[14px] sm:text-[22px]  font-extrabold">VS</div>
+                                <div className="text-[10px] sm:text-[14px]  text-white/80">
+                                    {isLive ? "Live Now" : "Upcoming"}
+                                </div>
                             </div>
-                            <div className="text-[9px] sm:text-[13px] text-white/60">
+                            {/* <div className="text-[9px] sm:text-[13px] text-white/60">
                                 {isLive ? (supportOpen ? "Support Open" : "Support Closed") : ""}
-                            </div>
+                            </div> */}
                         </div>
 
                         <MatchPointsCard
