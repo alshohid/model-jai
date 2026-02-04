@@ -188,6 +188,7 @@ export default function SupportHistoryPage() {
                                 rightPlayerImg={support.rightPlayerImg}
                                 versusImg="/images/home/versus.png"
                                 result={support.result}
+                                onWatch={() => router.push(`/live-stream/match/${support.id}?platform=tiktok`)}
                             />
                         ))}
                     </div>

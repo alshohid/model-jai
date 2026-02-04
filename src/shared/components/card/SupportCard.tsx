@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { Meta } from "../cardComponent/Meta";
 import { PlayerImage } from "../cardComponent/PlayerImage";
 import { Versus } from "../cardComponent/Versus";
+import WatchStreamButton from "@/shared/UI/button/WatchStreamButton";
 
 type SupportStatus = "live" | "unsettled" | "settled";
 
@@ -17,6 +18,7 @@ type Props = {
     rightPlayerImg: string;
     versusImg: string;
     className?: string;
+    onWatch?: () => void;
 };
 
 
@@ -31,6 +33,7 @@ export default function SupportCard({
     rightPlayerImg,
     versusImg,
     result,
+    onWatch,
     className = "",
 }: Props) {
     const statusLabel =
@@ -106,8 +109,9 @@ export default function SupportCard({
                             </span>
                         )}
                     </div>
-
-
+                    {status === "live" && <div className="p-2">
+                        <WatchStreamButton label="Watch Now" onClick={onWatch} />
+                    </div>}
                     {/* META INFO */}
                     <div className="flex gap-x-1 md:gap-x-6 text-white/75 text-xs md:text-sm">
                         <Meta icon="🗓" text={dateText} />
