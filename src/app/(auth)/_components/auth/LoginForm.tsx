@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useAuth } from "@/shared/providers/auth/useAuth";
+import { useAuth } from "@/redux/features/auth/hooks";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon } from "@/shared/UI/icon/icon";
@@ -14,17 +14,27 @@ import { useForm } from "react-hook-form";
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { login } = useAuth();
+    const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
 
     const { register, handleSubmit } = useForm();
 
-    const onSubmit = (data: any) => {
+    const onSubmit = async (data: any) => {
         console.log("login", data);
+        try {
+            const loginResult = await logIn({
+                email: data.email,
+                password: data.password,
 
-        login();
+            }).unwrap()
+            console.log("login result ===== ",loginResult);
 
-        router.replace(redirect);
+        } catch (error) {
+
+        }
+
+
+        // router.replace(redirect);
     };
 
 
@@ -54,7 +64,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                 />
 
                 <div className="pt-2">
-                    <PrimaryButton text="Log In" variant="pink" />
+                    <PrimaryButton isloading={isLoginLoading} loadingText="Logging" text="Log In" variant="pink" />
                 </div>
 
                 <button
