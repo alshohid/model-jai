@@ -7,7 +7,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import AuthButton from "@/shared/UI/button/AuthButton";
 import PointsButton from "@/shared/UI/button/PointsButton";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
-import { useAuth } from "@/shared/providers/auth/useAuth";
+
 
 import {
     Sheet,
@@ -21,6 +21,7 @@ import {
 import { LuAlignRight } from "react-icons/lu";
 import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
 import NavbarSearch from "./NavbarSearch";
+import { useAuth } from "@/redux/features/auth/hooks";
 
 type NavItem = { label: string; href: string };
 
@@ -37,6 +38,7 @@ export default function MobileNavSheet({
 }) {
     const pathname = usePathname();
     const { isAuthenticated } = useAuth();
+    console.log("auth ",isAuthenticated)
 
     const triggerStyles =
         tone === "light"

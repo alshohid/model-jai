@@ -9,6 +9,7 @@ import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
@@ -16,7 +17,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const router = useRouter();
     const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
-
+    const [erroLogin , setErrorLogin]= useState("")
     const { register, handleSubmit } = useForm();
 
     const onSubmit = async (data: any) => {
@@ -27,14 +28,16 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                 password: data.password,
 
             }).unwrap()
-            console.log("login result ===== ",loginResult);
+            console.log("login result ===== ", loginResult);
+            if (loginResult.success) {
+                router.replace(redirect);
+            }
 
         } catch (error) {
-
+            console.log("error ",error)
+            setErrorLogin(error?.data?.message)
         }
 
-
-        // router.replace(redirect);
     };
 
 
@@ -62,7 +65,9 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                     register={register as any}
                     icon={<LockIcon />}
                 />
-
+                <span className="text-red-600">
+                    {erroLogin ? erroLogin :""}
+                </span>
                 <div className="pt-2">
                     <PrimaryButton isloading={isLoginLoading} loadingText="Logging" text="Log In" variant="pink" />
                 </div>

@@ -1,8 +1,13 @@
 export type IRefreshTokenPayload = {
     success: boolean;
-    authorization: {
-        type: "bearer";
-        access_token: string;
+    data?: {
+        access_token?: string;
+        refresh_token?: string;
+    };
+    authorization?: {
+        type?: string;
+        access_token?: string;
+        refresh_token?: string;
     };
 };
 
@@ -11,7 +16,7 @@ export interface ILoginParams {
     password: string;
 }
 
-export type IAuthUserRole = "user" | "admin";
+export type IAuthUserRole = "user" | "admin" | null;
 export const RoleUtils = {
     isAdmin: (role?: IAuthUserRole | null) => role === "admin",
     isUser: (role?: IAuthUserRole | null) => role === "user",
@@ -29,12 +34,21 @@ export const RoleUtils = {
 export interface ILoginPayload {
     success: boolean;
     message: string;
-    type: IAuthUserRole; // User Role: admin | user
-    authorization: {
-        type: string; // auth type such as: bearer
-        access_token: string;
-        refresh_token: string;
+    type?: IAuthUserRole; // Legacy role location
+    data?: {
+        access_token?: string;
+        refresh_token?: string;
+        token_type?: string;
+        expires_in?: number;
+        user?: {
+            name?: string;
+            email?: string;
+            image?: string | null;
+            email_verified?: boolean;
+            role?: IAuthUserRole | string;
+        };
     };
+    
 }
 
 export interface IAuthUser {

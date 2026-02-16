@@ -1,5 +1,3 @@
-
-import Cookies from "js-cookie";
 import {
     BaseQueryFn,
     createApi,
@@ -18,7 +16,6 @@ import { ILoginParams, ILoginPayload, IRefreshTokenPayload } from "@/types/user/
 
 const baseQuery = fetchBaseQuery({
     baseUrl: constants.baseApiURL,
-    credentials: "include",
     prepareHeaders: (headers, { getState }) => {
         // Setting header on every API call
         const state = getState() as RootState;
@@ -39,12 +36,39 @@ type RefreshResult = QueryReturnValue<
 let refreshPromise: Promise<RefreshResult> | null = null;
 let isRefreshing = false;
 
+const toAuthRole = (role?: string | null) => {
+    if (role === "admin" || role === "user") return role;
+    return null;
+};
+
+const extractLoginAuthData = (payload: ILoginPayload) => {
+    const accessToken =
+        payload?.data?.access_token ?? null;
+    const refreshToken =
+        payload?.data?.access_token ?? null;
+    const role = toAuthRole(
+        payload?.data?.user?.role ?? null,
+    );
+
+    return { accessToken, refreshToken, role };
+};
+
+const extractRefreshTokens = (payload: IRefreshTokenPayload) => {
+    const accessToken =
+        payload?.data?.access_token ?? null;
+    const refreshToken =
+        payload?.data?.access_token ?? null;
+
+    return { accessToken, refreshToken };
+};
+
 const baseQueryWithReauth: BaseQueryFn<
     string | FetchArgs,
     unknown,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
+    console.log("result status == ", result);
 
     if (result?.error?.status === 401) {
         const state = api.getState() as RootState;
@@ -56,18 +80,13 @@ const baseQueryWithReauth: BaseQueryFn<
                     isRefreshing = true;
 
                     const state = api.getState() as RootState;
-                    const refreshToken = state.auth.refreshToken;
-
-                    const newToken = Cookies.get("token");
+                    // const refreshToken = state.auth.refreshToken;
 
                     refreshPromise = Promise.resolve(
                         baseQuery(
                             {
                                 url: "/refresh",
                                 method: "POST",
-                                body: {
-                                    refresh_token: refreshToken,
-                                },
                             },
                             api,
                             extraOptions,
@@ -77,13 +96,19 @@ const baseQueryWithReauth: BaseQueryFn<
                     const refreshResult = await refreshPromise;
 
                     if (refreshResult?.data) {
-                        const newToken = (refreshResult.data as IRefreshTokenPayload)
-                            ?.authorization?.access_token;
+                        const { accessToken } = extractRefreshTokens(
+                            refreshResult.data as IRefreshTokenPayload,
+                        );
+
+                        if (!accessToken) {
+                            throw new Error("No access token in refresh response");
+                        }
 
                         api.dispatch(
                             setCredentials({
-                                token: newToken,
+                                token: accessToken,
                                 role: state.auth.role,
+                                refreshToken: accessToken ,
                             }),
                         );
                     } else {
@@ -125,11 +150,15 @@ export const baseApi = createApi({
             onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
-                    const token = data?.authorization?.access_token;
-                    const refreshToken = data?.authorization?.refresh_token;
-                    const role = data?.type;
+                    const { accessToken, refreshToken, role } = extractLoginAuthData(data);
 
-                    dispatch(setCredentials({ token, role, refreshToken }));
+                    dispatch(
+                        setCredentials({
+                            token: accessToken,
+                            refreshToken,
+                            role,
+                        }),
+                    );
                 } catch (error) {
                     toast.error(
                         getErrorMessage(error, "Login failed. Please try again."),
