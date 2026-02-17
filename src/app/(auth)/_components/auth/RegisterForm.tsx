@@ -1,15 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useRegisterUserMutation } from "@/redux/features/auth/authapi";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon, UserIcon } from "@/shared/UI/icon/icon";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
+    const [registerUser, { isLoading }] = useRegisterUserMutation()
     const { register, handleSubmit } = useForm();
 
-    const onSubmit = (data: any) => {
-        console.log("register", data);
+    const onSubmit = async(data: any) => {
+        console.log(data)
+        const result = await registerUser(data)
+        
+        if ('data' in result) {
+            toast.success(result.data?.message ?? "User registered successfully")
+            console.log(result.data)
+        } else if ('error' in result) {
+
+            const error = result.error as any
+            toast.error(error?.data?.message ?? "Something went wrong")
+            console.log(error)
+        }
     };
 
     return (
@@ -26,7 +40,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             <div className="mt-8 space-y-4">
                 <AuthInput
                     label="Full name or artist name"
-                    name="fullName"
+                    name="name"
                     register={register as any}
                     icon={<UserIcon />}
                 />
@@ -46,14 +60,14 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                 />
                 <AuthInput
                     label="Confirm Password"
-                    name="confirmPassword"
+                    name="c_password"
                     type="password"
                     register={register as any}
                     icon={<LockIcon />}
                 />
 
                 <div className="pt-2">
-                    <PrimaryButton text="Register" variant="pink" />
+                    <PrimaryButton isLoading={isLoading} loadingText="Registering..." text="Register" variant="pink" />
                 </div>
 
                 <div className="mt-6 flex items-center justify-center gap-3">

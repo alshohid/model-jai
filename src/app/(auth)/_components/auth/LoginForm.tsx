@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client"
 
 import { getErrorMessage } from "@/lib/utils";
+import { useGoogleLoginMutation } from "@/redux/features/auth/authapi";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
@@ -19,8 +21,17 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const router = useRouter();
     const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
-    const [erroLogin , setErrorLogin]= useState("")
+    const [errorLogin, setErrorLogin] = useState("")
     const { register, handleSubmit } = useForm<ILoginParams>();
+    const [googleLogin] = useGoogleLoginMutation();
+
+    const handleGoogleLogin = async () => {
+        const res = await googleLogin().unwrap();
+
+        if (res.success) {
+            window.location.href = res?.data?.url;
+        }
+    };
 
     const onSubmit = async (data: ILoginParams) => {
         console.log("login", data);
@@ -36,7 +47,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
             }
 
         } catch (error: unknown) {
-            console.log("error ",error)
+            console.log("error ", error)
             setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));
         }
 
@@ -68,10 +79,10 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                     icon={<LockIcon />}
                 />
                 <span className="text-red-600">
-                    {erroLogin ? erroLogin :""}
+                    {errorLogin ? errorLogin : ""}
                 </span>
                 <div className="pt-2">
-                    <PrimaryButton isloading={isLoginLoading} loadingText="Logging" text="Log In" variant="pink" />
+                    <PrimaryButton isLoading={isLoginLoading} loadingText="Logging in..." text="Log In" variant="pink" />
                 </div>
 
                 <button
@@ -82,9 +93,13 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                 </button>
 
                 <div className="mt-6 flex items-center justify-center gap-3">
-                    <SocialButton kind="google" />
-                    <SocialButton kind="apple" />
-                    <SocialButton kind="facebook" />
+                    <SocialButton kind="google" handleSocialLogin={handleGoogleLogin} />
+                    <SocialButton kind="apple" handleSocialLogin={() => {
+                        console.log("apple");
+                    }} />
+                    <SocialButton kind="facebook" handleSocialLogin={() => {
+                        console.log("facebook");
+                    }} />
                 </div>
 
                 <p className="mt-6 text-center text-[13px] text-white/45">

@@ -6,6 +6,7 @@ import { RouteProvider } from "@/shared/providers/route/RouteProvider";
 import LenisProvider from "@/shared/providers/LenisProvider";
 import StoreProvider from "@/redux/StoreProvider";
 import AuthProvider from "@/redux/features/auth/AuthProvider";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
           <AuthProvider> 
         <LenisProvider>
           <RouteProvider>
+            <Toaster position="top-right"/>
             {children}
           </RouteProvider>
           </LenisProvider>

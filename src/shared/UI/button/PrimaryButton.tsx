@@ -1,10 +1,10 @@
 
-export function PrimaryButton({ text, variant = "pink", isloading = false, loadingText = "Processing" }: { text: string; variant?: "pink" | "blue", isloading: boolean, loadingText:string }) {
+export function PrimaryButton({ text, variant = "pink", isLoading = false, loadingText = "Processing" }: { text: string; variant?: "pink" | "blue", isLoading?: boolean, loadingText?:string }) {
     const isPink = variant === "pink";
     return (
         <button
             type="submit"
-            disabled={isloading}
+            disabled={isLoading}
             className={[
                 "w-full cursor-pointer rounded-[10px] px-4 py-3",
                 "text-[16px] font-semibold tracking-wide",
@@ -15,7 +15,7 @@ export function PrimaryButton({ text, variant = "pink", isloading = false, loadi
                     : "bg-[#11B5FF] text-[#0B0D12]",
             ].join(" ")}
         >
-            {isloading? loadingText:text}
+            {isLoading? loadingText:text}
         </button>
     );
 }

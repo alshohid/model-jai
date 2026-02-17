@@ -1,11 +1,12 @@
 import { FacebookIcon, GoogleIcon, AppleIcon } from "../icon/icon";
 
-export function SocialButton({ kind }: { kind: "google" | "facebook" | "apple" }) {
+export function SocialButton({ kind, handleSocialLogin }: { kind: "google" | "facebook" | "apple", handleSocialLogin?: () => void }) {
     const isGoogle = kind === "google";
     const isApple = kind === "apple";
 
     return (
         <button
+            onClick={handleSocialLogin}
             type="button"
             className={`
         cursor-pointer
