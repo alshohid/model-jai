@@ -16,9 +16,9 @@ export interface ILoginParams {
     password: string;
 }
 
-export type IAuthUserRole = "user" | "admin" | null;
+export type IAuthUserRole = "user" | "superadmin" | "artist" |null;
 export const RoleUtils = {
-    isAdmin: (role?: IAuthUserRole | null) => role === "admin",
+    isAdmin: (role?: IAuthUserRole | null) => role === "superadmin",
     isUser: (role?: IAuthUserRole | null) => role === "user",
     isPublic: (role?: IAuthUserRole | null) => role == null,
 

@@ -1,5 +1,6 @@
 "use client";
-import { useAuth } from "@/shared/providers/auth/useAuth";
+
+import { useAuth } from "@/redux/features/auth/hooks";
 import WalletDepositPanel from "./WalletDepositPanel";
 
 const WalletDepositeSection = () => {
@@ -14,7 +15,6 @@ const WalletDepositeSection = () => {
                     bonus="0.00"
                     onDeposit={(v) => {
                         console.log("DEPOSIT SUBMIT 👉", v);
-                        // v = { amount, priceCode, paymentMethod }
                     }}
                 /> :""
 

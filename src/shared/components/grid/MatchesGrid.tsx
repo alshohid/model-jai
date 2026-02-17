@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRouter } from "next/navigation";
 import MatchCard from "../card/MatchCard";
-import { useAuth } from "@/shared/providers/auth/useAuth";
+import { useAuth } from "@/redux/features/auth/hooks";
+
 
 export type MatchStatus = "Upcoming" | "Past" | "Live";
 

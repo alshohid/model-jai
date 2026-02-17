@@ -35,7 +35,7 @@ const RankingSection = () => {
                     <SupporterCard
                         imageSrc="/images/home/supported_cardimg.png"
                         title="Big Boss Supporter"
-                        name="Cameron Williamson"
+                        name="Fatt Le Sage"
                         className="mx-auto"
                     />
 

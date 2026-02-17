@@ -1,12 +1,14 @@
 
 "use client"
 
+import { getErrorMessage } from "@/lib/utils";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon } from "@/shared/UI/icon/icon";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
+import { ILoginParams } from "@/types/user/auth";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,9 +20,9 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
     const [erroLogin , setErrorLogin]= useState("")
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm<ILoginParams>();
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: ILoginParams) => {
         console.log("login", data);
         try {
             const loginResult = await logIn({
@@ -33,9 +35,9 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                 router.replace(redirect);
             }
 
-        } catch (error) {
+        } catch (error: unknown) {
             console.log("error ",error)
-            setErrorLogin(error?.data?.message)
+            setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));
         }
 
     };

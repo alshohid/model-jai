@@ -1,43 +1,13 @@
-import LiveGameCard from "@/shared/components/card/LiveGameCard";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import LiveSectionHeader from "./LiveSectionHeader";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/shared/providers/auth/useAuth";
 import MatchCard from "@/shared/components/card/MatchCard";
 import { MatchItem } from "@/shared/components/grid/MatchesGrid";
+import { useAuth } from "@/redux/features/auth/hooks";
 
-// const dummyLiveGames = [
-//     {
-//         id: "1",
-//         cover: "/images/home/livecard_1.jpg",
-//         isLive: true,
-//         watchingCount: "4.2K",
-//         title: "2022 world champs gaming warzone",
-//         userName: "Guy Hawkins",
-//         gameName: "Call of Duty",
-//         avatar: "/images/home/avatar_1.png",
-//     },
-//     {
-//         id: "2",
-//         cover: "/images/home/livecard_2.jpg",
-//         isLive: true,
-//         watchingCount: "4.5K",
-//         title: "2022 world champs gaming warzone",
-//         userName: "Guy Hawkins",
-//         gameName: "Call of duty",
-//         avatar: "/images/home/avatar_1.png",
-//     },
-//     {
-//         id: "3",
-//         cover: "/images/home/livecard_3.jpg",
-//         isLive: true,
-//         watchingCount: "4.8K",
-//         title: "2022 world champs gaming warzone",
-//         userName: "Guy Hawkins",
-//         gameName: "Call of duty",
-//         avatar: "/images/home/avatar_1.png",
-//     },
-// ];
+
 const MOCK_MATCHES: MatchItem[] = [
     {
         id: "1",
@@ -95,58 +65,7 @@ const MOCK_MATCHES: MatchItem[] = [
         versusImg: "/images/home/versus.png",
         platform: "twitch"
     },
-    // {
-    //     id: "5",
-    //     status: "Upcoming",
-    //     title: "ShadowR vs Phoenix Force",
-    //     dateText: "November 1, 2024",
-    //     timeText: "4:30 pm",
-    //     gameLogoSrc: "/images/home/fc26.png",
-    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
-    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
-    //     watchHref: "/matches/2",
-    //     voteRequired: false,
-    //     versusImg: "/images/home/versus.png",
-    // },
-    // {
-    //     id: "6",
-    //     status: "Upcoming",
-    //     title: "ShadowR vs Phoenix Force",
-    //     dateText: "November 1, 2024",
-    //     timeText: "4:30 pm",
-    //     gameLogoSrc: "/images/home/fc26.png",
-    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
-    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
-    //     watchHref: "/matches/3",
-    //     voteRequired: false,
-    //     versusImg: "/images/home/versus.png",
-    // },
-    // {
-    //     id: "3",
-    //     status: "Upcoming",
-    //     title: "ShadowR vs Phoenix Force",
-    //     dateText: "November 1, 2024",
-    //     timeText: "4:30 pm",
-    //     gameLogoSrc: "/images/home/mortal_1.png",
-    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
-    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
-    //     watchHref: "/matches/3",
-    //     voteRequired: false,
-    //     versusImg: "/images/home/versus.png",
-    // },
-    // {
-    //     id: "4",
-    //     status: "Upcoming",
-    //     title: "ShadowR vs Phoenix Force",
-    //     dateText: "November 1, 2024",
-    //     timeText: "4:30 pm",
-    //     gameLogoSrc: "/images/home/freestyle.png",
-    //     leftPlayerImg: "/images/home/leftPlayerImg.png",
-    //     rightPlayerImg: "/images/home/rightPlayerImg.png",
-    //     watchHref: "/matches/1",
-    //     voteRequired: false,
-    //     versusImg: "/images/home/versus.png",
-    // },
+    
 ];
 
 export default function LiveStreamsSection() {
@@ -202,11 +121,7 @@ export default function LiveStreamsSection() {
                             onWatch={()=>handleWatch(m.id, m.platform) as any}
 
                         />
-                        // <LiveGameCard
-                        //     key={game.id ?? i}
-                        //     {...game}
-                        //     onWatch={() => handleWatch(game.id)}
-                        // />
+                        
                     ))}
                 </div>
 

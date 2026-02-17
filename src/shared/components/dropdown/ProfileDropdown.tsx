@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import AppDropdownMenu, { AppDropdownItem } from "./AppDropdownMenu";
-import { useAuth } from "@/shared/providers/auth/useAuth";
+
 import { cn } from "@/shared/lib/utils/cn";
+import { useAuth } from "@/redux/features/auth/hooks";
 
 export default function ProfileDropdown({
     avatarSrc,
@@ -14,7 +15,7 @@ export default function ProfileDropdown({
     className?: string;
 }) {
     const router = useRouter();
-    const { logout } = useAuth(); // তোমার useAuth এ logout না থাকলে add করো
+    const { logOut } = useAuth(); 
 
     const items: AppDropdownItem[] = [
         { type: "label", label: "My Account" },
@@ -27,9 +28,8 @@ export default function ProfileDropdown({
         {
             label: "Log out",
             onSelect: () => {
-                logout?.();
+                logOut();
                 router.replace("/");
-
             },
             className: "text-red-200 focus:text-red-100",
         },

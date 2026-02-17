@@ -1,8 +1,4 @@
-/**
- * BossCard Component
- * Displays boss supporter information
- * Following Single Responsibility Principle
- */
+
 
 "use client";
 

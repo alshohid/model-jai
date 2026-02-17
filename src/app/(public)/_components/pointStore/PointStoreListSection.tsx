@@ -6,8 +6,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import LiveSectionHeader from "@/app/(auth)/_components/watchLive/LiveSectionHeader";
 import PointCard from "@/shared/components/card/PointCard";
 import BuyPointsDialog, { PointPack } from "@/shared/components/modal/BuyPointsDialog";
-import { useAuth } from "@/shared/providers/auth/useAuth";
+
 import Image from "next/image";
+import { useAuth } from "@/redux/features/auth/hooks";
 
 export default function PointStoreListSection() {
     const { isAuthenticated } = useAuth();

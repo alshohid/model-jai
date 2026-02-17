@@ -1,172 +1,171 @@
 import {
-    BaseQueryFn,
-    createApi,
-    FetchArgs,
-    fetchBaseQuery,
-    FetchBaseQueryError,
-    FetchBaseQueryMeta,
-    QueryReturnValue,
+  BaseQueryFn,
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import constants from "@/constant";
 import { logOut, setCredentials } from "../features/auth/authSlice";
-import { ILoginParams, ILoginPayload, IRefreshTokenPayload } from "@/types/user/auth";
+import {
+  IAuthUserRole,
+  ILoginParams,
+  ILoginPayload,
+  IRefreshTokenPayload,
+} from "@/types/user/auth";
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: constants.baseApiURL,
-    prepareHeaders: (headers, { getState }) => {
-        // Setting header on every API call
-        const state = getState() as RootState;
-        const token = state.auth.token;
-        if (token) {
-            headers.set("authorization", `Bearer ${token}`);
-        }
-        return headers;
-    },
+  baseUrl: constants.baseApiURL,
+  prepareHeaders: (headers, { getState }) => {
+    // Setting header on every API call
+    const state = getState() as RootState;
+    const token = state.auth.token;
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
 });
 
 type RefreshResult = QueryReturnValue<
-    unknown,
-    FetchBaseQueryError,
-    FetchBaseQueryMeta
+  unknown,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta
 >;
 
 let refreshPromise: Promise<RefreshResult> | null = null;
 let isRefreshing = false;
 
-const toAuthRole = (role?: string | null) => {
-    if (role === "admin" || role === "user") return role;
-    return null;
+const toAuthRole = (role?: string | null): IAuthUserRole => {
+  if (role === "superadmin" || role === "user") return role;
+  return null;
 };
 
 const extractLoginAuthData = (payload: ILoginPayload) => {
-    const accessToken =
-        payload?.data?.access_token ?? null;
-    const refreshToken =
-        payload?.data?.access_token ?? null;
-    const role = toAuthRole(
-        payload?.data?.user?.role ?? null,
-    );
+  const accessToken = payload?.data?.access_token ?? null;
+  const refreshToken = payload?.data?.access_token ?? null;
+  const role = toAuthRole(payload?.data?.user?.role ?? null);
 
-    return { accessToken, refreshToken, role };
+  return { accessToken, refreshToken, role };
 };
 
 const extractRefreshTokens = (payload: IRefreshTokenPayload) => {
-    const accessToken =
-        payload?.data?.access_token ?? null;
-    const refreshToken =
-        payload?.data?.access_token ?? null;
+  const accessToken = payload?.data?.access_token ?? null;
+  const refreshToken = payload?.data?.access_token ?? null;
 
-    return { accessToken, refreshToken };
+  return { accessToken, refreshToken };
 };
 
 const baseQueryWithReauth: BaseQueryFn<
-    string | FetchArgs,
-    unknown,
-    FetchBaseQueryError
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-    let result = await baseQuery(args, api, extraOptions);
-    console.log("result status == ", result);
+  let result = await baseQuery(args, api, extraOptions);
+  console.log("result status == ", result);
 
-    if (result?.error?.status === 401) {
-        const state = api.getState() as RootState;
+  if (result?.error?.status === 401) {
+    const state = api.getState() as RootState;
 
-        // Only attempt refresh if user was logged in
-        if (state.auth.token) {
-            try {
-                if (!isRefreshing) {
-                    isRefreshing = true;
+    // Only attempt refresh if user was logged in
+    if (state.auth.token) {
+      try {
+        if (!isRefreshing) {
+          isRefreshing = true;
 
-                    const state = api.getState() as RootState;
-                    // const refreshToken = state.auth.refreshToken;
+          const state = api.getState() as RootState;
+          const refreshToken = state.auth.refreshToken;
 
-                    refreshPromise = Promise.resolve(
-                        baseQuery(
-                            {
-                                url: "/refresh",
-                                method: "POST",
-                            },
-                            api,
-                            extraOptions,
-                        ),
-                    );
+          refreshPromise = Promise.resolve(
+            baseQuery(
+              {
+                url: "/refresh",
+                method: "POST",
+                body: { access_token: refreshToken },
+              },
+              api,
+              extraOptions,
+            ),
+          );
 
-                    const refreshResult = await refreshPromise;
+          const refreshResult = await refreshPromise;
 
-                    if (refreshResult?.data) {
-                        const { accessToken } = extractRefreshTokens(
-                            refreshResult.data as IRefreshTokenPayload,
-                        );
+          if (refreshResult?.data) {
+            const { accessToken, refreshToken } = extractRefreshTokens(
+              refreshResult.data as IRefreshTokenPayload,
+            );
 
-                        if (!accessToken) {
-                            throw new Error("No access token in refresh response");
-                        }
-
-                        api.dispatch(
-                            setCredentials({
-                                token: accessToken,
-                                role: state.auth.role,
-                                refreshToken: accessToken ,
-                            }),
-                        );
-                    } else {
-                        throw new Error("Refresh failed");
-                    }
-
-                    isRefreshing = false;
-                } else {
-                    await refreshPromise;
-                }
-
-                // Retry original request with new token
-                result = await baseQuery(args, api, extraOptions);
-            } catch (error) {
-                isRefreshing = false;
-                api.dispatch(logOut());
-                toast.error("Session expired — please log in again.", {
-                    description: getErrorMessage(error),
-                });
+            if (!accessToken) {
+              throw new Error("No access token in refresh response");
             }
-        }
-    }
 
-    return result;
+            api.dispatch(
+              setCredentials({
+                token: accessToken,
+                role: state.auth.role,
+                refreshToken: refreshToken ?? state.auth.refreshToken,
+              }),
+            );
+          } else {
+            throw new Error("Refresh failed");
+          }
+
+          isRefreshing = false;
+        } else {
+          await refreshPromise;
+        }
+
+        // Retry original request with new token
+        result = await baseQuery(args, api, extraOptions);
+      } catch (error) {
+        isRefreshing = false;
+        api.dispatch(logOut());
+        toast.error("Session expired — please log in again.", {
+          description: getErrorMessage(error),
+        });
+      }
+    }
+  }
+
+  return result;
 };
 export const baseApi = createApi({
-    reducerPath: "baseApi",
-    baseQuery: baseQueryWithReauth,
-    tagTypes: [
-    
-    ] as const,
-    endpoints: (builder) => ({
-        login: builder.mutation<ILoginPayload, ILoginParams>({
-            query: (credentialParams) => ({
-                url: "/login",
-                method: "POST",
-                body: credentialParams,
-            }),
-            onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
-                try {
-                    const { data } = await queryFulfilled;
-                    const { accessToken, refreshToken, role } = extractLoginAuthData(data);
+  reducerPath: "baseApi",
+  baseQuery: baseQueryWithReauth,
+  tagTypes: [] as const,
+  endpoints: (builder) => ({
+    login: builder.mutation<ILoginPayload, ILoginParams>({
+      query: (credentialParams) => ({
+        url: "/login",
+        method: "POST",
+        body: credentialParams,
+      }),
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          const { accessToken, refreshToken, role } =
+            extractLoginAuthData(data);
 
-                    dispatch(
-                        setCredentials({
-                            token: accessToken,
-                            refreshToken,
-                            role,
-                        }),
-                    );
-                } catch (error) {
-                    toast.error(
-                        getErrorMessage(error, "Login failed. Please try again."),
-                    );
-                }
-            },
-        }),
+          dispatch(
+            setCredentials({
+              token: accessToken,
+              refreshToken,
+              role,
+            }),
+          );
+        } catch (error) {
+          toast.error(
+            getErrorMessage(error, "Login failed. Please try again."),
+          );
+        }
+      },
     }),
+  }),
 });
 
 export const { useLoginMutation } = baseApi;
