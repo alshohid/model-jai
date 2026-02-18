@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,7 +16,7 @@ type AdminLoginValues = {
 export default function AdminLoginForm() {
     const router = useRouter();
     const sp = useSearchParams();
-    const { adminLogin } = useAuth(); 
+    const { adminLogin } = useAuth();
 
     const redirect = sp.get("redirect") || "/admin/dashboard";
 

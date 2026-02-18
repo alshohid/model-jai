@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -52,7 +53,7 @@ export default function WithdrawalDialog({
         if (amountNum > withdrawableBalance) return;
 
         onSend?.({
-            senderName:data.email.trim(),
+            senderName: data.email.trim(),
             email: data.email.trim(),
             amount: amountNum,
         });

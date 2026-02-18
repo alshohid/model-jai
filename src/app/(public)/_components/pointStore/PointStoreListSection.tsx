@@ -9,12 +9,14 @@ import BuyPointsDialog, { PointPack } from "@/shared/components/modal/BuyPointsD
 
 import Image from "next/image";
 import { useAuth } from "@/redux/features/auth/hooks";
+import { useBuyPointMutation } from "@/redux/features/pointstore/buypoint";
 
 export default function PointStoreListSection() {
     const { isAuthenticated } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const [buyPoint, { isLoading }] = useBuyPointMutation();
 
     const packs: PointPack[] = useMemo(
         () => [
@@ -54,6 +56,19 @@ export default function PointStoreListSection() {
         setOpen(true);
         setPackInUrl(pack.id);
     };
+    const handleStripePayment = async (pack: PointPack) => {
+        try {
+            const result = await buyPoint({ amount: Number(pack.price) }).unwrap();
+            const checkoutUrl = result?.data?.url;
+            if (!checkoutUrl) {
+                console.log("Stripe URL missing", result);
+                return;
+            }
+            window.location.href = checkoutUrl;
+        } catch (error) {
+            console.log("Stripe payment error:", error);
+        }
+    };
 
     useEffect(() => {
         const packId = searchParams.get("pack");
@@ -64,8 +79,8 @@ export default function PointStoreListSection() {
 
         if (!isAuthenticated) return;
 
-        setSelected(found);
-        setOpen(true);
+        // setSelected(found);
+        // setOpen(true);
     }, [searchParams, packs, isAuthenticated]);
 
     const onOpenChange = (v: boolean) => {
@@ -116,10 +131,8 @@ export default function PointStoreListSection() {
                     open={open}
                     onOpenChange={onOpenChange}
                     pack={selected}
-                    onPay={(pack) => {
-                        console.log("Pay with Stripe clicked:", pack);
-                        // later: call /api/stripe/create-checkout-session with pack.id
-                    }}
+                    isLoading={isLoading}
+                    onPay={(pack) => handleStripePayment(pack)}
                 />
 
             </div>

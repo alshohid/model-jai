@@ -1,12 +1,15 @@
 import { cn } from "@/shared/lib/utils/cn";
 import * as React from "react";
 
-type Props = React.ButtonHTMLAttributes<HTMLButtonElement>;
+type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    isLoading?: boolean;
+};
 
-export default function StartStreamingButton({ className, ...props }: Props) {
+export default function StartStreamingButton({ isLoading = false, className, ...props }: Props) {
     return (
         <button
             {...props}
+            disabled={isLoading}
             className={cn(
                 "inline-flex items-center justify-center whitespace-nowrap",
                 "cursor-pointer select-none",

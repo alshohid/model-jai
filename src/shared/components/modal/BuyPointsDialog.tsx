@@ -31,11 +31,13 @@ export default function BuyPointsDialog({
     onOpenChange,
     pack,
     onPay,
+    isLoading
 }: {
     open: boolean;
     onOpenChange: (v: boolean) => void;
     pack: PointPack | null;
     onPay?: (pack: PointPack) => void;
+    isLoading?: boolean;
 }) {
     if (!pack) return null;
 
@@ -43,7 +45,7 @@ export default function BuyPointsDialog({
     const code = pack.currencyCode ?? "USD";
 
     const subtotal = Number(pack.price || 0);
-    const tax = Number((subtotal * 0.1).toFixed(2)); // dummy tax 2.5%
+    const tax = Number((subtotal * 0.1).toFixed(2));
     const total = subtotal + tax;
 
     return (
@@ -141,8 +143,8 @@ export default function BuyPointsDialog({
                         </div>
                     </div>
 
-                    <StartStreamingButton className="w-full mt-2" onClick={() => onPay?.(pack)} >
-                        Pay with Stripe
+                    <StartStreamingButton isLoading={isLoading} className="w-full mt-2" onClick={() => onPay?.(pack)} >
+                        {isLoading ? "Processing..." : "Pay with Stripe"}
                     </StartStreamingButton>
                 </div>
             </DialogContent>
