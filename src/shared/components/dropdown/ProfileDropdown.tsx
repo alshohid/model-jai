@@ -18,7 +18,7 @@ export default function ProfileDropdown({
 }) {
     const router = useRouter();
     const { logOut } = useAuth();
-    const [logoutUser] = useLogoutUserMutation();
+    const [logoutUser, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
     const items: AppDropdownItem[] = [
         { type: "label", label: "My Account" },
@@ -32,8 +32,8 @@ export default function ProfileDropdown({
             label: "Log out",
             onSelect: async () => {
                 try {
-                    logOut();
                     await logoutUser();
+                    logOut();
                     router.replace("/");
                 } catch (error) {
                     toast.error("Logout failed");
@@ -50,6 +50,7 @@ export default function ProfileDropdown({
             trigger={
                 <button
                     type="button"
+                    disabled={isLogoutLoading}
                     className={cn(
                         "cursor-pointer  inline-flex items-center justify-center",
                         "rounded-full",

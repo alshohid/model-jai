@@ -3,47 +3,24 @@
 import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAppDispatch } from "@/redux/store";
-import Cookies from "js-cookie";
-import { setCredentials } from "@/redux/features/auth/authSlice";
+import { handleSocialAuth } from "@/shared/lib/auth/handleSocialCallback";
 
 export default function GoogleCallbackPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const dispatch = useAppDispatch();
-
     useEffect(() => {
         const encodedData = searchParams.get("data");
 
         if (!encodedData) {
-            router.push("/login");
+            router.replace("/login");
             return;
         }
-
         try {
-
-            const urlDecoded = decodeURIComponent(encodedData);
-
-            const base64Decoded = atob(urlDecoded);
-            const parsedData = JSON.parse(base64Decoded);
-            console.log("parsedData", parsedData);
-
-            const { access_token, user } = parsedData;
-            Cookies.set("token", access_token);
-            Cookies.set("role", user.role);
-
-            dispatch(
-                setCredentials({
-                    token: access_token,
-                    role: user.role,
-                    refreshToken: null,
-                })
-            );
-
-            router.push("/");
-
-        } catch (error) {
-            console.error("Google login decode error:", error);
-            router.push("/login");
+            handleSocialAuth(encodedData, dispatch);
+            router.replace("/");
+        } catch {
+            router.replace("/login");
         }
     }, [searchParams, router, dispatch]);
 

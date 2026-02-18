@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
+import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
@@ -27,26 +28,14 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const [googleLogin] = useGoogleLoginMutation();
     const [facebookLogin] = useFacebookLoginMutation();
 
-
     const handleGoogleLogin = async () => {
-        try {
-            const result = await googleLogin().unwrap();
-            console.log("result", result);
-            window.open(result?.data?.url, "_self");
-        } catch (error) {
-            console.log("error", error);
-        }
+        await executeSocialLogin(() => googleLogin().unwrap());
     };
 
     const handleFacebookLogin = async () => {
-        try {
-            const result = await facebookLogin().unwrap();
-            console.log("result", result);
-            window.open(result?.data?.url, "_self");
-        } catch (error) {
-            console.log("error", error);
-        }
+        await executeSocialLogin(() => facebookLogin().unwrap());
     };
+
 
     const onSubmit = async (data: ILoginParams) => {
         try {
