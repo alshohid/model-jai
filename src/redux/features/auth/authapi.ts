@@ -3,7 +3,6 @@ import { ApiResponse } from "@/types/common/api";
 import {
   IAuthRegisterParams,
   IAuthRegisterResponse,
-  IAuthUser,
   IGoogleRedirectData,
 } from "@/types/user/auth";
 
@@ -16,13 +15,26 @@ const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    logoutUser: builder.mutation<void, void>({
+      query: () => ({
+        url: "/logout",
+        method: "POST",
+      }),
+    }),
+    //google login
     googleLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
       query: () => ({
         url: "/google/redirect",
         method: "GET",
       }),
     }),
-
+    //facebook login
+    facebookLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
+      query: () => ({
+        url: "/facebook/redirect",
+        method: "GET",
+      }),
+    }),
     // verifyEmail: builder.mutation<
     //   IAuthRegisterResponse,
     //   IAuthVerifyEmailParams
@@ -78,7 +90,10 @@ const authApi = baseApi.injectEndpoints({
 export const {
   //   useGetMeQuery,
   useRegisterUserMutation,
+  useLogoutUserMutation,
   useGoogleLoginMutation,
+  useFacebookLoginMutation,
+
   //   useChangePasswordMutation,
 } = authApi;
 export default authApi;

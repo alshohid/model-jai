@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
 
@@ -22,12 +23,12 @@ const navItems = [
 ];
 
 export default function PublicNavbar() {
-    const { isAuthenticated,token, role } = useAuth();
-    console.log("use auth == ", {isAuthenticated, token,role} );
+    const { isAuthenticated, token, role } = useAuth();
+    console.log("use auth == ", { isAuthenticated, token, role });
     const pathname = usePathname();
     const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
-    const wrapperClass = (isAuthenticated )
+    const wrapperClass = (isAuthenticated)
         ? " w-full border-none"
         : "fixed top-[20px] z-[60] w-full";
 
@@ -43,26 +44,26 @@ export default function PublicNavbar() {
                         "flex items-center h-[80px] ",
                         navbarBg
                     )}
-                >  <NavbarSearchProvider> 
-                    <div className={cn("flex items-center justify-between", "container")}>
-                        <BrandMark />
+                >  <NavbarSearchProvider>
+                        <div className={cn("flex items-center justify-between", "container")}>
+                            <BrandMark />
 
-                        <nav className="hidden md:flex items-center gap-2">
-                            {navItems.map((item) => {
-                                const active = pathname === item.href;
-                                return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        className={cn(
-                                            "cursor-pointer rounded-md px-3 py-1.5 transition text-[1rem] md:text-[1.125rem]",
-                                            active ? "bg-navActive text-white" : "text-[#070707]"
-                                        )}
-                                    >
-                                        {item.label}
-                                    </Link>
-                                );
-                            })}
+                            <nav className="hidden md:flex items-center gap-2">
+                                {navItems.map((item) => {
+                                    const active = pathname === item.href;
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            className={cn(
+                                                "cursor-pointer rounded-md px-3 py-1.5 transition text-[1rem] md:text-[1.125rem]",
+                                                active ? "bg-navActive text-white" : "text-[#070707]"
+                                            )}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    );
+                                })}
                             </nav>
                             <div className="hidden md:block">
                                 <NavbarSearch />
@@ -92,32 +93,32 @@ export default function PublicNavbar() {
                                             onClick={() => console.log("open buy points")}
                                             size="compact"
                                             className=" block md:hidden"
-                                            
+
                                         />
                                         <PointsButton
                                             points={35000}
                                             icon={"/images/home/point_icon.png" as any}
                                             onClick={() => console.log("open buy points")}
                                             size="default"
-                                            className=" hidden md:block"
+                                            className=" hidden md:block "
 
                                         />
                                         <ProfileDropdown avatarSrc="/images/home/profile_img.png" />
                                     </div>
                                 </div>
-                        ) : (
-                            <div className="flex items-center gap-2 overflow-visible">
-                                <div className="hidden sm:flex items-center gap-2">
-                                    <AuthButton href="/login" variant="login">
-                                        Log In
-                                    </AuthButton>
-                                    <AuthButton href="/register" variant="signup">
-                                        Sign Up
-                                    </AuthButton>
+                            ) : (
+                                <div className="flex items-center gap-2 overflow-visible">
+                                    <div className="hidden sm:flex items-center gap-2">
+                                        <AuthButton href="/login" variant="login">
+                                            Log In
+                                        </AuthButton>
+                                        <AuthButton href="/register" variant="signup">
+                                            Sign Up
+                                        </AuthButton>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                        
+                            )}
+
                             <MobileNavSheet
                                 navItems={navItems}
                                 points={35000}

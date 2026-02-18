@@ -6,6 +6,8 @@ import AppDropdownMenu, { AppDropdownItem } from "./AppDropdownMenu";
 
 import { cn } from "@/shared/lib/utils/cn";
 import { useAuth } from "@/redux/features/auth/hooks";
+import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
+import { toast } from "sonner";
 
 export default function ProfileDropdown({
     avatarSrc,
@@ -15,7 +17,8 @@ export default function ProfileDropdown({
     className?: string;
 }) {
     const router = useRouter();
-    const { logOut } = useAuth(); 
+    const { logOut } = useAuth();
+    const [logoutUser] = useLogoutUserMutation();
 
     const items: AppDropdownItem[] = [
         { type: "label", label: "My Account" },
@@ -27,9 +30,14 @@ export default function ProfileDropdown({
         { type: "separator" },
         {
             label: "Log out",
-            onSelect: () => {
-                logOut();
-                router.replace("/");
+            onSelect: async () => {
+                try {
+                    logOut();
+                    await logoutUser();
+                    router.replace("/");
+                } catch (error) {
+                    toast.error("Logout failed");
+                }
             },
             className: "text-red-200 focus:text-red-100",
         },

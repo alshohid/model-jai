@@ -6,7 +6,7 @@ import Image from "next/image";
 
 type Props = {
     points: number | string;
-    icon?: any;
+    icon?: string;
     onClick?: () => void;
     className?: string;
     /** Compact size for mobile navbar */
@@ -22,7 +22,7 @@ export default function PointsButton({
     ...props
 }: Props) {
     const isCompact = size === "compact";
-   
+
     const base = cn(
         "inline-flex items-center justify-center whitespace-nowrap select-none cursor-pointer",
         "rounded-[8px]",
@@ -59,7 +59,7 @@ export default function PointsButton({
                     width={200}
                     height={200}
                     className="object-contain size-full"
-                />  : "🪙"}
+                /> : "🪙"}
             </span>
             <span>{points}</span>
         </button>

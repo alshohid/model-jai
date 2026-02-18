@@ -13,7 +13,6 @@ import { getErrorMessage } from "@/lib/utils";
 import constants from "@/constant";
 import { logOut, setCredentials } from "../features/auth/authSlice";
 import {
-  IAuthUserRole,
   ILoginParams,
   ILoginPayload,
   IRefreshTokenPayload,
@@ -41,19 +40,6 @@ type RefreshResult = QueryReturnValue<
 let refreshPromise: Promise<RefreshResult> | null = null;
 let isRefreshing = false;
 
-const toAuthRole = (role?: string | null): IAuthUserRole => {
-  if (role === "superadmin" || role === "user") return role;
-  return null;
-};
-
-const extractLoginAuthData = (payload: ILoginPayload) => {
-  const accessToken = payload?.data?.access_token ?? null;
-  const refreshToken = payload?.data?.access_token ?? null;
-  const role = toAuthRole(payload?.data?.user?.role ?? null);
-
-  return { accessToken, refreshToken, role };
-};
-
 const extractRefreshTokens = (payload: IRefreshTokenPayload) => {
   const accessToken = payload?.data?.access_token ?? null;
   const refreshToken = payload?.data?.access_token ?? null;
@@ -67,7 +53,6 @@ const baseQueryWithReauth: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log("result status == ", result);
 
   if (result?.error?.status === 401) {
     const state = api.getState() as RootState;
@@ -148,16 +133,9 @@ export const baseApi = createApi({
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
         try {
           const { data } = await queryFulfilled;
-          const { accessToken, refreshToken, role } =
-            extractLoginAuthData(data);
-
-          dispatch(
-            setCredentials({
-              token: accessToken,
-              refreshToken,
-              role,
-            }),
-          );
+          const { handleAuthSuccess } =
+            await import("../features/auth/authHelpers");
+          handleAuthSuccess(data, dispatch);
         } catch (error) {
           toast.error(
             getErrorMessage(error, "Login failed. Please try again."),

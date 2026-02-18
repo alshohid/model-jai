@@ -2,8 +2,7 @@
 
 "use client"
 
-import { getErrorMessage } from "@/lib/utils";
-import { useGoogleLoginMutation } from "@/redux/features/auth/authapi";
+import { getErrorMessage } from "@/lib/utils"
 import { useAuth } from "@/redux/features/auth/hooks";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
@@ -15,33 +14,48 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
     const router = useRouter();
+
     const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
     const [errorLogin, setErrorLogin] = useState("")
     const { register, handleSubmit } = useForm<ILoginParams>();
     const [googleLogin] = useGoogleLoginMutation();
+    const [facebookLogin] = useFacebookLoginMutation();
+
 
     const handleGoogleLogin = async () => {
-        const res = await googleLogin().unwrap();
+        try {
+            const result = await googleLogin().unwrap();
+            console.log("result", result);
+            window.open(result?.data?.url, "_self");
+        } catch (error) {
+            console.log("error", error);
+        }
+    };
 
-        if (res.success) {
-            window.location.href = res?.data?.url;
+    const handleFacebookLogin = async () => {
+        try {
+            const result = await facebookLogin().unwrap();
+            console.log("result", result);
+            window.open(result?.data?.url, "_self");
+        } catch (error) {
+            console.log("error", error);
         }
     };
 
     const onSubmit = async (data: ILoginParams) => {
-        console.log("login", data);
         try {
             const loginResult = await logIn({
                 email: data.email,
                 password: data.password,
 
             }).unwrap()
-            console.log("login result ===== ", loginResult);
+
             if (loginResult.success) {
                 router.replace(redirect);
             }
@@ -97,9 +111,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                     <SocialButton kind="apple" handleSocialLogin={() => {
                         console.log("apple");
                     }} />
-                    <SocialButton kind="facebook" handleSocialLogin={() => {
-                        console.log("facebook");
-                    }} />
+                    <SocialButton kind="facebook" handleSocialLogin={handleFacebookLogin} />
                 </div>
 
                 <p className="mt-6 text-center text-[13px] text-white/45">
