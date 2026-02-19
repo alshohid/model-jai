@@ -20,6 +20,7 @@ type Props = {
     withdrawableBalance: number;
     defaultValues?: Partial<FormValues>;
     onSend?: (data: { senderName: string; email: string; amount: number }) => void;
+    isLoading?: boolean;
 };
 
 export default function WithdrawalDialog({
@@ -28,6 +29,7 @@ export default function WithdrawalDialog({
     withdrawableBalance,
     defaultValues,
     onSend,
+    isLoading
 }: Props) {
     const { register, handleSubmit, reset, watch } = useForm<FormValues>({
         defaultValues: {
@@ -65,7 +67,6 @@ export default function WithdrawalDialog({
         <AppDialog open={open} onOpenChange={onOpenChange} title="Withdraw Money">
             <div className="rounded-[16px] border border-white/12 bg-white/5 p-4 sm:p-5">
 
-                {/* ✅ Balance Display */}
                 <div className="mb-4 rounded-xl bg-black/30 p-3 text-center">
                     <p className="text-white/60 text-xs">Available Balance</p>
                     <p className="text-white text-xl font-semibold">
@@ -103,7 +104,7 @@ export default function WithdrawalDialog({
 
                     <StartStreamingButton
                         disabled={
-                            !amountValue ||
+                            !amountValue || isLoading ||
                             amountValue <= 0 ||
                             amountValue > withdrawableBalance
                         }
@@ -112,7 +113,7 @@ export default function WithdrawalDialog({
                             "bg-[#FF2EC8] hover:opacity-95 disabled:opacity-50"
                         )}
                     >
-                        Withdraw
+                        {isLoading ? "Processing..." : "Withdraw"}
                     </StartStreamingButton>
                 </form>
             </div>

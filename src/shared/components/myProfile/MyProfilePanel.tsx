@@ -9,6 +9,8 @@ import { StatCard } from "../card/StatCard";
 import { MiniStat } from "../card/MiniStat";
 import { InfoRow } from "../card/InfoRow";
 import BigBossIndicator from "@/shared/components/user/BigBossIndicator";
+import { useConnectStripeMutation, useGetStripeStatusQuery } from "@/redux/features/pointstore/buypoint";
+import { toast } from "sonner";
 
 type ProfileInfo = {
     name: string;
@@ -48,6 +50,21 @@ export default function MyProfilePanel({
     onWithdrawRequest,
     className,
 }: Props) {
+    const { data: stripeStatus, isLoading: isStripeStatusLoading } = useGetStripeStatusQuery();
+    const [connectStripe, { isLoading: isConnectStripeLoading }] = useConnectStripeMutation();
+
+    const stripConnectHandler = async () => {
+        try {
+            const res = await connectStripe();
+            if (res.data?.data?.url) {
+                window.location.href = res.data.data.url;
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to connect stripe");
+        }
+    }
+
     return (
         <section
             className={cn(
@@ -130,20 +147,30 @@ export default function MyProfilePanel({
                                 onClick={onSendMoney}
                                 className="w-full bg-[#00C3FF]"
                             >
-                                Send Money
+                                Send Points
                             </StartStreamingButton>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <StartStreamingButton onClick={onReferralLink}>
                                     Referral Link
                                 </StartStreamingButton>
+                                {stripeStatus?.connected ? (
+                                    <StartStreamingButton
+                                        onClick={onWithdrawRequest}
+                                        className="bg-black/80"
+                                    >
+                                        Withdraw Request
+                                    </StartStreamingButton>
 
-                                <StartStreamingButton
-                                    onClick={onWithdrawRequest}
-                                    className="bg-black/80"
-                                >
-                                    Withdraw Request
-                                </StartStreamingButton>
+                                ) : (
+                                    <StartStreamingButton
+                                        onClick={stripConnectHandler}
+                                        disabled={isConnectStripeLoading || isStripeStatusLoading}
+                                        className="bg-black/80"
+                                    >
+                                        {isConnectStripeLoading || isStripeStatusLoading ? "Loading..." : stripeStatus?.connected ? "Stripe Connected" : "Connect Stripe Wallet"}
+                                    </StartStreamingButton>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -2,10 +2,14 @@
 "use client"
 import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
 import MyProfilePanel from "./MyProfilePanel"
-import  { useState } from "react";
+import { useState } from "react";
 import SendMoneyDialog from "@/app/(auth)/_components/myProfile/SendMoneyDialog";
 import WithdrawalDialog from "@/app/(auth)/_components/myProfile/WithdrawalDalog";
 import ReferralShareSheet from "./ReferralShareSheet";
+import { useWithdrawRequestMutation } from "@/redux/features/pointstore/buypoint";
+import { toast } from "sonner";
+import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import ProfileSkeleton from "./ProfileSkeleton";
 
 const REFERRAL_ARTIST_ID = "michael-rohan";
 const REFERRAL_ARTIST_NAME = "Michael Rohan";
@@ -17,7 +21,21 @@ const MyProfileSection = () => {
     const [withdrawal, setwithdrawalOpen] = useState(false);
     const [referralLinkOpen, setReferralLinkOpen] = useState(false);
     const [referralShareUrl, setReferralShareUrl] = useState("");
+    const [withdrawRequest, { isLoading: isWithdrawRequestLoading }] = useWithdrawRequestMutation()
+    const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
+    const user = meData?.data;
+    const withdrawHandler = async (amount: number) => {
+        try {
+            const response = await withdrawRequest({ coin_amount: amount }).unwrap()
+            if (response?.success) {
+                toast.success("Withdrawal request sent successfully")
+            }
 
+        } catch (error) {
+            console.log("withdrawal error ", error)
+            toast.error("Withdrawal request failed")
+        }
+    }
     const openReferralSheet = () => {
         if (typeof window !== "undefined") {
             setReferralShareUrl(
@@ -27,7 +45,7 @@ const MyProfileSection = () => {
         setReferralLinkOpen(true);
     };
 
-    const isBigBoss = true; // TODO: Get from API/user data
+    const isBigBoss = true;
     const profile = {
         name: "Michael Rohan",
         email: "michael@gmail.com",
@@ -38,37 +56,58 @@ const MyProfileSection = () => {
         followers: "115k",
         following: "225k",
     };
+
     return (
         <div className="container py-5 md:py-10">
-            <MyProfilePanel
-                profile={{
-                    name: "Michael Rohan",
-                    email: "michael@gmail.com",
-                    contact: "",
-                    nationality: "Nigerian",
-                    avatar: "/images/home/pro_1.jpg",
-                    posts: 125,
-                    followers: "115k",
-                    following: "225k",
-                }}
-                stats={[
-                    { label: "Total Earnings", value: "$ 245,000",icon:'/images/home/stat_button.png' },
-                    { label: "Total Referral Earnings", value: "$ 8,400", icon: '/images/home/stat_button_2.png' },
-                    { label: "Total Tip Recieved", value: "$ 1,311", icon: '/images/home/stat_button_3.png' },
-                ]}
-                isBigBoss={isBigBoss}
-                onEditProfile={() => setOpenEdit(true)}
-                onSendMoney={() => setSendMoneyOpen(true)}
-                onReferralLink={openReferralSheet}
-                onWithdrawRequest={() => setwithdrawalOpen(true)}
-            />
+            {
+                isMeDataLoading || isMeDataFetching ? (
+                    <ProfileSkeleton />
+                ) : (
+                    <MyProfilePanel
+                        profile={{
+                            name: user?.name ?? "",
+                            email: user?.email ?? "",
+                            contact: "",
+                            nationality: "",
+                            avatar: user?.image ?? "/images/home/pro_1.jpg",
+                            posts: 0,
+                            followers: "0",
+                            following: "0",
+                        }}
+
+                        stats={[
+                            {
+                                label: "Total Earnings",
+                                value: `$ ${user?.total_earning ?? "0.00"}`,
+                                icon: "/images/home/stat_button.png",
+                            },
+                            {
+                                label: "Total Referral Earnings",
+                                value: `$ ${user?.total_referral_earning ?? "0.00"}`,
+                                icon: "/images/home/stat_button_2.png",
+                            },
+                            {
+                                label: "Total Tip Received",
+                                value: `$ ${user?.total_tip_received ?? "0.00"}`,
+                                icon: "/images/home/stat_button_3.png",
+                            },
+                        ]}
+
+                        isBigBoss={isBigBoss}
+                        onEditProfile={() => setOpenEdit(true)}
+                        onSendMoney={() => setSendMoneyOpen(true)}
+                        onReferralLink={openReferralSheet}
+                        onWithdrawRequest={() => setwithdrawalOpen(true)}
+                    />
+                )
+            }
             <EditProfileDialog
                 open={openEdit}
                 onOpenChange={setOpenEdit}
-                avatarSrc={profile.avatar}
+                avatarSrc={user?.image ?? profile.avatar}
                 defaultValues={{
-                    name: profile.name,
-                    email: profile.email,
+                    name: user?.name ?? profile.name,
+                    email: user?.email ?? profile.email,
                     contact: profile.contact,
                     nationality: profile.nationality,
                 }}
@@ -85,13 +124,17 @@ const MyProfileSection = () => {
             />
             <WithdrawalDialog
                 open={withdrawal}
-                withdrawableBalance={4000}
+                withdrawableBalance={Number(user?.total_balance ?? 0)}
                 onOpenChange={setwithdrawalOpen}
-                defaultValues={{ email: "michael@gmail.com", amount: "100" }}
-                onSend={(data) => console.log("withdrawal data ", data)}
+                defaultValues={{ email: user?.email ?? "", amount: "100" }}
+                onSend={(data) => {
+                    console.log("withdrawal data ", data?.amount)
+                    withdrawHandler(Number(data?.amount))
+                }}
+                isLoading={isWithdrawRequestLoading}
             />
 
-            {/* Referral Link: নিচ থেকে শেয়ার শীট খুলবে, লিংক শেয়ার করা যাবে */}
+
             <ReferralShareSheet
                 open={referralLinkOpen}
                 onOpenChange={setReferralLinkOpen}
@@ -100,6 +143,7 @@ const MyProfileSection = () => {
                 onCopy={(link) => console.log("Copied:", link)}
                 onShare={(link) => console.log("Shared:", link)}
             />
+
         </div>
 
     )

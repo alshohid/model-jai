@@ -1,7 +1,13 @@
 import { baseApi } from "@/redux/api/baseApi";
 import { ApiResponse } from "@/types/common/api";
 
-import { IBuyPointParams, IBuyPointResponse } from "@/types/user/point";
+import {
+  IBuyPointParams,
+  IBuyPointResponse,
+  IConnectStripeResponse,
+  IStripeStatusResponse,
+  IWithdrawRequestData,
+} from "@/types/user/point";
 
 const BuyPointApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,9 +20,36 @@ const BuyPointApi = baseApi.injectEndpoints({
         }),
       },
     ),
+    getStripeStatus: builder.query<IStripeStatusResponse, void>({
+      query: () => ({
+        url: `/stripe/status`,
+        method: "GET",
+      }),
+    }),
+    connectStripe: builder.mutation<ApiResponse<IConnectStripeResponse>, void>({
+      query: () => ({
+        url: `/stripe/connect`,
+        method: "POST",
+      }),
+    }),
+    withdrawRequest: builder.mutation<
+      ApiResponse<IWithdrawRequestData>,
+      { coin_amount: number }
+    >({
+      query: (body) => ({
+        url: `/withdraw/request`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
-export const { useBuyPointMutation } = BuyPointApi;
+export const {
+  useBuyPointMutation,
+  useGetStripeStatusQuery,
+  useConnectStripeMutation,
+  useWithdrawRequestMutation,
+} = BuyPointApi;
 export default BuyPointApi;

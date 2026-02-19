@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (isAuthPage) {
-    if (token && role === "user") {
+    if (token && (role === "user" || role === "artist")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

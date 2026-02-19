@@ -4,6 +4,7 @@ import {
   IAuthRegisterParams,
   IAuthRegisterResponse,
   IGoogleRedirectData,
+  IUserInfo,
 } from "@/types/user/auth";
 
 const authApi = baseApi.injectEndpoints({
@@ -35,6 +36,12 @@ const authApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getMeData: builder.query<ApiResponse<IUserInfo>, void>({
+      query: () => ({
+        url: "/me",
+        method: "GET",
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -44,5 +51,6 @@ export const {
   useLogoutUserMutation,
   useGoogleLoginMutation,
   useFacebookLoginMutation,
+  useGetMeDataQuery,
 } = authApi;
 export default authApi;

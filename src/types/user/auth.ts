@@ -60,7 +60,7 @@ export interface IAuthUser {
   is_permanent_suspended: boolean | null;
   suspension_reason: string | null;
   note: string | null;
-  role: "user" | "superadmin";
+  role: "user" | "super_admin";
   referral_no: string;
   created_at: string;
 }
@@ -93,4 +93,17 @@ export interface IAuthChangePasswordParams {
 }
 export interface IGoogleRedirectData {
   url: string;
+}
+export interface IUserInfo {
+  name: string;
+  email: string;
+  image: string | null;
+  email_verified: boolean;
+  role: "user" | "admin" | string;
+  total_earning: string;
+  total_referral_earning: string;
+  total_tip_received: string;
+  total_withdraw: string;
+  total_balance: string;
+  total_bet: string;
 }
