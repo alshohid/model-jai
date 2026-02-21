@@ -89,8 +89,8 @@ export default function MyProfilePanel({
                     <div className="overflow-hidden rounded-[24px]">
                         <div className="relative w-full aspect-[4/5]">
                             <Image
-                                src={profile.avatar}
-                                alt={profile.name}
+                                src={profile?.avatar}
+                                alt={profile?.name}
                                 fill
                                 priority
                                 className="object-cover object-top"
