@@ -32,6 +32,7 @@ const BuyPointApi = baseApi.injectEndpoints({
         method: "POST",
       }),
     }),
+
     withdrawRequest: builder.mutation<
       ApiResponse<IWithdrawRequestData>,
       { coin_amount: number }
@@ -40,6 +41,33 @@ const BuyPointApi = baseApi.injectEndpoints({
         url: `/withdraw/request`,
         method: "POST",
         body,
+      }),
+    }),
+    allWithdrawRequestsList: builder.query<
+      ApiResponse<IWithdrawRequestData[]>,
+      void
+    >({
+      query: () => ({
+        url: `/admin/withdraws`,
+        method: "GET",
+      }),
+    }),
+    acceptWithdrawRequest: builder.mutation<
+      ApiResponse<IWithdrawRequestData>,
+      { id: string }
+    >({
+      query: (body) => ({
+        url: `/admin/withdraws/accept/${body.id}`,
+        method: "POST",
+      }),
+    }),
+    rejectWithdrawRequest: builder.mutation<
+      ApiResponse<IWithdrawRequestData>,
+      { id: string }
+    >({
+      query: (body) => ({
+        url: `/admin/withdraws/reject/${body.id}`,
+        method: "POST",
       }),
     }),
   }),
@@ -51,5 +79,8 @@ export const {
   useGetStripeStatusQuery,
   useConnectStripeMutation,
   useWithdrawRequestMutation,
+  useAllWithdrawRequestsListQuery,
+  useAcceptWithdrawRequestMutation,
+  useRejectWithdrawRequestMutation,
 } = BuyPointApi;
 export default BuyPointApi;
