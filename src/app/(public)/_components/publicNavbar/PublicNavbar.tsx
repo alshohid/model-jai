@@ -26,7 +26,6 @@ export default function PublicNavbar() {
     const { isAuthenticated, token, role } = useAuth();
     console.log("use auth == ", { isAuthenticated, token, role });
     const pathname = usePathname();
-    const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
     const wrapperClass = (isAuthenticated)
         ? " w-full border-none"

@@ -47,6 +47,7 @@ export default function ProfileDropdown({
         <AppDropdownMenu
             items={items}
             align="end"
+            isLogoutLoading={isLogoutLoading}
             trigger={
                 <button
                     type="button"

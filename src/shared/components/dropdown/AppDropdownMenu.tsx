@@ -11,6 +11,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Loader2 } from "lucide-react";
 
 export type AppDropdownItem =
     | {
@@ -22,6 +23,7 @@ export type AppDropdownItem =
         shortcut?: string;
         disabled?: boolean;
         className?: string;
+        isLogoutLoading?: boolean;
     }
     | { type: "separator" }
     | { type: "label"; label: string };
@@ -34,6 +36,7 @@ type Props = {
     sideOffset?: number;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    isLogoutLoading?: boolean;
 };
 
 export default function AppDropdownMenu({
@@ -44,6 +47,7 @@ export default function AppDropdownMenu({
     sideOffset = 10,
     open,
     onOpenChange,
+    isLogoutLoading
 }: Props) {
     return (
         <DropdownMenu open={open} onOpenChange={onOpenChange}>
@@ -105,7 +109,7 @@ export default function AppDropdownMenu({
                     return (
                         <DropdownMenuItem
                             key={idx}
-                            disabled={it.disabled}
+                            disabled={it.disabled || isLogoutLoading}
                             onSelect={(e) => {
                                 // Radix onSelect fires even when navigating; action-only items need this:
                                 e.preventDefault();
@@ -118,7 +122,9 @@ export default function AppDropdownMenu({
                                 it.className
                             )}
                         >
-                            {itemInner}
+                            {isLogoutLoading ? <div className="flex items-center gap-2">
+                                <span>Logging Out...</span>< Loader2 className="animate-spin" />
+                            </div> : itemInner}
                         </DropdownMenuItem>
                     );
                 })}
