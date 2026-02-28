@@ -50,7 +50,6 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
             }
 
         } catch (error: unknown) {
-            console.log("error ", error)
             setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));
         }
 

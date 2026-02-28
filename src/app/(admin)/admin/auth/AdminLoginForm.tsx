@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
-import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import { MailIcon } from "@/shared/UI/icon/icon";
-import { useAuth } from "@/shared/providers/auth/useAuth";
+import { useAuth } from "@/redux/features/auth/hooks";
+import { useState } from "react";
+import { getErrorMessage } from "@/lib/utils";
+import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
+
 
 type AdminLoginValues = {
     email: string;
@@ -15,25 +18,26 @@ type AdminLoginValues = {
 
 export default function AdminLoginForm() {
     const router = useRouter();
-    const sp = useSearchParams();
-    const { adminLogin } = useAuth();
-
-    const redirect = sp.get("redirect") || "/admin/dashboard";
+    const { logIn, isLoading: isLoginLoading } = useAuth();
+    const [errorLogin, setErrorLogin] = useState("")
 
     const { register, handleSubmit } = useForm<AdminLoginValues>({
         defaultValues: { email: "", password: "" },
     });
 
-    const onSubmit = (data: AdminLoginValues) => {
-        console.log("admin login", data);
+    const onSubmit = async (data: AdminLoginValues) => {
+        try {
+            const loginResult = await logIn({
+                email: data.email,
+                password: data.password,
+            }).unwrap()
 
-        // ✅ TODO: call backend admin login API here
-        // await api.adminLogin(data)
-
-        // ⚠️ MUST: set admin role in auth state, not normal user
-        adminLogin();
-
-        router.replace(redirect);
+            if (loginResult.success) {
+                router.replace("/admin/dashboard");
+            }
+        } catch (error) {
+            setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));
+        }
     };
 
     return (
@@ -60,9 +64,13 @@ export default function AdminLoginForm() {
                 />
             </div>
 
-            <StartStreamingButton className="w-full bg-[#FF2EC8] hover:opacity-95 mt-2">
-                Login
-            </StartStreamingButton>
+            <span className="text-red-600">
+                {errorLogin ? errorLogin : ""}
+            </span>
+
+            <div className="pt-2">
+                <PrimaryButton isLoading={isLoginLoading} loadingText="Logging in..." text="Log In" variant="pink" />
+            </div>
         </form>
     );
 }

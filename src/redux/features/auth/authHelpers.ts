@@ -3,7 +3,7 @@ import { AppDispatch } from "../../store";
 import { setCredentials } from "./authSlice";
 
 const toAuthRole = (role?: string | null): IAuthUserRole => {
-  if (role === "superadmin" || role === "user" || role === "artist")
+  if (role === "super_admin" || role === "user" || role === "artist")
     return role;
   return null;
 };

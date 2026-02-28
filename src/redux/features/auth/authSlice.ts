@@ -27,23 +27,42 @@ const authSlice = createSlice({
       state.refreshToken = refreshToken;
       state.role = role;
 
-      if (token) {
+      if (token && role !== "super_admin") {
         Cookies.set("token", token, {
           secure: process.env.NODE_ENV === "production",
           sameSite: "Lax",
           path: "/",
         });
       }
+      if (token && role === "super_admin") {
+        Cookies.set("admin_token", token, {
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+          path: "/",
+        });
+      }
 
-      if (refreshToken) {
+      if (refreshToken && role !== "super_admin") {
         Cookies.set("refresh_token", refreshToken, {
           secure: process.env.NODE_ENV === "production",
           sameSite: "Lax",
         });
       }
+      if (refreshToken && role === "super_admin") {
+        Cookies.set("admin_refresh_token", refreshToken, {
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+        });
+      }
 
-      if (role) {
+      if (role && role !== "super_admin") {
         Cookies.set("role", role, {
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Lax",
+        });
+      }
+      if (role && role === "super_admin") {
+        Cookies.set("admin_role", role, {
           secure: process.env.NODE_ENV === "production",
           sameSite: "Lax",
         });
@@ -62,10 +81,21 @@ const authSlice = createSlice({
       Cookies.remove("refresh_token", { path: "/" });
       Cookies.remove("role", { path: "/" });
     },
+    adminLogOut: (state) => {
+      // state.user = null;
+      state.token = null;
+      state.refreshToken = null;
+      state.role = null;
+
+      Cookies.remove("admin_token", { path: "/" });
+      Cookies.remove("admin_refresh_token", { path: "/" });
+      Cookies.remove("admin_role", { path: "/" });
+    },
   },
 });
 
-export const { setCredentials, logOut, invalidToken } = authSlice.actions;
+export const { setCredentials, logOut, invalidToken, adminLogOut } =
+  authSlice.actions;
 
 export default authSlice.reducer;
 

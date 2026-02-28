@@ -16,9 +16,9 @@ export interface ILoginParams {
   password: string;
 }
 
-export type IAuthUserRole = "user" | "superadmin" | "artist" | null;
+export type IAuthUserRole = "user" | "super_admin" | "artist" | null;
 export const RoleUtils = {
-  isAdmin: (role?: IAuthUserRole | null) => role === "superadmin",
+  isAdmin: (role?: IAuthUserRole | null) => role === "super_admin",
   isUser: (role?: IAuthUserRole | null) => role === "user",
   isPublic: (role?: IAuthUserRole | null) => role == null,
 
@@ -60,7 +60,7 @@ export interface IAuthUser {
   is_permanent_suspended: boolean | null;
   suspension_reason: string | null;
   note: string | null;
-  role: "user" | "super_admin";
+  role: "user" | "super_admin" | "artist";
   referral_no: string;
   created_at: string;
 }
@@ -99,7 +99,7 @@ export interface IUserInfo {
   email: string;
   image: string | null;
   email_verified: boolean;
-  role: "user" | "admin" | string;
+  role: "user" | "super_admin" | "artist" | string;
   total_earning: string;
   total_referral_earning: string;
   total_tip_received: string;
