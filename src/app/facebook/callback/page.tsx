@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useAppDispatch } from "@/redux/store";
 import { handleSocialAuth } from "@/shared/lib/auth/handleSocialCallback";
 
-export default function GoogleCallbackPage() {
+export default function FacebookCallbackPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const dispatch = useAppDispatch();
