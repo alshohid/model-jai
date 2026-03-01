@@ -94,16 +94,41 @@ export interface IAuthChangePasswordParams {
 export interface IGoogleRedirectData {
   url: string;
 }
-export interface IUserInfo {
-  name: string;
-  email: string;
-  image: string | null;
-  email_verified: boolean;
-  role: "user" | "super_admin" | "artist" | string;
+export interface IUserStats {
   total_earning: string;
   total_referral_earning: string;
   total_tip_received: string;
   total_withdraw: string;
-  total_balance: string;
+  total_balance: number;
+  total_bet: string;
+}
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  phone_number: string | null;
+  nationality: string | null;
+  image: string | null;
+  provider?: string;
+  verified_at: boolean;
+  suspended_until: string | null;
+  is_permanent_suspended: boolean;
+  suspension_reason: string | null;
+  note: string | null;
+  total_post: number;
+  role: "user" | "super_admin" | "artist" | string;
+  referral_no: string;
+  followers_count: number;
+  following_count: number;
+  created_at: string;
+  total_balance: number;
+}
+export interface IUserInfoResponse {
+  user: IUser;
+  total_earning: string;
+  total_referral_earning: string;
+  total_tip_received: string;
+  total_withdraw: string;
+  total_balance: number;
   total_bet: string;
 }

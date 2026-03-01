@@ -10,6 +10,8 @@ import { useWithdrawRequestMutation } from "@/redux/features/pointstore/buypoint
 import { toast } from "sonner";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import ProfileSkeleton from "./ProfileSkeleton";
+import { IUser, IUserStats } from "@/types/user/auth";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 const REFERRAL_ARTIST_ID = "michael-rohan";
 const REFERRAL_ARTIST_NAME = "Michael Rohan";
@@ -23,7 +25,19 @@ const MyProfileSection = () => {
     const [referralShareUrl, setReferralShareUrl] = useState("");
     const [withdrawRequest, { isLoading: isWithdrawRequestLoading }] = useWithdrawRequestMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
-    const user = meData?.data;
+    const user = meData?.data?.user;
+
+    const stats: IUserStats | undefined = meData?.data
+        ? {
+            total_earning: meData?.data?.total_earning,
+            total_referral_earning: meData?.data?.total_referral_earning,
+            total_tip_received: meData?.data?.total_tip_received,
+            total_withdraw: meData?.data?.total_withdraw,
+            total_balance: meData?.data?.total_balance,
+            total_bet: meData?.data?.total_bet,
+        }
+        : undefined;
+
     const withdrawHandler = async (amount: number) => {
         try {
             const response = await withdrawRequest({ coin_amount: amount }).unwrap()
@@ -67,32 +81,35 @@ const MyProfileSection = () => {
                         profile={{
                             name: user?.name ?? "",
                             email: user?.email ?? "",
-                            contact: "",
-                            nationality: "",
-                            avatar: user?.image ?? "/images/home/pro_1.jpg",
-                            posts: 0,
-                            followers: "0",
-                            following: "0",
+                            contact: user?.phone_number ?? "",
+                            nationality: user?.nationality ?? "",
+                            avatar: getSafeImageSrc(user?.image, "/images/home/pro_1.jpg"),
+                            posts: user?.total_post ?? 0,
+                            followers: String(user?.followers_count ?? 0),
+                            following: String(user?.following_count ?? 0),
                         }}
-
                         stats={[
                             {
                                 label: "Total Earnings",
-                                value: `$ ${user?.total_earning ?? "0.00"}`,
+                                value: `$ ${stats?.total_earning ?? "0.00"}`,
                                 icon: "/images/home/stat_button.png",
                             },
                             {
                                 label: "Total Referral Earnings",
-                                value: `$ ${user?.total_referral_earning ?? "0.00"}`,
+                                value: `$ ${stats?.total_referral_earning ?? "0.00"}`,
                                 icon: "/images/home/stat_button_2.png",
                             },
                             {
                                 label: "Total Tip Received",
-                                value: `$ ${user?.total_tip_received ?? "0.00"}`,
+                                value: `$ ${stats?.total_tip_received ?? "0.00"}`,
+                                icon: "/images/home/stat_button_3.png",
+                            },
+                            {
+                                label: "Total Withdraw",
+                                value: `$ ${stats?.total_withdraw ?? "0.00"}`,
                                 icon: "/images/home/stat_button_3.png",
                             },
                         ]}
-
                         isBigBoss={isBigBoss}
                         onEditProfile={() => setOpenEdit(true)}
                         onSendMoney={() => setSendMoneyOpen(true)}

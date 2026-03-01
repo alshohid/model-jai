@@ -94,6 +94,7 @@ export default function MyProfilePanel({
                                 fill
                                 priority
                                 className="object-cover object-top"
+                                unoptimized
                             />
 
                             <div className="absolute inset-x-0 bottom-4 px-4">
@@ -121,8 +122,8 @@ export default function MyProfilePanel({
                                     <BigBossIndicator isBigBoss={isBigBoss} size="sm" />
                                 </div>
                                 <InfoRow label="Email" value={profile.email} />
-                                <InfoRow label="Contact" value={profile.contact} />
-                                <InfoRow label="Nationality" value={profile.nationality} />
+                                {profile?.contact && <InfoRow label="Contact" value={profile.contact} />}
+                                {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />}
                             </div>
 
                             <FavoriteButton

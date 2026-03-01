@@ -82,6 +82,7 @@ export default function EditProfileDialog({
                             priority
                             sizes="(max-width: 520px) 92vw, 520px"
                             className="object-cover rounded-lg"
+                            unoptimized
                         />
                     </div>
 
