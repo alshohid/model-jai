@@ -15,6 +15,9 @@ import MobileNavSheet from "./MobileNavDrawer";
 import NavbarSearch, { NavbarSearchProvider } from "./NavbarSearch";
 import { Bell } from "lucide-react";
 import { useAuth } from "@/redux/features/auth/hooks";
+import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import ProfileSkeleton from "@/shared/components/myProfile/ProfileSkeleton";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -23,10 +26,12 @@ const navItems = [
 ];
 
 export default function PublicNavbar() {
-    const { isAuthenticated, token, role } = useAuth();
-    console.log("use auth == ", { isAuthenticated, token, role });
     const pathname = usePathname();
+    const { isAuthenticated, token, role } = useAuth();
+    const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
 
+    const userProfileData = meData?.data;
+    console.log("userProfileData", userProfileData);
     const wrapperClass = (isAuthenticated)
         ? " w-full border-none"
         : "fixed top-[20px] z-[60] w-full";
@@ -86,23 +91,30 @@ export default function PublicNavbar() {
                                         </Link>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <PointsButton
-                                            points={35000}
-                                            icon={"/images/home/point_icon.png" as any}
-                                            onClick={() => console.log("open buy points")}
-                                            size="compact"
-                                            className=" block md:hidden"
+                                        {isMeDataLoading || isMeDataFetching ? (
+                                            // <Skeleton className="h-10 w-24" />
+                                            <p>Loading...</p>
+                                        ) : (
+                                            <PointsButton
+                                                points={Number(userProfileData?.total_balance) ?? 0}
+                                                icon={"/images/home/point_icon.png" as any}
+                                                onClick={() => console.log("open buy points")}
+                                                size="compact"
+                                                className=" block md:hidden"
 
-                                        />
-                                        <PointsButton
-                                            points={35000}
+                                            />
+                                        )}
+                                        {isMeDataFetching || isMeDataLoading ? <p>Loading...</p> : <PointsButton
+                                            points={Number(userProfileData?.total_balance) ?? 0}
                                             icon={"/images/home/point_icon.png" as any}
                                             onClick={() => console.log("open buy points")}
                                             size="default"
                                             className=" hidden md:block "
 
-                                        />
-                                        <ProfileDropdown avatarSrc="/images/home/profile_img.png" />
+
+                                        />}
+
+                                        {isMeDataLoading || isMeDataFetching ? <p>Loading...</p> : <ProfileDropdown avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"} />}
                                     </div>
                                 </div>
                             ) : (
@@ -120,7 +132,8 @@ export default function PublicNavbar() {
 
                             <MobileNavSheet
                                 navItems={navItems}
-                                points={35000}
+                                isMeDataLoading={isMeDataFetching || isMeDataLoading}
+                                points={Number(userProfileData?.total_balance) ?? 0}
                                 avatarSrc="/images/home/profile_img.png"
                                 tone={isAuthenticated ? "light" : "dark"}
                             />

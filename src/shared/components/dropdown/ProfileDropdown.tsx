@@ -66,6 +66,7 @@ export default function ProfileDropdown({
                         width={40}
                         height={40}
                         className="size-10 rounded-full min-w-[40px] min-h-[40px]  ring-2 ring-gray-50 outline -outline-offset-1 outline-white/10"
+                        unoptimized
                     />
                 </button>
             }

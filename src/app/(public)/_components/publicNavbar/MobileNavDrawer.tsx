@@ -30,15 +30,17 @@ export default function MobileNavSheet({
     points = 0,
     avatarSrc,
     tone = "dark",
+    isMeDataLoading,
 }: {
     navItems: NavItem[];
     points?: number;
     avatarSrc?: string;
     tone?: "dark" | "light";
+    isMeDataLoading?: boolean;
 }) {
     const pathname = usePathname();
     const { isAuthenticated } = useAuth();
-    console.log("auth ",isAuthenticated)
+
 
     const triggerStyles =
         tone === "light"
@@ -101,7 +103,7 @@ export default function MobileNavSheet({
                     </SheetHeader>
 
                     <div className="flex-1 overflow-y-auto px-5 py-5">
-                        
+
                         <nav className="flex flex-col gap-2">
                             {navItems.map((item) => {
                                 const active = pathname === item.href;
@@ -150,13 +152,13 @@ export default function MobileNavSheet({
 
                         <div className="mt-6">
                             {isAuthenticated ? (
-                                
+
                                 <div className="flex  items-center justify-between gap-3">
-                                    <PointsButton
+                                    {isMeDataLoading ? <p>Loading...</p> : <PointsButton
                                         points={points}
-                                        icon={"/images/home/point_icon.png" }
+                                        icon={"/images/home/point_icon.png"}
                                         onClick={() => console.log("open buy points")}
-                                    />
+                                    />}
                                     {avatarSrc ? <ProfileDropdown avatarSrc={avatarSrc} /> : null}
                                 </div>
                             ) : (

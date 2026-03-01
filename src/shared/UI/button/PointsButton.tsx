@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import Image from "next/image";
 
 type Props = {
-    points: number | string;
+    points: number;
     icon?: string;
     onClick?: () => void;
     className?: string;
@@ -59,6 +59,7 @@ export default function PointsButton({
                     width={200}
                     height={200}
                     className="object-contain size-full"
+                    unoptimized
                 /> : "🪙"}
             </span>
             <span>{points}</span>
