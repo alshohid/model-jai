@@ -43,14 +43,12 @@ const BuyPointApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-    allWithdrawRequestsList: builder.query<
-      ApiResponse<IWithdrawRequestData[]>,
-      void
-    >({
-      query: () => ({
-        url: `/admin/withdraws`,
+    allWithdrawRequestsList: builder.query({
+      query: ({ page = 1 }) => ({
+        url: `/admin/withdraws?page=${page}`,
         method: "GET",
       }),
+      providesTags: ["Withdraw"],
     }),
     acceptWithdrawRequest: builder.mutation<
       ApiResponse<IWithdrawRequestData>,
@@ -60,6 +58,7 @@ const BuyPointApi = baseApi.injectEndpoints({
         url: `/admin/withdraws/accept/${body.id}`,
         method: "POST",
       }),
+      invalidatesTags: ["Withdraw"],
     }),
     rejectWithdrawRequest: builder.mutation<
       ApiResponse<IWithdrawRequestData>,
@@ -69,6 +68,7 @@ const BuyPointApi = baseApi.injectEndpoints({
         url: `/admin/withdraws/reject/${body.id}`,
         method: "POST",
       }),
+      invalidatesTags: ["Withdraw"],
     }),
   }),
   overrideExisting: true,

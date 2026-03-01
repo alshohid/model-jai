@@ -21,7 +21,6 @@ import {
 const baseQuery = fetchBaseQuery({
   baseUrl: constants.baseApiURL,
   prepareHeaders: (headers, { getState }) => {
-    // Setting header on every API call
     const state = getState() as RootState;
     const token = state.auth.token;
     if (token) {
@@ -122,7 +121,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: [] as const,
+  tagTypes: ["Withdraw"],
   endpoints: (builder) => ({
     login: builder.mutation<ILoginPayload, ILoginParams>({
       query: (credentialParams) => ({
