@@ -132,3 +132,10 @@ export interface IUserInfoResponse {
   total_balance: number;
   total_bet: string;
 }
+export interface IUpdateUserParams {
+  name?: string;
+  email?: string;
+  phone_number?: string | null;
+  nationality?: string | null;
+  image?: File | string | null | undefined;
+}

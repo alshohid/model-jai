@@ -10,19 +10,21 @@ import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { MailIcon } from "@/shared/UI/icon/icon";
 import AppDialog from "@/shared/components/modal/AppDialog";
 
-type FormValues = {
+type EditProfileFormValues = {
     name: string;
     email: string;
     contact: string;
     nationality: string;
+    image?: File | null;
 };
 
 type Props = {
     open: boolean;
     onOpenChange: (v: boolean) => void;
-    defaultValues?: Partial<FormValues>;
+    defaultValues?: Partial<EditProfileFormValues>;
     avatarSrc: string;
-    onSave?: (data: FormValues & { avatarFile?: File | null }) => void;
+    onSave?: (data: EditProfileFormValues) => void;
+    isLoading?: boolean;
 };
 
 export default function EditProfileDialog({
@@ -31,12 +33,13 @@ export default function EditProfileDialog({
     defaultValues,
     avatarSrc,
     onSave,
+    isLoading,
 }: Props) {
     const fileRef = React.useRef<HTMLInputElement | null>(null);
     const [preview, setPreview] = React.useState<string>(avatarSrc);
     const [file, setFile] = React.useState<File | null>(null);
 
-    const { register, handleSubmit, reset } = useForm<FormValues>({
+    const { register, handleSubmit, reset } = useForm<EditProfileFormValues>({
         defaultValues: {
             name: defaultValues?.name ?? "",
             email: defaultValues?.email ?? "",
@@ -45,7 +48,6 @@ export default function EditProfileDialog({
         },
     });
 
-    // ✅ dialog open হলে values sync করো (না হলে stale থাকে)
     React.useEffect(() => {
         setPreview(avatarSrc);
         reset({
@@ -65,9 +67,15 @@ export default function EditProfileDialog({
         setPreview(url);
     };
 
-    const submit = (data: FormValues) => {
-        onSave?.({ ...data, avatarFile: file });
-        onOpenChange(false);
+    // const submit = (data: EditProfileFormValues) => {
+    //     onSave?.({ ...data, avatarFile: file });
+    //     onOpenChange(false);
+    // };
+    const submit = (data: EditProfileFormValues) => {
+        onSave?.({
+            ...data,
+            image: file,
+        });
     };
 
     return (
@@ -134,6 +142,7 @@ export default function EditProfileDialog({
                         label="Email"
                         name="email"
                         type="email"
+                        readOnly={true}
                         register={register as any}
                         icon={<MailIcon />}
                     />
@@ -159,8 +168,8 @@ export default function EditProfileDialog({
                     />
                 </Field>
 
-                <StartStreamingButton className={cn("w-full mt-4 bg-[#FF2EC8] hover:opacity-95")}>
-                    Save
+                <StartStreamingButton disabled={isLoading} className={cn("w-full mt-4 bg-[#FF2EC8] hover:opacity-95")}>
+                    {isLoading ? "Saving..." : "Save"}
                 </StartStreamingButton>
             </form>
         </AppDialog>

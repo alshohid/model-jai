@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 "use client"
 import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
@@ -8,7 +9,7 @@ import WithdrawalDialog from "@/app/(auth)/_components/myProfile/WithdrawalDalog
 import ReferralShareSheet from "./ReferralShareSheet";
 import { useWithdrawRequestMutation } from "@/redux/features/pointstore/buypoint";
 import { toast } from "sonner";
-import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import { useEditProfileMutation, useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import ProfileSkeleton from "./ProfileSkeleton";
 import { IUser, IUserStats } from "@/types/user/auth";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
@@ -24,8 +25,10 @@ const MyProfileSection = () => {
     const [referralLinkOpen, setReferralLinkOpen] = useState(false);
     const [referralShareUrl, setReferralShareUrl] = useState("");
     const [withdrawRequest, { isLoading: isWithdrawRequestLoading }] = useWithdrawRequestMutation()
+    const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
     const user = meData?.data?.user;
+
 
     const stats: IUserStats | undefined = meData?.data
         ? {
@@ -121,16 +124,36 @@ const MyProfileSection = () => {
             <EditProfileDialog
                 open={openEdit}
                 onOpenChange={setOpenEdit}
-                avatarSrc={user?.image ?? profile.avatar}
+                avatarSrc={getSafeImageSrc(user?.image) ?? profile.avatar}
                 defaultValues={{
                     name: user?.name ?? profile.name,
                     email: user?.email ?? profile.email,
-                    contact: profile.contact,
-                    nationality: profile.nationality,
+                    contact: user?.phone_number ?? profile.contact,
+                    nationality: user?.nationality ?? profile.nationality,
                 }}
-                onSave={(data) => {
-                    console.log("FINAL SAVE payload:", data);
-                    // পরে backend আসলে এখানেই API call করবে
+                isLoading={isEditProfileLoading}
+                onSave={async (data) => {
+                    try {
+                        const formData = new FormData();
+
+                        formData.append("name", data.name);
+                        formData.append("phone_number", data.contact || "");
+                        formData.append("nationality", data.nationality || "");
+
+                        if (data.image instanceof File) {
+                            formData.append("image", data.image);
+                        }
+
+                        const response = await editProfile(formData).unwrap();
+
+                        if (response?.success) {
+                            toast.success("Profile updated successfully");
+                            setOpenEdit(false);
+                        }
+                    } catch (error) {
+                        toast.error("Profile update failed")
+                    }
+
                 }}
             />
             <SendMoneyDialog
@@ -141,11 +164,11 @@ const MyProfileSection = () => {
             />
             <WithdrawalDialog
                 open={withdrawal}
-                withdrawableBalance={Number(user?.total_balance ?? 0)}
+                readOnly={true}
+                withdrawableBalance={Number(meData?.data?.total_balance ?? 0)}
                 onOpenChange={setwithdrawalOpen}
                 defaultValues={{ email: user?.email ?? "", amount: "100" }}
                 onSend={(data) => {
-                    console.log("withdrawal data ", data?.amount)
                     withdrawHandler(Number(data?.amount))
                 }}
                 isLoading={isWithdrawRequestLoading}

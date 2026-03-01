@@ -15,12 +15,22 @@ const authApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
     logoutUser: builder.mutation<void, void>({
       query: () => ({
         url: "/logout",
         method: "POST",
       }),
+      invalidatesTags: ["User"],
+    }),
+    editProfile: builder.mutation<ApiResponse<IUserInfoResponse>, FormData>({
+      query: (formData) => ({
+        url: "/profile/update",
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["User"],
     }),
 
     googleLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
@@ -28,6 +38,7 @@ const authApi = baseApi.injectEndpoints({
         url: "/google/redirect",
         method: "GET",
       }),
+      invalidatesTags: ["User"],
     }),
 
     facebookLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
@@ -35,12 +46,14 @@ const authApi = baseApi.injectEndpoints({
         url: "/facebook/redirect",
         method: "GET",
       }),
+      invalidatesTags: ["User"],
     }),
     getMeData: builder.query<ApiResponse<IUserInfoResponse>, void>({
       query: () => ({
         url: "/me",
         method: "GET",
       }),
+      providesTags: ["User"],
     }),
   }),
   overrideExisting: false,
@@ -52,5 +65,6 @@ export const {
   useGoogleLoginMutation,
   useFacebookLoginMutation,
   useGetMeDataQuery,
+  useEditProfileMutation,
 } = authApi;
 export default authApi;

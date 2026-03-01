@@ -2,7 +2,7 @@ import { AuthInputProps } from "@/types/authType/AuthTypes";
 
 
 
-export function AuthInput({ label, type = "text", icon, register, name }: AuthInputProps) {
+export function AuthInput({ label, type = "text", icon, register, name, readOnly = false }: AuthInputProps) {
     return (
         <div className="relative">
             <div
@@ -19,6 +19,7 @@ export function AuthInput({ label, type = "text", icon, register, name }: AuthIn
                 <div className="opacity-70">{icon}</div>
                 <input
                     type={type}
+                    readOnly={readOnly}
                     placeholder={label}
                     className="
             w-full bg-transparent outline-none
@@ -26,6 +27,7 @@ export function AuthInput({ label, type = "text", icon, register, name }: AuthIn
             text-[14px]
             "
                     {...register(name, { required: true })}
+
                 />
             </div>
         </div>

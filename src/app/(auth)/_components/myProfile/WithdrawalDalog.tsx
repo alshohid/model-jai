@@ -21,6 +21,7 @@ type Props = {
     defaultValues?: Partial<FormValues>;
     onSend?: (data: { senderName: string; email: string; amount: number }) => void;
     isLoading?: boolean;
+    readOnly?: boolean;
 };
 
 export default function WithdrawalDialog({
@@ -29,7 +30,8 @@ export default function WithdrawalDialog({
     withdrawableBalance,
     defaultValues,
     onSend,
-    isLoading
+    isLoading,
+    readOnly
 }: Props) {
     const { register, handleSubmit, reset, watch } = useForm<FormValues>({
         defaultValues: {
@@ -83,6 +85,7 @@ export default function WithdrawalDialog({
                             type="email"
                             register={register as any}
                             icon={<MailIcon />}
+                            readOnly={readOnly}
                         />
                     </Field>
 
