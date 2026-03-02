@@ -27,7 +27,7 @@ const authApi = baseApi.injectEndpoints({
     editProfile: builder.mutation<ApiResponse<IUserInfoResponse>, FormData>({
       query: (formData) => ({
         url: "/profile/update",
-        method: "PUT",
+        method: "POST",
         body: formData,
       }),
       invalidatesTags: ["User"],

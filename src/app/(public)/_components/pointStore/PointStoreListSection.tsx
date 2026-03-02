@@ -92,7 +92,7 @@ export default function PointStoreListSection() {
     };
 
     return (
-        <div className="relative">
+        <div className="relative py-8 md:py-10 lg:py-12">
             <div className="pointer-events-none absolute -left-[400px] -top-[400px] -z-10">
                 <Image
                     src="/images/home/live_left_ellipse.png"

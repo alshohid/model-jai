@@ -9,7 +9,7 @@ const PointStore = () => {
     console.log("PointStore page");
     return (
         <div>
-            <WalletDepositeSection />
+            {/* <WalletDepositeSection /> */}
             <Suspense fallback={<div>Loading...</div>}>
                 <PointStoreListSection />
             </Suspense>

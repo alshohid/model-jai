@@ -65,7 +65,7 @@ const BuyPointApi = baseApi.injectEndpoints({
       { id: string }
     >({
       query: (body) => ({
-        url: `/admin/withdraws/reject/${body.id}`,
+        url: `/admin/withdraws/declined/${body.id}`,
         method: "POST",
       }),
       invalidatesTags: ["Withdraw"],

@@ -136,9 +136,9 @@ const MyProfileSection = () => {
                     try {
                         const formData = new FormData();
 
-                        formData.append("name", data.name);
-                        formData.append("phone_number", data.contact || "");
-                        formData.append("nationality", data.nationality || "");
+                        formData.append("name", data?.name);
+                        formData.append("phone_number", data?.contact);
+                        formData.append("nationality", data?.nationality);
 
                         if (data.image instanceof File) {
                             formData.append("image", data.image);

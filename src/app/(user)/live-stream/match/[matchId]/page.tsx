@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
 import { useMatchLiveStatus } from "@/shared/providers/hook/useMatchLiveStatus";
 import { useMatchDemoStore } from "@/shared/hooks/useMatchDemoStore";
-
-
 import { useSearchParams } from "next/navigation";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import RankingSection from "@/app/(public)/_components/rankingSection/RankingSection";
@@ -28,7 +26,6 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
 
     const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
 
-    // Initialize scheduledAt with a future time (4 seconds from now)
     const [scheduledAt, setScheduledAt] = useState<string | null>(() => {
         if (typeof window !== "undefined") {
             return new Date(Date.now() + 1000 * 1000).toISOString();
@@ -87,7 +84,7 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         supportOpen={false}
                         onSupportLeft={(amount, supporterName) => demo.support("left", amount, supporterName)}
                         onSupportRight={(amount, supporterName) => demo.support("right", amount, supporterName)}
-                        
+
                     />
                     <SupporterGridSection
                         matchId={matchId}
