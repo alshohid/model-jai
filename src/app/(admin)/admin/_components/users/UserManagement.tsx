@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ReactNode, useState } from "react";
 import MatchListToolbar from "../reusable/MatchListToolbar";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
-import { useClientPagination } from "../../hook/useClientPagination";
 import ActionIconButton from "../reusable/ActionIconButton";
-import { Eye, Pencil, Trash2, UserPlus, MoreVertical } from "lucide-react";
+import { Eye, Pencil, MoreVertical } from "lucide-react";
 import SelectUserAsPlayerDialog from "./SelectUserAsPlayerDialog";
 import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
+import { useGetAllUsersQuery } from "@/redux/features/user/userManagement";
 
 
 type RankRowItem = {
@@ -25,70 +26,55 @@ type RankRowItem = {
     actions?: any;
     user_name: string;
 };
-const allItems: RankRowItem[] = [
-    { id: 1, user_name:"Cameron Williamson", referral_no: "0sdagasgSDRG12513", referral_used_by: "Cameron Williamson", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 2, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Leslie Alexander", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 3, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Floyd Miles", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 4, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Arlene McCoy", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 5, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Jerome Bell", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 6, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Ralph Edwards", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 7, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Guy Hawkins", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 8, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Eleanor Pena", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 9, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Jacob Jones", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 10, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Courtney Henry", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 11, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Arlene McCoy", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 12, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Jerome Bell", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 13, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Ralph Edwards", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 14, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Guy Hawkins", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 15, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Eleanor Pena", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 16, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Jacob Jones", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-    { id: 17, user_name: "Cameron Williamson", referral_no: "sdagasgSDRG12513", referral_used_by: "Courtney Henry", player_2: "Cameron Williamson", game_name: "FC 26", actions: "" },
-];
 
 export default function UserManagement() {
     const [matchType, setMatchType] = useState("all");
-    const [limit] = useState(10);
     const [showSelectPlayerDialog, setShowSelectPlayerDialog] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    
-    // Suspend/Disable modals state
     const [suspendModalOpen, setSuspendModalOpen] = useState(false);
     const [disableModalOpen, setDisableModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<RankRowItem | null>(null);
-    
-    // Dropdown open state for each row (using item id as key)
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
 
-    // Mock users data - in real app, fetch from API
+    const [page, setPage] = useState(1);
+
+    const { data: usersData, isLoading, isFetching } =
+        useGetAllUsersQuery({ page });
+
     const allUsers = [
         { id: "1", name: "Cameron Williamson", email: "cameron@example.com", isPlayer: false },
         { id: "2", name: "Leslie Alexander", email: "leslie@example.com", isPlayer: true },
         { id: "3", name: "Floyd Miles", email: "floyd@example.com", isPlayer: false },
         { id: "4", name: "Arlene McCoy", email: "arlene@example.com", isPlayer: true },
     ];
+    const users =
+        usersData?.data?.map((user) => ({
+            id: user.id,
+            user_name: user.name,
+            referral_no: user.referral_no,
+            referral_used_by: user.role,
+            game_name: user.email,
+        })) ?? [];
+    console.log("usersData", usersData);
+    const meta = {
+        currentPage: usersData?.meta?.currentPage ?? 1,
+        lastPage: usersData?.meta?.lastPage ?? 1,
+        total: usersData?.meta?.total ?? 0,
+        perPage: usersData?.meta?.perPage ?? 10,
+    }
+    const tableHeader = ["User Name", "Referral No", "Role", "Email", "Actions"];
 
-    const tableHeader = ["User Name", "Referral No", "Referral Used By", "Game Name", "Actions"];
-    const { currentItems, meta, setPage } = useClientPagination({
-        items: allItems,
-        limit,
-        filterFn: (item) => {
-            if (matchType === "all") return true;
-            // TODO: item.type থাকবে তখন এখানে filter করবে
-            return true;
-        },
-        resetKey: matchType, 
-    });
 
     const handleSuspendClick = (item: RankRowItem) => {
         setSelectedUser(item);
         setSuspendModalOpen(true);
-        setOpenDropdownId(null); // Close dropdown when modal opens
+        setOpenDropdownId(null);
     };
 
     const handleDisableClick = (item: RankRowItem) => {
         setSelectedUser(item);
         setDisableModalOpen(true);
-        setOpenDropdownId(null); // Close dropdown when modal opens
+        setOpenDropdownId(null);
     };
 
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
@@ -108,7 +94,7 @@ export default function UserManagement() {
                     icon={<Pencil className="h-4 w-4" />}
                     onClick={() => console.log("edit", item)}
                 />
-                
+
                 {/* Three Dot Menu */}
                 <div className="relative">
                     <AppDropdownMenu
@@ -172,8 +158,8 @@ export default function UserManagement() {
 
             <div className="py-10">
                 <ReuseAbleTable
-                    isLoadings={false}
-                    currentItems={currentItems} 
+                    isLoadings={isLoading || isFetching}
+                    currentItems={users}
                     tableHeader={tableHeader}
                     tableRowDataRenderers={tableRowDataRenderers}
                     isBg={false}
@@ -182,9 +168,10 @@ export default function UserManagement() {
                 />
 
                 <div className="mt-6">
+
                     <AppPagination
-                        meta={meta}
-                        onPageChange={setPage}
+                        meta={meta as any}
+                        onPageChange={(newPage) => setPage(newPage)}
                         showSummary={false}
                     />
                 </div>
@@ -207,8 +194,8 @@ export default function UserManagement() {
                     setSelectedUser(null);
                     setOpenDropdownId(null); // Ensure dropdown is closed
                 }}
-                userName={selectedUser?.user_name || "Cameron Williamson"}
-                userId={`#${selectedUser?.id || "8832"}`}
+                userName={selectedUser?.user_name || ""}
+                userId={selectedUser?.id || 0}
                 userImage="/images/home/user.png"
                 isActive={true}
             />
@@ -222,7 +209,7 @@ export default function UserManagement() {
                     setOpenDropdownId(null); // Ensure dropdown is closed
                 }}
                 userName={selectedUser?.user_name || "Cameron Williamson"}
-                userId={`#${selectedUser?.id || "8832"}`}
+                userId={selectedUser?.id || 0}
                 userImage="/images/home/user.png"
                 isActive={true}
             />

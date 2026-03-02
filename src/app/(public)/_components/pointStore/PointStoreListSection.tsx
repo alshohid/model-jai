@@ -87,7 +87,7 @@ export default function PointStoreListSection() {
         setOpen(v);
         if (!v) {
             setSelected(null);
-            setPackInUrl(undefined); // close করলে url clean
+            setPackInUrl(undefined);
         }
     };
 

@@ -11,7 +11,7 @@ interface DisableUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     userName?: string;
-    userId?: string;
+    userId?: number;
     userImage?: string;
     isActive?: boolean;
 }
@@ -20,7 +20,7 @@ export default function DisableUserModal({
     isOpen,
     onClose,
     userName = "Cameron Williamson",
-    userId = "#8832",
+    userId = 8832,
     userImage = "/images/home/user.png",
     isActive = true,
 }: DisableUserModalProps) {

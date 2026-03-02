@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -6,12 +7,14 @@ import AppSelect, { AppSelectOption } from "../reusable/AppSelect";
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 import { Ban, CheckCircle2 } from "lucide-react";
+import { useSuspendUserMutation } from "@/redux/features/user/userManagement";
+import { toast } from "sonner";
 
 interface SuspendUserModalProps {
     isOpen: boolean;
     onClose: () => void;
     userName?: string;
-    userId?: string;
+    userId: number;
     userImage?: string;
     isActive?: boolean;
 }
@@ -20,7 +23,7 @@ export default function SuspendUserModal({
     isOpen,
     onClose,
     userName = "Cameron Williamson",
-    userId = "#8832",
+    userId,
     userImage = "/images/home/user.png",
     isActive = true,
 }: SuspendUserModalProps) {
@@ -28,6 +31,7 @@ export default function SuspendUserModal({
     const [reasonCategory, setReasonCategory] = useState("Violation of Terms");
     const [additionalNote, setAdditionalNote] = useState("");
     const [notifyUser, setNotifyUser] = useState(false);
+    const [suspendUser, { isLoading: isUserSuspendLoading }] = useSuspendUserMutation()
 
     const durationOptions: AppSelectOption[] = [
         { value: "1 day", label: "1 day" },
@@ -46,23 +50,31 @@ export default function SuspendUserModal({
         { value: "Other", label: "Other" },
     ];
 
-    const handleConfirm = () => {
-        console.log("Suspending user:", {
-            userName,
-            userId,
-            suspensionDuration,
-            reasonCategory,
-            additionalNote,
-            notifyUser,
-        });
-        onClose();
-        // Reset form
-        setSuspensionDuration("7 days");
-        setReasonCategory("Violation of Terms");
-        setAdditionalNote("");
-        setNotifyUser(false);
-    };
+    const handleConfirm = async () => {
+        if (!userId) return;
 
+        try {
+            const res = await suspendUser({
+                id: Number(userId),
+                duration: suspensionDuration,
+                reason_category: reasonCategory,
+                note: additionalNote,
+                notify_email: notifyUser,
+            }).unwrap();
+            toast.success(res?.message || "User suspended successfully");
+            onClose();
+            setSuspensionDuration("7 days");
+            setReasonCategory("Violation of Terms");
+            setAdditionalNote("");
+            setNotifyUser(false);
+        } catch (error: any) {
+            toast.error(
+                error?.data?.message ||
+                error?.message ||
+                "Something went wrong"
+            );
+        }
+    };
     const maxChars = 200;
     const charCount = additionalNote.length;
 
@@ -199,15 +211,17 @@ export default function SuspendUserModal({
                         Cancel
                     </button>
                     <button
+                        disabled={isUserSuspendLoading}
                         onClick={handleConfirm}
                         className={cn(
                             "flex-1 h-11 px-6 py-3 rounded-lg text-sm font-medium",
                             "bg-[#FF2EC8] hover:bg-[#FF2EC8]/90 text-white",
-                            "transition-all flex items-center justify-center gap-2"
+                            "transition-all flex items-center justify-center gap-2",
+                            isUserSuspendLoading && "opacity-50 cursor-not-allowed"
                         )}
                     >
                         <CheckCircle2 className="size-4" />
-                        Confirm Suspension
+                        {isUserSuspendLoading ? "Suspending..." : "Confirm Suspension"}
                     </button>
                 </div>
             </div>
