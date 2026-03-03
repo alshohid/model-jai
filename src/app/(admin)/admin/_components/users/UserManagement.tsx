@@ -26,7 +26,7 @@ export type RankRowItem = {
     referral_used_by?: string;
     actions?: any;
     user_name: string;
-    suspended_until: string;
+    suspended_until: string | null;
     is_permanent_suspended: boolean;
 };
 
