@@ -30,7 +30,7 @@ const UserManagementApi = baseApi.injectEndpoints({
     >({
       query: ({ id, ...body }) => ({
         url: `/admin/users/${id}`,
-        method: "PUT",
+        method: "POST",
         body,
       }),
       invalidatesTags: ["ManageUser"],
@@ -48,8 +48,8 @@ const UserManagementApi = baseApi.injectEndpoints({
       { id: number } & ISuspendUserParams
     >({
       query: ({ id, ...body }) => ({
-        url: `/admin/users/${id}`,
-        method: "DELETE",
+        url: `/admin/users/suspend/${id}`,
+        method: "POST",
         body,
       }),
       invalidatesTags: ["ManageUser"],

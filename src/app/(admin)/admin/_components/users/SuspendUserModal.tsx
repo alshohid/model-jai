@@ -27,19 +27,19 @@ export default function SuspendUserModal({
     userImage = "/images/home/user.png",
     isActive = true,
 }: SuspendUserModalProps) {
-    const [suspensionDuration, setSuspensionDuration] = useState("7 days");
+    const [suspensionDuration, setSuspensionDuration] = useState("7");
     const [reasonCategory, setReasonCategory] = useState("Violation of Terms");
     const [additionalNote, setAdditionalNote] = useState("");
     const [notifyUser, setNotifyUser] = useState(false);
     const [suspendUser, { isLoading: isUserSuspendLoading }] = useSuspendUserMutation()
 
     const durationOptions: AppSelectOption[] = [
-        { value: "1 day", label: "1 day" },
-        { value: "3 days", label: "3 days" },
-        { value: "7 days", label: "7 days" },
-        { value: "14 days", label: "14 days" },
-        { value: "30 days", label: "30 days" },
-        { value: "Permanent", label: "Permanent" },
+        { value: "1", label: "1 day" },
+        { value: "3", label: "3 days" },
+        { value: "7", label: "7 days" },
+        { value: "14", label: "14 days" },
+        { value: "30", label: "30 days" },
+        { value: "permanent", label: "Permanent" },
     ];
 
     const reasonOptions: AppSelectOption[] = [
@@ -63,7 +63,7 @@ export default function SuspendUserModal({
             }).unwrap();
             toast.success(res?.message || "User suspended successfully");
             onClose();
-            setSuspensionDuration("7 days");
+            setSuspensionDuration("7");
             setReasonCategory("Violation of Terms");
             setAdditionalNote("");
             setNotifyUser(false);

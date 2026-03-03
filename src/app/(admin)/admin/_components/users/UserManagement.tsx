@@ -12,9 +12,10 @@ import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
 import { useGetAllUsersQuery } from "@/redux/features/user/userManagement";
+import { getSuspendStatus } from "@/shared/lib/utils/getSuspendStatus";
 
 
-type RankRowItem = {
+export type RankRowItem = {
     id: number;
     match_no?: string;
     player_1?: string;
@@ -25,6 +26,8 @@ type RankRowItem = {
     referral_used_by?: string;
     actions?: any;
     user_name: string;
+    suspended_until: string;
+    is_permanent_suspended: boolean;
 };
 
 export default function UserManagement() {
@@ -54,6 +57,8 @@ export default function UserManagement() {
             referral_no: user.referral_no,
             referral_used_by: user.role,
             game_name: user.email,
+            suspended_until: user.suspended_until,
+            is_permanent_suspended: user.is_permanent_suspended,
         })) ?? [];
     console.log("usersData", usersData);
     const meta = {
@@ -78,10 +83,42 @@ export default function UserManagement() {
     };
 
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
-        (item) => <span className="text-[#FFFFFF]">{item.user_name}</span>,
+        (item) => {
+            const status = getSuspendStatus(item);
+
+            const color =
+                status === "permanent"
+                    ? "text-red-500"
+                    : status === "temporary"
+                        ? "text-orange-400"
+                        : "text-white";
+
+            return <span className={color}>{item.user_name}</span>;
+        },
         (item) => <span className="text-[#FFFFFF]">{item.referral_no}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.referral_used_by}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.game_name}</span>,
+        (item) => {
+            const status = getSuspendStatus(item);
+
+            return (
+                <div className="flex items-center gap-2">
+                    <span className="text-white">{item?.referral_used_by}</span>
+
+                    {status === "permanent" && (
+                        <span className="text-xs bg-red-600/20 text-red-500 px-2 py-1 rounded">
+                            Permanently Suspended
+                        </span>
+                    )}
+
+                    {status === "temporary" && (
+                        <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">
+                            Suspended
+                        </span>
+                    )}
+                </div>
+            );
+        },
         (item) => (
             <div className="flex items-center gap-2">
                 <ActionIconButton
@@ -95,7 +132,6 @@ export default function UserManagement() {
                     onClick={() => console.log("edit", item)}
                 />
 
-                {/* Three Dot Menu */}
                 <div className="relative">
                     <AppDropdownMenu
                         open={openDropdownId === item.id}
@@ -111,17 +147,21 @@ export default function UserManagement() {
                             </button>
                         }
                         items={[
-                            {
-                                label: "Suspend",
-                                onSelect: () => handleSuspendClick(item),
-                                className: "text-white hover:bg-white/10",
-                            },
-                            { type: "separator" },
-                            {
-                                label: "Disable",
-                                onSelect: () => handleDisableClick(item),
-                                className: "text-white hover:bg-white/10",
-                            },
+                            ...(getSuspendStatus(item) === "active"
+                                ? [
+                                    {
+                                        label: "Suspend",
+                                        onSelect: () => handleSuspendClick(item),
+                                        className: "text-white hover:bg-white/10",
+                                    },
+                                ]
+                                : [
+                                    {
+                                        label: "Unsuspend",
+                                        onSelect: () => handleDisableClick(item),
+                                        className: "text-white hover:bg-white/10",
+                                    },
+                                ]),
                         ]}
                         contentClassName="min-w-[160px] bg-[#5952FF] border-0"
                     />
@@ -177,7 +217,6 @@ export default function UserManagement() {
                 </div>
             </div>
 
-            {/* Select User as Player Dialog */}
             <SelectUserAsPlayerDialog
                 open={showSelectPlayerDialog}
                 onOpenChange={setShowSelectPlayerDialog}
@@ -208,7 +247,7 @@ export default function UserManagement() {
                     setSelectedUser(null);
                     setOpenDropdownId(null); // Ensure dropdown is closed
                 }}
-                userName={selectedUser?.user_name || "Cameron Williamson"}
+                userName={selectedUser?.user_name || ""}
                 userId={selectedUser?.id || 0}
                 userImage="/images/home/user.png"
                 isActive={true}

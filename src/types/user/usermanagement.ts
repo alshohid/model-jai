@@ -13,13 +13,11 @@ export interface User {
   image?: string;
   provider?: string;
   verifiedAt: boolean;
-  suspendedUntil: string | null;
-  isPermanentSuspended: boolean;
-  suspensionReason: string | null;
-  note: string | null;
   role: string;
   referral_no: string;
   createdAt: string;
+  suspended_until: string | null;
+  is_permanent_suspended: boolean;
 }
 
 export interface PaginationMeta {
