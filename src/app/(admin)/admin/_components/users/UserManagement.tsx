@@ -61,7 +61,7 @@ export default function UserManagement() {
                 : "";
     const { data: searchListData, isLoading: isSearchLoading } =
         useSearchUsersQuery({
-            keyword,
+            keyword: debouncedKeyword,
             role: roleParam,
         });
     const { data: usersData, isLoading, isFetching } =
