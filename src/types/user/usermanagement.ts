@@ -13,11 +13,16 @@ export interface User {
   image?: string;
   provider?: string;
   verifiedAt: boolean;
-  role: string;
+  role: "user" | "artist" | "super_admin";
   referral_no: string;
   createdAt: string;
   suspended_until: string | null;
   is_permanent_suspended: boolean;
+  phone_number?: string;
+  nationality?: string;
+  followers_count?: number;
+  following_count?: number;
+  total_post?: number;
 }
 
 export interface PaginationMeta {
@@ -57,4 +62,9 @@ export interface ISuspendUserParams {
   note?: string;
   notify_email: boolean;
   duration?: string;
+}
+export interface SingleUserResponse {
+  success: boolean;
+  message: string;
+  data: User;
 }

@@ -3,6 +3,7 @@ import { ApiResponse } from "@/types/common/api";
 import {
   ISuspendUserParams,
   IUserCreateParams,
+  SingleUserResponse,
   UserManagementResponse,
 } from "@/types/user/usermanagement";
 
@@ -25,7 +26,7 @@ const UserManagementApi = baseApi.injectEndpoints({
     }),
 
     updateUser: builder.mutation<
-      ApiResponse<UserManagementResponse>,
+      SingleUserResponse,
       { id: number; body: FormData }
     >({
       query: ({ id, body }) => ({
@@ -35,7 +36,7 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ManageUser"],
     }),
-    viewSingleUser: builder.query<UserManagementResponse, number>({
+    viewSingleUser: builder.query<SingleUserResponse, number>({
       query: (id) => ({
         url: `/admin/users/${id}`,
         method: "GET",

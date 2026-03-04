@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Upload } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { User } from "@/types/user/usermanagement";
 
 interface Props {
     open: boolean;
@@ -23,7 +24,7 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
     const { data } = useViewSingleUserQuery(userId!, { skip: !userId });
     const [updateUser, { isLoading }] = useUpdateUserMutation();
 
-    const user = data?.data;
+    const user: User | undefined = data?.data;
 
     const [name, setName] = useState("");
     const [role, setRole] = useState<"user" | "artist">("user");
@@ -31,13 +32,13 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState("");
 
-    useEffect(() => {
-        if (user) {
-            setName(user.name);
-            setRole(user.role === "artist" ? "artist" : "user");
-            setImagePreview(getSafeImageSrc(user.image));
-        }
-    }, [user]);
+    // useEffect(() => {
+    //     if (user) {
+    //         setName(user.name);
+    //         setRole(user.role === "artist" ? "artist" : "user");
+    //         setImagePreview(getSafeImageSrc(user.image));
+    //     }
+    // }, [user]);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
