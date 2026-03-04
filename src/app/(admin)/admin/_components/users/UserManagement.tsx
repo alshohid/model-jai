@@ -18,6 +18,7 @@ import EditUserModal from "./EditUserModal";
 import { Button } from "@/components/ui/button";
 import CreateUserModal from "./CreateUserModal";
 import { toast } from "sonner";
+import { useDebounce } from "../../hook/useDebounce";
 
 
 export type RankRowItem = {
@@ -49,6 +50,7 @@ export default function UserManagement() {
     const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [keyword, setKeyword] = useState("");
+    const debouncedKeyword = useDebounce(keyword, 400);
     const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
 
     const roleParam =
