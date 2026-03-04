@@ -6,13 +6,18 @@ import MatchListToolbar from "../reusable/MatchListToolbar";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
 import ActionIconButton from "../reusable/ActionIconButton";
-import { Eye, Pencil, MoreVertical } from "lucide-react";
+import { Eye, Pencil, MoreVertical, PlusIcon } from "lucide-react";
 import SelectUserAsPlayerDialog from "./SelectUserAsPlayerDialog";
 import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
-import { useGetAllUsersQuery } from "@/redux/features/user/userManagement";
+import { useCreateUserMutation, useGetAllUsersQuery } from "@/redux/features/user/userManagement";
 import { getSuspendStatus } from "@/shared/lib/utils/getSuspendStatus";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import ViewUserModal from "./ViewUserModal";
+import EditUserModal from "./EditUserModal";
+import { Button } from "@/components/ui/button";
+import CreateUserModal from "./CreateUserModal";
 
 
 export type RankRowItem = {
@@ -28,16 +33,21 @@ export type RankRowItem = {
     user_name: string;
     suspended_until: string | null;
     is_permanent_suspended: boolean;
+    status?: string;
+    image?: string;
 };
 
 export default function UserManagement() {
-    const [matchType, setMatchType] = useState("all");
+
     const [showSelectPlayerDialog, setShowSelectPlayerDialog] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [suspendModalOpen, setSuspendModalOpen] = useState(false);
     const [disableModalOpen, setDisableModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<RankRowItem | null>(null);
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+    const [viewModalOpen, setViewModalOpen] = useState(false);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
 
     const [page, setPage] = useState(1);
 
@@ -52,22 +62,23 @@ export default function UserManagement() {
     ];
     const users =
         usersData?.data?.map((user) => ({
-            id: user.id,
-            user_name: user.name,
-            referral_no: user.referral_no,
-            referral_used_by: user.role,
-            game_name: user.email,
-            suspended_until: user.suspended_until,
-            is_permanent_suspended: user.is_permanent_suspended,
+            id: user?.id,
+            user_name: user?.name,
+            referral_no: user?.referral_no,
+            referral_used_by: user?.role,
+            game_name: user?.email,
+            suspended_until: user?.suspended_until,
+            is_permanent_suspended: user?.is_permanent_suspended,
+            image: user?.image,
         })) ?? [];
-    console.log("usersData", usersData);
+
     const meta = {
         currentPage: usersData?.meta?.currentPage ?? 1,
         lastPage: usersData?.meta?.lastPage ?? 1,
         total: usersData?.meta?.total ?? 0,
         perPage: usersData?.meta?.perPage ?? 10,
     }
-    const tableHeader = ["User Name", "Referral No", "Role", "Email", "Actions"];
+    const tableHeader = ["User Name", "Referral No", "Role", "Email", "Status", "Actions"];
 
 
     const handleSuspendClick = (item: RankRowItem) => {
@@ -124,12 +135,19 @@ export default function UserManagement() {
                 <ActionIconButton
                     label="View"
                     icon={<Eye className="h-4 w-4" />}
-                    onClick={() => console.log("view", item)}
+                    onClick={() => {
+                        setSelectedUser(item);
+                        setViewModalOpen(true);
+                    }}
                 />
+
                 <ActionIconButton
                     label="Edit"
                     icon={<Pencil className="h-4 w-4" />}
-                    onClick={() => console.log("edit", item)}
+                    onClick={() => {
+                        setSelectedUser(item);
+                        setEditModalOpen(true);
+                    }}
                 />
 
                 <div className="relative">
@@ -178,23 +196,18 @@ export default function UserManagement() {
 
     return (
         <div>
-            <MatchListToolbar
-                title="User List"
-                ctaLabel="Select User as Player"
-                matchType={matchType}
-                onMatchTypeChange={(v) => {
-                    setMatchType(v);
-                    setPage(1);
-                    console.log("select box match type ", v);
-                }}
-                matchTypeOptions={[
-                    { label: "User Type", value: "all" },
-                    { label: "Live", value: "live" },
-                    { label: "Upcoming", value: "upcoming" },
-                    { label: "Completed", value: "completed" },
-                ]}
-                onCreateMatch={() => setShowSelectPlayerDialog(true)}
-            />
+            <div className="w-full flex flex-end items-center gap-4 ">
+
+                <MatchListToolbar
+                    title="User List"
+                    ctaLabel="Select User as Player"
+                    showSelect={false}
+                    onCreateMatch={() => setShowSelectPlayerDialog(true)}
+                />
+                <Button onClick={() => setCreateUserModalOpen(true)}>
+                    <span><PlusIcon /></span> Add User
+                </Button>
+            </div>
 
             <div className="py-10">
                 <ReuseAbleTable
@@ -225,32 +238,45 @@ export default function UserManagement() {
                 onSearch={(query) => setSearchQuery(query)}
             />
 
-            {/* Suspend User Modal */}
             <SuspendUserModal
                 isOpen={suspendModalOpen}
                 onClose={() => {
                     setSuspendModalOpen(false);
                     setSelectedUser(null);
-                    setOpenDropdownId(null); // Ensure dropdown is closed
+                    setOpenDropdownId(null);
                 }}
                 userName={selectedUser?.user_name || ""}
                 userId={selectedUser?.id || 0}
-                userImage="/images/home/user.png"
-                isActive={true}
+                userImage={(selectedUser?.image) || "/images/home/avatar_1.png"}
+                status={selectedUser?.status || ""}
             />
 
-            {/* Disable User Modal */}
             <DisableUserModal
                 isOpen={disableModalOpen}
                 onClose={() => {
                     setDisableModalOpen(false);
                     setSelectedUser(null);
-                    setOpenDropdownId(null); // Ensure dropdown is closed
+                    setOpenDropdownId(null);
                 }}
                 userName={selectedUser?.user_name || ""}
                 userId={selectedUser?.id || 0}
-                userImage="/images/home/user.png"
-                isActive={true}
+                userImage={(selectedUser?.image) || "/images/home/avatar_1.png"}
+                status={selectedUser?.status || ""}
+            />
+            <ViewUserModal
+                open={viewModalOpen}
+                onClose={() => setViewModalOpen(false)}
+                userId={selectedUser?.id ?? null}
+            />
+
+            <EditUserModal
+                open={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                userId={selectedUser?.id ?? null}
+            />
+            <CreateUserModal
+                isOpen={createUserModalOpen}
+                onClose={() => setCreateUserModalOpen(false)}
             />
         </div>
     );

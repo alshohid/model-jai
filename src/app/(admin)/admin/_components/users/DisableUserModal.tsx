@@ -3,10 +3,9 @@
 
 import { useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
-import AppSelect, { AppSelectOption } from "../reusable/AppSelect";
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
-import { UserX, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { useUnSuspendUserMutation } from "@/redux/features/user/userManagement";
 import { toast } from "sonner";
 
@@ -16,7 +15,7 @@ interface DisableUserModalProps {
     userName?: string;
     userId?: number;
     userImage?: string;
-    isActive?: boolean;
+    status?: string;
 }
 
 export default function DisableUserModal({
@@ -25,7 +24,7 @@ export default function DisableUserModal({
     userName = "Cameron Williamson",
     userId = 8832,
     userImage = "/images/home/user.png",
-    isActive = true,
+
 }: DisableUserModalProps) {
     const [notifyUser, setNotifyUser] = useState(false);
     const [unSuspendUser, { isLoading: isUnSuspendUserLoading }] = useUnSuspendUserMutation()
@@ -83,20 +82,16 @@ export default function DisableUserModal({
                                 alt={userName}
                                 width={48}
                                 height={48}
+                                unoptimized
+                                crossOrigin="anonymous"
                                 className="rounded-full size-12 object-cover border-2 border-white/20"
                             />
-                            {isActive && (
-                                <div className="absolute -bottom-0.5 -right-0.5 size-4 bg-[#00C3FF] rounded-full border-2 border-black" />
-                            )}
                         </div>
                         <div>
                             <p className="font-medium text-white">{userName}</p>
                             <div className="flex items-center gap-2 text-xs text-white/60">
                                 <span>{userId}</span>
-                                <span>•</span>
-                                <span className={isActive ? "text-[#00C3FF]" : ""}>
-                                    Currently Active
-                                </span>
+
                             </div>
                         </div>
                     </div>

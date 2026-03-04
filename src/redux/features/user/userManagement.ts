@@ -25,17 +25,17 @@ const UserManagementApi = baseApi.injectEndpoints({
     }),
 
     updateUser: builder.mutation<
-      UserManagementResponse,
-      { id: string } & IUserCreateParams
+      ApiResponse<UserManagementResponse>,
+      { id: number; body: FormData }
     >({
-      query: ({ id, ...body }) => ({
+      query: ({ id, body }) => ({
         url: `/admin/users/${id}`,
-        method: "POST",
+        method: "PUT",
         body,
       }),
       invalidatesTags: ["ManageUser"],
     }),
-    viewSingleUser: builder.query<UserManagementResponse, string>({
+    viewSingleUser: builder.query<UserManagementResponse, number>({
       query: (id) => ({
         url: `/admin/users/${id}`,
         method: "GET",

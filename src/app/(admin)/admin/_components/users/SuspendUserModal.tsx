@@ -16,7 +16,7 @@ interface SuspendUserModalProps {
     userName?: string;
     userId: number;
     userImage?: string;
-    isActive?: boolean;
+    status?: string;
 }
 
 export default function SuspendUserModal({
@@ -25,7 +25,7 @@ export default function SuspendUserModal({
     userName = "Cameron Williamson",
     userId,
     userImage = "/images/home/user.png",
-    isActive = true,
+
 }: SuspendUserModalProps) {
     const [suspensionDuration, setSuspensionDuration] = useState("7");
     const [reasonCategory, setReasonCategory] = useState("Violation of Terms");
@@ -105,20 +105,17 @@ export default function SuspendUserModal({
                                 alt={userName}
                                 width={48}
                                 height={48}
+                                unoptimized
+                                crossOrigin="anonymous"
                                 className="rounded-full size-12 object-cover border-2 border-white/20"
                             />
-                            {isActive && (
-                                <div className="absolute -bottom-0.5 -right-0.5 size-4 bg-[#00C3FF] rounded-full border-2 border-black" />
-                            )}
+
                         </div>
                         <div>
                             <p className="font-medium text-white">{userName}</p>
                             <div className="flex items-center gap-2 text-xs text-white/60">
                                 <span>{userId}</span>
-                                <span>•</span>
-                                <span className={isActive ? "text-[#00C3FF]" : ""}>
-                                    Currently Active
-                                </span>
+
                             </div>
                         </div>
                     </div>
