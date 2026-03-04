@@ -11,13 +11,13 @@ import SelectUserAsPlayerDialog from "./SelectUserAsPlayerDialog";
 import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
-import { useCreateUserMutation, useGetAllUsersQuery } from "@/redux/features/user/userManagement";
+import { useChangeUserRoleMutation, useGetAllUsersQuery, useSearchUsersQuery } from "@/redux/features/user/userManagement";
 import { getSuspendStatus } from "@/shared/lib/utils/getSuspendStatus";
-import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
 import { Button } from "@/components/ui/button";
 import CreateUserModal from "./CreateUserModal";
+import { toast } from "sonner";
 
 
 export type RankRowItem = {
@@ -40,7 +40,6 @@ export type RankRowItem = {
 export default function UserManagement() {
 
     const [showSelectPlayerDialog, setShowSelectPlayerDialog] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
     const [suspendModalOpen, setSuspendModalOpen] = useState(false);
     const [disableModalOpen, setDisableModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<RankRowItem | null>(null);
@@ -48,18 +47,35 @@ export default function UserManagement() {
     const [viewModalOpen, setViewModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
-
     const [page, setPage] = useState(1);
+    const [keyword, setKeyword] = useState("");
+    const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
 
+    const roleParam =
+        filterType === "players"
+            ? "artist"
+            : filterType === "non-players"
+                ? "user"
+                : "";
+    const { data: searchListData, isLoading: isSearchLoading } =
+        useSearchUsersQuery({
+            keyword,
+            role: roleParam,
+        });
     const { data: usersData, isLoading, isFetching } =
         useGetAllUsersQuery({ page });
+    const [changeUserRole] = useChangeUserRoleMutation();
 
-    const allUsers = [
-        { id: "1", name: "Cameron Williamson", email: "cameron@example.com", isPlayer: false },
-        { id: "2", name: "Leslie Alexander", email: "leslie@example.com", isPlayer: true },
-        { id: "3", name: "Floyd Miles", email: "floyd@example.com", isPlayer: false },
-        { id: "4", name: "Arlene McCoy", email: "arlene@example.com", isPlayer: true },
-    ];
+
+    const searchUserList =
+        searchListData?.data?.map((user) => ({
+            id: user.id.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            image: user.image,
+        })) ?? [];
+
     const users =
         usersData?.data?.map((user) => ({
             id: user?.id,
@@ -188,10 +204,17 @@ export default function UserManagement() {
         ),
     ];
 
-    const handleSelectAsPlayer = (userId: string) => {
-        console.log("Select user as player:", userId);
-        // TODO: Call API to update user as player
-        setShowSelectPlayerDialog(false);
+
+    const handleSelectAsPlayer = async (userId: string) => {
+        try {
+            const res = await changeUserRole({
+                id: Number(userId),
+            }).unwrap();
+
+            toast.success(res?.message || "User is now a player");
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Failed to change role");
+        }
     };
 
     return (
@@ -233,11 +256,14 @@ export default function UserManagement() {
             <SelectUserAsPlayerDialog
                 open={showSelectPlayerDialog}
                 onOpenChange={setShowSelectPlayerDialog}
-                users={allUsers}
+                users={searchUserList}
+                isLoading={isSearchLoading}
+                filterType={filterType}
+                setFilterType={setFilterType}
+                keyword={keyword}
+                setKeyword={setKeyword}
                 onSelectAsPlayer={handleSelectAsPlayer}
-                onSearch={(query) => setSearchQuery(query)}
             />
-
             <SuspendUserModal
                 isOpen={suspendModalOpen}
                 onClose={() => {

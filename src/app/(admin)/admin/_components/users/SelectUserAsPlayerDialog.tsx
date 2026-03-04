@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Search, UserPlus, Check } from "lucide-react";
 import {
     Dialog,
@@ -11,50 +10,43 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/shared/lib/utils/cn";
 import AppSelect from "../reusable/AppSelect";
+import Image from "next/image";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 interface User {
     id: string;
     name: string;
     email: string;
-    isPlayer: boolean;
+    role: string;
+    image?: string;
 }
 
-interface SelectUserAsPlayerDialogProps {
+interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     users: User[];
+    isLoading: boolean;
+
+    keyword: string;
+    setKeyword: (v: string) => void;
+
+    filterType: "all" | "players" | "non-players";
+    setFilterType: (v: "all" | "players" | "non-players") => void;
+
     onSelectAsPlayer: (userId: string) => void;
-    onSearch?: (query: string) => void;
 }
 
 export default function SelectUserAsPlayerDialog({
     open,
     onOpenChange,
     users,
+    isLoading,
+    keyword,
+    setKeyword,
+    filterType,
+    setFilterType,
     onSelectAsPlayer,
-    onSearch,
-}: SelectUserAsPlayerDialogProps) {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
-
-    const filteredUsers = users.filter((user) => {
-        const matchesSearch =
-            user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchQuery.toLowerCase());
-
-        const matchesFilter =
-            filterType === "all" ||
-            (filterType === "players" && user.isPlayer) ||
-            (filterType === "non-players" && !user.isPlayer);
-
-        return matchesSearch && matchesFilter;
-    });
-
-    const handleSearchChange = (value: string) => {
-        setSearchQuery(value);
-        onSearch?.(value);
-    };
-
+}: Props) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
@@ -73,16 +65,17 @@ export default function SelectUserAsPlayerDialog({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="flex-1 overflow-hidden flex flex-col gap-4 mt-4">
-                    {/* Search and Filter */}
+                <div className="flex flex-col gap-4 mt-4 flex-1">
+                    {/* Search */}
                     <div className="space-y-3">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-white/50" />
+
                             <input
                                 type="text"
                                 placeholder="Search by name or email..."
-                                value={searchQuery}
-                                onChange={(e) => handleSearchChange(e.target.value)}
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
                                 className={cn(
                                     "w-full h-[48px] rounded-lg",
                                     "bg-white/5 border border-white/12",
@@ -95,9 +88,9 @@ export default function SelectUserAsPlayerDialog({
 
                         <AppSelect
                             value={filterType}
-                            onValueChange={(value) => setFilterType(value as typeof filterType)}
+                            onValueChange={(v) => setFilterType(v as typeof filterType)}
                             options={[
-                                { label: "All Users", value: "all" },
+                                { label: "All Users", value: "" },
                                 { label: "Players Only", value: "players" },
                                 { label: "Non-Players", value: "non-players" },
                             ]}
@@ -106,48 +99,60 @@ export default function SelectUserAsPlayerDialog({
                     </div>
 
                     {/* User List */}
-                    <div className="flex-1 overflow-y-auto custom-scroll space-y-2">
-                        {filteredUsers.length === 0 ? (
-                            <div className="text-center py-8 text-white/50">
-                                <p>No users found</p>
+                    <div className="flex-1 overflow-y-auto space-y-2 custom-scroll">
+                        {isLoading ? (
+                            <div className="text-center py-10 text-white/50">
+                                Loading users...
+                            </div>
+                        ) : users.length === 0 ? (
+                            <div className="text-center py-10 text-white/50">
+                                No users found
                             </div>
                         ) : (
-                            filteredUsers.map((user) => (
+                            users.map((user) => (
                                 <div
                                     key={user.id}
                                     className={cn(
-                                        "flex items-center justify-between gap-3 p-3 md:p-4 rounded-lg",
+                                        "flex items-center justify-between gap-3 p-4 rounded-lg",
                                         "bg-white/5 border border-white/10",
                                         "hover:bg-white/10 transition-all"
                                     )}
                                 >
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-white truncate">
-                                            {user.name}
-                                        </h3>
-                                        <p className="text-sm text-white/60 truncate">{user.email}</p>
+                                    <div className="flex items-center gap-3">
+                                        <Image
+                                            src={
+                                                getSafeImageSrc(user.image) ??
+                                                "/images/home/avatar_1.png"
+                                            }
+                                            alt={user.name}
+                                            width={40}
+                                            height={40}
+                                            className="rounded-full object-cover"
+                                            unoptimized
+                                        />
+
+                                        <div>
+                                            <p className="font-medium text-white">{user.name}</p>
+                                            <p className="text-xs text-white/60">{user.email}</p>
+                                        </div>
                                     </div>
 
-                                    {user.isPlayer ? (
+                                    {user.role === "artist" ? (
                                         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#00C3FF]/20 text-[#00C3FF] border border-[#00C3FF]/30">
                                             <Check className="size-4" />
-                                            <span className="text-xs md:text-sm font-medium">
-                                                Player
-                                            </span>
+                                            <span className="text-xs font-medium">Player</span>
                                         </div>
                                     ) : (
                                         <button
-                                            type="button"
                                             onClick={() => onSelectAsPlayer(user.id)}
                                             className={cn(
                                                 "flex items-center gap-2 px-4 py-2 rounded-lg",
                                                 "bg-[#FF2EC8] hover:bg-[#FF2EC8]/90 text-white",
-                                                "transition-all font-medium",
-                                                "text-xs md:text-sm"
+                                                "transition-all text-sm font-medium"
                                             )}
                                         >
                                             <UserPlus className="size-4" />
-                                            <span>Make Player</span>
+                                            Make Player
                                         </button>
                                     )}
                                 </div>

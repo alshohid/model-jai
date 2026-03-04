@@ -4,6 +4,7 @@ import {
   ISuspendUserParams,
   IUserCreateParams,
   SingleUserResponse,
+  User,
   UserManagementResponse,
 } from "@/types/user/usermanagement";
 
@@ -43,7 +44,27 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ManageUser"],
     }),
-
+    searchUsers: builder.query<
+      ApiResponse<User[]>,
+      { keyword?: string; role?: string }
+    >({
+      query: ({ keyword = "", role = "user" }) => ({
+        url: `/admin/users/search`,
+        method: "GET",
+        params: {
+          keyword,
+          role,
+        },
+      }),
+      providesTags: ["ManageUser"],
+    }),
+    changeUserRole: builder.mutation<ApiResponse<User>, { id: number }>({
+      query: ({ id }) => ({
+        url: `/admin/users/change_role/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["ManageUser"],
+    }),
     suspendUser: builder.mutation<
       ApiResponse<UserManagementResponse>,
       { id: number } & ISuspendUserParams
@@ -77,5 +98,7 @@ export const {
   useViewSingleUserQuery,
   useSuspendUserMutation,
   useUnSuspendUserMutation,
+  useSearchUsersQuery,
+  useChangeUserRoleMutation,
 } = UserManagementApi;
 export default UserManagementApi;
