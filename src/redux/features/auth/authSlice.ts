@@ -71,31 +71,34 @@ const authSlice = createSlice({
     invalidToken: (state) => {
       state.token = state.token + "yyy";
     },
-    logOut: (state) => {
+    logOut: (state, action: PayloadAction<{ role: IAuthUserRole | null }>) => {
       // state.user = null;
       state.token = null;
       state.refreshToken = null;
       state.role = null;
+      const currentRole = action.payload.role;
 
-      Cookies.remove("token", { path: "/" });
-      Cookies.remove("refresh_token", { path: "/" });
-      Cookies.remove("role", { path: "/" });
-    },
-    adminLogOut: (state) => {
-      // state.user = null;
-      state.token = null;
-      state.refreshToken = null;
-      state.role = null;
-
-      Cookies.remove("admin_token", { path: "/" });
-      Cookies.remove("admin_refresh_token", { path: "/" });
-      Cookies.remove("admin_role", { path: "/" });
+      if (currentRole === "super_admin") {
+        Cookies.remove("admin_token", { path: "/" });
+        Cookies.remove("admin_refresh_token", { path: "/" });
+        Cookies.remove("admin_role", { path: "/" });
+      } else if (currentRole) {
+        Cookies.remove("token", { path: "/" });
+        Cookies.remove("refresh_token", { path: "/" });
+        Cookies.remove("role", { path: "/" });
+      } else {
+        Cookies.remove("token", { path: "/" });
+        Cookies.remove("refresh_token", { path: "/" });
+        Cookies.remove("role", { path: "/" });
+        Cookies.remove("admin_token", { path: "/" });
+        Cookies.remove("admin_refresh_token", { path: "/" });
+        Cookies.remove("admin_role", { path: "/" });
+      }
     },
   },
 });
 
-export const { setCredentials, logOut, invalidToken, adminLogOut } =
-  authSlice.actions;
+export const { setCredentials, logOut, invalidToken } = authSlice.actions;
 
 export default authSlice.reducer;
 

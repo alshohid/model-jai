@@ -108,7 +108,7 @@ const baseQueryWithReauth: BaseQueryFn<
         result = await baseQuery(args, api, extraOptions);
       } catch (error) {
         isRefreshing = false;
-        api.dispatch(logOut());
+        api.dispatch(logOut({ role: state.auth.role || null }));
         toast.error("Session expired — please log in again.", {
           description: getErrorMessage(error),
         });
