@@ -34,6 +34,9 @@ export interface PaginationMeta {
   perPage: number;
   to: number;
   total: number;
+  current_page: number;
+  last_page: number;
+  per_page: number;
 }
 
 export interface PaginationLink {

@@ -23,10 +23,11 @@ type ModalState = {
 
 export default function WithdrawManagement() {
     const [page, setPage] = useState(1);
+    const limit = 10;
     const {
         data: allWithdrawRequestsList,
         isLoading,
-    } = useAllWithdrawRequestsListQuery({ page });
+    } = useAllWithdrawRequestsListQuery({ page, limit });
 
 
     const [acceptWithdraw, { isLoading: isAccepting }] = useAcceptWithdrawRequestMutation();
@@ -47,14 +48,14 @@ export default function WithdrawManagement() {
     ];
 
     const withdrawList: IWithdrawRequestData[] =
-        allWithdrawRequestsList?.data?.data ?? [];
+        allWithdrawRequestsList?.data ?? [];
 
     const meta = {
-        page: allWithdrawRequestsList?.data?.current_page ?? 1,
-        limit: allWithdrawRequestsList?.data?.per_page ?? 10,
-        total: allWithdrawRequestsList?.data?.total ?? 0,
-        prev: !!allWithdrawRequestsList?.data?.prev_page_url,
-        next: !!allWithdrawRequestsList?.data?.next_page_url,
+        page: allWithdrawRequestsList?.meta?.current_page ?? 1,
+        limit: allWithdrawRequestsList?.meta?.per_page ?? 10,
+        total: allWithdrawRequestsList?.meta?.total ?? 0,
+        prev: !!allWithdrawRequestsList?.meta?.prev_page_url,
+        next: !!allWithdrawRequestsList?.meta?.next_page_url,
     };
 
 
@@ -138,12 +139,15 @@ export default function WithdrawManagement() {
 
     return (
         <div>
-            <MatchListToolbar
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-white">Withdraw List</h2>
+            </div>
+            {/* <MatchListToolbar
                 title="Withdraw List"
 
                 showSelect={false}
                 onCreateMatch={() => { }}
-            />
+            /> */}
 
             <div className="py-10">
                 <ReuseAbleTable

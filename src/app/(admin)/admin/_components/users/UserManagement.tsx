@@ -36,6 +36,13 @@ export type RankRowItem = {
     is_permanent_suspended: boolean;
     status?: string;
     image?: string;
+    meta?: {
+        page: number;
+        limit: number;
+        total: number;
+        prev: boolean;
+        next: boolean;
+    };
 };
 
 export default function UserManagement() {
@@ -52,6 +59,7 @@ export default function UserManagement() {
     const [keyword, setKeyword] = useState("");
     const debouncedKeyword = useDebounce(keyword, 400);
     const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
+    const limit = 5;
 
     const roleParam =
         filterType === "players"
@@ -65,7 +73,7 @@ export default function UserManagement() {
             role: roleParam,
         });
     const { data: usersData, isLoading, isFetching } =
-        useGetAllUsersQuery({ page });
+        useGetAllUsersQuery({ page, limit });
     const [changeUserRole] = useChangeUserRoleMutation();
 
 
@@ -89,13 +97,14 @@ export default function UserManagement() {
             is_permanent_suspended: user?.is_permanent_suspended,
             image: user?.image,
         })) ?? [];
-
+    console.log(usersData?.meta)
     const meta = {
-        currentPage: usersData?.meta?.currentPage ?? 1,
-        lastPage: usersData?.meta?.lastPage ?? 1,
+        page: usersData?.meta?.current_page ?? 1,
+        limit: usersData?.meta?.per_page ?? 10,
         total: usersData?.meta?.total ?? 0,
-        perPage: usersData?.meta?.perPage ?? 10,
-    }
+        prev: Boolean(usersData?.links?.prev),
+        next: Boolean(usersData?.links?.next),
+    };
     const tableHeader = ["User Name", "Referral No", "Role", "Email", "Status", "Actions"];
 
 

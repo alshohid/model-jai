@@ -10,9 +10,12 @@ import {
 
 const UserManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllUsers: builder.query<UserManagementResponse, { page?: number }>({
-      query: ({ page = 1 }) => ({
-        url: `/admin/users?page=${page}`,
+    getAllUsers: builder.query<
+      UserManagementResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/admin/users?page=${page}&limit=${limit}`,
         method: "GET",
       }),
       providesTags: ["ManageUser"],

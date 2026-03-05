@@ -44,8 +44,8 @@ const BuyPointApi = baseApi.injectEndpoints({
       }),
     }),
     allWithdrawRequestsList: builder.query({
-      query: ({ page = 1 }) => ({
-        url: `/admin/withdraws?page=${page}`,
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/admin/withdraws?page=${page}&limit=${limit}`,
         method: "GET",
       }),
       providesTags: ["Withdraw"],
