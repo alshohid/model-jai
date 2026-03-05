@@ -69,7 +69,7 @@ export default function AppPagination({
     onPageChange,
     className,
     siblingCount = 1,
-    showSummary = true,
+    showSummary = false,
 }: Props) {
     const { page, limit, total, prev, next } = meta;
 

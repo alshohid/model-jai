@@ -3,17 +3,27 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
+import { useState } from "react";
 import { cn } from "@/shared/lib/utils/cn";
 import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
 import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIcon";
-import { LogOutIcon, WalletIcon } from "lucide-react";
+import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad } from "lucide-react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
-import { useAuth } from "@/redux/features/auth/hooks";
 
 const menuItems = [
     { label: "Dashboard", href: "/admin/dashboard", icon: DashboardIcon },
+
+    {
+        label: "Game",
+        icon: MatchManagementMenuIcon,
+        children: [
+            { label: "Category", href: "/admin/dashboard/game-category", icon: <CatIcon /> },
+            { label: "Game List", href: "/admin/dashboard/games", icon: <Gamepad /> },
+        ],
+    },
+
     { label: "Match Management", href: "/admin/dashboard/matches", icon: MatchManagementMenuIcon },
     { label: "User Management", href: "/admin/dashboard/users", icon: UserManagementMenuIcon },
     { label: "Withdraw Management", href: "/admin/dashboard/withdrawals", icon: WalletIcon },
@@ -27,8 +37,9 @@ export default function AdminSidebar({
     toggleSidebar: () => void;
 }) {
     const pathname = usePathname();
-    // const { adminLogOut } = useAuth();
     const router = useRouter();
+    const [openMenu, setOpenMenu] = useState<string | null>(null);
+
     const [logoutAdmin, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
     return (
@@ -53,6 +64,7 @@ export default function AdminSidebar({
                 )}
             >
                 <div className="h-full flex flex-col px-4 md:px-6 py-6">
+
                     {/* header */}
                     <div className="flex items-center justify-between">
                         <div>
@@ -64,7 +76,6 @@ export default function AdminSidebar({
                             type="button"
                             onClick={toggleSidebar}
                             className="lg:hidden inline-flex items-center justify-center size-10 rounded-xl bg-white/5 border border-white/10 text-white/80"
-                            aria-label="Close sidebar"
                         >
                             <MdClose size={22} />
                         </button>
@@ -72,69 +83,172 @@ export default function AdminSidebar({
 
                     {/* menu */}
                     <nav className="mt-6 flex-1">
-                        {/* <p className="text-white/40 text-sm font-semibold mb-3">Menu</p> */}
-
                         <div className="space-y-2">
+
                             {menuItems.map((item) => {
-                                const isActive =
-                                    item.href === "/admin/dashboard"
-                                        ? pathname === "/admin/dashboard"
-                                        : pathname.startsWith(item.href);
+
+                                const isActive = item.href
+                                    ? pathname.startsWith(item.href)
+                                    : false;
+
+                                // submenu
+                                if (item.children) {
+
+                                    const isOpen = openMenu === item.label;
+
+                                    const parentActive = item.children.some((child) =>
+                                        pathname.startsWith(child.href)
+                                    );
+
+                                    return (
+                                        <div key={item.label}>
+
+                                            {/* Parent */}
+                                            <button
+                                                onClick={() =>
+                                                    setOpenMenu(isOpen ? null : item.label)
+                                                }
+                                                className={cn(
+                                                    "w-full flex items-center justify-between",
+                                                    "px-4 py-3 rounded-[14px] border border-white/10",
+                                                    "transition",
+                                                    parentActive
+                                                        ? "bg-[#7A2D66]/70 border-[#FF2EC8]/30"
+                                                        : "bg-white/[0.03] hover:bg-white/[0.06]"
+                                                )}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <span className="inline-flex items-center justify-center size-9 rounded-[12px] bg-white/5 border border-white/10">
+                                                        <item.icon />
+                                                    </span>
+
+                                                    <span className="text-[14px] font-medium text-white/75">
+                                                        {item.label}
+                                                    </span>
+                                                </div>
+
+                                                <ChevronDown
+                                                    size={18}
+                                                    className={cn(
+                                                        "text-white/60 transition-transform duration-300",
+                                                        isOpen && "rotate-180"
+                                                    )}
+                                                />
+                                            </button>
+
+                                            {/* Submenu */}
+                                            <div
+                                                className={cn(
+                                                    "overflow-hidden transition-all duration-300",
+                                                    isOpen ? "max-h-60 mt-2" : "max-h-0"
+                                                )}
+                                            >
+                                                <div className="ml-8 space-y-2">
+                                                    {item.children.map((child) => {
+
+                                                        const active = pathname.startsWith(child.href);
+
+                                                        return (
+                                                            <Link
+                                                                key={child.href}
+                                                                href={child.href}
+                                                                className={cn(
+                                                                    "group flex items-center gap-3",
+                                                                    "px-3 py-2.5 rounded-[10px]",
+                                                                    "border border-white/10",
+                                                                    "transition-all duration-200",
+                                                                    active
+                                                                        ? "bg-[#FF2EC8]/10 text-[#FF2EC8] border-[#FF2EC8]/30"
+                                                                        : "text-white/70 hover:bg-white/[0.06] hover:text-white"
+                                                                )}
+                                                            >
+                                                                {/* icon */}
+                                                                <span
+                                                                    className={cn(
+                                                                        "flex items-center justify-center",
+                                                                        "size-7 rounded-md",
+                                                                        "border border-white/10",
+                                                                        active
+                                                                            ? "bg-[#FF2EC8]/20 text-[#FF2EC8]"
+                                                                            : "bg-white/[0.03] group-hover:bg-white/[0.08]"
+                                                                    )}
+                                                                >
+                                                                    {child.icon}
+                                                                </span>
+
+                                                                {/* label */}
+                                                                <span className="text-[13px] font-medium">
+                                                                    {child.label}
+                                                                </span>
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    );
+                                }
 
                                 return (
                                     <Link
                                         key={item.href}
-                                        href={item.href}
+                                        href={item.href!}
                                         className={cn(
                                             "group flex items-center gap-3",
                                             "px-4 py-3 rounded-[14px]",
-                                            "border border-white/10",
-                                            "transition",
+                                            "border border-white/10 transition",
                                             isActive
                                                 ? "bg-[#7A2D66]/70 border-[#FF2EC8]/30 shadow-[0_12px_30px_rgba(255,46,200,0.18)]"
                                                 : "bg-white/[0.03] hover:bg-white/[0.06]"
                                         )}
                                     >
-                                        <span
-                                            className={cn(
-                                                "inline-flex items-center justify-center size-9 rounded-[12px]",
-                                                isActive ? "bg-white/10" : "bg-white/5 group-hover:bg-white/8",
-                                                "border border-white/10"
-                                            )}
-                                        >
+                                        <span className="inline-flex items-center justify-center size-9 rounded-[12px] bg-white/5 border border-white/10">
                                             <item.icon />
                                         </span>
 
-                                        <span className={cn("text-[14px] font-medium", isActive ? "text-white" : "text-white/75")}>
+                                        <span className="text-[14px] font-medium text-white/75">
                                             {item.label}
                                         </span>
                                     </Link>
                                 );
                             })}
+
                         </div>
                     </nav>
+
+                    {/* logout */}
                     <div className="w-full flex justify-end px-4 py-2">
-                        <div className={cn("flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/5 transition rounded-[14px]", isLogoutLoading && "opacity-50 cursor-not-allowed")}>
-                            <button disabled={isLogoutLoading} onClick={async () => {
-                                try {
-                                    await logoutAdmin();
-                                    // adminLogOut();
-                                    router.replace("/admin/login");
-                                } catch (error) {
-                                    console.log(error);
-                                }
-                            }}
-                                className="text-white/75 px-3 py-2 ">
+                        <div className={cn(
+                            "flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/5 transition rounded-[14px]",
+                            isLogoutLoading && "opacity-50 cursor-not-allowed"
+                        )}>
+                            <button
+                                disabled={isLogoutLoading}
+                                onClick={async () => {
+                                    try {
+                                        await logoutAdmin();
+                                        router.replace("/admin");
+                                    } catch (error) {
+                                        console.log(error);
+                                    }
+                                }}
+                                className="text-white/75 px-3 py-2"
+                            >
                                 {isLogoutLoading ? "Logging out..." : "Logout"}
                             </button>
+
                             <LogOutIcon size={22} />
                         </div>
                     </div>
 
-                    {/* footer area */}
+                    {/* footer */}
                     <div className="pt-4 border-t border-white/10">
-                        <p className="text-white/40 text-xs">© {new Date().getFullYear()} Model Boss Admin</p>
+                        <p className="text-white/40 text-xs">
+                            © {new Date().getFullYear()} Model Boss Admin
+                        </p>
                     </div>
+
                 </div>
             </aside>
         </>

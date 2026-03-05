@@ -121,7 +121,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Withdraw", "User", "ManageUser"],
+  tagTypes: ["Withdraw", "User", "ManageUser", "GameCategory", "GameList"],
   endpoints: (builder) => ({
     login: builder.mutation<ILoginPayload, ILoginParams>({
       query: (credentialParams) => ({

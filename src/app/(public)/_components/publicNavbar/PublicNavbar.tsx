@@ -15,6 +15,7 @@ import { Bell } from "lucide-react";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import Skeleton from "@/shared/UI/Skeleton";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -88,8 +89,9 @@ export default function PublicNavbar() {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         {isMeDataLoading || isMeDataFetching ? (
-                                            // <Skeleton className="h-10 w-24" />
-                                            <p>Loading...</p>
+                                            <div className="block md:hidden">
+                                                <Skeleton className="h-8 w-20 rounded-md bg-black/10" />
+                                            </div>
                                         ) : (
                                             <PointsButton
                                                 points={Number(userProfileData?.total_balance) ?? 0}
@@ -100,7 +102,9 @@ export default function PublicNavbar() {
 
                                             />
                                         )}
-                                        {isMeDataFetching || isMeDataLoading ? <p>Loading...</p> : <PointsButton
+                                        {isMeDataFetching || isMeDataLoading ? <div className="hidden md:block">
+                                            <Skeleton />
+                                        </div> : <PointsButton
                                             points={Number(userProfileData?.total_balance) ?? 0}
                                             icon={"/images/home/point_icon.png" as any}
                                             onClick={() => console.log("open buy points")}
@@ -110,7 +114,7 @@ export default function PublicNavbar() {
 
                                         />}
 
-                                        {isMeDataLoading || isMeDataFetching ? <p>Loading...</p> : <ProfileDropdown avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"} />}
+                                        {isMeDataLoading || isMeDataFetching ? <div className="animate-pulse size-10 rounded-full bg-black/10" /> : <ProfileDropdown avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"} />}
                                     </div>
                                 </div>
                             ) : (
