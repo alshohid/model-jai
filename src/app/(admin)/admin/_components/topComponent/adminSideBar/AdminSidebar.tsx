@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
 import { cn } from "@/shared/lib/utils/cn";
 import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
 import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIcon";
-import { WalletIcon } from "lucide-react";
+import { LogOutIcon, WalletIcon } from "lucide-react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
+import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
+import { useAuth } from "@/redux/features/auth/hooks";
 
 const menuItems = [
     { label: "Dashboard", href: "/admin/dashboard", icon: DashboardIcon },
@@ -25,6 +27,9 @@ export default function AdminSidebar({
     toggleSidebar: () => void;
 }) {
     const pathname = usePathname();
+    // const { adminLogOut } = useAuth();
+    const router = useRouter();
+    const [logoutAdmin, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
     return (
         <>
@@ -51,7 +56,7 @@ export default function AdminSidebar({
                     {/* header */}
                     <div className="flex items-center justify-between">
                         <div>
-                        <BrandMark width={130} height={90} />
+                            <BrandMark width={130} height={90} />
                             <div className="mt-2 h-[2px] w-full bg-gradient-to-r from-[#FF2EC8]/70 to-transparent" />
                         </div>
 
@@ -108,6 +113,23 @@ export default function AdminSidebar({
                             })}
                         </div>
                     </nav>
+                    <div className="w-full flex justify-end px-4 py-2">
+                        <div className={cn("flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/5 transition rounded-[14px]", isLogoutLoading && "opacity-50 cursor-not-allowed")}>
+                            <button disabled={isLogoutLoading} onClick={async () => {
+                                try {
+                                    await logoutAdmin();
+                                    // adminLogOut();
+                                    router.replace("/admin/login");
+                                } catch (error) {
+                                    console.log(error);
+                                }
+                            }}
+                                className="text-white/75 px-3 py-2 ">
+                                {isLogoutLoading ? "Logging out..." : "Logout"}
+                            </button>
+                            <LogOutIcon size={22} />
+                        </div>
+                    </div>
 
                     {/* footer area */}
                     <div className="pt-4 border-t border-white/10">

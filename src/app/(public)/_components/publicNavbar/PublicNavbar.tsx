@@ -4,11 +4,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRef } from "react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import AuthButton from "@/shared/UI/button/AuthButton";
 import PointsButton from "@/shared/UI/button/PointsButton";
-
 import { cn } from "@/shared/lib/utils/cn";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
 import MobileNavSheet from "./MobileNavDrawer";
@@ -16,7 +14,6 @@ import NavbarSearch, { NavbarSearchProvider } from "./NavbarSearch";
 import { Bell } from "lucide-react";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
-import ProfileSkeleton from "@/shared/components/myProfile/ProfileSkeleton";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 const navItems = [
@@ -27,11 +24,10 @@ const navItems = [
 
 export default function PublicNavbar() {
     const pathname = usePathname();
-    const { isAuthenticated, token, role } = useAuth();
+    const { isAuthenticated } = useAuth();
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
 
     const userProfileData = meData?.data;
-    console.log("userProfileData", userProfileData);
     const wrapperClass = (isAuthenticated)
         ? " w-full border-none"
         : "fixed top-[20px] z-[60] w-full";
@@ -134,7 +130,7 @@ export default function PublicNavbar() {
                                 navItems={navItems}
                                 isMeDataLoading={isMeDataFetching || isMeDataLoading}
                                 points={Number(userProfileData?.total_balance) ?? 0}
-                                avatarSrc="/images/home/profile_img.png"
+                                avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"}
                                 tone={isAuthenticated ? "light" : "dark"}
                             />
                         </div>

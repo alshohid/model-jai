@@ -97,7 +97,7 @@ export default function UserManagement() {
             is_permanent_suspended: user?.is_permanent_suspended,
             image: user?.image,
         })) ?? [];
-    console.log(usersData?.meta)
+
     const meta = {
         page: usersData?.meta?.current_page ?? 1,
         limit: usersData?.meta?.per_page ?? 10,
