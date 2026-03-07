@@ -94,7 +94,7 @@ export default function PublicNavbar() {
                                             </div>
                                         ) : (
                                             <PointsButton
-                                                points={Number(userProfileData?.total_balance) ?? 0}
+                                                points={Number(userProfileData?.total_balance || 0)}
                                                 icon={"/images/home/point_icon.png" as any}
                                                 onClick={() => console.log("open buy points")}
                                                 size="compact"
@@ -105,7 +105,7 @@ export default function PublicNavbar() {
                                         {isMeDataFetching || isMeDataLoading ? <div className="hidden md:block">
                                             <Skeleton />
                                         </div> : <PointsButton
-                                            points={Number(userProfileData?.total_balance) ?? 0}
+                                            points={Number(userProfileData?.total_balance || 0)}
                                             icon={"/images/home/point_icon.png" as any}
                                             onClick={() => console.log("open buy points")}
                                             size="default"

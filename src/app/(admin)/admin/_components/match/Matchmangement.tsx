@@ -1,61 +1,119 @@
 "use client";
 
-import { ReactNode,useState } from "react";
+import { ReactNode, useState } from "react";
 import MatchListToolbar from "../reusable/MatchListToolbar";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
-import { useClientPagination } from "../../hook/useClientPagination";
+import { IMatch } from "@/types/match/MatchManagementTypes";
+import { useDeleteMatchMutation, useGetAllMatchesQuery } from "@/redux/features/match/matchManagement";
+import CreateMatchModal from "./CreateMatchModal";
+import ViewMatchModal from "./ViewMatchModal";
+import EditMatchModal from "./EditMatchModal";
 
-
-type RankRowItem = {
-    id: number;
-    match_no?: string;
-    player_1?: string;
-    player_2?: string;
-    game_name?: string;
-    winner?: string;
-};
-const allItems: RankRowItem[] = [
-    { id: 1, match_no: "001", player_1: "Cameron Williamson", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 2, match_no: "002", player_1: "Leslie Alexander", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 3, match_no: "003", player_1: "Floyd Miles", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 4, match_no: "004", player_1: "Arlene McCoy", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 5, match_no: "005", player_1: "Jerome Bell", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 6, match_no: "006", player_1: "Ralph Edwards", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 7, match_no: "007", player_1: "Guy Hawkins", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 8, match_no: "008", player_1: "Eleanor Pena", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 9, match_no: "009", player_1: "Jacob Jones", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 10, match_no: "010", player_1: "Courtney Henry", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 11, match_no: "011", player_1: "Arlene McCoy", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 12, match_no: "012", player_1: "Jerome Bell", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 13, match_no: "013", player_1: "Ralph Edwards", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 14, match_no: "014", player_1: "Guy Hawkins", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 15, match_no: "015", player_1: "Eleanor Pena", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 16, match_no: "016", player_1: "Jacob Jones", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-    { id: 17, match_no: "017", player_1: "Courtney Henry", player_2: "Cameron Williamson", game_name: "FC 26", winner: "Player 01" },
-];
-
-export default function Matchmangement() {
+export default function MatchManagement() {
+    const [page, setPage] = useState(1);
     const [matchType, setMatchType] = useState("all");
-    const [limit] = useState(10); 
-    const tableHeader = ["Match No", "Player 01", "Player 02", "Game Name", "Winner"];
-    const { currentItems, meta, setPage } = useClientPagination({
-        items: allItems,
-        limit,
-        filterFn: (item) => {
-            if (matchType === "all") return true;
-            // TODO: item.type থাকবে তখন এখানে filter করবে
-            return true;
-        },
-        resetKey: matchType, 
-    });
+    const limit = 10;
+    const [open, setOpen] = useState(false);
+    const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
+    const [viewOpen, setViewOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
 
-    const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
-        (item) => <span className="text-[#FFFFFF]">{item.match_no}</span>,
-        (item) => <span className="text-[#FFFFFF]">{item.player_1}</span>,
-        (item) => <span className="text-[#FFFFFF]">{item.player_2}</span>,
-        (item) => <span className="text-[#FFFFFF]">{item.game_name}</span>,
-        (item) => <span className="text-[#FFFFFF]">{item.winner}</span>,
+    const { data, isLoading } = useGetAllMatchesQuery({
+        page,
+        limit,
+    });
+    const [deleteMatch] = useDeleteMatchMutation();
+
+    const matches: IMatch[] = data?.data ?? [];
+
+    const filteredMatches =
+        matchType === "all"
+            ? matches
+            : matches.filter((m) => m.type === matchType);
+
+    const meta = {
+        page: data?.meta?.current_page ?? 1,
+        limit: data?.meta?.per_page ?? 10,
+        total: data?.meta?.total ?? 0,
+        prev: false,
+        next: false
+    };
+
+    const tableHeader = [
+        "Match No",
+        "Player 01",
+        "Player 02",
+        "Game Name",
+        "Winner",
+        "Actions",
+    ];
+    const handleView = (id: number) => {
+        setSelectedMatchId(id);
+        setViewOpen(true);
+    };
+
+    const handleEdit = (id: number) => {
+        setSelectedMatchId(id);
+        setEditOpen(true);
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm("Are you sure you want to delete this match?")) return;
+
+        try {
+            await deleteMatch(id).unwrap();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const tableRowDataRenderers: ((item: IMatch, index: number) => ReactNode)[] = [
+
+        (item) => <span className="text-white">{item.match_no}</span>,
+
+        (item) => (
+            <span className="text-white">{item.player_one?.name}</span>
+        ),
+
+        (item) => (
+            <span className="text-white">{item.player_two?.name}</span>
+        ),
+
+        (item) => (
+            <span className="text-white">{item.game?.name}</span>
+        ),
+
+        (item) => (
+            <span className="text-white">{item.winner?.name ?? "-"}</span>
+        ),
+
+        (item) => (
+            <div className="flex gap-2">
+
+                <button
+                    onClick={() => handleView(item.id)}
+                    className="px-3 py-1 text-xs bg-blue-600 rounded-md text-white hover:bg-blue-500"
+                >
+                    View
+                </button>
+
+                <button
+                    onClick={() => handleEdit(item.id)}
+                    className="px-3 py-1 text-xs bg-yellow-500 rounded-md text-black hover:bg-yellow-400"
+                >
+                    Edit
+                </button>
+
+                <button
+                    onClick={() => handleDelete(item.id)}
+                    className="px-3 py-1 text-xs bg-red-600 rounded-md text-white hover:bg-red-500"
+                >
+                    Delete
+                </button>
+
+            </div>
+        ),
+
     ];
 
     return (
@@ -66,7 +124,7 @@ export default function Matchmangement() {
                 selectPlaceholder="All"
                 onMatchTypeChange={(v) => {
                     setMatchType(v);
-                    setPage(1); 
+                    setPage(1);
                 }}
                 matchTypeOptions={[
                     { label: "All", value: "all" },
@@ -74,13 +132,13 @@ export default function Matchmangement() {
                     { label: "Upcoming", value: "upcoming" },
                     { label: "Completed", value: "completed" },
                 ]}
-                onCreateMatch={() => console.log("create new match")}
+                onCreateMatch={() => setOpen(true)}
             />
 
             <div className="py-10">
                 <ReuseAbleTable
-                    isLoadings={false}
-                    currentItems={currentItems} 
+                    isLoadings={isLoading}
+                    currentItems={filteredMatches}
                     tableHeader={tableHeader}
                     tableRowDataRenderers={tableRowDataRenderers}
                     isBg={false}
@@ -96,6 +154,20 @@ export default function Matchmangement() {
                     />
                 </div>
             </div>
+            <CreateMatchModal
+                open={open}
+                onClose={() => setOpen(false)}
+            />
+            <ViewMatchModal
+                matchId={selectedMatchId}
+                open={viewOpen}
+                onClose={() => setViewOpen(false)}
+            />
+            <EditMatchModal
+                matchId={selectedMatchId}
+                open={editOpen}
+                onClose={() => setEditOpen(false)}
+            />
         </div>
     );
 }

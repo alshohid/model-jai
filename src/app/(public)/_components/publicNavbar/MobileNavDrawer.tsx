@@ -156,7 +156,7 @@ export default function MobileNavSheet({
 
                                 <div className="flex  items-center justify-between gap-3">
                                     {isMeDataLoading ? <Skeleton className="w-[100px] h-[40px]" /> : <PointsButton
-                                        points={points}
+                                        points={Number(points) || 0}
                                         icon={"/images/home/point_icon.png"}
                                         onClick={() => console.log("open buy points")}
                                     />}
