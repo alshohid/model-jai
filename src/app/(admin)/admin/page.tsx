@@ -2,19 +2,19 @@
 
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/shared/providers/auth/useAuth";
 import AdminAuthContainer from "./auth/AdminAuthContainer";
+import { useAuth } from "@/redux/features/auth/hooks";
 
 function AdminEntryPageContent() {
-    const { isAdminAuthenticated } = useAuth(); 
+    const { isAuthenticated, role } = useAuth();
     const router = useRouter();
     const sp = useSearchParams();
 
     const redirect = sp.get("redirect") || "/admin/dashboard";
 
     useEffect(() => {
-        if (isAdminAuthenticated) router.replace(redirect);
-    }, [isAdminAuthenticated, redirect, router]);
+        if (isAuthenticated && role === "super_admin") router.replace(redirect);
+    }, [isAuthenticated, role, redirect, router]);
 
     return <AdminAuthContainer />;
 }

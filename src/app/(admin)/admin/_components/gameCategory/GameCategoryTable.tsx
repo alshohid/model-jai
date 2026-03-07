@@ -9,7 +9,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useGetAllGameCategoriesQuery } from "@/redux/features/game/gameCategoryManagement";
 import EditCategoryModal from "./EditCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
-import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+
 
 
 export default function GameCategoryTable() {
@@ -23,6 +23,7 @@ export default function GameCategoryTable() {
     const [deleteItem, setDeleteItem] = useState<any>(null);
 
     const categories = data?.data ?? [];
+    console.log(categories);
 
     const meta = {
         page: data?.meta?.current_page ?? 1,
@@ -38,10 +39,12 @@ export default function GameCategoryTable() {
 
         (item) => (
             <Image
-                src={getSafeImageSrc(item?.image) || "/images/home/avatar_1.png"}
+                src={(item?.image) || "/images/home/avatar_1.png"}
                 alt={item.name}
                 width={40}
                 height={40}
+                unoptimized
+                crossOrigin="anonymous"
                 className="rounded-md"
             />
         ),

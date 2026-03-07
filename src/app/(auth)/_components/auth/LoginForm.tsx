@@ -21,7 +21,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const { logIn, isLoading: isLoginLoading } = useAuth();
+    const { logIn, isLoading: isLoginLoading, role } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
     const [errorLogin, setErrorLogin] = useState("")
     const { register, handleSubmit } = useForm<ILoginParams>();
@@ -46,7 +46,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
             }).unwrap()
 
             if (loginResult.success) {
-                router.replace(redirect);
+                role === "user" || role === "artist" ? router.replace(redirect) : router.replace("/admin/dashboard");
             }
 
         } catch (error: unknown) {

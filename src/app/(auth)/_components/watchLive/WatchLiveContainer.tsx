@@ -68,14 +68,14 @@ const slides: WatchLiveHeroSlide[] = [
         platform: "tiktok",
         thumbs: ["/images/home/game_12.png"],
     },
-    
+
 ];
 
 
 export default function WatchLivePage() {
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, role } = useAuth()
     const onWatchHandler = (s: WatchLiveHeroSlide) => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || role !== "user" && role !== "artist") {
             router.push(`/login?redirect=/live-stream/match/${s.id!}?platform=tiktok`);
             return;
         }

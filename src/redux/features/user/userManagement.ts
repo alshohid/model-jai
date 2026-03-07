@@ -35,7 +35,7 @@ const UserManagementApi = baseApi.injectEndpoints({
     >({
       query: ({ id, body }) => ({
         url: `/admin/users/${id}`,
-        method: "PUT",
+        method: "POST",
         body,
       }),
       invalidatesTags: ["ManageUser"],

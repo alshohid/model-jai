@@ -22,6 +22,7 @@ import { LuAlignRight } from "react-icons/lu";
 import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
 import NavbarSearch from "./NavbarSearch";
 import { useAuth } from "@/redux/features/auth/hooks";
+import Skeleton from "@/shared/UI/Skeleton";
 
 type NavItem = { label: string; href: string };
 
@@ -39,7 +40,7 @@ export default function MobileNavSheet({
     isMeDataLoading?: boolean;
 }) {
     const pathname = usePathname();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, role } = useAuth();
 
 
     const triggerStyles =
@@ -126,7 +127,7 @@ export default function MobileNavSheet({
                             })}
                         </nav>
 
-                        {isAuthenticated && (
+                        {isAuthenticated && (role === "user" || role === "artist") && (
                             <SheetClose asChild>
                                 <Link
                                     href="/support-history"
@@ -151,10 +152,10 @@ export default function MobileNavSheet({
 
 
                         <div className="mt-6">
-                            {isAuthenticated ? (
+                            {isAuthenticated && (role === "user" || role === "artist") ? (
 
                                 <div className="flex  items-center justify-between gap-3">
-                                    {isMeDataLoading ? <p>Loading...</p> : <PointsButton
+                                    {isMeDataLoading ? <Skeleton className="w-[100px] h-[40px]" /> : <PointsButton
                                         points={points}
                                         icon={"/images/home/point_icon.png"}
                                         onClick={() => console.log("open buy points")}

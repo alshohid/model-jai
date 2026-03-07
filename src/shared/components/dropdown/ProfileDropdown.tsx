@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 "use client";
 
 import Image from "next/image";
@@ -17,7 +18,7 @@ export default function ProfileDropdown({
     className?: string;
 }) {
     const router = useRouter();
-    const { logOut } = useAuth();
+    const { logOut, role } = useAuth();
     const [logoutUser, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
     const items: AppDropdownItem[] = [
@@ -34,7 +35,7 @@ export default function ProfileDropdown({
                 try {
                     await logoutUser();
                     logOut();
-                    router.replace("/");
+                    role === "user" || role === "artist" ? router.replace("/") : router.replace("/admin");
                 } catch (error) {
                     toast.error("Logout failed");
                 }

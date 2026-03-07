@@ -25,15 +25,15 @@ const navItems = [
 
 export default function PublicNavbar() {
     const pathname = usePathname();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, role } = useAuth();
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
 
     const userProfileData = meData?.data;
-    const wrapperClass = (isAuthenticated)
+    const wrapperClass = (isAuthenticated && (role === "user" || role === "artist"))
         ? " w-full border-none"
         : "fixed top-[20px] z-[60] w-full";
 
-    const navbarBg = (isAuthenticated)
+    const navbarBg = (isAuthenticated && (role === "user" || role === "artist"))
         ? "bg-[#FFEAFA] "
         : "bg-glass backdrop-blur-md navbar-border-ring ";
 
@@ -70,7 +70,7 @@ export default function PublicNavbar() {
                                 <NavbarSearch />
                             </div>
 
-                            {isAuthenticated ? (
+                            {isAuthenticated && (role === "user" || role === "artist") ? (
                                 <div className="flex  items-center">
                                     <div className="mr-2">
                                         <Link

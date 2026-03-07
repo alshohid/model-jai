@@ -12,7 +12,7 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { useBuyPointMutation } from "@/redux/features/pointstore/buypoint";
 
 export default function PointStoreListSection() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, role } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -46,7 +46,7 @@ export default function PointStoreListSection() {
     };
 
     const handleBuy = (pack: PointPack) => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || role !== "user" && role !== "artist") {
             const redirect = `${pathname}?pack=${encodeURIComponent(pack.id)}`;
             router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
             return;
@@ -77,7 +77,7 @@ export default function PointStoreListSection() {
         const found = packs.find((p) => p.id === packId);
         if (!found) return;
 
-        if (!isAuthenticated) return;
+        if (!isAuthenticated || role !== "user" && role !== "artist") return;
 
         // setSelected(found);
         // setOpen(true);

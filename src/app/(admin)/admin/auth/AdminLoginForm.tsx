@@ -18,7 +18,7 @@ type AdminLoginValues = {
 
 export default function AdminLoginForm() {
     const router = useRouter();
-    const { logIn, isLoading: isLoginLoading } = useAuth();
+    const { logIn, isLoading: isLoginLoading, role } = useAuth();
     const [errorLogin, setErrorLogin] = useState("")
 
     const { register, handleSubmit } = useForm<AdminLoginValues>({
@@ -33,7 +33,7 @@ export default function AdminLoginForm() {
             }).unwrap()
 
             if (loginResult.success) {
-                router.replace("/admin/dashboard");
+                role === "user" || role === "artist" ? router.replace("/") : router.replace("/admin/dashboard");
             }
         } catch (error) {
             setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));

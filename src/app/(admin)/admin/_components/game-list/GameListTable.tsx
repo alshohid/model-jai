@@ -39,12 +39,13 @@ export default function GameListTable() {
 
         (item) => (
             <Image
-                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${item.image}`}
+                src={`${item?.image}`}
                 alt={item.name}
                 width={40}
                 height={40}
                 className="rounded-md"
                 unoptimized
+                crossOrigin="anonymous"
             />
         ),
 
