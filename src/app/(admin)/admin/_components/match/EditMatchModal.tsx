@@ -24,6 +24,9 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
         players_bet_amount: "",
         match_date: "",
         match_time: "",
+        type: "",
+        winner_percentage: 0,
+        loser_percentage: 0,
     });
 
     useEffect(() => {
@@ -38,6 +41,9 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
                 players_bet_amount: m.player_one_bet,
                 match_date: m.match_date,
                 match_time: m.match_time,
+                type: m.type,
+                winner_percentage: m.winner_percentage,
+                loser_percentage: m.loser_percentage,
             });
         }
 

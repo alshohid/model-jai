@@ -38,9 +38,12 @@ const MatchManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ["Match"],
     }),
     createMatchConformation: builder.mutation({
-      query: (id) => ({
+      query: ({ id, confirmation_status }) => ({
         url: `/admin/match-confirm/${id}`,
         method: "POST",
+        body: {
+          confirmation_status,
+        },
       }),
       invalidatesTags: ["Match"],
     }),

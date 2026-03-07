@@ -9,6 +9,7 @@ import { useDeleteMatchMutation, useGetAllMatchesQuery } from "@/redux/features/
 import CreateMatchModal from "./CreateMatchModal";
 import ViewMatchModal from "./ViewMatchModal";
 import EditMatchModal from "./EditMatchModal";
+import WinnerSelectModal from "./WinnerSelectModal";
 
 export default function MatchManagement() {
     const [page, setPage] = useState(1);
@@ -18,6 +19,13 @@ export default function MatchManagement() {
     const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
     const [viewOpen, setViewOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
+    const [winnerModalOpen, setWinnerModalOpen] = useState(false);
+    const [winnerMatchId, setWinnerMatchId] = useState<number | null>(null);
+
+    const handleSelectWinner = (id: number) => {
+        setWinnerMatchId(id);
+        setWinnerModalOpen(true);
+    };
 
     const { data, isLoading } = useGetAllMatchesQuery({
         page,
@@ -83,9 +91,25 @@ export default function MatchManagement() {
             <span className="text-white">{item.game?.name}</span>
         ),
 
-        (item) => (
-            <span className="text-white">{item.winner?.name ?? "-"}</span>
-        ),
+        (item) => {
+
+            if (item.confirmation_status === 0) {
+                return (
+                    <button
+                        onClick={() => handleSelectWinner(item.id)}
+                        className="px-3 py-1 text-xs bg-purple-600 rounded-md text-white hover:bg-purple-500"
+                    >
+                        Select Winner
+                    </button>
+                );
+            }
+
+            return (
+                <span className="text-white">
+                    {item.winner?.name ?? "-"}
+                </span>
+            );
+        },
 
         (item) => (
             <div className="flex gap-2">
@@ -167,6 +191,11 @@ export default function MatchManagement() {
                 matchId={selectedMatchId}
                 open={editOpen}
                 onClose={() => setEditOpen(false)}
+            />
+            <WinnerSelectModal
+                matchId={winnerMatchId}
+                open={winnerModalOpen}
+                onClose={() => setWinnerModalOpen(false)}
             />
         </div>
     );
