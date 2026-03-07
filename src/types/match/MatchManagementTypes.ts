@@ -97,3 +97,8 @@ export type ICreateMatchPayload = IMatchBasePayload;
 export interface IUpdateMatchPayload extends IMatchBasePayload {
   id: number;
 }
+export interface IDeleteMatchResponse {
+  status: boolean;
+  message: string;
+  data: IMatch;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
 import {
   IGameCreateParams,
@@ -25,7 +26,13 @@ const GameListManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["GameList"],
     }),
-
+    getAllGames: builder.query<any, void>({
+      query: () => ({
+        url: `/admin/all-games`,
+        method: "GET",
+      }),
+      providesTags: ["GameList"],
+    }),
     updateGameList: builder.mutation<
       IGameCreateResponse,
       { id: number; body: FormData }
@@ -65,5 +72,6 @@ export const {
   useUpdateGameListMutation,
   useDeleteGameListMutation,
   useViewSingleGameListQuery,
+  useGetAllGamesQuery,
 } = GameListManagementApi;
 export default GameListManagementApi;

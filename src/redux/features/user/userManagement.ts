@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
 import { ApiResponse } from "@/types/common/api";
 import {
@@ -61,6 +62,13 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ManageUser"],
     }),
+    getAllPlayer: builder.query<any, void>({
+      query: () => ({
+        url: `/admin/all-players`,
+        method: "GET",
+      }),
+      providesTags: ["ManageUser"],
+    }),
     changeUserRole: builder.mutation<ApiResponse<User>, { id: number }>({
       query: ({ id }) => ({
         url: `/admin/users/change_role/${id}`,
@@ -68,6 +76,7 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ManageUser"],
     }),
+
     suspendUser: builder.mutation<
       ApiResponse<UserManagementResponse>,
       { id: number } & ISuspendUserParams
@@ -103,5 +112,6 @@ export const {
   useUnSuspendUserMutation,
   useSearchUsersQuery,
   useChangeUserRoleMutation,
+  useGetAllPlayerQuery,
 } = UserManagementApi;
 export default UserManagementApi;

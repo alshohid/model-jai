@@ -1,14 +1,18 @@
 import { baseApi } from "@/redux/api/baseApi";
-
 import {
-  IGameCategoryCreateParams,
-  IGameCategoryResponse,
-} from "@/types/game/gamecategory/gameCategorytypes";
+  ICreateMatchPayload,
+  IDeleteMatchResponse,
+  IMatchCreateResponse,
+  IMatchListResponse,
+  IMatchSingleResponse,
+  IMatchUpdateResponse,
+  IUpdateMatchPayload,
+} from "@/types/match/MatchManagementTypes";
 
 const MatchManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllMatches: builder.query<
-      IGameCategoryResponse,
+      IMatchListResponse,
       { page?: number; limit?: number }
     >({
       query: ({ page = 1, limit = 10 }) => ({
@@ -17,11 +21,15 @@ const MatchManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Match"],
     }),
+    getSelectedTwoPlayerByMatchId: builder.query({
+      query: (id) => ({
+        url: `/admin/match-players/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Match"],
+    }),
 
-    createMatch: builder.mutation<
-      IGameCategoryResponse,
-      IGameCategoryCreateParams
-    >({
+    createMatch: builder.mutation<IMatchCreateResponse, ICreateMatchPayload>({
       query: (body) => ({
         url: "/admin/matches",
         method: "POST",
@@ -29,12 +37,16 @@ const MatchManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Match"],
     }),
+    createMatchConformation: builder.mutation({
+      query: (id) => ({
+        url: `/admin/match-confirm/${id}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Match"],
+    }),
 
-    updateMatch: builder.mutation<
-      IGameCategoryResponse,
-      { id: number; body: FormData }
-    >({
-      query: ({ id, body }) => ({
+    updateMatch: builder.mutation<IMatchUpdateResponse, IUpdateMatchPayload>({
+      query: ({ id, ...body }) => ({
         url: `/admin/matches/${id}`,
         method: "POST",
         body,
@@ -42,17 +54,14 @@ const MatchManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ["Match"],
     }),
 
-    viewSingleMatch: builder.query<IGameCategoryResponse, number>({
+    viewSingleMatch: builder.query<IMatchSingleResponse, number>({
       query: (id) => ({
         url: `/admin/matches/${id}`,
         method: "GET",
       }),
       providesTags: ["Match"],
     }),
-    deleteMatch: builder.mutation<
-      { success: boolean; message: string },
-      number
-    >({
+    deleteMatch: builder.mutation<IDeleteMatchResponse, number>({
       query: (id) => ({
         url: `/admin/matches/${id}`,
         method: "DELETE",
@@ -63,5 +72,13 @@ const MatchManagementApi = baseApi.injectEndpoints({
   overrideExisting: true,
 });
 
-export const {} = MatchManagementApi;
+export const {
+  useGetAllMatchesQuery,
+  useGetSelectedTwoPlayerByMatchIdQuery,
+  useCreateMatchMutation,
+  useCreateMatchConformationMutation,
+  useUpdateMatchMutation,
+  useViewSingleMatchQuery,
+  useDeleteMatchMutation,
+} = MatchManagementApi;
 export default MatchManagementApi;
