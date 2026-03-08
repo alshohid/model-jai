@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import { cn } from "@/shared/lib/utils/cn";
 import NotificationButton from "../reusable/NotificationButton";
+import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 
 function titleFromPath(pathname: string) {
     if (pathname.startsWith("/admin/dashboard/matches")) return "Match Management";
@@ -21,6 +22,8 @@ export default function AdminTopBar({
 }) {
     const pathname = usePathname();
     const title = titleFromPath(pathname);
+    const { data, isLoading } = useGetMeDataQuery()
+    console.log(data, "data");
 
     return (
         <header
@@ -53,12 +56,12 @@ export default function AdminTopBar({
                 </div>
 
                 {/* center search */}
-               
+
 
                 {/* right actions */}
                 <div className="flex items-center gap-3">
                     <NotificationButton
-                        onClick={()=>console.log("clicked notification button ")}
+                        onClick={() => console.log("clicked notification button ")}
                         hasUnread
                         unreadCount={3}
                     />
@@ -66,7 +69,7 @@ export default function AdminTopBar({
                     {/* profile block (placeholder styling like screenshot) */}
                     <div className="flex items-center gap-3">
                         <div className="text-right hidden sm:block">
-                            <p className="text-white text-sm font-medium leading-none">James Wilson</p>
+                            <p className="text-white text-sm font-medium leading-none">{data?.data?.user?.name}</p>
                             <p className="text-white/45 text-xs mt-1">Agency Manager</p>
                         </div>
 

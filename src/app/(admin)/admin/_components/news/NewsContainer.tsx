@@ -24,7 +24,6 @@ export default function NewsContainer() {
 
     const [open, setOpen] = useState(false);
     const [selectedNewsId, setSelectedNewsId] = useState<number | null>(null);
-
     const [viewOpen, setViewOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
 
