@@ -3,6 +3,7 @@
 
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { useViewSingleMatchQuery } from "@/redux/features/match/matchManagement";
+import { InfoSkeleton } from "./InfoSkeleton";
 
 export default function ViewMatchModal({ matchId, open, onClose }: any) {
 
@@ -16,7 +17,11 @@ export default function ViewMatchModal({ matchId, open, onClose }: any) {
         <AppDialog open={open} onOpenChange={onClose} title="Match Details">
 
             {isLoading ? (
-                <div className="py-6 text-center text-white">Loading...</div>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <InfoSkeleton key={i} />
+                    ))}
+                </div>
             ) : (
                 <div className="space-y-4 text-white">
 
