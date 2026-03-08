@@ -129,6 +129,7 @@ export const baseApi = createApi({
     "GameList",
     "Match",
     "Gallery",
+    "News",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<ILoginPayload, ILoginParams>({
