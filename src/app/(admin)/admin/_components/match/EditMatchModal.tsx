@@ -7,6 +7,7 @@ import AppDialog from "@/shared/components/modal/AppDialog";
 import { useUpdateMatchMutation, useViewSingleMatchQuery } from "@/redux/features/match/matchManagement";
 import { useGetAllGamesQuery } from "@/redux/features/game/gameListManagement";
 import { useGetAllPlayerQuery } from "@/redux/features/user/userManagement";
+import { MatchType } from "@/types/match/MatchManagementTypes";
 
 export default function EditMatchModal({ matchId, open, onClose }: any) {
 
@@ -27,6 +28,8 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
         type: "",
         winner_percentage: 0,
         loser_percentage: 0,
+        tiktok_link: "",
+        twitch_link: "",
     });
 
     useEffect(() => {
@@ -44,6 +47,8 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
                 type: m.type,
                 winner_percentage: m.winner_percentage,
                 loser_percentage: m.loser_percentage,
+                tiktok_link: m.tiktok_link,
+                twitch_link: m.twitch_link
             });
         }
 
@@ -58,9 +63,11 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
             player_one_id: Number(form.player_one_id),
             player_two_id: Number(form.player_two_id),
             players_bet_amount: Number(form.players_bet_amount),
-            type: "upcoming",
+            type: form.type as MatchType,
             winner_percentage: 1,
             loser_percentage: 1,
+            tiktok_link: form.tiktok_link,
+            twitch_link: form.twitch_link,
         }).unwrap();
 
         onClose();
@@ -118,6 +125,98 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
                     }
                     className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
                 />
+                <div className="space-y-1">
+                    <label className="text-sm text-white/70">Match Type *</label>
+
+                    <select
+                        value={form.type}
+                        onChange={(e) =>
+                            setForm({ ...form, type: e.target.value })
+                        }
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    >
+                        <option value="" className="text-black">
+                            Select Type
+                        </option>
+
+                        {["live", "upcoming", "completed"].map((t) => (
+                            <option key={t} value={t} className="text-black">
+                                {t}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="space-y-1">
+                    <label className="text-sm text-white/70">TikTok Live Link</label>
+
+                    <input
+                        type="url"
+                        placeholder="https://tiktok.com/..."
+                        value={form.tiktok_link}
+                        onChange={(e) =>
+                            setForm({ ...form, tiktok_link: e.target.value })
+                        }
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-sm text-white/70">Twitch Live Link</label>
+
+                    <input
+                        type="url"
+                        placeholder="https://twitch.tv/..."
+                        value={form.twitch_link}
+                        onChange={(e) =>
+                            setForm({ ...form, twitch_link: e.target.value })
+                        }
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    />
+                </div>
+                <div className="space-y-2">
+
+                    <label className="text-sm text-white/70">Percentage Settings</label>
+
+                    <div className="flex gap-6">
+
+                        {/* Winner Percentage */}
+                        <label className="flex items-center gap-2 text-white/80 cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                checked={form.winner_percentage === 1}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        winner_percentage: e.target.checked ? 1 : 0,
+                                    })
+                                }
+                                className="w-4 h-4 accent-[#FF2EC8]"
+                            />
+
+                            Winner Percentage
+                        </label>
+
+                        {/* Loser Percentage */}
+                        <label className="flex items-center gap-2 text-white/80 cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                checked={form.loser_percentage === 1}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        loser_percentage: e.target.checked ? 1 : 0,
+                                    })
+                                }
+                                className="w-4 h-4 accent-[#FF2EC8]"
+                            />
+
+                            Loser Percentage
+                        </label>
+
+                    </div>
+
+                </div>
 
                 {/* Date */}
                 <input

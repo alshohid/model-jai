@@ -10,6 +10,9 @@ import CreateMatchModal from "./CreateMatchModal";
 import ViewMatchModal from "./ViewMatchModal";
 import EditMatchModal from "./EditMatchModal";
 import WinnerSelectModal from "./WinnerSelectModal";
+import Link from "next/link";
+import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
+
 
 export default function MatchManagement() {
     const [page, setPage] = useState(1);
@@ -53,6 +56,9 @@ export default function MatchManagement() {
         "Player 01",
         "Player 02",
         "Game Name",
+        "Live Link",
+        "Match Date",
+        "Match Time",
         "Winner",
         "Actions",
     ];
@@ -89,6 +95,34 @@ export default function MatchManagement() {
 
         (item) => (
             <span className="text-white">{item.game?.name}</span>
+        ),
+
+        (item) => (
+            <span>
+                {item.tiktok_link ? (
+                    <Link
+                        href={item.tiktok_link}
+                        target="_blank"
+                        className="text-blue-500 font-semibold"
+                    >
+                        Live
+                    </Link>
+                ) : "N/A"}
+            </span>
+        ),
+
+
+        (item) => (
+            <span className="text-white">
+                {formateDate(item.match_date!)}
+            </span>
+        ),
+
+
+        (item) => (
+            <span className="text-white">
+                {formateTime(item.match_time!)}
+            </span>
         ),
 
         (item) => {
@@ -137,9 +171,7 @@ export default function MatchManagement() {
 
             </div>
         ),
-
     ];
-
     return (
         <div>
             <MatchListToolbar

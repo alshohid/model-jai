@@ -20,6 +20,10 @@ export default function CreateMatchModal({ open, onClose }: any) {
         type: "",
         winner_percentage: 0,
         loser_percentage: 0,
+        tiktok_link: "",
+        twitch_link: "",
+
+
     });
 
     const { data: games } = useGetAllGamesQuery();
@@ -43,8 +47,15 @@ export default function CreateMatchModal({ open, onClose }: any) {
             return;
         }
 
+
         if (form.player_one_id === form.player_two_id) {
             setError("Player One and Player Two cannot be the same.");
+            return;
+        }
+
+
+        if (!form.tiktok_link && !form.twitch_link) {
+            setError("Please provide either a TikTok or Twitch live link.");
             return;
         }
 
@@ -59,6 +70,8 @@ export default function CreateMatchModal({ open, onClose }: any) {
                 type: form.type as MatchType,
                 winner_percentage: Number(form.winner_percentage),
                 loser_percentage: Number(form.loser_percentage),
+                tiktok_link: form.tiktok_link,
+                twitch_link: form.twitch_link,
             }).unwrap();
 
             setForm({
@@ -71,6 +84,8 @@ export default function CreateMatchModal({ open, onClose }: any) {
                 type: "",
                 winner_percentage: 0,
                 loser_percentage: 0,
+                twitch_link: "",
+                tiktok_link: ""
             });
 
             setError("");
@@ -80,7 +95,6 @@ export default function CreateMatchModal({ open, onClose }: any) {
             console.error(err);
         }
     };
-
     const filteredPlayerOne =
         players?.data?.filter((p: any) => p.id !== Number(form.player_two_id));
 
@@ -107,7 +121,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         onChange={(e) =>
                             setForm({ ...form, game_id: e.target.value })
                         }
-                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
                         <option value="" className="text-black">
                             Select Game
@@ -130,7 +144,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         onChange={(e) =>
                             setForm({ ...form, player_one_id: e.target.value })
                         }
-                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
                         <option value="" className="text-black">
                             Select Player
@@ -153,7 +167,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         onChange={(e) =>
                             setForm({ ...form, player_two_id: e.target.value })
                         }
-                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
                         <option value="" className="text-black">
                             Select Player
@@ -178,7 +192,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         onChange={(e) =>
                             setForm({ ...form, players_bet_amount: e.target.value })
                         }
-                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     />
                 </div>
 
@@ -191,7 +205,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         onChange={(e) =>
                             setForm({ ...form, type: e.target.value })
                         }
-                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
                         <option value="" className="text-black">
                             Select Type
@@ -203,6 +217,32 @@ export default function CreateMatchModal({ open, onClose }: any) {
                             </option>
                         ))}
                     </select>
+                </div>
+                <div className="space-y-1">
+                    <label className="text-sm text-white/70">TikTok Live Link</label>
+
+                    <input
+                        type="url"
+                        placeholder="https://tiktok.com/..."
+                        value={form.tiktok_link}
+                        onChange={(e) =>
+                            setForm({ ...form, tiktok_link: e.target.value })
+                        }
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-sm text-white/70">Twitch Live Link</label>
+
+                    <input
+                        type="url"
+                        placeholder="https://twitch.tv/..."
+                        value={form.twitch_link}
+                        onChange={(e) =>
+                            setForm({ ...form, twitch_link: e.target.value })
+                        }
+                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    />
                 </div>
                 <div className="space-y-2">
 
@@ -262,7 +302,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                             onChange={(e) =>
                                 setForm({ ...form, match_date: e.target.value })
                             }
-                            className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                            className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                         />
                     </div>
 
@@ -275,7 +315,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                             onChange={(e) =>
                                 setForm({ ...form, match_time: e.target.value })
                             }
-                            className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white"
+                            className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                         />
                     </div>
 
