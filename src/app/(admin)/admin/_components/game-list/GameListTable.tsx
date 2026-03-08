@@ -38,15 +38,16 @@ export default function GameListTable() {
     const tableRowDataRenderers: ((item: any) => ReactNode)[] = [
 
         (item) => (
-            <Image
-                src={`${item?.image}`}
-                alt={item.name}
-                width={40}
-                height={40}
-                className="rounded-md"
-                unoptimized
-                crossOrigin="anonymous"
-            />
+
+            <div className="flex items-center">
+                <img
+                    src={item?.image}
+                    alt={item.name}
+                    className="rounded-md w-16 h-16"
+
+                />
+            </div>
+
         ),
 
         (item) => <span className="text-white">{item.name}</span>,

@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "modelboss.apphero.agency",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

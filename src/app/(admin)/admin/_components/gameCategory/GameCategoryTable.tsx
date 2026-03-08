@@ -23,7 +23,7 @@ export default function GameCategoryTable() {
     const [deleteItem, setDeleteItem] = useState<any>(null);
 
     const categories = data?.data ?? [];
-    console.log(categories);
+
 
     const meta = {
         page: data?.meta?.current_page ?? 1,
@@ -38,15 +38,10 @@ export default function GameCategoryTable() {
     const tableRowDataRenderers: ((item: any) => ReactNode)[] = [
 
         (item) => (
-            <Image
-                src={(item?.image) || "/images/home/avatar_1.png"}
-                alt={item.name}
-                width={40}
-                height={40}
-                unoptimized
-                crossOrigin="anonymous"
-                className="rounded-md"
-            />
+            <div>
+                <img src={item?.image ?? "/images/home/avatar_1.png"} alt="image" className="rounded-md w-16 h-16" />
+            </div>
+
         ),
 
         (item) => <span className="text-white">{item.name}</span>,
