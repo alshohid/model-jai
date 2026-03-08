@@ -52,7 +52,7 @@ function Info({ label, value }: any) {
     return (
         <div className="flex flex-col bg-white/5 p-3 rounded-md">
             <span className="text-sm text-white/60">{label}</span>
-            <span className="font-medium">{value ?? "-"}</span>
+            <span className="font-medium truncate">{value ?? "-"}</span>
         </div>
     );
 }
