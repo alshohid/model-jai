@@ -16,7 +16,7 @@ export default function DashBoardLayout({ children }: { children?: React.ReactNo
             <div className="min-h-screen lg:ml-[300px] xl:ml-[350px]">
                 <AdminTopBar sidebarOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen((s) => !s)} />
 
-                <main className="p-4 md:p-6 lg:p-7">
+                <main className="p-2 md:p-3 lg:p-4">
                     <div className="rounded-[18px] bg-[#161616]/80 border border-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.55)]">
                         <div className="p-4 md:p-6">{children}</div>
                     </div>
