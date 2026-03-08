@@ -36,11 +36,7 @@ export default function MatchManagement() {
         type: matchType,
     });
     const [deleteMatch] = useDeleteMatchMutation();
-
     const matches: IMatch[] = data?.data ?? [];
-
-
-
     const meta = {
         page: data?.meta?.current_page ?? 1,
         limit: data?.meta?.per_page ?? 10,
