@@ -13,12 +13,23 @@ const MatchManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllMatches: builder.query<
       IMatchListResponse,
-      { page?: number; limit?: number }
+      { page?: number; limit?: number; type?: string }
     >({
-      query: ({ page = 1, limit = 10 }) => ({
-        url: `/admin/matches?page=${page}&limit=${limit}`,
-        method: "GET",
-      }),
+      query: ({ page = 1, limit = 10, type }) => {
+        const params = new URLSearchParams();
+
+        params.append("page", String(page));
+        params.append("per_page", String(limit));
+
+        if (type && type !== "all") {
+          params.append("type", type);
+        }
+
+        return {
+          url: `/admin/matches?${params.toString()}`,
+          method: "GET",
+        };
+      },
       providesTags: ["Match"],
     }),
     getSelectedTwoPlayerByMatchId: builder.query({

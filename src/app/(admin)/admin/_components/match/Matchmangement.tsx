@@ -33,15 +33,13 @@ export default function MatchManagement() {
     const { data, isLoading } = useGetAllMatchesQuery({
         page,
         limit,
+        type: matchType,
     });
     const [deleteMatch] = useDeleteMatchMutation();
 
     const matches: IMatch[] = data?.data ?? [];
 
-    const filteredMatches =
-        matchType === "all"
-            ? matches
-            : matches.filter((m) => m.type === matchType);
+
 
     const meta = {
         page: data?.meta?.current_page ?? 1,
@@ -194,7 +192,7 @@ export default function MatchManagement() {
             <div className="py-10">
                 <ReuseAbleTable
                     isLoadings={isLoading}
-                    currentItems={filteredMatches}
+                    currentItems={matches}
                     tableHeader={tableHeader}
                     tableRowDataRenderers={tableRowDataRenderers}
                     isBg={false}
