@@ -1,9 +1,10 @@
-import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
+
+import StartStreamingRedirect from "./LiveStreamRedirectButton";
 
 export default function HeroSection() {
     return (
         <section className="relative min-h-screen w-full overflow-hidden">
-            {/* Background */}
+
             <div className="absolute inset-0">
                 <div
                     className="h-full w-full bg-cover bg-center"
@@ -15,9 +16,8 @@ export default function HeroSection() {
                 />
             </div>
 
-            {/* Content */}
             <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-0 min-h-screen">
-                {/* ✅ Center always */}
+
                 <div className="min-h-screen grid place-items-center">
                     <div className="text-center w-full max-w-3xl px-2">
                         <h1 className="font-heading font-extrabold text-white tracking-[1px] leading-[132%] text-[32px] sm:text-[44px] lg:text-[56px]">
@@ -31,7 +31,7 @@ export default function HeroSection() {
                         </p>
 
                         <div className="mt-5 flex justify-center">
-                            <StartStreamingButton>Start Streaming</StartStreamingButton>
+                            <StartStreamingRedirect />
                         </div>
                     </div>
                 </div>

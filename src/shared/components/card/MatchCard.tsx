@@ -6,7 +6,7 @@ import { GameLogo } from "../cardComponent/GameLogo";
 import { PlayerImage } from "../cardComponent/PlayerImage";
 import { Versus } from "../cardComponent/Versus";
 
-type MatchStatus = "Upcoming" | "Past" | "Live";
+type MatchStatus = "upcoming" | "past" | "live";
 
 type Props = {
     status: MatchStatus;
@@ -38,7 +38,7 @@ export default function MatchCard({
 }: Props) {
     const statusStyle = clsx(
         "px-2 md:px-3 py-0 md:py-1 rounded-md text-xs border",
-        status === "Live"
+        status === "live"
             ? "bg-red-500/25 text-red-100 border-red-400/30"
             : "bg-white/10 text-white/70 border-white/15"
     );

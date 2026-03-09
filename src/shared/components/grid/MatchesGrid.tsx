@@ -4,7 +4,7 @@ import MatchCard from "../card/MatchCard";
 import { useAuth } from "@/redux/features/auth/hooks";
 
 
-export type MatchStatus = "Upcoming" | "Past" | "Live";
+export type MatchStatus = "upcoming" | "past" | "live";
 
 export type MatchItem = {
     id: string;

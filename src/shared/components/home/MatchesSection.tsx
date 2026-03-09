@@ -10,7 +10,7 @@ import Image from "next/image";
 const MOCK_MATCHES: MatchItem[] = [
     {
         id: "1",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -20,11 +20,11 @@ const MOCK_MATCHES: MatchItem[] = [
         watchHref: "/matches/1",
         voteRequired: false,
         versusImg: "/images/home/versus.png",
-        platform:"tiktok"
+        platform: "tiktok"
     },
     {
         id: "2",
-        status: "Past",
+        status: "past",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -38,7 +38,7 @@ const MOCK_MATCHES: MatchItem[] = [
     },
     {
         id: "3",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -52,7 +52,7 @@ const MOCK_MATCHES: MatchItem[] = [
     },
     {
         id: "4",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -66,7 +66,7 @@ const MOCK_MATCHES: MatchItem[] = [
     },
     {
         id: "5",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -80,7 +80,7 @@ const MOCK_MATCHES: MatchItem[] = [
     },
     {
         id: "6",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -94,7 +94,7 @@ const MOCK_MATCHES: MatchItem[] = [
     },
     {
         id: "3",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -108,7 +108,7 @@ const MOCK_MATCHES: MatchItem[] = [
     },
     {
         id: "4",
-        status: "Upcoming",
+        status: "upcoming",
         title: "ShadowR vs Phoenix Force",
         dateText: "November 1, 2024",
         timeText: "4:30 pm",
@@ -131,8 +131,8 @@ export default function MatchesSection({
 
     const filtered = useMemo(() => {
         if (tab === "all") return matches;
-        if (tab === "past") return matches.filter((m) => m.status === "Past");
-        return matches.filter((m) => m.status === "Upcoming");
+        if (tab === "past") return matches.filter((m) => m.status === "past");
+        return matches.filter((m) => m.status === "upcoming");
     }, [matches, tab]);
 
     return (
@@ -151,7 +151,7 @@ export default function MatchesSection({
                 <div className="flex flex-col gap-5 sm:text-center lg:flex-row lg:items-center lg:justify-between">
                     <SectionHeading
                         title={"Compete in epic\ntournaments"}
-                        className="whitespace-pre-line sm:text-center lg:text-left"  
+                        className="whitespace-pre-line sm:text-center lg:text-left"
                     />
 
                     <MatchHistoryTabs

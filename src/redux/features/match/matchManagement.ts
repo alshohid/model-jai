@@ -32,6 +32,27 @@ const MatchManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Match"],
     }),
+    getAllPublicMatchList: builder.query<
+      IMatchListResponse,
+      { page?: number; limit?: number; type?: string }
+    >({
+      query: ({ page = 1, limit = 10, type }) => {
+        const params = new URLSearchParams();
+
+        params.append("page", String(page));
+        params.append("per_page", String(limit));
+
+        if (type && type !== "all") {
+          params.append("type", type);
+        }
+
+        return {
+          url: `/matches?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Match"],
+    }),
     getSelectedTwoPlayerByMatchId: builder.query({
       query: (id) => ({
         url: `/admin/match-players/${id}`,
@@ -98,6 +119,7 @@ const MatchManagementApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllMatchesQuery,
+  useGetAllPublicMatchListQuery,
   useGetSelectedTwoPlayerByMatchIdQuery,
   useCreateMatchMutation,
   useCreateMatchConformationMutation,
