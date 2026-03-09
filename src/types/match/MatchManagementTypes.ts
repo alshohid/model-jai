@@ -1,16 +1,19 @@
 export interface IGame {
   id: number;
   name: string;
+  image?: string;
 }
 export type MatchType = "upcoming" | "live" | "completed";
 export type MatchTypePublicUse = "live" | "past" | "upcoming";
 export interface IPlayer {
   id: number;
   name: string;
+  image_url?: string;
 }
 export interface IMatch {
   id: number;
   match_no: string | number;
+  platform?: string;
 
   player_one_id: number;
   player_two_id: number;
