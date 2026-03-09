@@ -59,7 +59,7 @@ export default function UserManagement() {
     const [keyword, setKeyword] = useState("");
     const debouncedKeyword = useDebounce(keyword, 400);
     const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
-    const limit = 5;
+    const limit = 10;
 
     const roleParam =
         filterType === "players"
@@ -105,7 +105,7 @@ export default function UserManagement() {
         prev: Boolean(usersData?.links?.prev),
         next: Boolean(usersData?.links?.next),
     };
-    const tableHeader = ["User Name", "Referral No", "Role", "Email", "Status", "Actions"];
+    const tableHeader = ["User Name", "Image", "Referral No", "Role", "Email", "Status", "Actions"];
 
 
     const handleSuspendClick = (item: RankRowItem) => {
@@ -132,6 +132,13 @@ export default function UserManagement() {
                         : "text-white";
 
             return <span className={color}>{item.user_name}</span>;
+        },
+        (item) => {
+            return (
+                <div>
+                    <img src={item.image} alt="user" width={100} height={100} className="object-cover rounded-full h-16 w-16" />
+                </div>
+            )
         },
         (item) => <span className="text-[#FFFFFF]">{item.referral_no}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.referral_used_by}</span>,

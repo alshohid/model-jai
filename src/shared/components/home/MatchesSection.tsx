@@ -1,142 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useMemo, useState } from "react";
-import SectionHeading from "./SectionHeading";
+import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
 import MatchHistoryTabs, { TabKey } from "./MatchHistoryTabs";
-import MatchesGrid, { MatchItem } from "../grid/MatchesGrid";
+import MatchesGrid from "../grid/MatchesGrid";
 import Image from "next/image";
+import SectionHeading from "./SectionHeading";
 
-
-const MOCK_MATCHES: MatchItem[] = [
-    {
-        id: "1",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/2k.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/1",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "tiktok"
-    },
-    {
-        id: "2",
-        status: "past",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/freestyle_1.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/2",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "twitch"
-    },
-    {
-        id: "3",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/mortal_1.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/3",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "twitch"
-    },
-    {
-        id: "4",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/freestyle.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/1",
-        voteRequired: true,
-        versusImg: "/images/home/versus.png",
-        platform: "twitch"
-    },
-    {
-        id: "5",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/fc26.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/2",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "tiktok"
-    },
-    {
-        id: "6",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/fc26.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/3",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "tiktok"
-    },
-    {
-        id: "3",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/mortal_1.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/3",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "twitch"
-    },
-    {
-        id: "4",
-        status: "upcoming",
-        title: "ShadowR vs Phoenix Force",
-        dateText: "November 1, 2024",
-        timeText: "4:30 pm",
-        gameLogoSrc: "/images/home/freestyle.png",
-        leftPlayerImg: "/images/home/leftPlayerImg.png",
-        rightPlayerImg: "/images/home/rightPlayerImg.png",
-        watchHref: "/matches/1",
-        voteRequired: false,
-        versusImg: "/images/home/versus.png",
-        platform: "twitch"
-    },
-];
-
-export default function MatchesSection({
-    matches = MOCK_MATCHES,
-}: {
-    matches?: MatchItem[];
-}) {
+const MatchesSection = () => {
     const [tab, setTab] = useState<TabKey>("all");
+    const [page, setPage] = useState(1);
+    const limit = 10;
+
+    // API call for fetching matches
+    const { data, isLoading } = useGetAllPublicMatchListQuery({
+        page,
+        limit,
+        type: tab === "all" ? undefined : tab,
+    });
+
+    const matches = data?.data || [];
+
+    const meta = data?.meta ?? {};
 
     const filtered = useMemo(() => {
         if (tab === "all") return matches;
-        if (tab === "past") return matches.filter((m) => m.status === "past");
-        return matches.filter((m) => m.status === "upcoming");
+        return matches.filter((m: any) => m.status === tab);
     }, [matches, tab]);
 
     return (
-        <section className=" relative  pt-2 md:pt-17.5">
+        <section className="relative pt-2 md:pt-17.5">
             <div className="pointer-events-none absolute left-0 top-0 -z-10">
                 <Image
                     src="/images/home/top_left.png"
@@ -162,13 +56,11 @@ export default function MatchesSection({
                 </div>
 
                 <div className="mt-10">
-                    <MatchesGrid matches={filtered} />
+                    <MatchesGrid matches={filtered} isLoading={isLoading} />
                 </div>
             </div>
 
-
-
-            <div className=" pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">
+            <div className="pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">
                 <Image
                     src="/images/home/bottom_right.png"
                     width={702}
@@ -178,7 +70,7 @@ export default function MatchesSection({
                 />
             </div>
         </section>
-
     );
-}
+};
 
+export default MatchesSection;

@@ -39,7 +39,7 @@ const GameListManagementApi = baseApi.injectEndpoints({
     >({
       query: ({ id, body }) => ({
         url: `/admin/games/${id}`,
-        method: "PUT",
+        method: "POST",
         body,
       }),
       invalidatesTags: ["GameList"],

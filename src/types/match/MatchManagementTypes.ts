@@ -3,6 +3,7 @@ export interface IGame {
   name: string;
 }
 export type MatchType = "upcoming" | "live" | "completed";
+export type MatchTypePublicUse = "live" | "past" | "upcoming";
 export interface IPlayer {
   id: number;
   name: string;
