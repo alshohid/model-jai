@@ -58,6 +58,16 @@ const MatchManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Match"],
     }),
+    selectWinner: builder.mutation({
+      query: ({ id, winner_id }) => ({
+        url: `/admin/match-winner/${id}`,
+        method: "POST",
+        body: {
+          winner_id,
+        },
+      }),
+      invalidatesTags: ["Match"],
+    }),
 
     updateMatch: builder.mutation<IMatchUpdateResponse, IUpdateMatchPayload>({
       query: ({ id, ...body }) => ({
@@ -91,6 +101,7 @@ export const {
   useGetSelectedTwoPlayerByMatchIdQuery,
   useCreateMatchMutation,
   useCreateMatchConformationMutation,
+  useSelectWinnerMutation,
   useUpdateMatchMutation,
   useViewSingleMatchQuery,
   useDeleteMatchMutation,

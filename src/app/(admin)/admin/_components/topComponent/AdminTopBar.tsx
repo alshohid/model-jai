@@ -55,10 +55,7 @@ export default function AdminTopBar({
                     </h1>
                 </div>
 
-                {/* center search */}
 
-
-                {/* right actions */}
                 <div className="flex items-center gap-3">
                     <NotificationButton
                         onClick={() => console.log("clicked notification button ")}

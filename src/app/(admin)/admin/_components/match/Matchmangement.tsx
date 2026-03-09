@@ -12,6 +12,7 @@ import EditMatchModal from "./EditMatchModal";
 import WinnerSelectModal from "./WinnerSelectModal";
 import Link from "next/link";
 import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
+import MatchConfirmationModal from "./MatchConfirmationModal";
 
 
 export default function MatchManagement() {
@@ -24,7 +25,12 @@ export default function MatchManagement() {
     const [editOpen, setEditOpen] = useState(false);
     const [winnerModalOpen, setWinnerModalOpen] = useState(false);
     const [winnerMatchId, setWinnerMatchId] = useState<number | null>(null);
-
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [confirmMatchId, setConfirmMatchId] = useState<number | null>(null);
+    const handleConfirm = (id: number) => {
+        setConfirmMatchId(id);
+        setConfirmModalOpen(true);
+    };
     const handleSelectWinner = (id: number) => {
         setWinnerMatchId(id);
         setWinnerModalOpen(true);
@@ -53,6 +59,10 @@ export default function MatchManagement() {
         "Live Link",
         "Match Date",
         "Match Time",
+        "Players Bet",
+        "Player One Total Support",
+        "Player Two Total Support",
+        "Confirm Match",
         "Winner",
         "Actions",
     ];
@@ -118,13 +128,58 @@ export default function MatchManagement() {
                 {formateTime(item.match_time!)}
             </span>
         ),
-
         (item) => {
-
+            return (
+                <span className="text-white">
+                    {item.player_one_bet}
+                </span>
+            )
+        },
+        (item) => {
+            return (
+                <span className="text-white">
+                    {item.player_one_total}
+                </span>
+            )
+        },
+        (item) => {
+            return (
+                <span className="text-white">
+                    {item.player_two_total}
+                </span>
+            )
+        },
+        (item) => {
             if (item.confirmation_status === 0) {
                 return (
                     <button
-                        onClick={() => handleSelectWinner(item.id)}
+                        onClick={() => handleConfirm(item.id!)}
+                        className="px-3 py-1 text-xs text-white bg-purple-600 hover:bg-purple-500 rounded-md"
+                    >
+                        Select Confirm
+                    </button>
+                )
+            } else if (item.confirmation_status === 1) {
+                return (
+                    <span className="text-white bg-green-600 px-3 py-1 rounded-md">
+                        Confirmed
+                    </span>
+                )
+            } else {
+                return (
+                    <span className="text-white bg-red-600 px-3 py-1 rounded-md">
+                        Cancelled
+                    </span>
+                )
+            }
+        },
+
+        (item) => {
+
+            if (item.confirmation_status === 1 && item.winner_id === null) {
+                return (
+                    <button
+                        onClick={() => handleSelectWinner(item.id!)}
                         className="px-3 py-1 text-xs bg-purple-600 rounded-md text-white hover:bg-purple-500"
                     >
                         Select Winner
@@ -222,6 +277,11 @@ export default function MatchManagement() {
                 matchId={winnerMatchId}
                 open={winnerModalOpen}
                 onClose={() => setWinnerModalOpen(false)}
+            />
+            <MatchConfirmationModal
+                matchId={confirmMatchId}
+                open={confirmModalOpen}
+                onClose={() => setConfirmModalOpen(false)}
             />
         </div>
     );
