@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -8,7 +10,6 @@ import {
     useUpdateUserMutation,
 } from "@/redux/features/user/userManagement";
 import { toast } from "sonner";
-import Image from "next/image";
 import { Upload } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
@@ -32,13 +33,13 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState("");
 
-    // useEffect(() => {
-    //     if (user) {
-    //         setName(user.name);
-    //         setRole(user.role === "artist" ? "artist" : "user");
-    //         setImagePreview(getSafeImageSrc(user.image));
-    //     }
-    // }, [user]);
+    useEffect(() => {
+        if (user) {
+            setName(user.name);
+            setRole(user.role === "artist" ? "artist" : "user");
+            setImagePreview(getSafeImageSrc(user.image));
+        }
+    }, [user]);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -89,16 +90,13 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                 {/* Avatar Upload */}
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <Image
-                            src={imagePreview || getSafeImageSrc(user?.image) || "/images/home/avatar_1.png"}
+                        <img
+                            src={imagePreview || (user?.image) || "/images/home/avatar_1.png"}
                             alt="user"
-                            width={64}
-                            height={64}
-                            className="rounded-full object-cover border border-white/20"
+                            className="rounded-full object-cover border border-white/20 w-16 h-16"
                             onError={(e) => {
                                 e.currentTarget.src = "/images/home/avatar_1.png";
                             }}
-                            unoptimized
                             crossOrigin="anonymous"
                         />
                     </div>
