@@ -32,7 +32,6 @@ export default function TransactionsContainer() {
         if (type === "withdraw") {
             return "bg-red-500/15 text-red-400 border border-red-500/20";
         }
-
         return "bg-green-500/15 text-green-400 border border-green-500/20";
     };
 
