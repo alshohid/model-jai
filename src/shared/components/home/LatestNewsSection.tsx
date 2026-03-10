@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
-import { useGetAllNewsListQuery } from "@/redux/features/settings/news/newsManagement";
+import { useGetPublicNewsListQuery } from "@/redux/features/settings/news/newsManagement";
 import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
 import { useState } from "react";
 import Link from "next/link";
@@ -17,7 +17,7 @@ type NewsItem = {
 
 export default function LatestNewsSection() {
     const [page, setPage] = useState(1);
-    const { data, isLoading } = useGetAllNewsListQuery({
+    const { data, isLoading } = useGetPublicNewsListQuery({
         page: page,
         limit: 5
     });

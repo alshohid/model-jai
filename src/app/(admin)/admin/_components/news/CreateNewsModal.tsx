@@ -23,7 +23,7 @@ export default function CreateNewsModal({ open, onClose }: any) {
 
         formData.append("title", form.title);
         formData.append("description", form.description);
-        formData.append("status", form.status);
+        formData.append("status", 'published');
         formData.append("is_featured", form.is_featured ? "1" : "0");
 
         if (form.image) formData.append("image", form.image);
@@ -40,7 +40,7 @@ export default function CreateNewsModal({ open, onClose }: any) {
 
                 <input
                     placeholder="Title"
-                    className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
+                    className="w-full h-10 px-3 rounded-md bg-white/10 text-white focus:outline-none focus:border-pink-500 focus:ring-1"
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
                 />
 
@@ -52,7 +52,7 @@ export default function CreateNewsModal({ open, onClose }: any) {
                     }
                 />
 
-                <select
+                {/* <select
                     className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
                     onChange={(e) =>
                         setForm({ ...form, status: e.target.value })
@@ -64,7 +64,7 @@ export default function CreateNewsModal({ open, onClose }: any) {
                     <option value="draft" className="text-black">
                         Draft
                     </option>
-                </select>
+                </select> */}
 
                 <label className="flex items-center gap-2 text-white">
 

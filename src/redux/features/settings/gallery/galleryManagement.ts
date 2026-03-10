@@ -19,6 +19,16 @@ const GalleryManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Gallery"],
     }),
+    getFeaturedGalleryList: builder.query<
+      IGalleryListResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 20 }) => ({
+        url: `/get_featured_gallery?page=${page}&per_page=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Gallery"],
+    }),
 
     viewSingleGallery: builder.query<IGallerySingleResponse, number>({
       query: (id) => ({
@@ -63,6 +73,7 @@ const GalleryManagementApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllGalleryListQuery,
+  useGetFeaturedGalleryListQuery,
   useViewSingleGalleryQuery,
   useCreateGalleryMutation,
   useUpdateGalleryMutation,

@@ -19,6 +19,16 @@ const NewsManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["News"],
     }),
+    getPublicNewsList: builder.query<
+      INewsListResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/get_featured_news?page=${page}&per_page=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["News"],
+    }),
 
     viewSingleNews: builder.query<INewsSingleResponse, number>({
       query: (id) => ({
@@ -63,6 +73,7 @@ const NewsManagementApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllNewsListQuery,
+  useGetPublicNewsListQuery,
   useViewSingleNewsQuery,
   useCreateNewsMutation,
   useUpdateNewsMutation,
