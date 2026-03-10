@@ -21,7 +21,8 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/user-profile") ||
     pathname.startsWith("/payment-success") ||
     pathname.startsWith("/payment-cancel") ||
-    pathname.startsWith("/support-history");
+    pathname.startsWith("/support-history") ||
+    pathname.startsWith("/transactions");
 
   if (isAdminProtectedRoute) {
     if (!adminToken || adminRole !== "super_admin") {
@@ -55,6 +56,7 @@ export const config = {
     "/live-stream/match/:path*",
     "/user-profile",
     "/support-history",
+    "/transactions",
     "/login",
     "/register",
     "/payment-success",

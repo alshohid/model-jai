@@ -1,5 +1,8 @@
 import { baseApi } from "@/redux/api/baseApi";
-import { IBigBossSupporterResponse } from "@/types/support/supportmanagement";
+import {
+  IBigBossSupporterResponse,
+  IUserTransactionsResponse,
+} from "@/types/support/supportmanagement";
 
 const SupportManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,14 +14,25 @@ const SupportManagementApi = baseApi.injectEndpoints({
         url: `/bigboss-supporter`,
         method: "GET",
       }),
-      providesTags: ["News"],
+    }),
+
+    getUserTransactions: builder.query<
+      IUserTransactionsResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page, limit }) => ({
+        url: `/user-transactions?page=${page}&per_page=${limit}`,
+        method: "GET",
+      }),
     }),
   }),
 
   overrideExisting: true,
 });
 
-export const { useGetBigBossSupporterRankingAllDataQuery } =
-  SupportManagementApi;
+export const {
+  useGetBigBossSupporterRankingAllDataQuery,
+  useGetUserTransactionsQuery,
+} = SupportManagementApi;
 
 export default SupportManagementApi;

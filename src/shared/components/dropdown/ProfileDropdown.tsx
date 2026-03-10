@@ -27,6 +27,8 @@ export default function ProfileDropdown({
         { label: "Profile", href: "/user-profile" },
         { label: "Point Store", href: "/point-store" },
         { label: "Support History", href: "/support-history" },
+        { label: "Transactions", href: "/transactions" },
+
 
         { type: "separator" },
         {

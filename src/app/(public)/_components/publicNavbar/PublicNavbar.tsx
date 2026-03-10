@@ -21,6 +21,7 @@ const navItems = [
     { label: "Home", href: "/" },
     { label: "Live Stream Match", href: "/live-stream" },
     { label: "Store", href: "/point-store" },
+    // { label: "Transactions", href: "/transactions" },
 ];
 
 export default function PublicNavbar() {

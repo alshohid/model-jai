@@ -141,6 +141,20 @@ export default function MobileNavSheet({
                                 </Link>
                             </SheetClose>
                         )}
+                        {isAuthenticated && (role === "user" || role === "artist") && (
+                            <SheetClose asChild>
+                                <Link
+                                    href="/transactions"
+                                    className={cn(
+                                        "mt-4 block w-full rounded-[12px] px-4 py-3 text-left",
+                                        "border border-white/10 bg-white/5  transition",
+                                        "text-white font-medium hover:bg-white/40"
+                                    )}
+                                >
+                                    Transactions
+                                </Link>
+                            </SheetClose>
+                        )}
 
                         <div className="mt-5">
                             <TipShortcutToggle
