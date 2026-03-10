@@ -18,6 +18,8 @@ export interface INewsMeta {
   per_page: number;
   to: number;
   total: number;
+  has_next?: boolean;
+  has_prev?: boolean;
 }
 
 export interface INewsListResponse {

@@ -61,7 +61,7 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
                     voteRequired={match.confirmation_status === 0} // If confirmation is 0, vote is required
                     watchHref={match.tiktok_link || "#"} // Assuming you are passing TikTok link
                     versusImg="/images/home/versus.png" // Static or dynamic image
-                    onWatch={() => handleWatch(match.id, match.platform || "tiktok")}
+                    onWatch={() => handleWatch(match.id!, match.platform || "tiktok")}
                 />
             ))}
         </div>

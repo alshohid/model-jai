@@ -13,7 +13,17 @@ const GameListManagementApi = baseApi.injectEndpoints({
       { page?: number; limit?: number }
     >({
       query: ({ page = 1, limit = 10 }) => ({
-        url: `/admin/games?page=${page}&limit=${limit}`,
+        url: `/admin/games?page=${page}&per_page=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["GameList"],
+    }),
+    getAllPublicGamesList: builder.query<
+      IGameListResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 100 }) => ({
+        url: `/games?page=${page}&per_page=${limit}`,
         method: "GET",
       }),
       providesTags: ["GameList"],
@@ -69,6 +79,7 @@ const GameListManagementApi = baseApi.injectEndpoints({
 export const {
   useCreateGameListMutation,
   useGetAllGameListQuery,
+  useGetAllPublicGamesListQuery,
   useUpdateGameListMutation,
   useDeleteGameListMutation,
   useViewSingleGameListQuery,
