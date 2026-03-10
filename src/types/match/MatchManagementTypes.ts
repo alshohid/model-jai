@@ -5,21 +5,29 @@ export interface IGame {
 }
 export type MatchType = "upcoming" | "live" | "completed";
 export type MatchTypePublicUse = "live" | "past" | "upcoming";
+// export interface IPlayer {
+//   [x: string]: string | undefined;
+//   id?: number;
+//   name?: string;
+//   image_url?: string;
+// }
 export interface IPlayer {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
   image_url?: string;
+  image?: string;
 }
 export interface IMatch {
   id: number;
   match_no: string | number;
   platform?: string;
+  status: MatchType;
 
-  player_one_id: number;
-  player_two_id: number;
+  player_one_id?: number;
+  player_two_id?: number;
 
-  player_one_bet: string | number;
-  player_two_bet: string | number;
+  player_one_bet?: string | number;
+  player_two_bet?: string | number;
 
   player_one_total: string | number;
   player_two_total: string | number;

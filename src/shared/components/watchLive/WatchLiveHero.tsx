@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import { useMemo, useRef, useState } from "react";
@@ -141,19 +143,19 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                             <div className="w-full grid grid-cols-1 lg:grid-cols-[6fr_6fr] items-end gap-6 lg:gap-10">
                                 <div className="w-full">
                                     <div
-                                        key={activeSlide.id}
+                                        key={activeSlide?.id}
                                         className={cn("info-anim", dir === "next" ? "info-next" : "info-prev")}
                                     >
-                                        {activeSlide.isLive ? <LiveBadge /> : null}
+                                        {activeSlide?.isLive ? <LiveBadge /> : null}
                                         <p className="mt-6 lg:mt-10 text-white font-bold text-xs sm:text-sm lg:text-base xl:text-[21px]">
-                                            {activeSlide.game}
+                                            {activeSlide?.game}
                                         </p>
                                         <h2 className="mt-1 text-white font-semibold leading-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-                                            {activeSlide.title}
+                                            {activeSlide?.title}
                                         </h2>
                                         <div className="mt-3 flex items-center gap-3">
-                                            {activeSlide.avatars?.length ? <Avatars items={activeSlide.avatars} /> : null}
-                                            <p className="text-white text-xs sm:text-sm">{activeSlide.meta}</p>
+                                            {activeSlide?.avatars?.length ? <Avatars items={activeSlide.avatars} /> : null}
+                                            <p className="text-white text-xs sm:text-sm">{activeSlide?.meta}</p>
                                         </div>
                                     </div>
                                     <div className="pt-6 lg:pt-10">

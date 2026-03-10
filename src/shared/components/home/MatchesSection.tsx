@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
 import MatchHistoryTabs, { TabKey } from "./MatchHistoryTabs";
 import MatchesGrid from "../grid/MatchesGrid";
-import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
+
 import Image from "next/image";
 import SectionHeading from "./SectionHeading";
 
