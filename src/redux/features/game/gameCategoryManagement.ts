@@ -12,11 +12,22 @@ const GameCategoryApi = baseApi.injectEndpoints({
       { page?: number; limit?: number }
     >({
       query: ({ page = 1, limit = 10 }) => ({
-        url: `/admin/categories?page=${page}&limit=${limit}`,
+        url: `/admin/categories?page=${page}&per_page=${limit}`,
         method: "GET",
       }),
       providesTags: ["GameCategory"],
     }),
+    getAllPublicCategoryList: builder.query<
+      IGameCategoryResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 100 }) => ({
+        url: `/categories?page=${page}&per_page=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["GameCategory"],
+    }),
+
     createGameCategory: builder.mutation<
       IGameCategoryResponse,
       IGameCategoryCreateParams
@@ -64,6 +75,7 @@ const GameCategoryApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllGameCategoriesQuery,
+  useGetAllPublicCategoryListQuery,
   useCreateGameCategoryMutation,
   useUpdateGameCategoryMutation,
   useViewSingleGameCategoryQuery,
