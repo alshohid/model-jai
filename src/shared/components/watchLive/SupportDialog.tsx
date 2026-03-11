@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -21,9 +21,12 @@ interface SupportDialogProps {
     side: SupportSide;
     defaultSupporterName?: string;
     defaultAmount?: number;
-    onConfirm: (side: SupportSide, supporterName: string, amount: number) => void;
+    onConfirm: (
+        side: SupportSide,
+        supporterName: string,
+        amount: number
+    ) => Promise<void> | void;
 }
-
 
 export default function SupportDialog({
     open,
@@ -37,23 +40,39 @@ export default function SupportDialog({
     const [supporterName, setSupporterName] = React.useState(defaultSupporterName);
     const [amount, setAmount] = React.useState<string>(String(defaultAmount));
     const [success, setSuccess] = React.useState(false);
+    const [submitting, setSubmitting] = React.useState(false);
+    const [error, setError] = React.useState("");
 
     React.useEffect(() => {
         if (open) {
             setSupporterName(defaultSupporterName);
             setAmount(String(defaultAmount));
             setSuccess(false);
+            setSubmitting(false);
+            setError("");
         }
     }, [open, defaultSupporterName, defaultAmount]);
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         const num = Math.max(0, parseInt(amount, 10) || 0);
         if (num <= 0) return;
-        onConfirm(side, supporterName, num);
-        setSuccess(true);
-        setTimeout(() => {
-            onOpenChange?.(false);
-        }, 800);
+
+        try {
+            setSubmitting(true);
+            setError("");
+
+            await onConfirm(side, supporterName, num);
+
+            setSuccess(true);
+
+            setTimeout(() => {
+                onOpenChange(false);
+            }, 800);
+        } catch (err: any) {
+            setError(err?.data?.message || err?.message || "Support failed.");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const numAmount = Math.max(0, parseInt(amount, 10) || 0);
@@ -70,17 +89,11 @@ export default function SupportDialog({
             >
                 <DialogTitle className="sr-only">Support {playerName}</DialogTitle>
 
-                {/* Header: SUPPORT + player pill + bell */}
                 <div className="flex items-center gap-2 px-5 pt-5 pb-4 border-b border-white/10">
                     <span className="font-bold text-white text-lg tracking-wide">
                         SUPPORT
                     </span>
-                    <span
-                        className={cn(
-                            "px-3 py-1 rounded-full text-sm font-semibold",
-                            "bg-orange-500/90 text-white"
-                        )}
-                    >
+                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-orange-500/90 text-white">
                         {playerName}
                     </span>
                     <div className="relative ml-auto">
@@ -100,7 +113,6 @@ export default function SupportDialog({
                     </div>
                 ) : (
                     <>
-                        {/* Supporter Full Name */}
                         <div className="px-5 py-4">
                             <label className="block text-white/70 text-sm font-medium mb-2">
                                 Supporter Full Name
@@ -117,7 +129,6 @@ export default function SupportDialog({
                             </div>
                         </div>
 
-                        {/* Support amount */}
                         <div className="px-5 py-2 pb-4">
                             <label className="block text-white/70 text-sm font-medium mb-2">
                                 Support amount
@@ -136,18 +147,21 @@ export default function SupportDialog({
                             </div>
                         </div>
 
-                        {/* Confirm */}
+                        {error ? (
+                            <div className="px-5 pb-2 text-sm text-red-400">{error}</div>
+                        ) : null}
+
                         <div className="px-5 pb-6">
                             <button
                                 type="button"
                                 onClick={handleConfirm}
-                                disabled={numAmount <= 0}
+                                disabled={numAmount <= 0 || submitting}
                                 className={cn(
                                     "w-full py-3.5 rounded-xl font-semibold text-white transition",
                                     "bg-[#FF2EC8] hover:bg-[#FF2EC8]/90 disabled:opacity-50 disabled:cursor-not-allowed"
                                 )}
                             >
-                                Confirm Support
+                                {submitting ? "Processing..." : "Confirm Support"}
                             </button>
                         </div>
                     </>

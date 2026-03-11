@@ -19,6 +19,7 @@ export interface TeamInfo {
   playerName: string;
   teamLogoSrc: string;
   points: number;
+  playerId: number;
 }
 
 export interface BossInfo {

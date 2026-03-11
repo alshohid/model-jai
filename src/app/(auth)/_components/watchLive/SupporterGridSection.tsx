@@ -17,6 +17,8 @@ export default function SupporterGridSection({
     leftImg,
     rightImg,
     onSupport,
+    leftBossName,
+    rightBossName,
 }: {
     matchId: string;
     mode: "tiktok" | "twitch";
@@ -26,17 +28,19 @@ export default function SupporterGridSection({
     rightImg: string;
     leftImg: string;
     onSupport: (side: SupportSide, amount: number) => void;
+    leftBossName: string;
+    rightBossName: string;
 }) {
     const [selectedSide, setSelectedSide] = useState<SupportSide>("left");
-    
+
     return (
         <section className="w-full ">
 
             <div className=" mx-auto w-full px-1 md:px-4 py-2 md:py-6">
                 <div className="grid grid-cols-[1fr_auto_1fr] md:grid-cols-[1fr_100px_1fr] gap-4 items-center">
-                    <BossCard name={leftBoss.name} img={leftImg} supportPlayerName="TEAM JACK" total={leftBoss.total} />
+                    <BossCard name={leftBoss.name} img={leftImg} supportPlayerName={leftBossName ?? "TEAM JACK"} total={leftBoss.total} />
                     <div className="text-[12px] sm:text-[22px] font-extrabold rotate-45 text-center">VS</div>
-                    <BossCard name={rightBoss.name} img={rightImg} supportPlayerName="TEAM STEEVE" total={rightBoss.total} />
+                    <BossCard name={rightBoss.name} img={rightImg} supportPlayerName={rightBossName ?? "TEAM STEEVE"} total={rightBoss.total} />
                 </div>
 
                 <h2
@@ -58,14 +62,14 @@ export default function SupporterGridSection({
                     <SelectSideCard
                         mode={mode}
                         selected={selectedSide === "left"}
-                        name={"Jack"}      
+                        name={leftBossName ?? "Jack"}
                         sideLabel="Matched"
                         onClick={() => setSelectedSide("left")}
                     />
                     <SelectSideCard
                         mode={mode}
                         selected={selectedSide === "right"}
-                        name={"steve"}
+                        name={rightBossName ?? "steve"}
                         sideLabel="UnMatched"
                         onClick={() => setSelectedSide("right")}
                     />

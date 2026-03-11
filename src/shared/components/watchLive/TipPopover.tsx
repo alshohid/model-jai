@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /**
  * TipPopover Component
  * Displays tip menu or custom tip form

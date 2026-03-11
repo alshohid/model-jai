@@ -22,11 +22,11 @@ export function BossCard({ name, img, supportPlayerName, total }: { name: string
                         </svg>
                     </div>
                 </div>
-                <h3 className="text-white font-extrabold text-[1rem] md:text-[1.8rem] uppercase">{supportPlayerName}</h3>
+                <h3 className="text-white font-extrabold text-[1rem] md:text-[1.8rem] uppercase">{"Team " + supportPlayerName}</h3>
             </div>
             <div className=" rounded-xl bg-black/40 border border-white/10 p-3">
 
-                <div className="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-black">
+                <div className="w-full aspect-4/5 relative rounded-lg overflow-hidden bg-black">
                     <Image src={img} alt={name} fill className="object-cover" />
                 </div>
 

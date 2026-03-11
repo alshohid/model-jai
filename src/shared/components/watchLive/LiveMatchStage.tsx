@@ -27,17 +27,22 @@ export default function LiveMatchStage({
 }: StageProps) {
     const supportDialog = useSupportDialog();
 
-    const handleSupportConfirm = (
+    const handleSupportConfirm = async (
         side: SupportSide,
         supporterName: string,
         amount: number
     ) => {
-        if (side === "left") {
-            onSupportLeft?.(amount, supporterName);
-        } else if (side === "right") {
-            onSupportRight?.(amount, supporterName);
+        try {
+            if (side === "left") {
+                await onSupportLeft?.(amount, supporterName);
+            } else if (side === "right") {
+                await onSupportRight?.(amount, supporterName);
+            }
+
+            supportDialog.closeDialog();
+        } catch (error) {
+            console.error("Support failed:", error);
         }
-        supportDialog.closeDialog();
     };
 
     const getPlayerName = () => {
@@ -48,13 +53,11 @@ export default function LiveMatchStage({
     return (
         <section className="w-full bg-black text-white">
 
-            {/* <div className="flex justify-end mb-2">
-                    <MatchGuidelinesDialog matchId={matchId} />
-                </div> */}
+
             <div className="mx-auto w-full  pt-2">
-                {/* ================= MOBILE TOP PLAYERS ================= */}
+
                 <div className="grid grid-cols-3 gap-1 mb-2">
-                    {/* LEFT */}
+
                     <PlayerCard
                         image={left.imageSrc}
                         name={left.name}
@@ -64,7 +67,7 @@ export default function LiveMatchStage({
                         onClick={() => supportDialog.openDialog("left")}
                     />
 
-                    {/* MIDDLE */}
+
                     <div className="relative aspect-3/4 overflow-hidden">
                         <Image src={middle.imageSrc} fill className="object-cover" alt="host" />
                         <div className="absolute inset-0 bg-black/30" />
@@ -73,7 +76,7 @@ export default function LiveMatchStage({
                         </div>
                     </div>
 
-                    {/* RIGHT */}
+
                     <PlayerCard
                         image={right.imageSrc}
                         name={right.name}
@@ -88,7 +91,7 @@ export default function LiveMatchStage({
                         }
                     />
                 </div>
-                {/* ================= LIVE VIDEO ================= */}
+
                 {isLive && <div className={cn(
                     // portrait: tall, landscape: standard video
                     (mode === "twitch") ? "w-full max-w-xs mx-auto aspect-9/16" : "w-full aspect-video",

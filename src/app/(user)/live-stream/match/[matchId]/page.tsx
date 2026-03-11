@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
@@ -16,24 +16,43 @@ import {
     useReferralRedirect,
     ReferralRegistrationPrompt,
 } from "@/shared/hooks/useReferralRedirect";
+import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
 
-export default function MatchDetails({ params }: { params: Promise<{ matchId: string }> }) {
+export default function MatchDetails({
+    params,
+}: {
+    params: Promise<{ matchId: string }>;
+}) {
     const { matchId } = React.use(params);
     const searchParams = useSearchParams();
     const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
-
     const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "tiktok";
 
     const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
 
-    const [scheduledAt, setScheduledAt] = useState<string | null>(() => {
+    const [scheduledAt] = useState<string | null>(() => {
         if (typeof window !== "undefined") {
             return new Date(Date.now() + 1000 * 1000).toISOString();
         }
         return null;
     });
+
     const { isLive } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
-    const demo = useMatchDemoStore(matchId);
+
+    const { data: matchListData, isLoading: isMatchLoading } =
+        useGetAllPublicMatchListQuery({
+            page: 1,
+            limit: 100,
+            type: "all",
+        });
+
+    const currentMatch = useMemo(() => {
+        return (
+            matchListData?.data?.find((m) => String(m.id) === String(matchId)) || null
+        );
+    }, [matchListData, matchId]);
+
+    const liveStore = useMatchDemoStore(matchId, currentMatch);
     const supportClosed = isLive;
 
     const {
@@ -42,14 +61,24 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
         handleLogin,
         handleSkip,
     } = useReferralRedirect();
+
     const tipEnabled =
         typeof window !== "undefined" &&
         localStorage.getItem("tip_shortcut_enabled") === "true";
 
+    if (isMatchLoading || !currentMatch) {
+        return (
+            <div className="min-h-screen bg-black text-white">
+                <PublicNavbar />
+                <div className="container py-24">Loading match...</div>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen ">
+        <div className="min-h-screen">
             <PublicNavbar />
+
             <div className="w-full">
                 <LiveMatchStage
                     matchId={matchId}
@@ -57,12 +86,16 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                     isLive={isLive}
                     mode={mode}
                     supportClosed={supportClosed}
-                    left={demo.left}
-                    right={demo.right}
-                    middle={demo.middle}
-                    bossSide={demo.bossSide}
-                    onSupportLeft={(amount, supporterName) => demo.support("left", amount, supporterName)}
-                    onSupportRight={(amount, supporterName) => demo.support("right", amount, supporterName)}
+                    left={liveStore.left}
+                    right={liveStore.right}
+                    middle={liveStore.middle}
+                    bossSide={liveStore.bossSide}
+                    onSupportLeft={(amount, supporterName) =>
+                        liveStore.support("left", amount, supporterName)
+                    }
+                    onSupportRight={(amount, supporterName) =>
+                        liveStore.support("right", amount, supporterName)
+                    }
                 />
 
                 <div className="container">
@@ -71,43 +104,60 @@ export default function MatchDetails({ params }: { params: Promise<{ matchId: st
                         isLive={isLive}
                         matchId={matchId}
                         tipEnabled={tipEnabled}
+
                         left={{
-                            playerName: demo.left.name,
-                            teamLogoSrc: demo.left.teamLogoSrc || "",
-                            points: demo.left.points,
+                            playerName: liveStore.left.name,
+                            teamLogoSrc: liveStore.left.teamLogoSrc || "",
+                            points: liveStore.left.points,
+                            playerId: liveStore.left.id,
                         }}
                         right={{
-                            playerName: demo.right.name,
-                            teamLogoSrc: demo.right.teamLogoSrc || "",
-                            points: demo.right.points,
+                            playerName: liveStore.right.name,
+                            teamLogoSrc: liveStore.right.teamLogoSrc || "",
+                            points: liveStore.right.points,
+                            playerId: liveStore.right.id,
                         }}
                         supportOpen={false}
-                        onSupportLeft={(amount, supporterName) => demo.support("left", amount, supporterName)}
-                        onSupportRight={(amount, supporterName) => demo.support("right", amount, supporterName)}
-
+                        onSupportLeft={(amount, supporterName) =>
+                            liveStore.support("left", amount, supporterName)
+                        }
+                        onSupportRight={(amount, supporterName) =>
+                            liveStore.support("right", amount, supporterName)
+                        }
                     />
+
                     <SupporterGridSection
                         matchId={matchId}
                         isLive={isLive}
                         mode={mode}
-                        leftBoss={{ name: demo.topLeft.name, total: demo.topLeft.total }}
-                        rightBoss={{ name: demo.topRight.name, total: demo.topRight.total }}
-                        leftImg="/images/home/supported_cardimg.png"
-                        rightImg="/images/home/rightSupport.jpg"
-                        onSupport={demo.support}
+                        leftBossName={liveStore.left.name}
+                        rightBossName={liveStore.right.name}
+                        leftBoss={{
+                            name: liveStore.topLeft.name,
+                            total: liveStore.topLeft.total,
+                        }}
+                        rightBoss={{
+                            name: liveStore.topRight.name,
+                            total: liveStore.topRight.total,
+                        }}
+                        leftImg={liveStore.topLeft.imageSrc || "/images/home/supported_cardimg.png"}
+                        rightImg={liveStore.topRight.imageSrc || "/images/home/rightSupport.jpg"}
+                        onSupport={liveStore.support}
                     />
                 </div>
+
                 <RankingSection />
                 <LatestNewsSection />
                 <TakeGameSection />
                 <FooterSection />
             </div>
+
             <ReferralRegistrationPrompt
                 open={showRegistrationPrompt}
                 onRegister={handleRegister}
                 onLogin={handleLogin}
                 onSkip={handleSkip}
-                artistName={demo.left.name || demo.right.name}
+                artistName={liveStore.left.name || liveStore.right.name}
             />
         </div>
     );

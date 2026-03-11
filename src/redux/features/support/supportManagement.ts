@@ -1,5 +1,9 @@
 import { baseApi } from "@/redux/api/baseApi";
 import {
+  ISupportPayload,
+  ISupportResponse,
+} from "@/types/support/liveSupportTypes";
+import {
   IBigBossSupporterResponse,
   IUserTransactionsResponse,
 } from "@/types/support/supportmanagement";
@@ -25,6 +29,24 @@ const SupportManagementApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    placeSupport: builder.mutation<ISupportResponse, ISupportPayload>({
+      query: (body) => ({
+        url: `/support`,
+        method: "POST",
+        body,
+      }),
+    }),
+
+    sendTip: builder.mutation<
+      { status: string; message: string },
+      { receiver_id: string; tip_amount: number }
+    >({
+      query: (body) => ({
+        url: `/send-tip`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 
   overrideExisting: true,
@@ -33,6 +55,8 @@ const SupportManagementApi = baseApi.injectEndpoints({
 export const {
   useGetBigBossSupporterRankingAllDataQuery,
   useGetUserTransactionsQuery,
+  usePlaceSupportMutation,
+  useSendTipMutation,
 } = SupportManagementApi;
 
 export default SupportManagementApi;

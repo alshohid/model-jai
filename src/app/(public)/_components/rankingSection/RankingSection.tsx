@@ -8,7 +8,7 @@ import Image from "next/image";
 
 const RankingSection = () => {
     const { data, isLoading } = useGetBigBossSupporterRankingAllDataQuery();
-    console.log(data?.data);
+
     return (
         <section className="relative w-full ">
             {/* Background layer (clipped) */}

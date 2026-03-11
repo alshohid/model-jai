@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 
 "use client";
@@ -17,6 +18,8 @@ import type {
 import { MatchPointsSummarySectionProps } from "@/types/liveMatchDetails/MatchPointSummerySectionProps";
 import { getSideXPosition } from "@/lib/helper/getSideXPosition";
 import { TipCaretButton } from "@/shared/UI/button/TipCaretButton";
+import { useSendTipMutation } from "@/redux/features/support/supportManagement";
+import { toast } from "sonner";
 
 
 export default function MatchPointsSummarySection({
@@ -30,24 +33,33 @@ export default function MatchPointsSummarySection({
     layout = "tiktok",
     onSupportLeft,
     onSupportRight,
+
+
+
 }: MatchPointsSummarySectionProps) {
     const tipSystem = useTipSystem();
     const supportDialog = useSupportDialog();
+    const [sendTip, { isLoading: isTipSending }] = useSendTipMutation();
 
-    const handleSupportConfirm = (
+    const handleSupportConfirm = async (
         side: "left" | "right" | "middle",
         supporterName: string,
         amount: number
     ) => {
-        if (side === "left") {
-            onSupportLeft?.(amount, supporterName);
-        } else if (side === "right") {
-            onSupportRight?.(amount, supporterName);
-        }
+        try {
+            if (side === "left") {
+                await onSupportLeft?.(amount, supporterName);
+            } else if (side === "right") {
+                await onSupportRight?.(amount, supporterName);
+            }
 
-        // Trigger 5 flying coins sequentially
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => tipSystem.triggerFlyingCoin(side as SupportSide), i * 100);
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => tipSystem.triggerFlyingCoin(side as SupportSide), i * 100);
+            }
+
+            supportDialog.closeDialog();
+        } catch (error) {
+            console.error("Support failed:", error);
         }
     };
 
@@ -59,9 +71,41 @@ export default function MatchPointsSummarySection({
         supportDialog.openDialog(side);
     };
 
+    const getReceiverId = (side: "left" | "right" | "middle") => {
+        if (side === "left") return left.playerId;
+        if (side === "right") return right.playerId;
+        return null;
+    };
+
+    const handleSendTip = async (side: "left" | "right" | "middle", amount: number) => {
+        try {
+            const receiverId = side === "middle" ? 1 : getReceiverId(side);
+
+            if (!receiverId) {
+                toast.error("Tip receiver not found.");
+                return;
+            }
+
+            await sendTip({
+                receiver_id: String(receiverId),
+                tip_amount: amount,
+            }).unwrap();
+
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => tipSystem.triggerFlyingCoin(side as SupportSide), i * 100);
+            }
+
+            toast.success("Tip sent successfully.");
+            tipSystem.closeTip();
+        } catch (error: any) {
+            console.error("Tip send failed:", error);
+            toast.error(error?.data?.message || "Failed to send tip.");
+        }
+    };
+
     return (
         <section className={cn("text-white relative", className)}>
-            {/* Flying Coins Container */}
+
             <div className="fixed inset-0 pointer-events-none z-[9999]">
                 {tipSystem.flyingCoins.map((coin) => (
                     <FlyingPeso
@@ -76,7 +120,7 @@ export default function MatchPointsSummarySection({
                 ))}
             </div>
 
-            {/* ================= TIP CARETS (if enabled) ================= */}
+
             {tipEnabled && (
                 <div className="px-2 md:px-4 md:py-4">
                     <div className="flex justify-between">
@@ -93,17 +137,15 @@ export default function MatchPointsSummarySection({
                                 align="left"
                                 triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
-                                onPesto={() => console.log("Pesto tip left")}
+                                onPesto={() => handleSendTip("left", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
-                                onSendCustom={(name, amount) => {
-                                    console.log("Custom tip left:", name, amount);
-                                    tipSystem.closeTip();
+                                onSendCustom={async (name, amount) => {
+                                    await handleSendTip("left", amount);
                                 }}
                             />
                         </TipCaretButton>
 
-                        {/* Middle Tip Caret */}
                         <TipCaretButton
                             side="middle"
                             isOpen={tipSystem.tipOpen === "middle"}
@@ -116,12 +158,11 @@ export default function MatchPointsSummarySection({
                                 align="center"
                                 triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
-                                onPesto={() => console.log("Pesto tip middle")}
+                                onPesto={() => handleSendTip("middle", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
-                                onSendCustom={(name, amount) => {
-                                    console.log("Custom tip middle:", name, amount);
-                                    tipSystem.closeTip();
+                                onSendCustom={async (name, amount) => {
+                                    await handleSendTip("middle", amount);
                                 }}
                             />
                         </TipCaretButton>
@@ -139,12 +180,11 @@ export default function MatchPointsSummarySection({
                                 align="right"
                                 triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
-                                onPesto={() => console.log("Pesto tip right")}
+                                onPesto={() => handleSendTip("right", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
-                                onSendCustom={(name, amount) => {
-                                    console.log("Custom tip right:", name, amount);
-                                    tipSystem.closeTip();
+                                onSendCustom={async (name, amount) => {
+                                    await handleSendTip("right", amount);
                                 }}
                             />
                         </TipCaretButton>
@@ -152,7 +192,6 @@ export default function MatchPointsSummarySection({
                 </div>
             )}
 
-            {/* ================= MATCH POINTS CARDS ================= */}
             <div>
                 <div className={cn("mx-auto", "md:w-full")}>
                     <div className="grid grid-cols-[1fr_auto_1fr] py-6 gap-2 md:gap-4">
@@ -199,7 +238,7 @@ export default function MatchPointsSummarySection({
                     onOpenChange={supportDialog.closeDialog}
                     playerName={getPlayerName()}
                     side={supportDialog.selectedSide}
-                    defaultSupporterName="Michael Rohan"
+                    defaultSupporterName={supportDialog.selectedSide === "left" ? left.playerName : right.playerName}
                     defaultAmount={100}
                     onConfirm={handleSupportConfirm}
                 />
