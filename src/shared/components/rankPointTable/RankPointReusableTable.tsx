@@ -2,9 +2,8 @@
 
 import { ReactNode } from "react";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
-import { useGetBigBossSupporterRankingAllDataQuery } from "@/redux/features/support/supportManagement";
 
-type SupporterRowItem = {
+export type SupporterRowItem = {
     user_id: number;
     serial_no: string;
     supported_amounts: string;
@@ -14,9 +13,7 @@ type SupporterRowItem = {
     };
 };
 
-const RankPointReusableTable = () => {
-    const { data, isLoading } = useGetBigBossSupporterRankingAllDataQuery();
-
+const RankPointReusableTable = ({ data, isLoading }: { data: SupporterRowItem[]; isLoading: boolean }) => {
     const tableHeader = [
         "Rank No",
         "Name",
@@ -24,16 +21,15 @@ const RankPointReusableTable = () => {
         "Range Point Match Support From Highest to Lowest",
     ];
 
-    const currentItems: SupporterRowItem[] =
-        data?.data?.map((item) => ({
-            user_id: item.user_id,
-            serial_no: item.serial_no,
-            supported_amounts: item.supported_amounts,
-            supporter: {
-                id: item.supporter.id,
-                name: item.supporter.name,
-            },
-        })) ?? [];
+    const currentItems: SupporterRowItem[] = data?.map((item) => ({
+        user_id: item.user_id,
+        serial_no: item.serial_no,
+        supported_amounts: item.supported_amounts,
+        supporter: {
+            id: item.supporter.id,
+            name: item.supporter.name,
+        },
+    })) ?? [];
 
     const tableRowDataRenderers: ((item: SupporterRowItem, index: number) => ReactNode)[] = [
         (item) => <span className="text-[#FFFFFF]">{item.serial_no}</span>,

@@ -14,6 +14,7 @@ export interface IBigBossSupporterItem {
 export interface ISupporter {
   id: number;
   name: string;
+  image?: string;
 }
 export type TransactionType = "withdraw" | "recharge";
 

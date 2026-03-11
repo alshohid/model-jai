@@ -1,8 +1,14 @@
+"use client";
+
+import { useGetBigBossSupporterRankingAllDataQuery } from "@/redux/features/support/supportManagement";
+import Skeleton from "@/shared/UI/Skeleton";
 import SupporterCard from "@/shared/components/card/SupporterCard";
 import RankPointReusableTable from "@/shared/components/rankPointTable/RankPointReusableTable";
 import Image from "next/image";
 
 const RankingSection = () => {
+    const { data, isLoading } = useGetBigBossSupporterRankingAllDataQuery();
+    console.log(data?.data);
     return (
         <section className="relative w-full ">
             {/* Background layer (clipped) */}
@@ -32,15 +38,21 @@ const RankingSection = () => {
             {/* Content */}
             <div className="container py-20">
                 <div className="flex flex-col items-center gap-8">
-                    <SupporterCard
-                        imageSrc="/images/home/supported_cardimg.png"
-                        title="Big Boss Supporter"
-                        name="Fatt Le Sage"
-                        className="mx-auto"
-                    />
+                    {isLoading ? (
+                        <div className="w-full">
+                            <Skeleton className="w-full h-40" />
+                        </div>
+                    ) : (
+                        <SupporterCard
+                            imageSrc={data?.data[0]?.supporter?.image || "/images/home/supported_cardimg.png"}
+                            title="Big Boss Supporter"
+                            name={data?.data[0]?.supporter?.name || "Fatt Le Sage"}
+                            className="mx-auto"
+                        />
+                    )}
 
                     <div className="w-full">
-                        <RankPointReusableTable />
+                        <RankPointReusableTable data={data?.data || []} isLoading={isLoading} />
                     </div>
                 </div>
             </div>
