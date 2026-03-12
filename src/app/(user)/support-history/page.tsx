@@ -32,7 +32,7 @@ export default function SupportHistoryPage() {
     const tabFromUrl = searchParams.get("tab") as SupportHistoryTab | null;
     const initialTab = validTabs.includes(tabFromUrl as SupportHistoryTab)
         ? (tabFromUrl as SupportHistoryTab)
-        : "live";
+        : "all";
 
     const [activeTab, setActiveTab] = useState<SupportHistoryTab>(initialTab);
     const [page, setPage] = useState(1);
