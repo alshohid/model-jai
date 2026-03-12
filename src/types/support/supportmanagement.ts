@@ -44,3 +44,39 @@ export interface IUserTransactionsResponse {
   data: IUserTransactionItem[];
   meta: IUserTransactionMeta;
 }
+export type SupportHistoryMatchType = "upcoming" | "live" | "completed";
+export type SupportHistoryResult = "pending" | "win" | "lose" | "cancelled";
+
+export interface ISupportHistoryPlayer {
+  name: string;
+  image: string;
+}
+
+export interface ISupportHistoryItem {
+  match_id: number;
+  match_no: string | number;
+  match_date: string;
+  match_time: string;
+  type: SupportHistoryMatchType;
+  confirmation_status: number;
+  player_one: ISupportHistoryPlayer;
+  player_two: ISupportHistoryPlayer;
+  coin_amount: string;
+  result: SupportHistoryResult;
+}
+
+export interface ISupportHistoryMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  prev: boolean;
+  next: boolean;
+}
+
+export interface ISupportHistoryResponse {
+  status: boolean;
+  message: string;
+  data: ISupportHistoryItem[];
+  meta: ISupportHistoryMeta;
+}
