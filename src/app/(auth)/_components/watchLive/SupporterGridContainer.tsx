@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -5,7 +6,7 @@ import SupporterGrid, { GridCell, SupportSide } from "@/shared/components/grid/S
 
 type Props = {
     matchId?: string;
-    matchStatus?:any;
+    matchStatus?: any;
     locked?: boolean;
 
     selectedSide: SupportSide;

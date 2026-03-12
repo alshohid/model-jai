@@ -4,11 +4,20 @@ import { useGetBigBossSupporterRankingAllDataQuery } from "@/redux/features/supp
 import Skeleton from "@/shared/UI/Skeleton";
 import SupporterCard from "@/shared/components/card/SupporterCard";
 import RankPointReusableTable from "@/shared/components/rankPointTable/RankPointReusableTable";
+import { ITopSupporterItem } from "@/types/match/MatchManagementTypes";
 import Image from "next/image";
+export type Props = {
+    data?: ITopSupporterItem[];
+    isLoading?: boolean;
+}
+const RankingSection = ({ data: propData, isLoading: propLoading }: Props) => {
+    const shouldUseApi = !propData;
 
-const RankingSection = () => {
-    const { data, isLoading } = useGetBigBossSupporterRankingAllDataQuery();
+    const { data: apiData, isLoading: apiLoading } = useGetBigBossSupporterRankingAllDataQuery(undefined, { skip: !shouldUseApi });
 
+    const finalData = propData ?? apiData?.data ?? [];
+    const finalLoading = propLoading ?? apiLoading;
+    // console.log("final ::::: ", finalData);
     return (
         <section className="relative w-full ">
             {/* Background layer (clipped) */}
@@ -38,21 +47,21 @@ const RankingSection = () => {
             {/* Content */}
             <div className="container py-20">
                 <div className="flex flex-col items-center gap-8">
-                    {isLoading ? (
+                    {finalLoading ? (
                         <div className="w-full">
                             <Skeleton className="w-full h-40" />
                         </div>
                     ) : (
                         <SupporterCard
-                            imageSrc={data?.data[0]?.supporter?.image || "/images/home/supported_cardimg.png"}
+                            imageSrc={finalData?.[0]?.supporter?.image || "/images/home/avatar_img.png"}
                             title="Big Boss Supporter"
-                            name={data?.data[0]?.supporter?.name || "Fatt Le Sage"}
+                            name={finalData?.[0]?.supporter?.name || "Fatt Le Sage"}
                             className="mx-auto"
                         />
                     )}
 
                     <div className="w-full">
-                        <RankPointReusableTable data={data?.data || []} isLoading={isLoading} />
+                        <RankPointReusableTable data={finalData} isLoading={finalLoading} />
                     </div>
                 </div>
             </div>

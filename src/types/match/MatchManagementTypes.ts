@@ -11,12 +11,35 @@ export type MatchTypePublicUse = "live" | "past" | "upcoming";
 //   name?: string;
 //   image_url?: string;
 // }
+// export interface ISupportPlacedData {
+//   support: ISupportRecord;
+//   updated_balance: string | number;
+//   updated_total_bet: string | number;
+//   match_player_one_total: string | number;
+//   match_player_two_total: string | number;
+//   top_supporters: ITopSupporterItem[];
+//   player_one_top_supporter?: ITopSupporterUser | null;
+//   player_two_top_supporter?: ITopSupporterUser | null;
+// }
 export interface IPlayer {
   id?: number;
   name?: string;
   image_url?: string;
   image?: string;
 }
+export interface ITopSupporterUser {
+  id: number;
+  name: string;
+  image?: string | null;
+}
+
+export interface ITopSupporterItem {
+  user_id: number;
+  serial_no: string;
+  supported_amounts: string;
+  supporter: ITopSupporterUser;
+}
+
 export interface IMatch {
   id: number;
   match_no: string | number;
@@ -33,7 +56,6 @@ export interface IMatch {
   player_two_total: string | number;
 
   game_id: number | string;
-
   winner_id: number | null;
 
   type: MatchType;
@@ -53,11 +75,13 @@ export interface IMatch {
   updated_at: string;
 
   game: IGame;
-
   player_one: IPlayer;
   player_two: IPlayer;
-
   winner?: IPlayer | null;
+
+  top_supporters?: ITopSupporterItem[];
+  player_one_top_supporter?: ITopSupporterUser | null;
+  player_two_top_supporter?: ITopSupporterUser | null;
 }
 export interface IPaginationMeta {
   current_page: number;

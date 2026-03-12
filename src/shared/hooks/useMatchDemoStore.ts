@@ -1,21 +1,25 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getEcho } from "@/shared/lib/echo";
 import { usePlaceSupportMutation } from "@/redux/features/support/supportManagement";
-import { IMatch } from "@/types/match/MatchManagementTypes";
+import {
+  IMatch,
+  ITopSupporterItem,
+  ITopSupporterUser,
+} from "@/types/match/MatchManagementTypes";
 import {
   ISupportPlacedData,
   ISupportPlacedEvent,
-  ITopSupporterItem,
 } from "@/types/support/liveSupportTypes";
+import { toast } from "sonner";
 
 export type Side = "left" | "right";
 
 type BossSummary = {
   name: string;
-  total: number;
   imageSrc?: string;
 };
 
@@ -24,36 +28,17 @@ const FALLBACK_RIGHT = "/images/home/panel_right.png";
 const FALLBACK_MIDDLE = "/images/home/middle.png";
 const FALLBACK_LEFT_TEAM = "/images/home/bayern.png";
 const FALLBACK_RIGHT_TEAM = "/images/home/totenhum.png";
+const FALLBACK_AVATAR = "/images/home/avatar_img.png";
 
 function toNumber(value: string | number | null | undefined) {
   const num = Number(value);
   return Number.isFinite(num) ? num : 0;
 }
 
-function parseSupportedAmounts(value?: string) {
-  if (!value) return 0;
-  return value
-    .split(",")
-    .map((v) => Number(v.trim()))
-    .filter((v) => Number.isFinite(v))
-    .reduce((sum, v) => sum + v, 0);
-}
-
-function topFromList(list: ITopSupporterItem[]): BossSummary {
-  if (!list.length) {
-    return {
-      name: "No Supporter",
-      total: 0,
-      imageSrc: "/images/home/avatar_img.png",
-    };
-  }
-
-  const top = list[0];
-
+function bossFromUser(user?: ITopSupporterUser | null): BossSummary {
   return {
-    name: top.supporter?.name || "No Supporter",
-    total: parseSupportedAmounts(top.supported_amounts),
-    imageSrc: top.supporter?.image || "/images/home/avatar_img.png",
+    name: user?.name || "No Supporter",
+    imageSrc: user?.image || FALLBACK_AVATAR,
   };
 }
 
@@ -61,11 +46,19 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
   const [placeSupport, { isLoading: isSupporting }] = usePlaceSupportMutation();
 
   const [viewerBalance, setViewerBalance] = useState<number>(0);
+  const [rankingSupporters, setRankingSupporters] = useState<
+    ITopSupporterItem[]
+  >([]);
 
-  const [leftSupporters, setLeftSupporters] = useState<ITopSupporterItem[]>([]);
-  const [rightSupporters, setRightSupporters] = useState<ITopSupporterItem[]>(
-    [],
-  );
+  const [leftBoss, setLeftBoss] = useState<BossSummary>({
+    name: "No Supporter",
+    imageSrc: FALLBACK_AVATAR,
+  });
+
+  const [rightBoss, setRightBoss] = useState<BossSummary>({
+    name: "No Supporter",
+    imageSrc: FALLBACK_AVATAR,
+  });
 
   const [left, setLeft] = useState({
     id: 0,
@@ -113,49 +106,46 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
         FALLBACK_RIGHT,
       teamLogoSrc: match.game?.image || FALLBACK_RIGHT_TEAM,
     });
+
+    setRankingSupporters(match.top_supporters || []);
+    setLeftBoss(bossFromUser(match.player_one_top_supporter));
+    setRightBoss(bossFromUser(match.player_two_top_supporter));
   }, [match]);
 
-  const applySupportData = useCallback(
-    (payload: ISupportPlacedData) => {
-      setLeft((prev) => ({
-        ...prev,
-        points: toNumber(payload.match_player_one_total),
-      }));
+  const applySupportData = useCallback((payload: ISupportPlacedData) => {
+    setLeft((prev) => ({
+      ...prev,
+      points: toNumber(payload.match_player_one_total),
+    }));
 
-      setRight((prev) => ({
-        ...prev,
-        points: toNumber(payload.match_player_two_total),
-      }));
+    setRight((prev) => ({
+      ...prev,
+      points: toNumber(payload.match_player_two_total),
+    }));
 
-      const supportedPlayerId = Number(payload.support.supported_player_id);
+    setRankingSupporters(payload.top_supporters || []);
+    setLeftBoss(bossFromUser(payload.player_one_top_supporter));
+    setRightBoss(bossFromUser(payload.player_two_top_supporter));
 
-      if (supportedPlayerId === left.id) {
-        setLeftSupporters(payload.top_supporters || []);
-      }
-
-      if (supportedPlayerId === right.id) {
-        setRightSupporters(payload.top_supporters || []);
-      }
-
-      setViewerBalance(toNumber(payload.updated_balance));
-    },
-    [left.id, right.id],
-  );
+    setViewerBalance(toNumber(payload.updated_balance));
+  }, []);
 
   useEffect(() => {
     const echo = getEcho();
     if (!echo || !matchId) return;
 
     const channelName = `match.${matchId}`;
+    console.log("Joining channel:", channelName);
 
-    echo
-      .channel(channelName)
-      .listen(".support.placed", (event: ISupportPlacedEvent) => {
-        applySupportData(event.data);
-        console.log("support placed", event.data);
-      });
+    const channel = echo.channel(channelName);
+
+    channel.listen(".support.placed", (event: ISupportPlacedEvent) => {
+      console.log("support placed event received:", event);
+      applySupportData(event.data);
+    });
 
     return () => {
+      console.log("Leaving channel:", channelName);
       echo.leave(channelName);
     };
   }, [matchId, applySupportData]);
@@ -165,27 +155,24 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     return left.points > right.points ? ("left" as const) : ("right" as const);
   }, [left.points, right.points]);
 
-  const topLeft = useMemo(() => topFromList(leftSupporters), [leftSupporters]);
-  const topRight = useMemo(
-    () => topFromList(rightSupporters),
-    [rightSupporters],
-  );
-
   const support = useCallback(
     async (side: Side, amount: number, supporterName?: string) => {
       const supportedPlayerId = side === "left" ? left.id : right.id;
 
       if (!matchId || !supportedPlayerId || amount <= 0) return;
+      try {
+        const response = await placeSupport({
+          match_id: Number(matchId),
+          supported_player_id: supportedPlayerId,
+          coin_amount: amount,
+        }).unwrap();
 
-      const response = await placeSupport({
-        match_id: Number(matchId),
-        supported_player_id: supportedPlayerId,
-        coin_amount: amount,
-      }).unwrap();
-
-      void supporterName;
-
-      applySupportData(response.data);
+        void supporterName;
+        applySupportData(response.data);
+        toast.success("Support placed successfully");
+      } catch (error: any) {
+        toast.error(error.message);
+      }
     },
     [applySupportData, left.id, matchId, placeSupport, right.id],
   );
@@ -196,10 +183,9 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     right,
     middle,
     bossSide,
-    topLeft,
-    topRight,
-    leftSupporters,
-    rightSupporters,
+    leftBoss,
+    rightBoss,
+    rankingSupporters,
     viewerBalance,
     isSupporting,
     support,

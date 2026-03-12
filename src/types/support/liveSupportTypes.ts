@@ -1,3 +1,5 @@
+import { ITopSupporterUser } from "../match/MatchManagementTypes";
+
 export interface ISupportPayload {
   match_id: number;
   supported_player_id: number;
@@ -36,6 +38,8 @@ export interface ISupportPlacedData {
   match_player_one_total: string | number;
   match_player_two_total: string | number;
   top_supporters: ITopSupporterItem[];
+  player_one_top_supporter?: ITopSupporterUser | null;
+  player_two_top_supporter?: ITopSupporterUser | null;
 }
 
 export interface ISupportResponse {

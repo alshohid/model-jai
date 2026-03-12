@@ -49,7 +49,7 @@ export default function MatchDetails({
     }, [matchData]);
 
     const liveStore = useMatchDemoStore(matchId, currentMatch);
-    console.log("liveStore", liveStore);
+
     const supportClosed = isLive;
 
     const {
@@ -130,20 +130,24 @@ export default function MatchDetails({
                         leftBossName={liveStore.left.name}
                         rightBossName={liveStore.right.name}
                         leftBoss={{
-                            name: liveStore.topLeft.name,
-                            total: liveStore.topLeft.total,
+                            name: liveStore.leftBoss.name,
+                            total: liveStore.left.points,
                         }}
                         rightBoss={{
-                            name: liveStore.topRight.name,
-                            total: liveStore.topRight.total,
+                            name: liveStore.rightBoss.name,
+                            total: liveStore.right.points,
                         }}
-                        leftImg={liveStore.topLeft.imageSrc || "/images/home/supported_cardimg.png"}
-                        rightImg={liveStore.topRight.imageSrc || "/images/home/rightSupport.jpg"}
+                        leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
+                        rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
                         onSupport={liveStore.support}
+                    />
+
+                    <RankingSection
+                        data={liveStore.rankingSupporters}
+                        isLoading={isMatchLoading}
                     />
                 </div>
 
-                <RankingSection />
                 <LatestNewsSection />
                 <TakeGameSection />
                 <FooterSection />
