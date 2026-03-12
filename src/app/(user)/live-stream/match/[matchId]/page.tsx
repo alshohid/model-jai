@@ -16,7 +16,7 @@ import {
     useReferralRedirect,
     ReferralRegistrationPrompt,
 } from "@/shared/hooks/useReferralRedirect";
-import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
+import { useGetSingleMatchByMatchIdQuery } from "@/redux/features/match/matchManagement";
 
 export default function MatchDetails({
     params,
@@ -39,20 +39,17 @@ export default function MatchDetails({
 
     const { isLive } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
 
-    const { data: matchListData, isLoading: isMatchLoading } =
-        useGetAllPublicMatchListQuery({
-            page: 1,
-            limit: 100,
-            type: "all",
-        });
+    const { data: matchData, isLoading: isMatchLoading } =
+        useGetSingleMatchByMatchIdQuery(matchId);
 
     const currentMatch = useMemo(() => {
         return (
-            matchListData?.data?.find((m) => String(m.id) === String(matchId)) || null
+            matchData?.data || null
         );
-    }, [matchListData, matchId]);
+    }, [matchData]);
 
     const liveStore = useMatchDemoStore(matchId, currentMatch);
+    console.log("liveStore", liveStore);
     const supportClosed = isLive;
 
     const {

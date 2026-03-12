@@ -24,6 +24,7 @@ interface TipPopoverProps {
     onBackToMenu: () => void;
     onSendCustom: (name: string, amount: number) => void;
     triggerFly: (side: SupportSide) => void;
+    isLoading?: boolean;
 }
 
 const DEFAULT_NAME = "Michael Rohan";
@@ -40,6 +41,7 @@ export default function TipPopover({
     onBackToMenu,
     onSendCustom,
     triggerFly,
+    isLoading,
 }: TipPopoverProps) {
     const [name, setName] = useState(DEFAULT_NAME);
     const [amount, setAmount] = useState<number>(DEFAULT_AMOUNT);
@@ -60,7 +62,7 @@ export default function TipPopover({
                 : "left-1/2 -translate-x-1/2";
 
     const handlePesoClick = () => {
-        console.log("Peso tip clicked - multiple coins");
+        onSendCustom(name, 10);
         for (let i = 0; i < 5; i++) {
             setTimeout(() => triggerFly(side), i * 100);
         }
@@ -90,11 +92,13 @@ export default function TipPopover({
                     <div className="p-1 md:p-3 flex items-center gap-2">
                         <button
                             type="button"
+                            disabled={amount < 10 || isLoading}
                             onClick={handlePesoClick}
                             className={cn(
                                 "h-7 px-3 rounded-full",
                                 "bg-white/10 hover:bg-white/15 transition",
-                                "text-white text-sm font-semibold whitespace-nowrap"
+                                "text-white text-sm font-semibold whitespace-nowrap",
+                                isLoading && "opacity-50 cursor-not-allowed"
                             )}
                         >
                             ₱
@@ -102,11 +106,13 @@ export default function TipPopover({
 
                         <button
                             type="button"
+                            disabled={isLoading}
                             onClick={onOpenCustom}
                             className={cn(
                                 "h-9 px-4 rounded-full",
                                 "bg-white/10 hover:bg-white/15 transition",
-                                "text-white text-sm font-semibold whitespace-nowrap"
+                                "text-white text-sm font-semibold whitespace-nowrap",
+                                isLoading && "opacity-50 cursor-not-allowed"
                             )}
                         >
                             Custom tip
@@ -155,11 +161,13 @@ export default function TipPopover({
                             <button
                                 type="button"
                                 onClick={handleSend}
+                                disabled={isLoading}
                                 className={cn(
                                     "h-10 sm:h-9 w-full",
                                     "rounded-xl font-semibold text-sm",
                                     "bg-fuchsia-500/95 hover:bg-fuchsia-500 transition",
-                                    "shadow-[0_10px_22px_rgba(236,72,153,0.35)]"
+                                    "shadow-[0_10px_22px_rgba(236,72,153,0.35)]",
+                                    isLoading && "opacity-50 cursor-not-allowed"
                                 )}
                             >
                                 Send

@@ -152,6 +152,7 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
       .channel(channelName)
       .listen(".support.placed", (event: ISupportPlacedEvent) => {
         applySupportData(event.data);
+        console.log("support placed", event.data);
       });
 
     return () => {
@@ -182,8 +183,6 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
         coin_amount: amount,
       }).unwrap();
 
-      // NOTE:
-      // supporterName backend নেয় না; backend auth user থেকেই supporter identify করে
       void supporterName;
 
       applySupportData(response.data);

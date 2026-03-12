@@ -39,7 +39,7 @@ export default function MatchPointsCard({
     const [shareSheetOpen, setShareSheetOpen] = useState(false);
     const [shareUrl, setShareUrl] = useState("");
 
-    const sign = positive ? "+" : "-";
+    const sign = positive ? "+" : "+";
 
     const numericPoints =
         typeof points === "string"

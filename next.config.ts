@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
+      {
+        protocol: "http",
+        hostname: "192.168.7.192",
+        pathname: "/**",
+      },
     ],
   },
 };

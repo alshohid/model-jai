@@ -131,6 +131,7 @@ export default function MatchPointsSummarySection({
                             onClick={() => tipSystem.openTip("left")}
                         >
                             <TipPopover
+                                isLoading={isTipSending}
                                 open={tipSystem.tipOpen === "left"}
                                 side="left"
                                 view={tipSystem.tipView}
@@ -152,6 +153,7 @@ export default function MatchPointsSummarySection({
                             onClick={() => tipSystem.openTip("middle")}
                         >
                             <TipPopover
+                                isLoading={isTipSending}
                                 open={tipSystem.tipOpen === "middle"}
                                 side="middle"
                                 view={tipSystem.tipView}
@@ -174,6 +176,7 @@ export default function MatchPointsSummarySection({
                             onClick={() => tipSystem.openTip("right")}
                         >
                             <TipPopover
+                                isLoading={isTipSending}
                                 open={tipSystem.tipOpen === "right"}
                                 side="right"
                                 view={tipSystem.tipView}

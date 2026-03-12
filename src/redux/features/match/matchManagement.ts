@@ -53,6 +53,13 @@ const MatchManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Match"],
     }),
+    getSingleMatchByMatchId: builder.query({
+      query: (id) => ({
+        url: `/match/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Match"],
+    }),
     getSelectedTwoPlayerByMatchId: builder.query({
       query: (id) => ({
         url: `/admin/match-players/${id}`,
@@ -120,6 +127,7 @@ const MatchManagementApi = baseApi.injectEndpoints({
 export const {
   useGetAllMatchesQuery,
   useGetAllPublicMatchListQuery,
+  useGetSingleMatchByMatchIdQuery,
   useGetSelectedTwoPlayerByMatchIdQuery,
   useCreateMatchMutation,
   useCreateMatchConformationMutation,

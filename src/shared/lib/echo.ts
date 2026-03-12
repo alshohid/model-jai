@@ -22,10 +22,22 @@ export function getEcho() {
     key: process.env.NEXT_PUBLIC_REVERB_APP_KEY || "kroxn8vfslxcduiv5y5s",
     wsHost: process.env.NEXT_PUBLIC_REVERB_HOST || "127.0.0.1",
     wsPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT || 8080),
-    wssPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT || 443),
+    wssPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT || 8080),
     forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME || "http") === "https",
     enabledTransports: ["ws", "wss"],
     disableStats: true,
+  });
+
+  echoInstance.connector.pusher.connection.bind("connected", () => {
+    console.log("Socket connected");
+  });
+
+  echoInstance.connector.pusher.connection.bind("error", (err: unknown) => {
+    console.log("Socket connection error:", err);
+  });
+
+  echoInstance.connector.pusher.connection.bind("disconnected", () => {
+    console.log("Socket disconnected");
   });
 
   return echoInstance;
