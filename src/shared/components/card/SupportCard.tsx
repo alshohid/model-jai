@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import clsx from "clsx";
 import { Meta } from "../cardComponent/Meta";
 import { PlayerImage } from "../cardComponent/PlayerImage";
 import { Versus } from "../cardComponent/Versus";
 import WatchStreamButton from "@/shared/UI/button/WatchStreamButton";
 
-type SupportStatus = "live" | "unsettled" | "settled";
+type SupportStatus = "live" | "unsettled" | "settled" | "all";
 
 type Props = {
     status: SupportStatus;
-    result?: "win" | "loss"; 
+    result?: any;
     supporterName: string;
     playerName: string;
     amount: number;
@@ -20,7 +21,6 @@ type Props = {
     className?: string;
     onWatch?: () => void;
 };
-
 
 export default function SupportCard({
     status,
@@ -41,9 +41,11 @@ export default function SupportCard({
             ? "Live Now"
             : status === "unsettled"
                 ? "Unsettled"
-                : result === "win"
-                    ? "Settled Win"
-                    : "Settled Loss";
+                : status === "settled"
+                    ? result === "win"
+                        ? "Settled Win"
+                        : "Settled Loss"
+                    : "Support History";
 
     const statusStyle = clsx(
         "px-2 md:px-3 py-0 md:py-1 rounded-md text-xs border",
@@ -56,7 +58,6 @@ export default function SupportCard({
                     : "bg-red-500/25 text-red-100 border-red-400/30"
     );
 
-
     return (
         <article
             className={clsx(
@@ -66,28 +67,25 @@ export default function SupportCard({
             )}
         >
             <div className="overflow-hidden px-3 py-2 md:p-6">
-                {/* PLAYER IMAGES */}
-                <div className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr]
-            aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10 p-2 md:p-5 mb-2">
+                <div
+                    className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr]
+                    aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10 p-2 md:p-5 mb-2"
+                >
                     <PlayerImage src={leftPlayerImg} />
                     <Versus src={versusImg} />
                     <PlayerImage src={rightPlayerImg} />
                 </div>
 
-                {/* INFO */}
                 <div className="mt-2">
-                    {/* STATUS */}
                     <div className="flex items-center gap-2 mb-3">
                         <span className={statusStyle}>{statusLabel}</span>
                     </div>
 
-                    {/* SUPPORTER NAME */}
                     <h3 className="text-white font-semibold text-[12px] md:text-[16px] leading-tight mb-1">
                         Support by <span className="font-bold">{supporterName}</span>
                     </h3>
 
-                    {/* PLAYER NAME & AMOUNT */}
-                    <div className="flex items-center justify-between mb-2 md:mb-3">
+                    <div className="flex items-center justify-between mb-2 md:mb-3 gap-3">
                         <p className="text-white/75 text-xs md:text-sm">
                             Supporting <span className="font-semibold text-white">{playerName}</span>
                         </p>
@@ -109,10 +107,13 @@ export default function SupportCard({
                             </span>
                         )}
                     </div>
-                    {status === "live" && <div className="p-2">
-                        <WatchStreamButton label="Watch Now" onClick={onWatch} />
-                    </div>}
-                    {/* META INFO */}
+
+                    {status === "live" && (
+                        <div className="p-2">
+                            <WatchStreamButton label="Watch Now" onClick={onWatch} />
+                        </div>
+                    )}
+
                     <div className="flex gap-x-1 md:gap-x-6 text-white/75 text-xs md:text-sm">
                         <Meta icon="🗓" text={dateText} />
                         <Meta icon="🕒" text={timeText} />
