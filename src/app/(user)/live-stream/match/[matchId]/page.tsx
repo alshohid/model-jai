@@ -17,6 +17,7 @@ import {
     ReferralRegistrationPrompt,
 } from "@/shared/hooks/useReferralRedirect";
 import { useGetSingleMatchByMatchIdQuery } from "@/redux/features/match/matchManagement";
+import { MatchDetailsSkeleton } from "@/components/ui/MatchDetailsSkeleton";
 
 export default function MatchDetails({
     params,
@@ -63,58 +64,22 @@ export default function MatchDetails({
         typeof window !== "undefined" &&
         localStorage.getItem("tip_shortcut_enabled") === "true";
 
-    if (isMatchLoading || !currentMatch) {
-        return (
-            <div className="min-h-screen bg-black text-white">
-                <PublicNavbar />
-                <div className="container py-24">Loading match...</div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen">
             <PublicNavbar />
-
-            <div className="w-full">
-                <LiveMatchStage
-                    matchId={matchId}
-                    playbackId={playbackId}
-                    isLive={isLive}
-                    mode={mode}
-                    supportClosed={supportClosed}
-                    left={liveStore.left}
-                    right={liveStore.right}
-                    middle={liveStore.middle}
-                    bossSide={liveStore.bossSide}
-                    onSupportLeft={(amount, supporterName) =>
-                        liveStore.support("left", amount, supporterName)
-                    }
-                    onSupportRight={(amount, supporterName) =>
-                        liveStore.support("right", amount, supporterName)
-                    }
-                />
-
-                <div className="container">
-                    <MatchPointsSummarySection
-                        layout={mode}
-                        isLive={isLive}
+            {isMatchLoading || !currentMatch ? <MatchDetailsSkeleton /> : (
+                <div className="w-full">
+                    <LiveMatchStage
                         matchId={matchId}
-                        tipEnabled={tipEnabled}
-
-                        left={{
-                            playerName: liveStore.left.name,
-                            teamLogoSrc: liveStore.left.teamLogoSrc || "",
-                            points: liveStore.left.points,
-                            playerId: liveStore.left.id,
-                        }}
-                        right={{
-                            playerName: liveStore.right.name,
-                            teamLogoSrc: liveStore.right.teamLogoSrc || "",
-                            points: liveStore.right.points,
-                            playerId: liveStore.right.id,
-                        }}
-                        supportOpen={false}
+                        playbackId={playbackId}
+                        isLive={isLive}
+                        mode={mode}
+                        supportClosed={supportClosed}
+                        left={liveStore.left}
+                        right={liveStore.right}
+                        middle={liveStore.middle}
+                        bossSide={liveStore.bossSide}
                         onSupportLeft={(amount, supporterName) =>
                             liveStore.support("left", amount, supporterName)
                         }
@@ -123,35 +88,66 @@ export default function MatchDetails({
                         }
                     />
 
-                    <SupporterGridSection
-                        matchId={matchId}
-                        isLive={isLive}
-                        mode={mode}
-                        leftBossName={liveStore.left.name}
-                        rightBossName={liveStore.right.name}
-                        leftBoss={{
-                            name: liveStore.leftBoss.name,
-                            total: liveStore.left.points,
-                        }}
-                        rightBoss={{
-                            name: liveStore.rightBoss.name,
-                            total: liveStore.right.points,
-                        }}
-                        leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
-                        rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
-                        onSupport={liveStore.support}
-                    />
+                    <div className="container">
+                        <MatchPointsSummarySection
+                            layout={mode}
+                            isLive={isLive}
+                            matchId={matchId}
+                            tipEnabled={tipEnabled}
 
-                    <RankingSection
-                        data={liveStore.rankingSupporters}
-                        isLoading={isMatchLoading}
-                    />
+                            left={{
+                                playerName: liveStore.left.name,
+                                teamLogoSrc: liveStore.left.teamLogoSrc || "",
+                                points: liveStore.left.points,
+                                playerId: liveStore.left.id,
+                            }}
+                            right={{
+                                playerName: liveStore.right.name,
+                                teamLogoSrc: liveStore.right.teamLogoSrc || "",
+                                points: liveStore.right.points,
+                                playerId: liveStore.right.id,
+                            }}
+                            supportOpen={false}
+                            onSupportLeft={(amount, supporterName) =>
+                                liveStore.support("left", amount, supporterName)
+                            }
+                            onSupportRight={(amount, supporterName) =>
+                                liveStore.support("right", amount, supporterName)
+                            }
+                        />
+
+                        <SupporterGridSection
+                            matchId={matchId}
+                            isLive={isLive}
+                            mode={mode}
+                            leftBossName={liveStore.left.name}
+                            rightBossName={liveStore.right.name}
+                            leftBoss={{
+                                name: liveStore.leftBoss.name,
+                                total: liveStore.left.points,
+                            }}
+                            rightBoss={{
+                                name: liveStore.rightBoss.name,
+                                total: liveStore.right.points,
+                            }}
+                            leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
+                            rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
+                            onSupport={liveStore.support}
+                        />
+
+                        <RankingSection
+                            data={liveStore.rankingSupporters}
+                            isLoading={isMatchLoading}
+                        />
+                    </div>
+
+                    <LatestNewsSection />
+                    <TakeGameSection />
+                    <FooterSection />
                 </div>
+            )}
 
-                <LatestNewsSection />
-                <TakeGameSection />
-                <FooterSection />
-            </div>
+
 
             <ReferralRegistrationPrompt
                 open={showRegistrationPrompt}
