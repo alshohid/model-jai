@@ -5,6 +5,7 @@ import {
 } from "@/types/support/liveSupportTypes";
 import {
   IBigBossSupporterResponse,
+  IPastSupportResponse,
   ISupportHistoryResponse,
   IUserTransactionsResponse,
 } from "@/types/support/supportmanagement";
@@ -54,6 +55,18 @@ const SupportManagementApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getPastMatchSupportList: builder.query<
+      IPastSupportResponse,
+      {
+        page?: number;
+        limit?: number;
+      }
+    >({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/past-supports?page=${page}&per_page=${limit}`,
+        method: "GET",
+      }),
+    }),
     placeSupport: builder.mutation<ISupportResponse, ISupportPayload>({
       query: (body) => ({
         url: `/support`,
@@ -81,6 +94,7 @@ export const {
   useGetBigBossSupporterRankingAllDataQuery,
   useGetUserTransactionsQuery,
   useGetSupportHistoryQuery,
+  useGetPastMatchSupportListQuery,
   usePlaceSupportMutation,
   useSendTipMutation,
 } = SupportManagementApi;

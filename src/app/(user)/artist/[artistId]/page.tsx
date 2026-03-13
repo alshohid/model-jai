@@ -13,7 +13,7 @@ export default function ArtistProfilePage() {
     const router = useRouter();
     const artistId = params.artistId as string;
 
-    // Mock artist data - in real app, fetch from API using artistId
+
     const [artistData, setArtistData] = useState({
         id: artistId,
         name: "Jeffson Jrcelestin",

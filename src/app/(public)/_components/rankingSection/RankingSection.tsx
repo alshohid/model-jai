@@ -17,7 +17,7 @@ const RankingSection = ({ data: propData, isLoading: propLoading }: Props) => {
 
     const finalData = propData ?? apiData?.data ?? [];
     const finalLoading = propLoading ?? apiLoading;
-    // console.log("final ::::: ", finalData);
+
     return (
         <section className="relative w-full ">
             {/* Background layer (clipped) */}

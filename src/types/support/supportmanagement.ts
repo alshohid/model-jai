@@ -80,3 +80,30 @@ export interface ISupportHistoryResponse {
   data: ISupportHistoryItem[];
   meta: ISupportHistoryMeta;
 }
+
+export type PastSupportResult = "pending" | "win" | "loss";
+
+export interface IPastSupportItem {
+  rank_no: string;
+  game_name: string;
+  match_no: string | number;
+  supported_player: string;
+  result: PastSupportResult;
+  range_points: string[];
+}
+
+export interface IPastSupportMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  prev: boolean;
+  next: boolean;
+}
+
+export interface IPastSupportResponse {
+  status: boolean;
+  message: string;
+  data: IPastSupportItem[];
+  meta: IPastSupportMeta;
+}
