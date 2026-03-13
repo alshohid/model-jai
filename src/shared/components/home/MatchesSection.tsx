@@ -14,7 +14,6 @@ const MatchesSection = () => {
     const [page, setPage] = useState(1);
     const limit = 10;
 
-    // API call for fetching matches
     const { data, isLoading } = useGetAllPublicMatchListQuery({
         page,
         limit,
@@ -22,15 +21,6 @@ const MatchesSection = () => {
     });
 
     const matches = data?.data || [];
-
-    const meta = data?.meta ?? {};
-
-    // Filter matches based on tab selection
-    const filtered = useMemo(() => {
-        if (tab === "all") return matches;
-        return matches.filter((m: any) => m.type === tab);
-    }, [matches, tab]);
-
     return (
         <section className="relative pt-2 md:pt-17.5">
             <div className="pointer-events-none absolute left-0 top-0 -z-10">
@@ -58,7 +48,7 @@ const MatchesSection = () => {
                 </div>
 
                 <div className="mt-10">
-                    <MatchesGrid matches={filtered} isLoading={isLoading} />
+                    <MatchesGrid matches={matches} isLoading={isLoading} />
                 </div>
             </div>
 
