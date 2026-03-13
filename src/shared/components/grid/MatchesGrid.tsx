@@ -34,12 +34,19 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
     const { isAuthenticated, role } = useAuth();
 
     const handleWatch = (matchId: string, platform: string) => {
-        if (!isAuthenticated || role === "user" || role === "artist") {
+        console.log(matchId, platform);
+
+        if (!isAuthenticated) {
             router.push(`/login?redirect=/live-stream/match/${matchId}?platform=${platform}`);
             return;
         }
 
-        router.push(`/live-stream/match/${matchId}?platform=${platform}`);
+        if (role === "user" || role === "artist") {
+            router.push(`/live-stream/match/${matchId}?platform=${platform}`);
+            return;
+        }
+
+        router.push(`/admin/dashboard`);
     };
 
     if (isLoading) {
