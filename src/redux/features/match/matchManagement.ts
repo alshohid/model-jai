@@ -60,6 +60,12 @@ const MatchManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Match"],
     }),
+    getTwitchStatusLiveCheck: builder.query({
+      query: () => ({
+        url: `/twitch/check_live`,
+        method: "GET",
+      }),
+    }),
     getSelectedTwoPlayerByMatchId: builder.query({
       query: (id) => ({
         url: `/admin/match-players/${id}`,
@@ -127,6 +133,7 @@ const MatchManagementApi = baseApi.injectEndpoints({
 export const {
   useGetAllMatchesQuery,
   useGetAllPublicMatchListQuery,
+  useGetTwitchStatusLiveCheckQuery,
   useGetSingleMatchByMatchIdQuery,
   useGetSelectedTwoPlayerByMatchIdQuery,
   useCreateMatchMutation,

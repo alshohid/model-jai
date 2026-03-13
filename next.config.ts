@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "modelboss.apphero.agency",
+        hostname: "model.devlaro.com",
         pathname: "/**",
       },
       {
