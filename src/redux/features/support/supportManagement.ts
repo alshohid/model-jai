@@ -7,6 +7,7 @@ import {
   IBigBossSupporterResponse,
   IPastSupportResponse,
   ISupportHistoryResponse,
+  ITwitchLiveStatusResponse,
   IUserTransactionsResponse,
 } from "@/types/support/supportmanagement";
 
@@ -67,6 +68,15 @@ const SupportManagementApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getTikTokAndTwitchLiveStatus: builder.query<
+      ITwitchLiveStatusResponse,
+      void
+    >({
+      query: () => ({
+        url: `/twitch/check_live`,
+        method: "GET",
+      }),
+    }),
     placeSupport: builder.mutation<ISupportResponse, ISupportPayload>({
       query: (body) => ({
         url: `/support`,
@@ -95,6 +105,7 @@ export const {
   useGetUserTransactionsQuery,
   useGetSupportHistoryQuery,
   useGetPastMatchSupportListQuery,
+  useGetTikTokAndTwitchLiveStatusQuery,
   usePlaceSupportMutation,
   useSendTipMutation,
 } = SupportManagementApi;
