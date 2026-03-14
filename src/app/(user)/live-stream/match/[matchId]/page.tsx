@@ -19,6 +19,7 @@ import {
 import { useGetSingleMatchByMatchIdQuery } from "@/redux/features/match/matchManagement";
 import { MatchDetailsSkeleton } from "@/components/ui/MatchDetailsSkeleton";
 import { useGetTikTokAndTwitchLiveStatusQuery } from "@/redux/features/support/supportManagement";
+import { useLiveStatus } from "@/shared/hooks/useLiveStatus";
 
 export default function MatchDetails({
     params,
@@ -29,7 +30,8 @@ export default function MatchDetails({
     const searchParams = useSearchParams();
     const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
     const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "twitch";
-
+    const { liveStatus, isLive: isLiveStatus, isPaused, isStopped, platformName, mode: liveMode } = useLiveStatus()
+    console.log("live broadcast data === > ", liveStatus, isLiveStatus, isPaused, isStopped, platformName, liveMode)
 
     const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
 

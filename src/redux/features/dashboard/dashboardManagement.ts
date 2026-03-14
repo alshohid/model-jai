@@ -3,6 +3,7 @@ import {
   IAdminEarningChartDataResponse,
   IRecentMatchDataResponse,
 } from "@/types/dashboard/dashboardManagementTypes";
+import { ILiveStatusChangedEvent } from "@/types/liveMatchDetails/liveStatus";
 import { IMatchListResponse } from "@/types/match/MatchManagementTypes";
 
 const DashboardManagementApi = baseApi.injectEndpoints({
@@ -41,6 +42,28 @@ const DashboardManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Match"],
     }),
+    getStartLiveMatchData: builder.query<ILiveStatusChangedEvent, void>({
+      query: () => {
+        return {
+          url: `/admin/dashboard`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Match"],
+    }),
+    changeMatchStatus: builder.mutation<
+      ILiveStatusChangedEvent,
+      { platform_name: string; status: string; mode: string }
+    >({
+      query: (data) => {
+        return {
+          url: `/admin/dashboard/change_live_status`,
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["Match"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -49,5 +72,7 @@ export const {
   useGetAdminEarningChartDataQuery,
   useGetRecentMatchDataQuery,
   useGetUpcomingMatchDataQuery,
+  useChangeMatchStatusMutation,
+  useGetStartLiveMatchDataQuery,
 } = DashboardManagementApi;
 export default DashboardManagementApi;

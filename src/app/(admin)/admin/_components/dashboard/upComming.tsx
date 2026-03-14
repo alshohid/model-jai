@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { ReactNode, useState } from "react";
@@ -6,8 +7,8 @@ import { IMatch } from "@/types/match/MatchManagementTypes";
 import WinnerSelectModal from "../match/WinnerSelectModal";
 import MatchConfirmationModal from "../match/MatchConfirmationModal";
 import { useGetUpcomingMatchDataQuery } from "@/redux/features/dashboard/dashboardManagement";
-import { Button } from "@/components/ui/button";
 import PrimaryCtaButton from "../reusable/PrimaryCtaButton";
+import LiveController from "./LiveController";
 
 
 
@@ -135,12 +136,8 @@ export default function UpComming() {
         <div className="w-full">
             <div className="flex items-center justify-between">
                 <h2 className="text-white text-2xl font-semibold">Upcoming Matches</h2>
-                <PrimaryCtaButton
-                // onClick={() => handleStartLive()}
+                <LiveController />
 
-                >
-                    Start Live
-                </PrimaryCtaButton>
             </div>
 
 
@@ -155,13 +152,6 @@ export default function UpComming() {
                     variant="rank-dark"
                 />
 
-                {/* <div className="mt-6">
-                    <AppPagination
-                        meta={meta}
-                        onPageChange={setPage}
-                        showSummary={false}
-                    />
-                </div> */}
             </div>
 
 

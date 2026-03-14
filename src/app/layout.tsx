@@ -7,6 +7,7 @@ import LenisProvider from "@/shared/providers/LenisProvider";
 import StoreProvider from "@/redux/StoreProvider";
 import AuthProvider from "@/redux/features/auth/AuthProvider";
 import { Toaster } from "sonner";
+import LiveStatusProvider from "@/shared/providers/LiveStatusProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,16 +36,18 @@ export default function RootLayout({
     <html lang="en" className="custom-scroll">
       <body
         className={`${inter.variable} ${manrope.variable} antialiased `}
-      > 
+      >
         <StoreProvider>
-          <AuthProvider> 
-        <LenisProvider>
-          <RouteProvider>
-            <Toaster position="top-right"/>
-            {children}
-          </RouteProvider>
-          </LenisProvider>
-        </AuthProvider>
+          <AuthProvider>
+            <LenisProvider>
+              <LiveStatusProvider>
+                <RouteProvider>
+                  <Toaster position="top-right" />
+                  {children}
+                </RouteProvider>
+              </LiveStatusProvider>
+            </LenisProvider>
+          </AuthProvider>
         </StoreProvider>
         {/* <TwScreenSize/> */}
       </body>
