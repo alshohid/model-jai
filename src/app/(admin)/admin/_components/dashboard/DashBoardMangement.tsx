@@ -6,8 +6,11 @@ import { FiSearch } from "react-icons/fi";
 import EarningsAnalyticsChart from "../dashboardIcons/EarningsAnalyticsChart";
 import RecentStreamsCard, { RecentStreamItem } from "./RecentStreamsCard";
 import UpComming from "./upComming";
+import { useGetRecentMatchDataQuery } from "@/redux/features/dashboard/dashboardManagement";
 
 const DashBoardManagement = () => {
+    const { data: recentMatchData, isLoading: isRecentMatchDataLoading } = useGetRecentMatchDataQuery();
+    console.log(recentMatchData?.data);
     const recentStreams: RecentStreamItem[] = [
         { id: "1", title: "Match Name", subtitle: "Bundle", amount: "$4500.99", timeAgo: "12 Min Ago" },
         { id: "2", title: "Match Name", subtitle: "Bundle", amount: "$4500.99", timeAgo: "12 Min Ago" },
@@ -33,16 +36,16 @@ const DashBoardManagement = () => {
                     <FiSearch className="absolute left-3 text-white/55" />
                 </form>
 
-                <PrimaryCtaButton
+                {/* <PrimaryCtaButton
                     onClick={() => console.log("create new match")}
                     className={cn("h-10 rounded-[14px]", "w-full sm:w-auto", "px-6 sm:px-10")}
                 >
                     Create New Match
-                </PrimaryCtaButton>
+                </PrimaryCtaButton> */}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-[8fr_4fr] gap-4">
-                <EarningsAnalyticsChart />
+                <EarningsAnalyticsChart year="2026" />
 
                 <RecentStreamsCard
                     items={recentStreams}
@@ -51,7 +54,7 @@ const DashBoardManagement = () => {
                 />
             </div>
             <div className="py-8">
-                <UpComming/>
+                <UpComming />
             </div>
         </div>
     );

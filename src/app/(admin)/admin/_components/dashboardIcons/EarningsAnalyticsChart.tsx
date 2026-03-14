@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
 import { cn } from "@/shared/lib/utils/cn";
+import { Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -13,14 +15,12 @@ import {
     ChartOptions,
     Plugin,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { useGetAdminEarningChartDataQuery } from "@/redux/features/dashboard/dashboardManagement";
+import { Loader } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
-type Props = {
-    className?: string;
-};
-
+// Custom vertical hover line plugin
 const verticalHoverLine: Plugin<"line"> = {
     id: "verticalHoverLine",
     afterDatasetsDraw(chart) {
@@ -43,6 +43,7 @@ const verticalHoverLine: Plugin<"line"> = {
     },
 };
 
+// External tooltip handler
 function getOrCreateTooltipEl(chart: any) {
     let el = chart.canvas.parentNode.querySelector(".app-chart-tooltip");
     if (!el) {
@@ -75,17 +76,14 @@ const externalTooltipHandler = (context: any) => {
       background:#fff;
       border-radius:10px;
       padding:10px 12px;
-      min-width:160px;
+      min-width:120px;
       box-shadow:0 18px 45px rgba(0,0,0,.35);
       font-family:Inter, system-ui, sans-serif;
     ">
       <div style="color:#FF2EC8;font-weight:600;font-size:12px;margin-bottom:6px;">${title}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-        <div style="display:flex;align-items:center;gap:6px;color:#222;font-size:12px;">
-          <span style="color:#16a34a;font-weight:700;">↗</span>
-          <span style="opacity:.8;">Income</span>
-        </div>
-        <div style="color:#111;font-weight:600;font-size:12px;">$${value}</div>
+      <div style="display:flex;justify-content:space-between;gap:10px;color:#111;font-weight:600;font-size:12px;">
+        <span>Income</span>
+        <span>$${value}</span>
       </div>
     </div>
   `;
@@ -96,11 +94,41 @@ const externalTooltipHandler = (context: any) => {
     el.style.top = posY + tooltip.caretY + "px";
 };
 
-export default function EarningsAnalyticsChart({ className }: Props) {
-    const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const values = [600, 520, 780, 640, 760, 720, 610, 650, 820, 560, 430, 590];
+type Props = {
+    year: string;
+    className?: string;
+};
 
-    const data = React.useMemo(() => {
+export default function EarningsAnalyticsChart({ year, className }: Props) {
+    // Fetch earnings data from API
+    const { data, isLoading } = useGetAdminEarningChartDataQuery({ year });
+
+    const labels = React.useMemo(
+        () =>
+            data?.data?.map((item) => item.month) || [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ],
+        [data]
+    );
+
+    const values = React.useMemo(
+        () =>
+            data?.data?.map((item) => Number(item.total)) || Array(12).fill(0),
+        [data]
+    );
+
+    const chartData = React.useMemo(() => {
         return {
             labels,
             datasets: [
@@ -111,7 +139,7 @@ export default function EarningsAnalyticsChart({ className }: Props) {
                     borderWidth: 2.5,
                     tension: 0.35,
                     fill: true,
-                    pointRadius: 0,              // ✅ default hide points (like screenshot)
+                    pointRadius: 0,
                     pointHoverRadius: 6,
                     pointHoverBorderWidth: 3,
                     pointHoverBorderColor: "#FF2EC8",
@@ -129,7 +157,7 @@ export default function EarningsAnalyticsChart({ className }: Props) {
                 },
             ],
         };
-    }, []);
+    }, [labels, values]);
 
     const options = React.useMemo<ChartOptions<"line">>(() => {
         return {
@@ -139,7 +167,7 @@ export default function EarningsAnalyticsChart({ className }: Props) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    enabled: false,               // ✅ we render custom tooltip
+                    enabled: false,
                     external: externalTooltipHandler,
                 },
             },
@@ -151,36 +179,34 @@ export default function EarningsAnalyticsChart({ className }: Props) {
                 },
                 y: {
                     ticks: { color: "rgba(255,255,255,0.45)", font: { size: 12 } },
-                    grid: {
-                        color: "rgba(255,255,255,0.18)",
-                        borderDash: [3, 6],         // ✅ dotted horizontal grid
-                    },
+                    grid: { color: "rgba(255,255,255,0.18)", borderDash: [3, 6] },
                     border: { display: false },
                 },
             },
         };
     }, []);
-
+    if (isLoading) {
+        return <div className="w-full h-[260px] sm:h-[320px] flex items-center justify-center">
+            <Loader />
+        </div>
+    }
     return (
         <div
             className={cn(
-                "w-full rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-xl",
-                "p-4 sm:p-5",
+                "w-full rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-xl p-4 sm:p-5",
                 className
             )}
         >
             <div className="flex items-center justify-between gap-3 mb-3">
-                <h3 className="text-white font-semibold text-[16px] sm:text-[18px]">
-                    Earnings Analytics
-                </h3>
+                <h3 className="text-white font-semibold text-[16px] sm:text-[18px]">Earnings Analytics</h3>
 
                 <div className="px-3 py-2 rounded-[10px] bg-white/10 border border-white/10 text-white/85 text-sm">
-                    Last Year ▾
+                    {year} ▾
                 </div>
             </div>
 
             <div className="relative h-[260px] sm:h-[320px]">
-                <Line data={data} options={options} plugins={[verticalHoverLine]} />
+                <Line data={chartData} options={options} plugins={[verticalHoverLine]} />
             </div>
         </div>
     );
