@@ -18,6 +18,7 @@ import {
 } from "@/shared/hooks/useReferralRedirect";
 import { useGetSingleMatchByMatchIdQuery } from "@/redux/features/match/matchManagement";
 import { MatchDetailsSkeleton } from "@/components/ui/MatchDetailsSkeleton";
+import { useGetTikTokAndTwitchLiveStatusQuery } from "@/redux/features/support/supportManagement";
 
 export default function MatchDetails({
     params,
@@ -27,19 +28,16 @@ export default function MatchDetails({
     const { matchId } = React.use(params);
     const searchParams = useSearchParams();
     const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
-    const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "tiktok";
+    const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "twitch";
 
-    const playbackId = "00H88JLrnB44kSp100PdoEyP4f2kwdAEI7WGRpRiXl6t8";
 
-    const [scheduledAt] = useState<string | null>(() => {
-        if (typeof window !== "undefined") {
-            return new Date(Date.now() + 1000 * 1000).toISOString();
-        }
-        return null;
-    });
+    const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
 
-    const { isLive } = useMatchLiveStatus({ scheduledAt: scheduledAt ?? "" });
-
+    const isLive =
+        mode === "twitch"
+            ? Boolean(twitchLiveData?.data?.is_live)
+            : true;
+    const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const { data: matchData, isLoading: isMatchLoading } =
         useGetSingleMatchByMatchIdQuery(matchId);
 
@@ -72,7 +70,7 @@ export default function MatchDetails({
                 <div className="w-full">
                     <LiveMatchStage
                         matchId={matchId}
-                        playbackId={playbackId}
+                        twitchChannel={twitchChannel}
                         isLive={isLive}
                         mode={mode}
                         supportClosed={supportClosed}

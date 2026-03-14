@@ -171,7 +171,7 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
         applySupportData(response.data);
         toast.success("Support placed successfully");
       } catch (error: any) {
-        toast.error(error.message);
+        toast.error(error.message || "Failed to place support");
       }
     },
     [applySupportData, left.id, matchId, placeSupport, right.id],
