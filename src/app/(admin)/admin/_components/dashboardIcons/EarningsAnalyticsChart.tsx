@@ -20,7 +20,7 @@ import { Loader } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
-// Custom vertical hover line plugin
+// Vertical hover line plugin
 const verticalHoverLine: Plugin<"line"> = {
     id: "verticalHoverLine",
     afterDatasetsDraw(chart) {
@@ -43,7 +43,7 @@ const verticalHoverLine: Plugin<"line"> = {
     },
 };
 
-// External tooltip handler
+// External tooltip
 function getOrCreateTooltipEl(chart: any) {
     let el = chart.canvas.parentNode.querySelector(".app-chart-tooltip");
     if (!el) {
@@ -94,115 +94,81 @@ const externalTooltipHandler = (context: any) => {
     el.style.top = posY + tooltip.caretY + "px";
 };
 
-type Props = {
-    year: string;
-    className?: string;
-};
+export default function EarningsAnalyticsChart({ className }: { className?: string }) {
+    const [selectedYear, setSelectedYear] = React.useState("2026");
 
-export default function EarningsAnalyticsChart({ year, className }: Props) {
-    // Fetch earnings data from API
-    const { data, isLoading } = useGetAdminEarningChartDataQuery({ year });
+    // Fetch API for selected year
+    const { data, isLoading } = useGetAdminEarningChartDataQuery({ year: selectedYear });
 
     const labels = React.useMemo(
-        () =>
-            data?.data?.map((item) => item.month) || [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
+        () => data?.data?.map((item) => item.month) || ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         [data]
     );
 
     const values = React.useMemo(
-        () =>
-            data?.data?.map((item) => Number(item.total)) || Array(12).fill(0),
+        () => data?.data?.map((item) => Number(item.total)) || Array(12).fill(0),
         [data]
     );
 
-    const chartData = React.useMemo(() => {
-        return {
-            labels,
-            datasets: [
-                {
-                    label: "Income",
-                    data: values,
-                    borderColor: "#FF2EC8",
-                    borderWidth: 2.5,
-                    tension: 0.35,
-                    fill: true,
-                    pointRadius: 0,
-                    pointHoverRadius: 6,
-                    pointHoverBorderWidth: 3,
-                    pointHoverBorderColor: "#FF2EC8",
-                    pointHoverBackgroundColor: "#FFFFFF",
-                    backgroundColor: (ctx: any) => {
-                        const { chart } = ctx;
-                        const { ctx: c, chartArea } = chart;
-                        if (!chartArea) return "rgba(255,46,200,0.20)";
-
-                        const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                        g.addColorStop(0, "rgba(255,46,200,0.30)");
-                        g.addColorStop(1, "rgba(255,46,200,0.00)");
-                        return g;
-                    },
-                },
-            ],
-        };
-    }, [labels, values]);
-
-    const options = React.useMemo<ChartOptions<"line">>(() => {
-        return {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: "index", intersect: false },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    enabled: false,
-                    external: externalTooltipHandler,
+    const chartData = React.useMemo(() => ({
+        labels,
+        datasets: [
+            {
+                label: "Income",
+                data: values,
+                borderColor: "#FF2EC8",
+                borderWidth: 2.5,
+                tension: 0.35,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                pointHoverBorderWidth: 3,
+                pointHoverBorderColor: "#FF2EC8",
+                pointHoverBackgroundColor: "#FFFFFF",
+                backgroundColor: (ctx: any) => {
+                    const { chart } = ctx;
+                    const { ctx: c, chartArea } = chart;
+                    if (!chartArea) return "rgba(255,46,200,0.20)";
+                    const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                    g.addColorStop(0, "rgba(255,46,200,0.30)");
+                    g.addColorStop(1, "rgba(255,46,200,0.00)");
+                    return g;
                 },
             },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: "rgba(255,255,255,0.45)", font: { size: 12 } },
-                    border: { display: false },
-                },
-                y: {
-                    ticks: { color: "rgba(255,255,255,0.45)", font: { size: 12 } },
-                    grid: { color: "rgba(255,255,255,0.18)", borderDash: [3, 6] },
-                    border: { display: false },
-                },
-            },
-        };
-    }, []);
-    if (isLoading) {
-        return <div className="w-full h-[260px] sm:h-[320px] flex items-center justify-center">
-            <Loader />
-        </div>
-    }
+        ],
+    }), [labels, values]);
+
+    const options: ChartOptions<"line"> = React.useMemo(() => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false, external: externalTooltipHandler },
+        },
+        scales: {
+            x: { grid: { display: false }, ticks: { color: "rgba(255,255,255,0.45)", font: { size: 12 } }, border: { display: false } },
+            y: { ticks: { color: "rgba(255,255,255,0.45)", font: { size: 12 } }, grid: { color: "rgba(255,255,255,0.18)", borderDash: [3, 6] }, border: { display: false } },
+        },
+    }), []);
+
+    if (isLoading) return <div className="w-full h-[260px] sm:h-[320px] flex items-center justify-center"><Loader /></div>;
+
     return (
-        <div
-            className={cn(
-                "w-full rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-xl p-4 sm:p-5",
-                className
-            )}
-        >
+        <div className={cn("w-full rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-xl p-4 sm:p-5", className)}>
             <div className="flex items-center justify-between gap-3 mb-3">
                 <h3 className="text-white font-semibold text-[16px] sm:text-[18px]">Earnings Analytics</h3>
 
-                <div className="px-3 py-2 rounded-[10px] bg-white/10 border border-white/10 text-white/85 text-sm">
-                    {year} ▾
-                </div>
+                {/* Year selector */}
+                <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="px-3 py-2 rounded-[10px] bg-white/10 border border-white/10 text-white/85 text-sm focus:outline-none focus:border-[#FF2EC8]/40"
+                >
+                    {["2026", "2027", "2028", "2029", "2030", "2031"].map((year) => (
+                        <option className="bg-black" key={year} value={year}>{year}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="relative h-[260px] sm:h-[320px]">

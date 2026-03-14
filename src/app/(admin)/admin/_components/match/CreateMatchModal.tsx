@@ -123,12 +123,12 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         }
                         className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
-                        <option value="" className="text-black">
+                        <option value="" className="text-white">
                             Select Game
                         </option>
 
                         {games?.data?.map((g: any) => (
-                            <option key={g.id} value={g.id} className="text-black">
+                            <option key={g.id} value={g.id} className="text-white">
                                 {g.name}
                             </option>
                         ))}
@@ -146,12 +146,12 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         }
                         className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
-                        <option value="" className="text-black">
+                        <option value="" className="text-white">
                             Select Player
                         </option>
 
                         {filteredPlayerOne?.map((p: any) => (
-                            <option key={p.id} value={p.id} className="text-black">
+                            <option key={p.id} value={p.id} className="text-white">
                                 {p.name}
                             </option>
                         ))}
@@ -169,12 +169,12 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         }
                         className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
-                        <option value="" className="text-black">
+                        <option value="" className="text-white">
                             Select Player
                         </option>
 
                         {filteredPlayerTwo?.map((p: any) => (
-                            <option key={p.id} value={p.id} className="text-black">
+                            <option key={p.id} value={p.id} className="text-white">
                                 {p.name}
                             </option>
                         ))}
@@ -207,12 +207,12 @@ export default function CreateMatchModal({ open, onClose }: any) {
                         }
                         className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
-                        <option value="" className="text-black">
+                        <option value="" className="text-white">
                             Select Type
                         </option>
 
                         {["live", "upcoming", "completed"].map((t) => (
-                            <option key={t} value={t} className="text-black">
+                            <option key={t} value={t} className="text-white">
                                 {t}
                             </option>
                         ))}

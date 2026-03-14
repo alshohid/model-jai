@@ -113,7 +113,7 @@ export default function LiveMatchStage({
                             </>
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-white/60">
-                                Twitch channel not found.
+                                Live Starts soon...
                             </div>
                         )
                     ) : (

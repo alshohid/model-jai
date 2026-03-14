@@ -3,6 +3,7 @@ import {
   IAdminEarningChartDataResponse,
   IRecentMatchDataResponse,
 } from "@/types/dashboard/dashboardManagementTypes";
+import { IMatchListResponse } from "@/types/match/MatchManagementTypes";
 
 const DashboardManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -28,10 +29,25 @@ const DashboardManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Dashboard"],
     }),
+    getUpcomingMatchData: builder.query<
+      IMatchListResponse,
+      { page: number; limit: number }
+    >({
+      query: ({ page, limit = 30 }: { page: number; limit: number }) => {
+        return {
+          url: `/admin/running-matches?page=${page}&per_page=${limit}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Match"],
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetAdminEarningChartDataQuery, useGetRecentMatchDataQuery } =
-  DashboardManagementApi;
+export const {
+  useGetAdminEarningChartDataQuery,
+  useGetRecentMatchDataQuery,
+  useGetUpcomingMatchDataQuery,
+} = DashboardManagementApi;
 export default DashboardManagementApi;

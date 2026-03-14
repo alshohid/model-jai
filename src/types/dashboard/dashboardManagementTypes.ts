@@ -11,6 +11,7 @@ export interface IAdminEarningChartDataResponse {
 export interface IRecentMatchData {
   match_no: string;
   total_earnings: string;
+  end_time: string;
 }
 export interface IRecentMatchDataResponse {
   success: boolean;
