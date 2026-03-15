@@ -31,12 +31,10 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
     React.useEffect(() => {
         if (!api) return;
         setCount(api.scrollSnapList().length)
-        console.log("count set to", api.slideNodes().length);
 
         const onSelect = () => {
             const curr = api.selectedScrollSnap();
             setCurrent(curr);
-            console.log("current set to", curr);
         };
         onSelect();
         api.on("select", onSelect);
@@ -97,7 +95,6 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                     <button
                         key={`page-${i}`}
                         onClick={() => {
-                            console.log("clicking button", i);
                             api?.scrollTo(i);
                         }}
                         className={cn(

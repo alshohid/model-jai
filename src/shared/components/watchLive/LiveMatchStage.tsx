@@ -8,6 +8,7 @@ import type { SupportSide } from "@/shared/components/watchLive/types";
 import { PlayerCard } from "../card/PlayerCard";
 import { StageProps } from "@/types/liveMatchDetails/LiveMatchStage";
 import TwitchEmbedPlayer from "./TwitchEmbededPlayer";
+import TwitchPlayer from "./TwitchPlayer";
 
 
 export default function LiveMatchStage({
@@ -89,42 +90,59 @@ export default function LiveMatchStage({
                         }
                     />
                 </div>
-
-                <div
-                    className={cn(
-                        mode === "tiktok"
-                            ? "w-full max-w-xs mx-auto aspect-9/16"
-                            : "w-full aspect-video",
-                        "relative rounded-xl overflow-hidden border border-white/10"
-                    )}
-                >
-                    {mode === "twitch" ? (
-                        twitchChannel ? (
-                            <>
-                                <TwitchEmbedPlayer
-                                    channel={twitchChannel}
-                                    autoplay
-                                    muted={false}
-                                    className="absolute inset-0 w-full h-full"
+                {isLive && (
+                    <div
+                        className={cn(
+                            mode === "portrait"
+                                ? "w-full max-w-xs mx-auto aspect-9/16 object-contain "
+                                : "w-full h-auto aspect-video ",
+                            "relative rounded-xl overflow-hidden border border-white/10"
+                        )}
+                    >
+                        {
+                            mode === "landscape" || mode === "portrait" ? (
+                                <>
+                                    <TwitchPlayer />
+                                    {/* <div className="absolute inset-0 z-10 bg-transparent" /> */}
+                                </>
+                            ) : (
+                                <Image
+                                    src="/images/home/demo_pitch.jpg"
+                                    alt="match"
+                                    fill
+                                    className="object-cover"
                                 />
+                            )
+                        }
+                        {/* {mode === "landscape" || mode === "portrait" ? (
+                            twitchChannel ? (
+                                <>
+                                <TwitchPlayer />
+                                    <TwitchEmbedPlayer
+                                        channel={twitchChannel}
+                                        autoplay={true}
+                                        muted={false}
+                                        className="absolute inset-0 w-full h-full"
+                                    />
 
 
-                                <div className="absolute inset-0 z-10 bg-transparent" />
-                            </>
+                                    <div className="absolute inset-0 z-10 bg-transparent" />
+                                </>
+                            ) : (
+                                <div className="absolute inset-0 flex items-center justify-center text-white/60">
+                                    Live Starts soon...
+                                </div>
+                            )
                         ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-white/60">
-                                Live Starts soon...
-                            </div>
-                        )
-                    ) : (
-                        <Image
-                            src="/images/home/demo_pitch.jpg"
-                            alt="match"
-                            fill
-                            className="object-cover"
-                        />
-                    )}
-                </div>
+                            <Image
+                                src="/images/home/demo_pitch.jpg"
+                                alt="match"
+                                fill
+                                className="object-cover"
+                            />
+                        )} */}
+                    </div>
+                )}
             </div>
 
             <SupportDialog

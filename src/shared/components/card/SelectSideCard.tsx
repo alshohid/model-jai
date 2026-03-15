@@ -7,7 +7,7 @@ export function SelectSideCard({
     sideLabel, // optional: "Matched" / "Unmatched"
     onClick,
 }: {
-    mode: "tiktok" | "twitch";
+    mode: "landscape" | "portrait";
     selected: boolean;
     name: string;        // ✅ JACK / STEEVE
     sideLabel?: string;  // ✅ optional
@@ -24,7 +24,7 @@ export function SelectSideCard({
                 "border transition text-left",
                 "bg-black/35 backdrop-blur-md",
                 selected
-                    ?  "border-2 border-yellow-400"
+                    ? "border-2 border-yellow-400"
                     : "border border-white/15 opacity-85 hover:opacity-100"
             )}
             aria-pressed={selected}
@@ -41,8 +41,8 @@ export function SelectSideCard({
                 className={cn(
                     "font-extrabold leading-none truncate",
                     "text-[18px] sm:text-[22px]",
-                    selected 
-                        ? "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-white to-pink-300" :"text-[#DD2E03] [-webkit-text-stroke:1px_#F9C80E]"
+                    selected
+                        ? "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-white to-pink-300" : "text-[#DD2E03] [-webkit-text-stroke:1px_#F9C80E]"
 
                 )}
                 style={{ fontFamily: "Manrope" }}

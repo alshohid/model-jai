@@ -1,9 +1,7 @@
-import { MatchMode, TeamInfo } from "@/shared/components/watchLive/types";
+import { TeamInfo } from "@/shared/components/watchLive/types";
 
 export interface MatchPointsSummarySectionProps {
-  layout: MatchMode;
   isLive: boolean;
-  supportOpen?: boolean;
   left: TeamInfo;
   right: TeamInfo;
   matchId?: string;

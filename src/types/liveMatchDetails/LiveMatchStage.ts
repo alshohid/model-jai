@@ -6,7 +6,7 @@ export interface StageProps {
   isLive: boolean;
   tipEnabled?: boolean;
 
-  mode?: "tiktok" | "twitch";
+  mode?: "landscape" | "portrait";
   supportClosed: boolean;
 
   left: { name: string; points: number; imageSrc: string };

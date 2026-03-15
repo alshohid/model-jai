@@ -23,7 +23,7 @@ export default function AdminTopBar({
     const pathname = usePathname();
     const title = titleFromPath(pathname);
     const { data, isLoading } = useGetMeDataQuery()
-    console.log(data, "data");
+
 
     return (
         <header
