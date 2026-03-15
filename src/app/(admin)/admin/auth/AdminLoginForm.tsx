@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -33,7 +34,7 @@ export default function AdminLoginForm() {
             }).unwrap()
 
             if (loginResult.success) {
-                role === "user" || role === "artist" ? router.replace("/") : router.replace("/admin/dashboard");
+                role === "super_admin" ? router.replace("/admin/dashboard") : router.replace("/");
             }
         } catch (error) {
             setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));
