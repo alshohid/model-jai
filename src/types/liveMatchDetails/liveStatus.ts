@@ -9,7 +9,7 @@ export interface ILiveStatusData {
   mode: TLiveMode;
   live_started_at: string | null;
   live_stopped_at: string | null;
-  live_status: ILiveStatusData;
+  live_status: ILiveStatusData[];
 }
 
 export interface IStartLiveMatchResponse {

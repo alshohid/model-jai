@@ -6,7 +6,6 @@ import TakeGameSection from "@/shared/components/home/TakeGameSection";
 
 const PointStore = () => {
 
-    console.log("PointStore page");
     return (
         <div>
             {/* <WalletDepositeSection /> */}

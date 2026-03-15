@@ -31,7 +31,6 @@ export default function LiveStatusProvider({
         const channel = echo.channel(channelName);
 
         channel.listen(".status.changed", (event: any) => {
-            console.log("Live status broadcast received:", event);
             if (event?.liveStatus) {
 
                 dispatch(setLiveStatus(event.liveStatus));

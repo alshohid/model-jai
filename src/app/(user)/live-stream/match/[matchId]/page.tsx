@@ -26,7 +26,7 @@ export default function MatchDetails({
 }) {
     const { matchId } = React.use(params);
     const { isLive: isLiveStatus, isPaused, isStopped, platformName, mode: liveMode } = useLiveStatus()
-    console.log("isLiveStatus==>", isLiveStatus, "isPaused==>", isPaused, "isStopped==>", isStopped, "platformName==>", platformName, "liveMode==>", liveMode)
+
 
     const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
 

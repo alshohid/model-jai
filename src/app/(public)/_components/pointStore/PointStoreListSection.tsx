@@ -10,6 +10,7 @@ import BuyPointsDialog, { PointPack } from "@/shared/components/modal/BuyPointsD
 import Image from "next/image";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { useBuyPointMutation } from "@/redux/features/pointstore/buypoint";
+import { toast } from "sonner";
 
 export default function PointStoreListSection() {
     const { isAuthenticated, role } = useAuth();
@@ -62,11 +63,13 @@ export default function PointStoreListSection() {
             const checkoutUrl = result?.data?.url;
             if (!checkoutUrl) {
                 console.log("Stripe URL missing", result);
+                toast.error("Stripe URL missing");
                 return;
             }
             window.location.href = checkoutUrl;
         } catch (error) {
             console.log("Stripe payment error:", error);
+            toast.error("Stripe payment error");
         }
     };
 
