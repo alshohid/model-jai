@@ -27,7 +27,7 @@ export default function LiveController() {
     return (
         <div className="flex gap-3">
             <button
-                onClick={() => handleChangeStatus("live", "twitch", "landscape")}
+                onClick={() => handleChangeStatus("live", "twitch", "portrait")}
                 className="px-4 py-2 bg-green-600 text-white rounded-md"
                 disabled={isLoading}
             >

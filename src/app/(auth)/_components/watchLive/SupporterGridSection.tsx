@@ -11,7 +11,7 @@ import { BossCard } from "@/shared/components/card/BossCard";
 export default function SupporterGridSection({
     matchId,
     mode,
-    isLive,
+    // isLive,
     leftBoss,
     rightBoss,
     leftImg,
@@ -21,8 +21,8 @@ export default function SupporterGridSection({
     rightBossName,
 }: {
     matchId: string;
-    mode: "tiktok" | "twitch";
-    isLive: boolean;
+    mode: "landscape" | "portrait";
+    // isLive: boolean;
     leftBoss: { name: string; total: number };
     rightBoss: { name: string; total: number };
     rightImg: string;

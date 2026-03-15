@@ -5,7 +5,6 @@ import { useAppSelector } from "@/redux/store";
 export function useLiveStatus() {
   const liveStatus = useAppSelector((state) => state.liveStatus.liveStatus);
   const isHydrated = useAppSelector((state) => state.liveStatus.isHydrated);
-
   return {
     liveStatus,
     isHydrated,

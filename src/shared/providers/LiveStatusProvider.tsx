@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { PropsWithChildren, useEffect } from "react";
 import { getEcho } from "@/shared/lib/echo";
-import { useGetStartLiveMatchDataQuery } from "@/redux/features/dashboard/dashboardManagement";
+import { useGetLiveStatusQuery } from "@/redux/features/dashboard/dashboardManagement";
 import { useAppDispatch } from "@/redux/store";
 import { setLiveStatus } from "@/redux/features/live/liveStatusReducer";
-import { ILiveStatusChangedEvent } from "@/types/liveMatchDetails/liveStatus";
+// import { ILiveStatusChangedEvent } from "@/types/liveMatchDetails/liveStatus";
 
 
 export default function LiveStatusProvider({
@@ -13,12 +14,10 @@ export default function LiveStatusProvider({
 }: PropsWithChildren) {
     const dispatch = useAppDispatch();
 
-    const { data } = useGetStartLiveMatchDataQuery();
-
-    // initial API data -> redux
+    const { data } = useGetLiveStatusQuery();
     useEffect(() => {
-        if (data?.data) {
-            dispatch(setLiveStatus(data?.data));
+        if (data?.data?.live_status && data?.data?.live_status?.length > 0) {
+            dispatch(setLiveStatus(data?.data?.live_status[0]));
         }
     }, [data, dispatch]);
 
@@ -31,10 +30,11 @@ export default function LiveStatusProvider({
 
         const channel = echo.channel(channelName);
 
-        channel.listen(".status.changed", (event: ILiveStatusChangedEvent) => {
+        channel.listen(".status.changed", (event: any) => {
             console.log("Live status broadcast received:", event);
-            if (event?.data) {
-                dispatch(setLiveStatus(event.data));
+            if (event?.liveStatus) {
+
+                dispatch(setLiveStatus(event.liveStatus));
             }
         });
 

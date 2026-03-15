@@ -24,13 +24,11 @@ import { toast } from "sonner";
 
 export default function MatchPointsSummarySection({
     isLive,
-    supportOpen = false,
     tipEnabled,
     left,
     right,
     matchId,
     className,
-    layout = "tiktok",
     onSupportLeft,
     onSupportRight,
 

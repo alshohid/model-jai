@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
 import {
   IAdminEarningChartDataResponse,
@@ -51,6 +52,15 @@ const DashboardManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Match"],
     }),
+    getLiveStatus: builder.query<any, void>({
+      query: () => {
+        return {
+          url: `/get_live_staus`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Match"],
+    }),
     changeMatchStatus: builder.mutation<
       ILiveStatusChangedEvent,
       { platform_name: string; status: string; mode: string }
@@ -73,6 +83,7 @@ export const {
   useGetRecentMatchDataQuery,
   useGetUpcomingMatchDataQuery,
   useChangeMatchStatusMutation,
+  useGetLiveStatusQuery,
   useGetStartLiveMatchDataQuery,
 } = DashboardManagementApi;
 export default DashboardManagementApi;

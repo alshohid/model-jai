@@ -4,9 +4,7 @@ import React, { useMemo, useState } from "react";
 import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
-import { useMatchLiveStatus } from "@/shared/providers/hook/useMatchLiveStatus";
 import { useMatchDemoStore } from "@/shared/hooks/useMatchDemoStore";
-import { useSearchParams } from "next/navigation";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import RankingSection from "@/app/(public)/_components/rankingSection/RankingSection";
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
@@ -27,18 +25,13 @@ export default function MatchDetails({
     params: Promise<{ matchId: string }>;
 }) {
     const { matchId } = React.use(params);
-    const searchParams = useSearchParams();
-    const platform = (searchParams.get("platform") ?? "tiktok").toLowerCase();
-    const mode: "tiktok" | "twitch" = platform === "twitch" ? "twitch" : "twitch";
-    const { liveStatus, isLive: isLiveStatus, isPaused, isStopped, platformName, mode: liveMode } = useLiveStatus()
-    console.log("live broadcast data === > ", liveStatus, isLiveStatus, isPaused, isStopped, platformName, liveMode)
+    const { isLive: isLiveStatus, isPaused, isStopped, platformName, mode: liveMode } = useLiveStatus()
+    console.log("isLiveStatus==>", isLiveStatus, "isPaused==>", isPaused, "isStopped==>", isStopped, "platformName==>", platformName, "liveMode==>", liveMode)
 
     const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
 
-    const isLive =
-        mode === "twitch"
-            ? Boolean(twitchLiveData?.data?.is_live)
-            : true;
+    const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus;
+
     const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const { data: matchData, isLoading: isMatchLoading } =
         useGetSingleMatchByMatchIdQuery(matchId);
@@ -51,7 +44,7 @@ export default function MatchDetails({
 
     const liveStore = useMatchDemoStore(matchId, currentMatch);
 
-    const supportClosed = isLive;
+    const supportClosed = isLiveContinue;
 
     const {
         showRegistrationPrompt,
@@ -73,8 +66,8 @@ export default function MatchDetails({
                     <LiveMatchStage
                         matchId={matchId}
                         twitchChannel={twitchChannel}
-                        isLive={isLive}
-                        mode={mode}
+                        isLive={isLiveContinue}
+                        mode={liveMode as "portrait" | "landscape" | undefined}
                         supportClosed={supportClosed}
                         left={liveStore.left}
                         right={liveStore.right}
@@ -90,8 +83,8 @@ export default function MatchDetails({
 
                     <div className="container">
                         <MatchPointsSummarySection
-                            layout={mode}
-                            isLive={isLive}
+
+                            isLive={isLiveContinue}
                             matchId={matchId}
                             tipEnabled={tipEnabled}
 
@@ -107,7 +100,7 @@ export default function MatchDetails({
                                 points: liveStore.right.points,
                                 playerId: liveStore.right.id,
                             }}
-                            supportOpen={false}
+                            // supportOpen={false}
                             onSupportLeft={(amount, supporterName) =>
                                 liveStore.support("left", amount, supporterName)
                             }
@@ -118,8 +111,7 @@ export default function MatchDetails({
 
                         <SupporterGridSection
                             matchId={matchId}
-                            isLive={isLive}
-                            mode={mode}
+                            mode={(liveMode as "landscape" | "portrait") || "landscape"}
                             leftBossName={liveStore.left.name}
                             rightBossName={liveStore.right.name}
                             leftBoss={{

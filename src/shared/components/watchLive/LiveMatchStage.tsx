@@ -89,42 +89,43 @@ export default function LiveMatchStage({
                         }
                     />
                 </div>
+                {isLive && (
+                    <div
+                        className={cn(
+                            mode === "portrait"
+                                ? "w-full max-w-xs mx-auto aspect-9/16"
+                                : "w-full aspect-video",
+                            "relative rounded-xl overflow-hidden border border-white/10"
+                        )}
+                    >
+                        {mode === "landscape" || mode === "portrait" ? (
+                            twitchChannel ? (
+                                <>
+                                    <TwitchEmbedPlayer
+                                        channel={twitchChannel}
+                                        autoplay
+                                        muted={false}
+                                        className="absolute inset-0 w-full h-full"
+                                    />
 
-                <div
-                    className={cn(
-                        mode === "tiktok"
-                            ? "w-full max-w-xs mx-auto aspect-9/16"
-                            : "w-full aspect-video",
-                        "relative rounded-xl overflow-hidden border border-white/10"
-                    )}
-                >
-                    {mode === "twitch" ? (
-                        twitchChannel ? (
-                            <>
-                                <TwitchEmbedPlayer
-                                    channel={twitchChannel}
-                                    autoplay
-                                    muted={false}
-                                    className="absolute inset-0 w-full h-full"
-                                />
 
-
-                                <div className="absolute inset-0 z-10 bg-transparent" />
-                            </>
+                                    <div className="absolute inset-0 z-10 bg-transparent" />
+                                </>
+                            ) : (
+                                <div className="absolute inset-0 flex items-center justify-center text-white/60">
+                                    Live Starts soon...
+                                </div>
+                            )
                         ) : (
-                            <div className="absolute inset-0 flex items-center justify-center text-white/60">
-                                Live Starts soon...
-                            </div>
-                        )
-                    ) : (
-                        <Image
-                            src="/images/home/demo_pitch.jpg"
-                            alt="match"
-                            fill
-                            className="object-cover"
-                        />
-                    )}
-                </div>
+                            <Image
+                                src="/images/home/demo_pitch.jpg"
+                                alt="match"
+                                fill
+                                className="object-cover"
+                            />
+                        )}
+                    </div>
+                )}
             </div>
 
             <SupportDialog
