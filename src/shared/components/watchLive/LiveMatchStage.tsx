@@ -150,7 +150,7 @@ export default function LiveMatchStage({
                 onOpenChange={supportDialog.closeDialog}
                 playerName={getPlayerName()}
                 side={supportDialog.selectedSide}
-                defaultSupporterName="Michael Rohan"
+                defaultSupporterName={getPlayerName()}
                 defaultAmount={100}
                 onConfirm={handleSupportConfirm}
             />
