@@ -32,11 +32,11 @@ export default function FlyingPeso({
 
     return (
         <div
-            className="fixed bottom-1/2 left-1/2 pointer-events-none z-[9999]"
+            className="fixed bottom-1/2 pointer-events-none z-[9999]"
             style={{
+                left: `${xPercent}%`,
                 transform: "translateX(-50%)",
                 animation: "pesoFly var(--dur) ease-out forwards",
-                ["--tx" as string]: `${xPercent - 50}%`,
                 ["--ty" as string]: `${ty}px`,
                 ["--rot" as string]: `${rot}deg`,
                 ["--dur" as string]: `${dur}ms`,
@@ -54,7 +54,7 @@ export default function FlyingPeso({
                     }
                     100% {
                         opacity: 0;
-                        transform: translateX(calc(-50% + var(--tx))) translateY(var(--ty))
+                        transform: translateX(-50%) translateY(var(--ty))
                             scale(0.5) rotate(var(--rot));
                     }
                 }
