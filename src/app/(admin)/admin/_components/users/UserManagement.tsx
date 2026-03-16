@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -19,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import CreateUserModal from "./CreateUserModal";
 import { toast } from "sonner";
 import { useDebounce } from "../../hook/useDebounce";
+import { FiSearch } from "react-icons/fi";
+import { cn } from "@/lib/utils";
 
 
 export type RankRowItem = {
@@ -72,8 +75,10 @@ export default function UserManagement() {
             keyword: debouncedKeyword,
             role: roleParam,
         });
-    const { data: usersData, isLoading, isFetching } =
-        useGetAllUsersQuery({ page, limit });
+    const { data: usersData, isLoading, isFetching } = useGetAllUsersQuery({
+        search: debouncedKeyword,
+        page, limit
+    });
     const [changeUserRole] = useChangeUserRoleMutation();
 
 
@@ -248,6 +253,25 @@ export default function UserManagement() {
                 <Button onClick={() => setCreateUserModalOpen(true)}>
                     <span><PlusIcon /></span> Add User
                 </Button>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 py-6 sm:py-10">
+                <form className="flex items-center relative w-full sm:w-[320px] lg:w-[420px]">
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        className={cn(
+                            "w-full h-10 rounded-[12px]",
+                            "bg-white/5 border border-white/10",
+                            "text-white/85 placeholder:text-white/40",
+                            "pl-10 pr-3 outline-none",
+                            "focus:border-[#FF2EC8]/40"
+                        )}
+                    />
+                    <FiSearch className="absolute left-3 text-white/55" />
+                </form>
+
             </div>
 
             <div className="py-10">
