@@ -25,25 +25,18 @@ export default function MatchDetails({
     params: Promise<{ matchId: string }>;
 }) {
     const { matchId } = React.use(params);
-    const { isLive: isLiveStatus, isPaused, isStopped, platformName, mode: liveMode } = useLiveStatus()
-
-
-    const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
-
-    const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus;
-
-    const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const { data: matchData, isLoading: isMatchLoading } =
         useGetSingleMatchByMatchIdQuery(matchId);
-
+    const { isLive: isLiveStatus, mode: liveMode } = useLiveStatus()
+    const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
     const currentMatch = useMemo(() => {
         return (
             matchData?.data || null
         );
     }, [matchData]);
-
     const liveStore = useMatchDemoStore(matchId, currentMatch);
-
+    const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus && matchData?.data?.type === "live";
+    const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const supportClosed = isLiveContinue;
 
     const {

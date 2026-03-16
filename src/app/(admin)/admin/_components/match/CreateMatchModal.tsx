@@ -6,7 +6,7 @@ import AppDialog from "@/shared/components/modal/AppDialog";
 import { useGetAllGamesQuery } from "@/redux/features/game/gameListManagement";
 import { useGetAllPlayerQuery } from "@/redux/features/user/userManagement";
 import { useCreateMatchMutation } from "@/redux/features/match/matchManagement";
-import { MatchType } from "@/types/match/MatchManagementTypes";
+
 
 export default function CreateMatchModal({ open, onClose }: any) {
 
@@ -40,8 +40,8 @@ export default function CreateMatchModal({ open, onClose }: any) {
             !form.player_two_id ||
             !form.players_bet_amount ||
             !form.match_date ||
-            !form.match_time ||
-            !form.type
+            !form.match_time
+
         ) {
             setError("All fields are required.");
             return;
@@ -67,7 +67,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                 player_one_id: Number(form.player_one_id),
                 player_two_id: Number(form.player_two_id),
                 players_bet_amount: Number(form.players_bet_amount),
-                type: form.type as MatchType,
+                type: "upcoming",
                 winner_percentage: Number(form.winner_percentage),
                 loser_percentage: Number(form.loser_percentage),
                 tiktok_link: form.tiktok_link,
@@ -81,7 +81,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                 players_bet_amount: "",
                 match_date: "",
                 match_time: "",
-                type: "",
+                type: "upcoming",
                 winner_percentage: 0,
                 loser_percentage: 0,
                 twitch_link: "",
@@ -196,28 +196,7 @@ export default function CreateMatchModal({ open, onClose }: any) {
                     />
                 </div>
 
-                {/* Game Type */}
-                <div className="space-y-1">
-                    <label className="text-sm text-white/70">Match Type *</label>
 
-                    <select
-                        value={form.type}
-                        onChange={(e) =>
-                            setForm({ ...form, type: e.target.value })
-                        }
-                        className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                    >
-                        <option value="" className="text-white">
-                            Select Type
-                        </option>
-
-                        {["live", "upcoming", "completed"].map((t) => (
-                            <option key={t} value={t} className="text-white">
-                                {t}
-                            </option>
-                        ))}
-                    </select>
-                </div>
                 <div className="space-y-1">
                     <label className="text-sm text-white/70">TikTok Live Link</label>
 

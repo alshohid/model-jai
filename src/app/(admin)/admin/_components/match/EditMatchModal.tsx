@@ -7,7 +7,6 @@ import AppDialog from "@/shared/components/modal/AppDialog";
 import { useUpdateMatchMutation, useViewSingleMatchQuery } from "@/redux/features/match/matchManagement";
 import { useGetAllGamesQuery } from "@/redux/features/game/gameListManagement";
 import { useGetAllPlayerQuery } from "@/redux/features/user/userManagement";
-import { MatchType } from "@/types/match/MatchManagementTypes";
 import { EditMatchSkeleton } from "./EditMatchSkeleton";
 
 export default function EditMatchModal({ matchId, open, onClose }: any) {
@@ -26,7 +25,7 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
         players_bet_amount: "",
         match_date: "",
         match_time: "",
-        type: "",
+        type: "upcoming",
         winner_percentage: 0,
         loser_percentage: 0,
         tiktok_link: "",
@@ -56,17 +55,18 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
     }, [data]);
 
     const handleSubmit = async () => {
-
+        const matchTime = form.match_time?.slice(0, 5);
         await updateMatch({
             id: matchId,
-            ...form,
             game_id: Number(form.game_id),
             player_one_id: Number(form.player_one_id),
             player_two_id: Number(form.player_two_id),
             players_bet_amount: Number(form.players_bet_amount),
-            type: form.type as MatchType,
-            winner_percentage: 1,
-            loser_percentage: 1,
+            match_date: form.match_date,
+            match_time: matchTime,
+            type: "upcoming",
+            winner_percentage: form.winner_percentage,
+            loser_percentage: form.loser_percentage,
             tiktok_link: form.tiktok_link,
             twitch_link: form.twitch_link,
         }).unwrap();
@@ -129,27 +129,7 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
                             }
                             className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
                         />
-                        <div className="space-y-1">
-                            <label className="text-sm text-white/70">Match Type *</label>
 
-                            <select
-                                value={form.type}
-                                onChange={(e) =>
-                                    setForm({ ...form, type: e.target.value })
-                                }
-                                className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                            >
-                                <option value="" className="text-black">
-                                    Select Type
-                                </option>
-
-                                {["live", "upcoming", "completed"].map((t) => (
-                                    <option key={t} value={t} className="text-black">
-                                        {t}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
                         <div className="space-y-1">
                             <label className="text-sm text-white/70">TikTok Live Link</label>
 
