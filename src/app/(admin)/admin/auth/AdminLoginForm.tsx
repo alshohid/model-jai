@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { MailIcon } from "@/shared/UI/icon/icon";
@@ -10,6 +10,8 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { useState } from "react";
 import { getErrorMessage } from "@/lib/utils";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
+import { handleAfterLogin } from "@/lib/helper/loginHelper";
+import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
 
 
 type AdminLoginValues = {
@@ -19,12 +21,15 @@ type AdminLoginValues = {
 
 export default function AdminLoginForm() {
     const router = useRouter();
-    const { logIn, isLoading: isLoginLoading, role } = useAuth();
+    const searchParams = useSearchParams();
+    const { logIn, isLoading: isLoginLoading, } = useAuth();
     const [errorLogin, setErrorLogin] = useState("")
 
     const { register, handleSubmit } = useForm<AdminLoginValues>({
         defaultValues: { email: "", password: "" },
     });
+    const redirect = safeRedirect(searchParams.get("redirect"));
+
 
     const onSubmit = async (data: AdminLoginValues) => {
         try {
@@ -34,7 +39,8 @@ export default function AdminLoginForm() {
             }).unwrap()
 
             if (loginResult.success) {
-                role === "super_admin" ? router.replace("/admin/dashboard") : router.replace("/");
+                const role = loginResult?.data?.user?.role;
+                handleAfterLogin(role, redirect, router);
             }
         } catch (error) {
             setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));

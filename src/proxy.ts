@@ -63,6 +63,7 @@ export const config = {
     "/payment-success",
     "/payment-cancel",
     "/admin",
+    "/notifications",
     "/admin/dashboard/:path*",
   ],
 };

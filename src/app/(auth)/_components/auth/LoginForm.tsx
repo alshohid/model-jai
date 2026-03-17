@@ -17,12 +17,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
 import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
+import { handleAfterLogin } from "@/lib/helper/loginHelper";
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const { logIn, isLoading: isLoginLoading, role } = useAuth();
+    const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect"));
     const [errorLogin, setErrorLogin] = useState("")
     const { register, handleSubmit } = useForm<ILoginParams>();
@@ -47,7 +48,8 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
             }).unwrap()
 
             if (loginResult.success) {
-                role === "user" || role === "artist" ? router.replace(redirect) : router.replace("/admin/dashboard");
+                const role = loginResult?.data?.user?.role;
+                handleAfterLogin(role, redirect, router);
             }
 
         } catch (error: unknown) {

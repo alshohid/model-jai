@@ -11,6 +11,8 @@ import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIco
 import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon } from "lucide-react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
+import { adminLogOut } from "@/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/redux/store";
 
 const menuItems = [
     { label: "Dashboard", href: "/admin/dashboard", icon: DashboardIcon },
@@ -46,6 +48,7 @@ export default function AdminSidebar({
     toggleSidebar: () => void;
 }) {
     const pathname = usePathname();
+    const dispatch = useAppDispatch();
     const router = useRouter();
     const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -237,9 +240,12 @@ export default function AdminSidebar({
                                 onClick={async () => {
                                     try {
                                         await logoutAdmin();
-                                        router.replace("/admin");
+
                                     } catch (error) {
                                         console.log(error);
+                                    } finally {
+                                        dispatch(adminLogOut())
+                                        router.replace("/admin");
                                     }
                                 }}
                                 className="text-white/75 px-3 py-2"
