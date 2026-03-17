@@ -14,7 +14,6 @@ function useInitiateAuthState() {
     const isAppLoading = token === false;
 
     useEffect(() => {
-
         const userToken = Cookies.get("token");
         const userRole = Cookies.get("role");
         const userRefresh = Cookies.get("refresh_token");
@@ -23,18 +22,59 @@ function useInitiateAuthState() {
         const adminRole = Cookies.get("admin_role");
         const adminRefresh = Cookies.get("admin_refresh_token");
 
-        const savedToken = userToken ?? adminToken ?? null;
-        const savedRole = userRole ?? adminRole ?? null;
-        const refreshToken = userRefresh ?? adminRefresh ?? null;
+        if (adminToken && adminRole === "super_admin") {
+            dispatch(
+                setCredentials({
+                    token: adminToken,
+                    role: adminRole as IAuthUserRole,
+                    refreshToken: adminRefresh ?? null,
+                })
+            );
+            return;
+        }
+
+        if (userToken && (userRole === "user" || userRole === "artist")) {
+            dispatch(
+                setCredentials({
+                    token: userToken,
+                    role: userRole as IAuthUserRole,
+                    refreshToken: userRefresh ?? null,
+                })
+            );
+            return;
+        }
 
         dispatch(
             setCredentials({
-                token: savedToken,
-                role: (savedRole as IAuthUserRole) ?? null,
-                refreshToken: refreshToken,
-            }),
+                token: null,
+                role: null,
+                refreshToken: null,
+            })
         );
     }, [dispatch]);
+
+    // useEffect(() => {
+
+    //     const userToken = Cookies.get("token");
+    //     const userRole = Cookies.get("role");
+    //     const userRefresh = Cookies.get("refresh_token");
+
+    //     const adminToken = Cookies.get("admin_token");
+    //     const adminRole = Cookies.get("admin_role");
+    //     const adminRefresh = Cookies.get("admin_refresh_token");
+
+    //     const savedToken = userToken ?? adminToken ?? null;
+    //     const savedRole = userRole ?? adminRole ?? null;
+    //     const refreshToken = userRefresh ?? adminRefresh ?? null;
+
+    //     dispatch(
+    //         setCredentials({
+    //             token: savedToken,
+    //             role: (savedRole as IAuthUserRole) ?? null,
+    //             refreshToken: refreshToken,
+    //         }),
+    //     );
+    // }, [dispatch]);
 
     return { isAppLoading };
 }
