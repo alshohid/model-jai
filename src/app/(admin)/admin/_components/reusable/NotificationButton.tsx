@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -6,17 +7,19 @@ import Image from "next/image";
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
     hasUnread?: boolean;
-    unreadCount?: number; // optional
+    unreadCount?: number
 };
 
 export default function NotificationButton({
     className,
-    hasUnread,
     unreadCount,
     type = "button",
     ...props
 }: Props) {
-    const showBadge = typeof unreadCount === "number" ? unreadCount > 0 : !!hasUnread;
+    const showBadge =
+        unreadCount !== undefined &&
+        unreadCount !== null &&
+        unreadCount !== 0
 
     return (
         <button
@@ -26,21 +29,20 @@ export default function NotificationButton({
                 "size-8 rounded-[12px]",
                 "bg-white/10 border border-white/12",
                 "text-white/85 hover:bg-white/12 transition",
-                "focus-visible:outline-none ",
+                "focus-visible:outline-none",
                 className
             )}
             aria-label="Notifications"
             {...props}
         >
             <Image
-                src={'/images/home/notify_2.png'}
+                src="/images/home/notify_2.png"
                 alt="notify_image"
                 width={200}
                 height={200}
                 className="w-full"
-
-            
             />
+
             {showBadge ? (
                 <span
                     className={cn(
@@ -51,7 +53,7 @@ export default function NotificationButton({
                         "border border-black/40"
                     )}
                 >
-                    {typeof unreadCount === "number" ? Math.min(unreadCount, 99) : ""}
+                    {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
             ) : null}
         </button>

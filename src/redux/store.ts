@@ -12,12 +12,14 @@ import {
 import authReducer from "./features/auth/authSlice";
 import { baseApi } from "./api/baseApi";
 import liveStatusReducer from "./features/live/liveStatusReducer";
+import notificationReducer from "./features/notification/notificationReducer";
 
 export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
     auth: authReducer,
     liveStatus: liveStatusReducer,
+    notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

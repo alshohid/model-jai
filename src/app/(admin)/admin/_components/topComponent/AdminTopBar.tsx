@@ -1,10 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import { cn } from "@/shared/lib/utils/cn";
 import NotificationButton from "../reusable/NotificationButton";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import { useNotifications } from "@/shared/providers/hook/useNotificaton";
+import { LoaderPinwheel } from "lucide-react";
 
 function titleFromPath(pathname: string) {
     if (pathname.startsWith("/admin/dashboard/matches")) return "Match Management";
@@ -20,11 +22,16 @@ export default function AdminTopBar({
     sidebarOpen: boolean;
     toggleSidebar: () => void;
 }) {
+    const router = useRouter()
+    const { unreadCount } = useNotifications()
     const pathname = usePathname();
     const title = titleFromPath(pathname);
     const { data, isLoading } = useGetMeDataQuery()
-
-
+    if (isLoading) {
+        return <div>
+            <LoaderPinwheel />
+        </div>
+    }
     return (
         <header
             className={cn(
@@ -58,9 +65,8 @@ export default function AdminTopBar({
 
                 <div className="flex items-center gap-3">
                     <NotificationButton
-                        onClick={() => console.log("clicked notification button ")}
-                        hasUnread
-                        unreadCount={3}
+                        onClick={() => router.push("/admin/dashboard/notification")}
+                        unreadCount={unreadCount}
                     />
 
                     {/* profile block (placeholder styling like screenshot) */}

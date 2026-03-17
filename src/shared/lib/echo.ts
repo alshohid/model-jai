@@ -2,6 +2,7 @@
 
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
+import { store } from "@/redux/store";
 
 declare global {
   interface Window {
@@ -13,6 +14,11 @@ let echoInstance: Echo<"reverb"> | null = null;
 
 export function getEcho() {
   if (typeof window === "undefined") return null;
+
+  const token = store.getState().auth.token;
+
+  if (!token) return null;
+
   if (echoInstance) return echoInstance;
 
   window.Pusher = Pusher;
@@ -26,6 +32,13 @@ export function getEcho() {
     forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME || "http") === "https",
     enabledTransports: ["ws", "wss"],
     disableStats: true,
+
+    authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/broadcasting/auth`,
+    auth: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
   });
 
   echoInstance.connector.pusher.connection.bind("connected", () => {
@@ -41,4 +54,11 @@ export function getEcho() {
   });
 
   return echoInstance;
+}
+
+export function disconnectEcho() {
+  if (echoInstance) {
+    echoInstance.disconnect();
+    echoInstance = null;
+  }
 }

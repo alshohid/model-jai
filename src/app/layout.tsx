@@ -8,6 +8,7 @@ import StoreProvider from "@/redux/StoreProvider";
 import AuthProvider from "@/redux/features/auth/AuthProvider";
 import { Toaster } from "sonner";
 import LiveStatusProvider from "@/shared/providers/LiveStatusProvider";
+import NotificationProvider from "@/shared/providers/NotificationProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,12 +41,14 @@ export default function RootLayout({
         <StoreProvider>
           <AuthProvider>
             <LenisProvider>
-              <LiveStatusProvider>
-                <RouteProvider>
-                  <Toaster position="top-right" />
-                  {children}
-                </RouteProvider>
-              </LiveStatusProvider>
+              <NotificationProvider>
+                <LiveStatusProvider>
+                  <RouteProvider>
+                    <Toaster position="top-right" />
+                    {children}
+                  </RouteProvider>
+                </LiveStatusProvider>
+              </NotificationProvider>
             </LenisProvider>
           </AuthProvider>
         </StoreProvider>

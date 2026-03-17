@@ -22,11 +22,12 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/payment-success") ||
     pathname.startsWith("/payment-cancel") ||
     pathname.startsWith("/support-history") ||
-    pathname.startsWith("/transactions");
+    pathname.startsWith("/transactions") ||
+    pathname.startsWith("/notifications");
 
   if (isAdminProtectedRoute) {
     if (!adminToken || adminRole !== "super_admin") {
-      return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 

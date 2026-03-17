@@ -16,6 +16,7 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import Skeleton from "@/shared/UI/Skeleton";
+import { useNotifications } from "@/shared/providers/hook/useNotificaton";
 
 const navItems = [
     { label: "Home", href: "/" },
@@ -26,6 +27,7 @@ const navItems = [
 
 export default function PublicNavbar() {
     const pathname = usePathname();
+    const { unreadCount } = useNotifications();
     const { isAuthenticated, role } = useAuth();
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
 
@@ -79,13 +81,25 @@ export default function PublicNavbar() {
                                             className={cn(
                                                 "relative inline-flex items-center justify-center shrink-0",
                                                 "size-7 sm:size-8 md:size-10 rounded-lg",
-                                                "bg-[#FF2EC8]/20 border-[#FF2EC8]/30",
-                                                "text-white transition-all",
-                                                pathname === "/notifications" && "bg-[#FF2EC8]/20 border-[#FF2EC8]/30"
+                                                "bg-[#FF2EC8]/20 border border-[#FF2EC8]/30",
+                                                "text-white transition-all hover:bg-[#FF2EC8]/30",
+                                                pathname === "/notifications" && "bg-[#FF2EC8]/30 border-[#FF2EC8]/50"
                                             )}
                                         >
                                             <Bell className="size-3.5 sm:size-4 md:size-5" />
-                                            <span className="absolute -top-0.5 -right-0.5 size-2.5 sm:size-3 bg-[#FF2EC8] rounded-full border-2 border-[#FFEAFA]" />
+
+                                            {unreadCount > 0 && (
+                                                <span className={cn(
+                                                    "absolute -top-1.5 -right-1.5",
+                                                    "min-w-[18px] h-[18px] px-1",
+                                                    "bg-red-500 text-white",
+                                                    "text-[10px] font-bold leading-none",
+                                                    "rounded-full border-2 border-[#FFEAFA]",
+                                                    "flex items-center justify-center"
+                                                )}>
+                                                    {unreadCount > 99 ? "99+" : unreadCount}
+                                                </span>
+                                            )}
                                         </Link>
                                     </div>
                                     <div className="flex items-center gap-4">

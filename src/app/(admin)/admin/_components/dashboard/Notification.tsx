@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+"use client"
 
-import { useMemo, useState } from "react";
+
+import { cn } from "@/lib/utils";
+import NotificationItem from "@/shared/components/notifications/NotificationItem";
+import { formatNotificationTime } from "@/shared/lib/formateNotificatinTime";
+import { useNotifications } from "@/shared/providers/hook/useNotificaton";
 import { ArrowLeft, CheckCheck, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
-import NotificationItem from "@/shared/components/notifications/NotificationItem";
-import { cn } from "@/shared/lib/utils/cn";
-import { useNotifications } from "@/shared/providers/hook/useNotificaton";
-import { formatNotificationTime } from "@/shared/lib/formateNotificatinTime";
 
-export default function NotificationsPage() {
+
+
+export default function AdminNotificationContainer() {
     const {
         notifications: appNotifications,
         unreadCount,
@@ -133,10 +135,9 @@ export default function NotificationsPage() {
         }
     };
 
-    return (
-        <div className="min-h-screen bg-black">
-            <PublicNavbar />
 
+    return (
+        <div>
             <div className="sticky top-0 bg-black/95 backdrop-blur-lg z-10 border-b border-white/10">
                 <div className="container px-4 py-3">
                     <div className="flex items-center justify-between gap-3 mb-4">
@@ -183,8 +184,7 @@ export default function NotificationsPage() {
                     </div>
                 </div>
             </div>
-
-            <div className="container px-4 py-4">
+            <div className="px-4 py-4">
                 <div className="space-y-3">
                     {notifications.map((notification) => (
                         <div
