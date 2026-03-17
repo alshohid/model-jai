@@ -64,10 +64,12 @@ export default function AdminTopBar({
 
 
                 <div className="flex items-center gap-3">
+
                     <NotificationButton
                         onClick={() => router.push("/admin/dashboard/notification")}
-                        unreadCount={unreadCount}
+                        unreadCount={unreadCount || 0}
                     />
+
 
                     {/* profile block (placeholder styling like screenshot) */}
                     <div className="flex items-center gap-3">

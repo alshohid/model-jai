@@ -18,8 +18,8 @@ export default function NotificationButton({
 }: Props) {
     const showBadge =
         unreadCount !== undefined &&
-        unreadCount !== null &&
-        unreadCount !== 0
+        unreadCount !== null
+
 
     return (
         <button
