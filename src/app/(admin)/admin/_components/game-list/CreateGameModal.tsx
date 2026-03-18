@@ -46,12 +46,12 @@ export default function CreateGameModal({ open, onClose }: any) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Game name"
-                    className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
+                    className="w-full h-10 px-3 rounded-md bg-black/20 text-white"
                 />
 
                 <select
                     onChange={(e) => setCategoryId(Number(e.target.value))}
-                    className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
+                    className="w-full h-10 px-3 rounded-md bg-black/20 text-white"
                 >
                     <option value="">Select Category</option>
 

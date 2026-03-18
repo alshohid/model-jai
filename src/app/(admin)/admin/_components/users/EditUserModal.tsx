@@ -137,7 +137,7 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                         onChange={(e) =>
                             setRole(e.target.value as "user" | "artist")
                         }
-                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-gray-300 outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        className="w-full rounded-lg bg-black/20 border border-white/10  px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     >
                         <option value="user">User</option>
                         <option value="artist">Artist</option>
