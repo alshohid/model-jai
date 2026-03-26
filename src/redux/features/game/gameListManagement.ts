@@ -28,6 +28,13 @@ const GameListManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["GameList"],
     }),
+    getAllUnAuthUserGamesList: builder.query<any, void>({
+      query: () => ({
+        url: `/get_all_games`,
+        method: "GET",
+      }),
+      providesTags: ["GameList"],
+    }),
     createGameList: builder.mutation<IGameCreateResponse, IGameCreateParams>({
       query: (body) => ({
         url: "/admin/games",
@@ -84,5 +91,6 @@ export const {
   useDeleteGameListMutation,
   useViewSingleGameListQuery,
   useGetAllGamesQuery,
+  useGetAllUnAuthUserGamesListQuery,
 } = GameListManagementApi;
 export default GameListManagementApi;
