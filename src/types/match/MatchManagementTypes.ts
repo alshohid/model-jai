@@ -73,6 +73,7 @@ export interface IMatch {
 
   created_at: string;
   updated_at: string;
+  rules: string;
 
   game: IGame;
   player_one: IPlayer;
@@ -125,6 +126,7 @@ export interface IMatchBasePayload {
 
   winner_percentage: number;
   loser_percentage: number;
+  rules?: string;
 
   tiktok_link?: string;
   twitch_link?: string;

@@ -9,13 +9,35 @@ import { useGetAllGamesQuery } from "@/redux/features/game/gameListManagement";
 import { useGetAllPlayerQuery } from "@/redux/features/user/userManagement";
 import { EditMatchSkeleton } from "./EditMatchSkeleton";
 
+// ── Reusable field wrapper ──────────────────────────────────────────────────
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+    return (
+        <div className="space-y-1.5">
+            <label className="block text-[11px] font-semibold uppercase tracking-widest text-white/45">
+                {label}
+                {required && <span className="ml-1 text-[#FF2EC8]">*</span>}
+            </label>
+            {children}
+        </div>
+    );
+}
+
+const inputCls =
+    "w-full h-11 px-3.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/5 transition-all duration-200";
+
+const selectCls =
+    "w-full h-11 px-3.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/5 transition-all duration-200 appearance-none";
+
+const ChevronDown = () => (
+    <svg className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-white/30" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+    </svg>
+);
+
 export default function EditMatchModal({ matchId, open, onClose }: any) {
-
     const { data, isLoading } = useViewSingleMatchQuery(matchId, { skip: !matchId || !open });
-
     const { data: games } = useGetAllGamesQuery();
     const { data: players } = useGetAllPlayerQuery();
-
     const [updateMatch, { isLoading: isMatchUpdateLoading }] = useUpdateMatchMutation();
 
     const [form, setForm] = useState<any>({
@@ -30,13 +52,12 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
         loser_percentage: 0,
         tiktok_link: "",
         twitch_link: "",
+        rules: "",
     });
 
     useEffect(() => {
-
         if (data?.data) {
             const m = data.data;
-
             setForm({
                 game_id: m.game_id,
                 player_one_id: m.player_one_id,
@@ -48,11 +69,13 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
                 winner_percentage: m.winner_percentage,
                 loser_percentage: m.loser_percentage,
                 tiktok_link: m.tiktok_link,
-                twitch_link: m.twitch_link
+                twitch_link: m.twitch_link,
+                rules: m.rules ?? "",
             });
         }
-
     }, [data]);
+
+    const set = (key: string, value: any) => setForm((prev: any) => ({ ...prev, [key]: value }));
 
     const handleSubmit = async () => {
         const matchTime = form.match_time?.slice(0, 5);
@@ -69,171 +92,194 @@ export default function EditMatchModal({ matchId, open, onClose }: any) {
             loser_percentage: form.loser_percentage,
             tiktok_link: form.tiktok_link,
             twitch_link: form.twitch_link,
+            rules: form.rules,
         }).unwrap();
-
         onClose();
     };
 
+    const filteredPlayerOne = players?.data?.filter((p: any) => p.id !== Number(form.player_two_id));
+    const filteredPlayerTwo = players?.data?.filter((p: any) => p.id !== Number(form.player_one_id));
+
     return (
         <AppDialog open={open} onOpenChange={onClose} title="Edit Match">
-            {
-                isLoading ? (
-                    <EditMatchSkeleton />
-                )
-                    : (<div className="space-y-4 py-4">
+            {isLoading ? (
+                <EditMatchSkeleton />
+            ) : (
+                <div className="py-4 space-y-5">
 
-                        {/* Game */}
-                        <select
-                            value={form.game_id}
-                            onChange={(e) => setForm({ ...form, game_id: e.target.value })}
-                            className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
-                        >
-                            {games?.data?.map((g: any) => (
-                                <option key={g.id} value={g.id} className="text-black">
-                                    {g.name}
-                                </option>
-                            ))}
-                        </select>
+                    {/* ── Game ── */}
+                    <Field label="Game" required>
+                        <div className="relative">
+                            <select value={form.game_id} onChange={(e) => set("game_id", e.target.value)} className={selectCls}>
+                                <option value="" className="bg-[#1a1a1f]">Select a game</option>
+                                {games?.data?.map((g: any) => (
+                                    <option key={g.id} value={g.id} className="bg-[#1a1a1f]">{g.name}</option>
+                                ))}
+                            </select>
+                            <ChevronDown />
+                        </div>
+                    </Field>
 
-                        {/* Player One */}
-                        <select
-                            value={form.player_one_id}
-                            onChange={(e) => setForm({ ...form, player_one_id: e.target.value })}
-                            className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
-                        >
-                            {players?.data?.map((p: any) => (
-                                <option key={p.id} value={p.id} className="text-black">
-                                    {p.name}
-                                </option>
-                            ))}
-                        </select>
+                    {/* ── Players ── */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <Field label="Player One" required>
+                            <div className="relative">
+                                <select value={form.player_one_id} onChange={(e) => set("player_one_id", e.target.value)} className={selectCls}>
+                                    <option value="" className="bg-[#1a1a1f]">Select player</option>
+                                    {filteredPlayerOne?.map((p: any) => (
+                                        <option key={p.id} value={p.id} className="bg-[#1a1a1f]">{p.name}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown />
+                            </div>
+                        </Field>
 
-                        {/* Player Two */}
-                        <select
-                            value={form.player_two_id}
-                            onChange={(e) => setForm({ ...form, player_two_id: e.target.value })}
-                            className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
-                        >
-                            {players?.data?.map((p: any) => (
-                                <option key={p.id} value={p.id} className="text-black">
-                                    {p.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Field label="Player Two" required>
+                            <div className="relative">
+                                <select value={form.player_two_id} onChange={(e) => set("player_two_id", e.target.value)} className={selectCls}>
+                                    <option value="" className="bg-[#1a1a1f]">Select player</option>
+                                    {filteredPlayerTwo?.map((p: any) => (
+                                        <option key={p.id} value={p.id} className="bg-[#1a1a1f]">{p.name}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown />
+                            </div>
+                        </Field>
+                    </div>
 
-                        {/* Bet */}
+                    {/* ── Bet Amount ── */}
+                    <Field label="Bet Amount" required>
                         <input
+                            type="number"
+                            placeholder="0.00"
                             value={form.players_bet_amount}
-                            onChange={(e) =>
-                                setForm({ ...form, players_bet_amount: e.target.value })
-                            }
-                            className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
+                            onChange={(e) => set("players_bet_amount", e.target.value)}
+                            className={inputCls}
                         />
+                    </Field>
 
-                        <div className="space-y-1">
-                            <label className="text-sm text-white/70">TikTok Live Link</label>
-
+                    {/* ── Live Links ── */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <Field label="TikTok Live Link">
                             <input
                                 type="url"
                                 placeholder="https://tiktok.com/..."
                                 value={form.tiktok_link}
-                                onChange={(e) =>
-                                    setForm({ ...form, tiktok_link: e.target.value })
-                                }
-                                className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                                onChange={(e) => set("tiktok_link", e.target.value)}
+                                className={inputCls}
                             />
-                        </div>
-                        <div className="space-y-1">
-                            <label className="text-sm text-white/70">Twitch Live Link</label>
+                        </Field>
 
+                        <Field label="Twitch Live Link">
                             <input
                                 type="url"
                                 placeholder="https://twitch.tv/..."
                                 value={form.twitch_link}
-                                onChange={(e) =>
-                                    setForm({ ...form, twitch_link: e.target.value })
-                                }
-                                className="w-full h-11 px-3 rounded-lg bg-[#1F1F23] border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                                onChange={(e) => set("twitch_link", e.target.value)}
+                                className={inputCls}
                             />
+                        </Field>
+                    </div>
+
+                    {/* ── Percentage Settings ── */}
+                    <Field label="Percentage Settings">
+                        <div className="flex gap-3">
+                            {[
+                                { key: "winner_percentage", label: "Winner %" },
+                                { key: "loser_percentage", label: "Loser %" },
+                            ].map(({ key, label }) => {
+                                const checked = form[key] === 1;
+                                return (
+                                    <label
+                                        key={key}
+                                        className={`
+                                            flex items-center gap-2.5 flex-1 h-11 px-3.5 rounded-lg border cursor-pointer
+                                            transition-all duration-200 text-sm font-medium
+                                            ${checked
+                                                ? "border-[#FF2EC8]/60 bg-[#FF2EC8]/8 text-[#FF2EC8]"
+                                                : "border-white/10 bg-white/5 text-white/50 hover:border-white/20"
+                                            }
+                                        `}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={(e) => set(key, e.target.checked ? 1 : 0)}
+                                            className="sr-only"
+                                        />
+                                        <span className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 border transition-all duration-200 ${checked ? "bg-[#FF2EC8] border-[#FF2EC8]" : "border-white/20 bg-white/5"}`}>
+                                            {checked && (
+                                                <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                                                    <path d="M1 3L3.5 5.5L8 1" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                            )}
+                                        </span>
+                                        {label}
+                                    </label>
+                                );
+                            })}
                         </div>
-                        <div className="space-y-2">
+                    </Field>
 
-                            <label className="text-sm text-white/70">Percentage Settings</label>
+                    {/* ── Date + Time ── */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <Field label="Match Date" required>
+                            <input
+                                type="date"
+                                value={form.match_date}
+                                onChange={(e) => set("match_date", e.target.value)}
+                                className={inputCls}
+                            />
+                        </Field>
 
-                            <div className="flex gap-6">
+                        <Field label="Match Time" required>
+                            <input
+                                type="time"
+                                value={form.match_time}
+                                onChange={(e) => set("match_time", e.target.value)}
+                                className={inputCls}
+                            />
+                        </Field>
+                    </div>
 
-                                {/* Winner Percentage */}
-                                <label className="flex items-center gap-2 text-white/80 cursor-pointer">
-
-                                    <input
-                                        type="checkbox"
-                                        checked={form.winner_percentage === 1}
-                                        onChange={(e) =>
-                                            setForm({
-                                                ...form,
-                                                winner_percentage: e.target.checked ? 1 : 0,
-                                            })
-                                        }
-                                        className="w-4 h-4 accent-[#FF2EC8]"
-                                    />
-
-                                    Winner Percentage
-                                </label>
-
-                                {/* Loser Percentage */}
-                                <label className="flex items-center gap-2 text-white/80 cursor-pointer">
-
-                                    <input
-                                        type="checkbox"
-                                        checked={form.loser_percentage === 1}
-                                        onChange={(e) =>
-                                            setForm({
-                                                ...form,
-                                                loser_percentage: e.target.checked ? 1 : 0,
-                                            })
-                                        }
-                                        className="w-4 h-4 accent-[#FF2EC8]"
-                                    />
-
-                                    Loser Percentage
-                                </label>
-
-                            </div>
-
-                        </div>
-
-                        {/* Date */}
-                        <input
-                            type="date"
-                            value={form.match_date}
-                            onChange={(e) =>
-                                setForm({ ...form, match_date: e.target.value })
-                            }
-                            className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
+                    {/* ── Rules ── */}
+                    <Field label="Match Rules">
+                        <textarea
+                            rows={4}
+                            placeholder="Describe the match rules, conditions, or any special instructions..."
+                            value={form.rules}
+                            onChange={(e) => set("rules", e.target.value)}
+                            className="w-full px-3.5 py-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/5 transition-all duration-200 resize-none leading-relaxed"
                         />
+                    </Field>
 
-                        {/* Time */}
-                        <input
-                            type="time"
-                            value={form.match_time}
-                            onChange={(e) =>
-                                setForm({ ...form, match_time: e.target.value })
+                    {/* ── Divider ── */}
+                    <div className="border-t border-white/8" />
+
+                    {/* ── Submit ── */}
+                    <button
+                        onClick={handleSubmit}
+                        disabled={isMatchUpdateLoading}
+                        className={`
+                            w-full h-11 rounded-lg font-semibold text-sm tracking-wide transition-all duration-200
+                            ${isMatchUpdateLoading
+                                ? "bg-white/10 text-white/30 cursor-not-allowed"
+                                : "bg-[#FF2EC8] hover:bg-[#ff48d0] active:scale-[0.98] text-white shadow-[0_0_20px_rgba(255,46,200,0.3)] hover:shadow-[0_0_28px_rgba(255,46,200,0.45)]"
                             }
-                            className="w-full h-10 px-3 rounded-md bg-white/10 text-white"
-                        />
+                        `}
+                    >
+                        {isMatchUpdateLoading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white/80 rounded-full animate-spin" />
+                                Updating Match...
+                            </span>
+                        ) : (
+                            "Update Match"
+                        )}
+                    </button>
 
-                        <button
-                            onClick={handleSubmit}
-                            disabled={isMatchUpdateLoading}
-                            className={`w-full h-10 bg-[#FF2EC8] text-white rounded-md ${isMatchUpdateLoading ? "cursor-not-allowed bg-[#673259]" : ""}`}
-                        >
-                            {isMatchUpdateLoading ? "Updating..." : "Update Match"}
-                        </button>
-
-                    </div>)
-            }
-
-
-        </AppDialog >
+                </div>
+            )}
+        </AppDialog>
     );
 }

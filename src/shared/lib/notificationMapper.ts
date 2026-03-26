@@ -28,7 +28,7 @@ export function mapSocketMatchCreatedNotification(payload: {
     title: "New Match Available",
     message:
       payload.message ||
-      "New match available! Go to home to support your favorite player.",
+      "New match available! Go to support your favorite player.",
     read: false,
     createdAt: new Date().toISOString(),
     raw: payload,
