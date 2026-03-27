@@ -67,6 +67,12 @@ export function useNotifications() {
       return false;
     }
   };
+  const notificationsWithRules = notifications.filter(
+    (n) => n.rules && n.rules.trim().length > 0,
+  );
+
+  const getRulesById = (id: string) =>
+    notifications.find((n) => n.id === id)?.rules ?? null;
 
   return {
     notifications,
@@ -79,5 +85,7 @@ export function useNotifications() {
     isMarkingRead,
     isClearingAll,
     isClearingSingle,
+    notificationsWithRules,
+    getRulesById,
   };
 }

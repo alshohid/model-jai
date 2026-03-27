@@ -15,6 +15,8 @@ export interface IRawNotificationData {
   coin_amount?: string;
   usd_amount?: string;
   status?: string;
+  rules?: string;
+  player_ids?: number[];
 }
 
 export interface INotificationApiItem {
@@ -42,4 +44,6 @@ export interface IAppNotificationItem {
   read: boolean;
   createdAt: string;
   raw: IRawNotificationData | unknown;
+  rules?: string | null;
+  playerIds?: number[] | null;
 }

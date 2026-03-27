@@ -34,8 +34,6 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
     const { isAuthenticated, role } = useAuth();
 
     const handleWatch = (matchId: string, platform: string) => {
-        console.log(matchId, platform);
-
         if (!isAuthenticated) {
             router.push(`/login?redirect=/live-stream/match/${matchId}?platform=${platform}`);
             return;
@@ -65,9 +63,10 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
                     gameLogoSrc={match.game.image || "/images/home/gameLogo.png"}
                     leftPlayerImg={match.player_one?.image_url || "/images/home/leftPlayerImg.png"}
                     rightPlayerImg={match.player_two?.image_url || "/images/home/rightPlayerImg.png"}
-                    voteRequired={match.confirmation_status === 0} // If confirmation is 0, vote is required
-                    watchHref={match.tiktok_link || "#"} // Assuming you are passing TikTok link
-                    versusImg="/images/home/versus.png" // Static or dynamic image
+                    voteRequired={match.confirmation_status === 0}
+                    watchHref={match.tiktok_link || "#"}
+                    rules={match.rules ?? null}
+                    versusImg="/images/home/versus.png"
                     onWatch={() => handleWatch(match.id!, match.platform || "tiktok")}
                 />
             ))}

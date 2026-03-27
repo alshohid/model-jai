@@ -5,6 +5,8 @@ export interface StageProps {
   twitchChannel: string;
   isLive: boolean;
   tipEnabled?: boolean;
+  rules: string | null;
+  onRulesClick: () => void;
 
   mode?: "landscape" | "portrait";
   supportClosed: boolean;

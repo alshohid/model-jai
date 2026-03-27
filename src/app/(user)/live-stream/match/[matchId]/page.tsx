@@ -18,12 +18,14 @@ import { useGetSingleMatchByMatchIdQuery } from "@/redux/features/match/matchMan
 import { MatchDetailsSkeleton } from "@/components/ui/MatchDetailsSkeleton";
 import { useGetTikTokAndTwitchLiveStatusQuery } from "@/redux/features/support/supportManagement";
 import { useLiveStatus } from "@/shared/hooks/useLiveStatus";
+import MatchRulesModal from "@/shared/components/modal/MatchRulesModal";
 
 export default function MatchDetails({
     params,
 }: {
     params: Promise<{ matchId: string }>;
 }) {
+    const [rulesModalOpen, setRulesModalOpen] = useState(false);
     const { matchId } = React.use(params);
     const { data: matchData, isLoading: isMatchLoading } =
         useGetSingleMatchByMatchIdQuery(matchId);
@@ -38,6 +40,9 @@ export default function MatchDetails({
     const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus && matchData?.data?.type === "live";
     const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const supportClosed = isLiveContinue;
+    const rules = currentMatch?.rules ?? null;
+    const modelPicture = matchData?.model_picture ?? "/images/home/middle.png";
+    const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
 
     const {
         showRegistrationPrompt,
@@ -66,6 +71,10 @@ export default function MatchDetails({
                         right={liveStore.right}
                         middle={liveStore.middle}
                         bossSide={liveStore.bossSide}
+                        rules={rules}
+                        modelPicture={modelPicture}
+                        watchingPeopleCount={watchingPeopleCount}
+                        onRulesClick={() => setRulesModalOpen(true)}
                         onSupportLeft={(amount, supporterName) =>
                             liveStore.support("left", amount, supporterName)
                         }
@@ -141,6 +150,13 @@ export default function MatchDetails({
                 onSkip={handleSkip}
                 artistName={liveStore.left.name || liveStore.right.name}
             />
+            {rules && (
+                <MatchRulesModal
+                    open={rulesModalOpen}
+                    onClose={() => setRulesModalOpen(false)}
+                    rules={rules}
+                />
+            )}
         </div>
     );
 }

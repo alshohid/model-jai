@@ -33,7 +33,7 @@ export default function NotificationsPage() {
                     id: item.id,
                     type: "live" as const,
                     title: item.title,
-                    playerName: "MODELJAY",
+                    playerName: "PLAYER",
                     playerColor: "#00C3FF",
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),

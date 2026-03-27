@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PhilippinePeso } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";

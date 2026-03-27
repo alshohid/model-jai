@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useGetAllNotificationsQuery } from "@/redux/features/notification/notificationManagement";
 import { useAppDispatch } from "@/redux/store";
@@ -9,13 +9,29 @@ import {
     addNotification,
     setNotifications,
 } from "@/redux/features/notification/notificationReducer";
-import { mapApiNotificationItem, mapSocketMatchCreatedNotification, mapSocketPrivateNotification } from "../lib/notificationMapper";
+import {
+    mapApiNotificationItem,
+    mapSocketMatchCreatedNotification,
+    mapSocketPrivateNotification,
+} from "../lib/notificationMapper";
 import { IRawNotificationData } from "@/types/notifications/NotitficationsTypes";
+import MatchRulesModal from "../components/modal/MatchRulesModal";
 
 
-export default function NotificationProvider({
-    children,
-}: PropsWithChildren) {
+interface IMatchCreatedPayload {
+    message: string;
+    rules?: string;
+    player_ids?: number[];
+    socket: null;
+}
+
+interface IRulesModalState {
+    open: boolean;
+    rules: string;
+    message: string;
+}
+
+export default function NotificationProvider({ children }: PropsWithChildren) {
     const dispatch = useAppDispatch();
     const { data: meData } = useGetMeDataQuery();
     const { data: notificationsData } = useGetAllNotificationsQuery();
@@ -23,14 +39,22 @@ export default function NotificationProvider({
     const user = meData?.data?.user;
     const userId = user?.id;
     const role = user?.role;
+
+    const [rulesModal, setRulesModal] = useState<IRulesModalState>({
+        open: false,
+        rules: "",
+        message: "",
+    });
+
+    // Hydrate notifications from API
     useEffect(() => {
         if (notificationsData?.data) {
-            const mapped = notificationsData?.data?.map(mapApiNotificationItem);
+            const mapped = notificationsData.data.map(mapApiNotificationItem);
             dispatch(setNotifications(mapped));
         }
     }, [notificationsData, dispatch]);
 
-    // socket listeners
+    // Socket listeners
     useEffect(() => {
         if (!userId) return;
 
@@ -43,9 +67,22 @@ export default function NotificationProvider({
         const matchChannelName = `user.${userId}`;
         const matchChannel = echo.private(matchChannelName);
 
-        matchChannel.listen(".match.created", (event: { message: string }) => {
+
+
+        matchChannel.listen(".match.created", (event: IMatchCreatedPayload) => {
             console.log("Match created notification:", event);
+
+            const isPlayer = event.player_ids?.includes(Number(userId)) ?? false;
+
+
             dispatch(addNotification(mapSocketMatchCreatedNotification(event)));
+            if (isPlayer && event.rules) {
+                setRulesModal({
+                    open: true,
+                    rules: event.rules,
+                    message: event.message,
+                });
+            }
         });
 
         cleanups.push(() => {
@@ -85,5 +122,15 @@ export default function NotificationProvider({
         };
     }, [dispatch, userId, role]);
 
-    return children;
+    return (
+        <>
+            {children}
+            <MatchRulesModal
+                open={rulesModal.open}
+                onClose={() => setRulesModal((prev) => ({ ...prev, open: false }))}
+                rules={rulesModal.rules}
+                message={rulesModal.message}
+            />
+        </>
+    );
 }
