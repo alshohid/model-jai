@@ -8,6 +8,7 @@ import type { SupportSide } from "@/shared/components/watchLive/types";
 import { PlayerCard } from "../card/PlayerCard";
 import { StageProps } from "@/types/liveMatchDetails/LiveMatchStage";
 import TwitchPlayer from "./TwitchPlayer";
+import { formatViewerCount } from "@/shared/lib/utils/formateViewerCount";
 
 export default function LiveMatchStage({
     matchId,
@@ -121,7 +122,7 @@ export default function LiveMatchStage({
                         onClick={() => supportDialog.openDialog("right")}
                         topRightBadge={
                             <div className="rounded-full bg-black/70 px-2 py-1 text-[11px] font-bold border border-white/10 backdrop-blur">
-                                {watchingPeopleCount} watching
+                                {formatViewerCount(watchingPeopleCount || 0)} watching
                             </div>
                         }
                     />

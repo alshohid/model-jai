@@ -4,7 +4,6 @@
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
-import FavoriteButton from "@/shared/UI/button/FavoriteButton";
 import { StatCard } from "../card/StatCard";
 import { MiniStat } from "../card/MiniStat";
 import { InfoRow } from "../card/InfoRow";
@@ -21,6 +20,10 @@ type ProfileInfo = {
     posts: string | number;
     followers: string | number;
     following: string | number;
+    favouriteGame?: {
+        name?: string;
+        image?: string;
+    } | null;
 };
 
 type StatItem = {
@@ -63,7 +66,9 @@ export default function MyProfilePanel({
             console.log(error);
             toast.error("Failed to connect stripe");
         }
-    }
+    };
+
+    const game = profile.favouriteGame;
 
     return (
         <section
@@ -96,7 +101,6 @@ export default function MyProfilePanel({
                                 className="object-cover object-top"
                                 unoptimized
                             />
-
                             <div className="absolute inset-x-0 bottom-4 px-4">
                                 <button
                                     onClick={onEditProfile}
@@ -116,6 +120,7 @@ export default function MyProfilePanel({
                     {/* INFO + ACTIONS */}
                     <div>
                         <div className="flex justify-between items-start gap-4">
+                            {/* Info rows */}
                             <div className="space-y-2 py-3 md:py-8">
                                 <div className="flex items-center gap-2">
                                     <InfoRow label="Name" value={profile.name} />
@@ -126,11 +131,35 @@ export default function MyProfilePanel({
                                 {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />}
                             </div>
 
-                            <FavoriteButton
-                                loveSrc="/images/home/love.png"
-                                loveBgSrc="/images/home/love-bg.png"
-                                initialLoved={false}
-                            />
+                            {/* ── Favourite Game Card (replaces FavoriteButton) ── */}
+                            {game?.name ? (
+                                <div className="flex-shrink-0 flex flex-col items-center gap-1.5 py-3 md:py-8">
+                                    <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+                                        Fav Game
+                                    </p>
+                                    <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#FF2EC8]/30 shadow-[0_0_12px_rgba(255,46,200,0.2)]">
+                                        {game.image ? (
+                                            <Image
+                                                src={game.image}
+                                                alt={game.name}
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+                                        ) : (
+                                            /* Fallback — first letter of game name */
+                                            <div className="w-full h-full bg-[#FF2EC8]/10 flex items-center justify-center">
+                                                <span className="text-[#FF2EC8] font-black text-xl">
+                                                    {game.name.charAt(0).toUpperCase()}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="text-[11px] text-white/70 font-medium text-center max-w-[72px] truncate">
+                                        {game.name}
+                                    </p>
+                                </div>
+                            ) : null}
                         </div>
 
                         {/* MINI STATS */}
@@ -155,6 +184,7 @@ export default function MyProfilePanel({
                                 <StartStreamingButton onClick={onReferralLink}>
                                     Referral Link
                                 </StartStreamingButton>
+
                                 {stripeStatus?.connected ? (
                                     <StartStreamingButton
                                         onClick={onWithdrawRequest}
@@ -162,14 +192,15 @@ export default function MyProfilePanel({
                                     >
                                         Withdraw Request
                                     </StartStreamingButton>
-
                                 ) : (
                                     <StartStreamingButton
                                         onClick={stripConnectHandler}
                                         disabled={isConnectStripeLoading || isStripeStatusLoading}
                                         className="bg-black/80"
                                     >
-                                        {isConnectStripeLoading || isStripeStatusLoading ? "Loading..." : stripeStatus?.connected ? "Stripe Connected" : "Connect Stripe Wallet"}
+                                        {isConnectStripeLoading || isStripeStatusLoading
+                                            ? "Loading..."
+                                            : "Connect Stripe Wallet"}
                                     </StartStreamingButton>
                                 )}
                             </div>

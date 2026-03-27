@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type IRefreshTokenPayload = {
   success: boolean;
   data?: {
@@ -103,6 +104,7 @@ export interface IUserStats {
   total_bet: string;
 }
 export interface IUser {
+  game: any;
   id: number;
   name: string;
   email: string;

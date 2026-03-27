@@ -49,6 +49,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
 
         if ("data" in result) {
             toast.success(result.data?.message ?? "User registered successfully");
+            onGoLogin();
         } else if ("error" in result) {
             const error = result.error as any;
             toast.error(error?.data?.message ?? "Something went wrong");

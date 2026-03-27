@@ -42,10 +42,15 @@ const MyProfileSection = () => {
         : undefined;
 
     const withdrawHandler = async (amount: number) => {
+        if (amount < 10) {
+            toast.error("Withdrawal amount must be at least 10")
+            return;
+        }
         try {
             const response = await withdrawRequest({ coin_amount: amount }).unwrap()
             if (response?.success) {
                 toast.success("Withdrawal request sent successfully")
+
             }
 
         } catch (error) {
@@ -62,7 +67,7 @@ const MyProfileSection = () => {
         setReferralLinkOpen(true);
     };
 
-    const isBigBoss = true;
+    const isBigBoss = false;
     const profile = {
         name: "Michael Rohan",
         email: "michael@gmail.com",
@@ -90,6 +95,12 @@ const MyProfileSection = () => {
                             posts: user?.total_post ?? 0,
                             followers: String(user?.followers_count ?? 0),
                             following: String(user?.following_count ?? 0),
+                            favouriteGame: user?.game
+                                ? {
+                                    name: user.game.name,
+                                    image: user.game.image ?? null,
+                                }
+                                : null,
                         }}
                         stats={[
                             {
