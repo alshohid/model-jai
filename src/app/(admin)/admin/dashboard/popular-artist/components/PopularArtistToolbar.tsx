@@ -40,7 +40,7 @@ export default function PopularArtistToolbar({
           disabled={isSearching}
           className="inline-flex items-center justify-center rounded-[14px] bg-gradient-to-r from-[#FF2EC8] to-[#5A33FF] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Add Popular Artist Vote
+          Add New Voting Match
         </button>
       </div>
     </div>

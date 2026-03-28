@@ -123,7 +123,7 @@ export default function PopularArtistFormDialog({
   };
 
   const title =
-    mode === "create" ? "Create Popular Artist Vote" : "Edit Popular Artist Vote";
+    mode === "create" ? "Create New Voting Match" : "Edit Voting Match";
 
   return (
     <AppDialog open={open} onOpenChange={onClose} title={title}>
