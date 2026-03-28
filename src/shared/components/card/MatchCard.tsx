@@ -122,14 +122,14 @@ export default function MatchCard({
                         {/* ACTION */}
                         <div className="mt-2 md:mt-5">
                             <WatchStreamButton label="Watch stream" onClick={onWatch} />
-
-                            {voteRequired ? (
+                            <SocialLinks />
+                            {/* {voteRequired ? (
                                 <p className="mt-2 md:mt-3 text-center text-xs md:text-base font-medium text-[#FF2EC8]">
                                     Tiktok Vote Required
                                 </p>
                             ) : (
                                 <SocialLinks />
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>
