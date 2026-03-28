@@ -20,7 +20,7 @@ type ProfileInfo = {
     posts: string | number;
     followers: string | number;
     following: string | number;
-    favouriteGame?: {
+    favoriteGame?: {
         name?: string;
         image?: string;
     } | null;
@@ -68,7 +68,7 @@ export default function MyProfilePanel({
         }
     };
 
-    const game = profile.favouriteGame;
+    const game = profile.favoriteGame;
 
     return (
         <section

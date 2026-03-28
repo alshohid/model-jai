@@ -43,6 +43,21 @@ const BuyPointApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    getAutoAcceptStatus: builder.query({
+      query: () => ({
+        url: `admin/settings/auto_accept_withdraw`,
+        method: "GET",
+      }),
+      providesTags: ["Withdraw"],
+    }),
+    toggleAutoAcceptStatus: builder.mutation({
+      query: (body: { value: string }) => ({
+        url: `admin/settings/auto_accept_withdraw`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Withdraw"],
+    }),
     allWithdrawRequestsList: builder.query({
       query: ({ page = 1, limit = 10 }) => ({
         url: `/admin/withdraws?page=${page}&limit=${limit}`,
@@ -82,5 +97,7 @@ export const {
   useAllWithdrawRequestsListQuery,
   useAcceptWithdrawRequestMutation,
   useRejectWithdrawRequestMutation,
+  useGetAutoAcceptStatusQuery,
+  useToggleAutoAcceptStatusMutation,
 } = BuyPointApi;
 export default BuyPointApi;

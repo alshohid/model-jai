@@ -95,7 +95,7 @@ const MyProfileSection = () => {
                             posts: user?.total_post ?? 0,
                             followers: String(user?.followers_count ?? 0),
                             following: String(user?.following_count ?? 0),
-                            favouriteGame: user?.game
+                            favoriteGame: user?.game
                                 ? {
                                     name: user.game.name,
                                     image: user.game.image ?? null,

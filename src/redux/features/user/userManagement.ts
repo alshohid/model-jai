@@ -30,6 +30,28 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ManageUser"],
     }),
+    changeAdminPassword: builder.mutation({
+      query: (body: {
+        current_password: string;
+        password: string;
+        password_confirmation: string;
+      }) => ({
+        url: `/admin/settings/change_password`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["ManageUser"],
+    }),
+    adminChangeSettings: builder.mutation({
+      query: (body: FormData) => ({
+        url: `/admin/settings`,
+        method: "PUT",
+        body,
+
+        formData: true,
+      }),
+      invalidatesTags: ["ManageUser"],
+    }),
 
     updateUser: builder.mutation<
       SingleUserResponse,
@@ -114,5 +136,7 @@ export const {
   useSearchUsersQuery,
   useChangeUserRoleMutation,
   useGetAllPlayerQuery,
+  useChangeAdminPasswordMutation,
+  useAdminChangeSettingsMutation,
 } = UserManagementApi;
 export default UserManagementApi;
