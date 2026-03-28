@@ -8,6 +8,13 @@ import {
   IMatchUpdateResponse,
   IUpdateMatchPayload,
 } from "@/types/match/MatchManagementTypes";
+import {
+  ICreatePopularArtistPayload,
+  IDeletePopularArtistResponse,
+  IPopularArtistListResponse,
+  IPopularArtistSingleResponse,
+  IUpdatePopularArtistPayload,
+} from "@/types/match/popularArtistTypes";
 
 const MatchManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,6 +38,58 @@ const MatchManagementApi = baseApi.injectEndpoints({
         };
       },
       providesTags: ["Match"],
+    }),
+    getAllPopularArtist: builder.query<
+      IPopularArtistListResponse,
+      { page?: number; limit?: number; search?: string }
+    >({
+      query: ({ page = 1, limit = 10, search }) => {
+        const params = new URLSearchParams();
+
+        params.append("page", String(page));
+        params.append("per_page", String(limit));
+        if (search) {
+          params.append("search", search);
+        }
+
+        return {
+          url: `/admin/match-voting?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["PopularArtist"],
+    }),
+    createPopularArtistVote: builder.mutation<
+      IPopularArtistSingleResponse,
+      ICreatePopularArtistPayload
+    >({
+      query: (body) => ({
+        url: "/admin/match-voting",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["PopularArtist"],
+    }),
+    updatePopularArtistVote: builder.mutation<
+      IPopularArtistSingleResponse,
+      IUpdatePopularArtistPayload
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/admin/match-voting/${id}`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["PopularArtist"],
+    }),
+    deletePopularArtistVote: builder.mutation<
+      IDeletePopularArtistResponse,
+      number
+    >({
+      query: (id) => ({
+        url: `/admin/match-voting/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["PopularArtist"],
     }),
     getAllPublicMatchList: builder.query<
       IMatchListResponse,
@@ -136,11 +195,15 @@ export const {
   useGetTwitchStatusLiveCheckQuery,
   useGetSingleMatchByMatchIdQuery,
   useGetSelectedTwoPlayerByMatchIdQuery,
+  useGetAllPopularArtistQuery,
   useCreateMatchMutation,
   useCreateMatchConformationMutation,
   useSelectWinnerMutation,
   useUpdateMatchMutation,
   useViewSingleMatchQuery,
   useDeleteMatchMutation,
+  useCreatePopularArtistVoteMutation,
+  useUpdatePopularArtistVoteMutation,
+  useDeletePopularArtistVoteMutation,
 } = MatchManagementApi;
 export default MatchManagementApi;

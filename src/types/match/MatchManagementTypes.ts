@@ -89,6 +89,8 @@ export interface IPaginationMeta {
   last_page: number;
   per_page: number;
   total: number;
+  prev?: boolean;
+  next?: boolean;
 }
 export interface IMatchListResponse {
   status: boolean;

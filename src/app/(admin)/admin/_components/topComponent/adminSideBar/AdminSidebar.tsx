@@ -29,6 +29,7 @@ const menuItems = [
     { label: "Match Management", href: "/admin/dashboard/matches", icon: MatchManagementMenuIcon },
     { label: "User Management", href: "/admin/dashboard/users", icon: UserManagementMenuIcon },
     { label: "Withdraw Management", href: "/admin/dashboard/withdrawals", icon: WalletIcon },
+    { label: "Popular Artist", href: "/admin/dashboard/popular-artist", icon: User },
 
     {
         label: "Settings",
