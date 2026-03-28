@@ -22,7 +22,7 @@ const navItems = [
     { label: "Home", href: "/" },
     { label: "Live Stream Match", href: "/live-stream" },
     { label: "Store", href: "/point-store" },
-    // { label: "Transactions", href: "/transactions" },
+
 ];
 
 export default function PublicNavbar() {
@@ -69,12 +69,11 @@ export default function PublicNavbar() {
                                     );
                                 })}
                             </nav>
-                            <div className="hidden md:block">
-                                <NavbarSearch />
-                            </div>
+
 
                             {isAuthenticated && (role === "user" || role === "artist") ? (
-                                <div className="flex  items-center">
+                                <div className="flex items-center gap-2 md:gap-4">
+                                    <NavbarSearch />
                                     <div className="mr-2">
                                         <Link
                                             href="/notifications"

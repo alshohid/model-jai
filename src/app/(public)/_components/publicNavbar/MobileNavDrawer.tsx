@@ -51,9 +51,11 @@ export default function MobileNavSheet({
     return (
         <Sheet>
             <div className="relative">
-                <div className="py-2 ml-2 flex md:hidden ">
-                    <NavbarSearch />
-                </div>
+                {isAuthenticated && (role === "user" || role === "artist") && (
+                    <div className="py-2 ml-2 flex md:hidden ">
+                        <NavbarSearch />
+                    </div>
+                )}
                 <SheetTrigger asChild>
                     <button
                         type="button"
@@ -155,14 +157,16 @@ export default function MobileNavSheet({
                                 </Link>
                             </SheetClose>
                         )}
+                        {isAuthenticated && (role === "user" || role === "artist") && (
+                            <div className="mt-5">
+                                <TipShortcutToggle
+                                    storageKey="tip_shortcut_enabled"
+                                    defaultOn={false}
+                                    onChange={(v) => console.log("Tip shortcut (parent):", v)}
+                                />
+                            </div>
+                        )}
 
-                        <div className="mt-5">
-                            <TipShortcutToggle
-                                storageKey="tip_shortcut_enabled"
-                                defaultOn={false}
-                                onChange={(v) => console.log("Tip shortcut (parent):", v)}
-                            />
-                        </div>
 
 
                         <div className="mt-6">
