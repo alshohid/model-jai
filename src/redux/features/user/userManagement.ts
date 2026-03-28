@@ -52,6 +52,16 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ManageUser"],
     }),
+    searchPlayer: builder.query<any, string>({
+      query: (keyword: string) => ({
+        url: `/search_artist`,
+        method: "GET",
+        params: {
+          search: keyword,
+        },
+      }),
+      providesTags: ["ManageUser"],
+    }),
 
     updateUser: builder.mutation<
       SingleUserResponse,
@@ -88,6 +98,13 @@ const UserManagementApi = baseApi.injectEndpoints({
     getAllPlayer: builder.query<any, void>({
       query: () => ({
         url: `/admin/all-players`,
+        method: "GET",
+      }),
+      providesTags: ["ManageUser"],
+    }),
+    viewSingleArtistProfile: builder.query<any, number>({
+      query: (id) => ({
+        url: `/show_artist_prifile/${id}`,
         method: "GET",
       }),
       providesTags: ["ManageUser"],
@@ -138,5 +155,7 @@ export const {
   useGetAllPlayerQuery,
   useChangeAdminPasswordMutation,
   useAdminChangeSettingsMutation,
+  useSearchPlayerQuery,
+  useViewSingleArtistProfileQuery,
 } = UserManagementApi;
 export default UserManagementApi;

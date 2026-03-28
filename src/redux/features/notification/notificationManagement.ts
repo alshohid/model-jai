@@ -20,7 +20,7 @@ const NotificationManagementApi = baseApi.injectEndpoints({
     }),
     clearAllNotifications: builder.mutation<void, void>({
       query: () => ({
-        url: "/notifications/delete_all",
+        url: "/notifications/delete",
         method: "DELETE",
       }),
       invalidatesTags: ["Notification"],

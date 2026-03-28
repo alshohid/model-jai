@@ -41,6 +41,21 @@ const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["User"],
     }),
 
+    followArtist: builder.mutation<ApiResponse<IUserInfoResponse>, number>({
+      query: (id) => ({
+        url: `/follow/${id}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["ManageUser"],
+    }),
+    unFollowArtist: builder.mutation<ApiResponse<IUserInfoResponse>, number>({
+      query: (id) => ({
+        url: `/unfollow/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ManageUser"],
+    }),
+
     facebookLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
       query: () => ({
         url: "/facebook/redirect",
@@ -56,7 +71,7 @@ const authApi = baseApi.injectEndpoints({
       providesTags: ["User"],
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
 export const {
@@ -66,5 +81,7 @@ export const {
   useFacebookLoginMutation,
   useGetMeDataQuery,
   useEditProfileMutation,
+  useFollowArtistMutation,
+  useUnFollowArtistMutation,
 } = authApi;
 export default authApi;

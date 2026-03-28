@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Image from "next/image";
@@ -38,6 +39,7 @@ type Props = {
     onFollow?: () => void;
     onSendTip?: () => void;
     className?: string;
+    isLoading?: boolean;
 };
 
 export default function ArtistProfilePanel({
@@ -46,6 +48,7 @@ export default function ArtistProfilePanel({
     onFollow,
     onSendTip,
     className,
+    isLoading,
 }: Props) {
     return (
         <section
@@ -160,7 +163,7 @@ export default function ArtistProfilePanel({
                                 </div>
                             </StartStreamingButton>
 
-                            <StartStreamingButton
+                            {/* <StartStreamingButton
                                 onClick={onSendTip}
                                 className="w-full bg-[#00C3FF] hover:bg-[#00C3FF]/90"
                             >
@@ -168,7 +171,7 @@ export default function ArtistProfilePanel({
                                     <Send className="size-5" />
                                     <span>Send Tip Points</span>
                                 </div>
-                            </StartStreamingButton>
+                            </StartStreamingButton> */}
                         </div>
                     </div>
 

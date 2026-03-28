@@ -25,7 +25,8 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/payment-cancel") ||
     pathname.startsWith("/support-history") ||
     pathname.startsWith("/transactions") ||
-    pathname.startsWith("/notifications");
+    pathname.startsWith("/notifications") ||
+    pathname.startsWith("/artist");
 
   const isPublicHomePage = pathname === "/";
 
@@ -98,5 +99,6 @@ export const config = {
     "/payment-cancel",
     "/admin",
     "/admin/dashboard/:path*",
+    "/artist/:path*",
   ],
 };

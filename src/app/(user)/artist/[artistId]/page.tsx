@@ -1,73 +1,107 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import FooterSection from "@/shared/components/home/FooterSection";
 import ArtistProfilePanel from "@/shared/components/user/ArtistProfilePanel";
-import PastMatchSupportedTable from "@/shared/components/rankPointTable/PastMatchSupportedTable";
-import ReferrelLinkTable from "@/shared/components/rankPointTable/ReferrelLinkTable";
+import Skeleton from "@/shared/UI/Skeleton";
+import { useViewSingleArtistProfileQuery } from "@/redux/features/user/userManagement";
+import { toast } from "sonner";
+import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
 
 export default function ArtistProfilePage() {
     const params = useParams();
-    const router = useRouter();
-    const artistId = params.artistId as string;
+    const artistId = Number(params.artistId);
+
+    const { data: profileResponse, isLoading, isError } = useViewSingleArtistProfileQuery(artistId);
+    const [followArtist, { isLoading: isFollowing }] = useFollowArtistMutation();
+    const [unFollowArtist, { isLoading: isUnfollowing }] = useUnFollowArtistMutation();
+
+    if (isLoading) {
+        return (
+            <div className="container py-20 text-center">
+                <Skeleton className="h-[400px] w-full rounded-xl" />
+            </div>
+        );
+    }
+
+    if (isError || !profileResponse?.data) {
+        return <div className="py-20 text-center text-red-500">Artist not found or something went wrong!</div>;
+    }
+
+    const artistData = profileResponse.data;
+    const user = artistData.user;
 
 
-    const [artistData, setArtistData] = useState({
-        id: artistId,
-        name: "Jeffson Jrcelestin",
-        username: "jeffsonjrcelestin",
-        email: "jeffson@example.com",
-        avatar: "/images/home/pro_2.jpg",
-        isBigBoss: true,
-        isVerified: true,
-        posts: 125,
-        followers: "115k",
-        following: "225k",
-        isFollowing: false,
-        bio: "Professional gamer and content creator. Join me for epic matches!",
-        contact: "+1234567890",
-        nationality: "American",
-    });
-
-    const handleFollow = () => {
-        setArtistData((prev) => ({
-            ...prev,
-            isFollowing: !prev.isFollowing,
-            followers: prev.isFollowing
-                ? String(parseInt(prev.followers.replace("k", "")) - 1) + "k"
-                : String(parseInt(prev.followers.replace("k", "")) + 1) + "k",
-        }));
-        // TODO: Call API to follow/unfollow artist
-        console.log(artistData.isFollowing ? "Unfollowed" : "Followed", artistId);
-    };
-
-    const handleSendTip = () => {
-        // TODO: Open tip dialog
-        console.log("Send tip to", artistId);
+    const mappedArtist = {
+        id: String(user.id),
+        name: user.name,
+        username: user.email.split('@')[0],
+        email: user.email,
+        avatar: user.image || "/images/home/profile_img.png",
+        isBigBoss: user.role === "artist",
+        isVerified: user.verified_at !== null,
+        posts: user.total_post || 0,
+        followers: String(user.followers_count || 0),
+        following: String(user.following_count || 0),
+        isFollowing: artistData.is_followed,
+        bio: user.note || "No bio available",
+        contact: user.phone_number || "N/A",
+        nationality: user.nationality || "N/A",
     };
 
     const stats = [
-        { label: "Total Earnings", value: "₱ 245,000", icon: "/images/home/stat_button.png" },
-        { label: "Total Referral Earnings", value: "₱ 8,400", icon: "/images/home/stat_button_2.png" },
-        { label: "Total Tip Received", value: "₱ 1,311", icon: "/images/home/stat_button_3.png" },
+        {
+            label: "Total Earnings",
+            value: `₱ ${artistData.total_earning}`,
+            icon: "/images/home/stat_button.png"
+        },
+        {
+            label: "Total Referral Earnings",
+            value: `₱ ${artistData.total_referral_earning}`,
+            icon: "/images/home/stat_button_2.png"
+        },
+        {
+            label: "Total Tip Received",
+            value: `₱ ${artistData.total_tip_received}`,
+            icon: "/images/home/stat_button_3.png"
+        },
     ];
 
-    return (
-        <div>
-            <PublicNavbar />
-            <div className="container py-5 md:py-10">
-                <ArtistProfilePanel
-                    artist={artistData}
-                    stats={stats}
-                    onFollow={handleFollow}
-                    onSendTip={handleSendTip}
-                />
-            </div>
+    const handleFollowToggle = async () => {
+        try {
+            if (artistData.is_followed) {
+                await unFollowArtist(artistId).unwrap();
+                toast.success("Unfollowed successfully");
+            } else {
+                await followArtist(artistId).unwrap();
+                toast.success("Followed successfully");
+            }
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Something went wrong");
+        }
+    };
 
-            <PastMatchSupportedTable />
-            <ReferrelLinkTable />
+    const handleSendTip = () => {
+        console.log("Open Tip Modal for:", artistId);
+
+    };
+
+    return (
+        <div className="min-h-screen flex flex-col">
+            <PublicNavbar />
+            <main className="flex-grow">
+                <div className="container py-5 md:py-10">
+                    <ArtistProfilePanel
+                        artist={mappedArtist}
+                        stats={stats}
+                        onFollow={handleFollowToggle}
+                        onSendTip={handleSendTip}
+                        isLoading={isFollowing || isUnfollowing}
+                    />
+                </div>
+            </main>
             <FooterSection />
         </div>
     );

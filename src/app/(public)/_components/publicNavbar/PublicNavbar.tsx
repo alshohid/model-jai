@@ -73,7 +73,9 @@ export default function PublicNavbar() {
 
                             {isAuthenticated && (role === "user" || role === "artist") ? (
                                 <div className="flex items-center gap-2 md:gap-4">
-                                    <NavbarSearch />
+                                    <div className="hidden md:block">
+                                        <NavbarSearch />
+                                    </div>
                                     <div className="mr-2">
                                         <Link
                                             href="/notifications"
