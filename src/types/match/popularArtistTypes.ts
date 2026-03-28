@@ -30,7 +30,7 @@ export interface IPopularArtistListResponse {
   status: boolean;
   message: string;
   data: IPopularArtist[];
-  meta: IPaginationMeta;
+  meta?: IPaginationMeta;
 }
 
 export interface IPopularArtistSingleResponse {

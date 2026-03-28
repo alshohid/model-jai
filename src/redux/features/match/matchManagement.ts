@@ -59,6 +59,23 @@ const MatchManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["PopularArtist"],
     }),
+    getVotingPublicList: builder.query<IPopularArtistListResponse, void>({
+      query: () => {
+        return {
+          url: `/match-for-voting`,
+          method: "GET",
+        };
+      },
+      providesTags: ["PopularArtist"],
+    }),
+    goVote: builder.mutation<IPopularArtistSingleResponse, number>({
+      query: (id) => ({
+        url: `/vote`,
+        method: "POST",
+        params: { match_for_voting_id: id },
+      }),
+      invalidatesTags: ["PopularArtist"],
+    }),
     createPopularArtistVote: builder.mutation<
       IPopularArtistSingleResponse,
       ICreatePopularArtistPayload
@@ -196,12 +213,14 @@ export const {
   useGetSingleMatchByMatchIdQuery,
   useGetSelectedTwoPlayerByMatchIdQuery,
   useGetAllPopularArtistQuery,
+  useGetVotingPublicListQuery,
   useCreateMatchMutation,
   useCreateMatchConformationMutation,
   useSelectWinnerMutation,
   useUpdateMatchMutation,
   useViewSingleMatchQuery,
   useDeleteMatchMutation,
+  useGoVoteMutation,
   useCreatePopularArtistVoteMutation,
   useUpdatePopularArtistVoteMutation,
   useDeletePopularArtistVoteMutation,
