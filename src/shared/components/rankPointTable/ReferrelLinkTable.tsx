@@ -59,6 +59,8 @@ const ReferrelLinkTable = () => {
         setLimit((prev) => prev + LOAD_MORE_STEP);
     };
 
+
+
     return (
         <div className="container py-8 md:py-10 lg:py-15 xl:py-20">
             <LiveSectionHeader
