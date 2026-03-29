@@ -1,9 +1,13 @@
 import { baseApi } from "@/redux/api/baseApi";
 import { ApiResponse } from "@/types/common/api";
 import {
+  IForgotPasswordParams,
+  IForgotPasswordResponseData,
+  IResetPasswordParams,
   IAuthRegisterParams,
   IAuthRegisterResponse,
   IGoogleRedirectData,
+  IVerifyForgotPasswordParams,
   IUserInfoResponse,
 } from "@/types/user/auth";
 
@@ -70,6 +74,33 @@ const authApi = baseApi.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+    forgotPassword: builder.mutation<
+      ApiResponse<IForgotPasswordResponseData>,
+      IForgotPasswordParams
+    >({
+      query: (body) => ({
+        url: "/forgot_password",
+        method: "POST",
+        body,
+      }),
+    }),
+    verifyForgotPassword: builder.mutation<
+      ApiResponse<unknown[]>,
+      IVerifyForgotPasswordParams
+    >({
+      query: (body) => ({
+        url: "/verify_forgot_password",
+        method: "POST",
+        body,
+      }),
+    }),
+    resetPassword: builder.mutation<ApiResponse<unknown>, IResetPasswordParams>({
+      query: (body) => ({
+        url: "/reset_password",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
   overrideExisting: true,
 });
@@ -83,5 +114,8 @@ export const {
   useEditProfileMutation,
   useFollowArtistMutation,
   useUnFollowArtistMutation,
+  useForgotPasswordMutation,
+  useVerifyForgotPasswordMutation,
+  useResetPasswordMutation,
 } = authApi;
 export default authApi;

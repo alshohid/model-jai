@@ -85,6 +85,28 @@ export interface IAuthRegisterResponse {
   data: IAuthUser;
 }
 
+export interface IForgotPasswordParams {
+  email: string;
+}
+
+export interface IForgotPasswordResponseData {
+  token: string;
+  email: string;
+}
+
+export interface IVerifyForgotPasswordParams {
+  email: string;
+  otp: string;
+}
+
+export interface IResetPasswordParams {
+  email: string;
+  token: string;
+  otp: string;
+  new_password: string;
+  confirm_new_password: string;
+}
+
 export interface IAuthVerifyEmailParams {
   email: string;
   token: string;

@@ -1,5 +1,5 @@
 
-export function PrimaryButton({ text, variant = "pink", isLoading = false, loadingText = "Processing" }: { text: string; variant?: "pink" | "blue", isLoading?: boolean, loadingText?:string }) {
+export function PrimaryButton({ text, variant = "pink", isLoading = false, loadingText = "Processing", className }: { text: string; variant?: "pink" | "blue", isLoading?: boolean, loadingText?: string, className?: string }) {
     const isPink = variant === "pink";
     return (
         <button
@@ -13,9 +13,10 @@ export function PrimaryButton({ text, variant = "pink", isLoading = false, loadi
                 isPink
                     ? "bg-[#FF00C8] text-white"
                     : "bg-[#11B5FF] text-[#0B0D12]",
+                className
             ].join(" ")}
         >
-            {isLoading? loadingText:text}
+            {isLoading ? loadingText : text}
         </button>
     );
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client"
@@ -92,6 +91,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
 
                 <button
                     type="button"
+                    onClick={() => router.push("/forgot-password")}
                     className="cursor-pointer w-full text-center text-[13px] text-white/35 hover:text-white/55 transition"
                 >
                     Forgot password?

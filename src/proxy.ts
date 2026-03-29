@@ -13,7 +13,9 @@ export function proxy(request: NextRequest) {
   const isUserAuthenticated = !!token && (role === "user" || role === "artist");
 
   const isUserAuthPage =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/forgot-password");
 
   const isAdminLoginPage = pathname === "/admin";
   const isAdminProtectedRoute = pathname.startsWith("/admin/dashboard");
@@ -100,5 +102,8 @@ export const config = {
     "/admin",
     "/admin/dashboard/:path*",
     "/artist/:path*",
+    "/forgot-password",
+    "/forgot-password/verify",
+    "/forgot-password/reset",
   ],
 };
