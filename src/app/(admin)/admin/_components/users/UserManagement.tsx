@@ -39,6 +39,8 @@ export type RankRowItem = {
     is_permanent_suspended: boolean;
     status?: string;
     image?: string;
+    favGameImg?: string;
+    favGameName?: string;
     meta?: {
         page: number;
         limit: number;
@@ -101,6 +103,8 @@ export default function UserManagement() {
             suspended_until: user?.suspended_until,
             is_permanent_suspended: user?.is_permanent_suspended,
             image: user?.image,
+            favGameImg: user?.game?.image,
+            favGameName: user?.game?.name
         })) ?? [];
 
     const meta = {
@@ -110,7 +114,7 @@ export default function UserManagement() {
         prev: Boolean(usersData?.links?.prev),
         next: Boolean(usersData?.links?.next),
     };
-    const tableHeader = ["User Name", "Image", "Referral No", "Role", "Email", "Status", "Actions"];
+    const tableHeader = ["User Name", "Image", "Favorite Game", "Role", "Email", "Status", "Actions"];
 
 
     const handleSuspendClick = (item: RankRowItem) => {
@@ -126,7 +130,9 @@ export default function UserManagement() {
     };
 
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
+
         (item) => {
+            console.log(item);
             const status = getSuspendStatus(item);
 
             const color =
@@ -145,7 +151,10 @@ export default function UserManagement() {
                 </div>
             )
         },
-        (item) => <span className="text-[#FFFFFF]">{item.referral_no}</span>,
+        (item) => <div className="text-[#FFFFFF]">
+            <img src={item?.favGameImg ?? "/assets/images/user.png"} alt="user" width={100} height={100} className="object-cover rounded-full h-12 w-12" />
+            <p>{item?.favGameName}</p>
+        </div>,
         (item) => <span className="text-[#FFFFFF]">{item.referral_used_by}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.game_name}</span>,
         (item) => {

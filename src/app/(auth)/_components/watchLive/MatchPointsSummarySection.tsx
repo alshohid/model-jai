@@ -3,8 +3,6 @@
 
 "use client";
 
-import * as React from "react";
-import { ChevronDown } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import MatchPointsCard from "@/shared/components/card/MatchPointsCard";
 import SupportDialog from "@/shared/components/watchLive/SupportDialog";

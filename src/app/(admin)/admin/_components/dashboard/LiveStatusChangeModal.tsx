@@ -3,6 +3,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import AppDialog from "@/shared/components/modal/AppDialog";
 
 type Props = {
     open: boolean;
@@ -29,49 +30,48 @@ const LiveStatusModal: React.FC<Props> = ({ open, onClose, platform, mode, statu
         onClose();
     };
 
-    if (!open) return null;
-
     return (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-            <div className="bg-gray-800 p-6 rounded-lg w-[400px]">
-                <h3 className="text-xl font-semibold text-center mb-4">Change Live Status</h3>
-
-                {/* Platform Selection */}
-                <div className="mb-4">
-                    <label htmlFor="platform" className="block text-sm text-gray-200">Platform</label>
+        <AppDialog open={open} onOpenChange={onClose} title="Change Live Status">
+            <div className="space-y-4 py-2">
+                <div className="space-y-1.5">
+                    <label htmlFor="platform" className="block text-sm font-medium text-white/80">
+                        Platform
+                    </label>
                     <select
                         id="platform"
                         value={selectedPlatform}
                         onChange={(e) => setSelectedPlatform(e.target.value)}
-                        className="w-full p-2 mt-1 bg-black/30 border border-gray-300 rounded-md"
+                        className="w-full rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-white outline-none transition focus:border-white/30"
                     >
                         <option value="twitch">Twitch</option>
                         <option value="tiktok">TikTok</option>
                     </select>
                 </div>
 
-                {/* Mode Selection */}
-                <div className="mb-4">
-                    <label htmlFor="mode" className="block text-sm text-gray-200">Mode</label>
+                <div className="space-y-1.5">
+                    <label htmlFor="mode" className="block text-sm font-medium text-white/80">
+                        Mode
+                    </label>
                     <select
                         id="mode"
                         value={selectedMode}
                         onChange={(e) => setSelectedMode(e.target.value)}
-                        className="w-full p-2 mt-1 border bg-black/30 border-gray-300 rounded-md"
+                        className="w-full rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-white outline-none transition focus:border-white/30"
                     >
                         <option value="portrait">Portrait</option>
                         <option value="landscape">Landscape</option>
                     </select>
                 </div>
 
-                {/* Status Selection */}
-                <div className="mb-4">
-                    <label htmlFor="status" className="block text-sm text-gray-200">Status</label>
+                <div className="space-y-1.5">
+                    <label htmlFor="status" className="block text-sm font-medium text-white/80">
+                        Status
+                    </label>
                     <select
                         id="status"
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
-                        className="w-full p-2 mt-1 bg-black/30 border border-gray-300 rounded-md"
+                        className="w-full rounded-md border border-white/15 bg-black/30 px-3 py-2 text-sm text-white outline-none transition focus:border-white/30"
                     >
                         <option value="live">Live</option>
                         <option value="pause">Pause</option>
@@ -79,27 +79,27 @@ const LiveStatusModal: React.FC<Props> = ({ open, onClose, platform, mode, statu
                     </select>
                 </div>
 
-                <div className="flex justify-between gap-2">
-
+                <div className="flex gap-3 pt-2">
                     <button
+                        type="button"
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-400 text-white rounded-md w-full"
+                        className="w-full rounded-md bg-white/15 px-4 py-2 text-white transition hover:bg-white/20"
                     >
                         Cancel
                     </button>
                     <button
+                        type="button"
                         onClick={handleSave}
-                        className="px-4 py-2 bg-green-600 text-white rounded-md w-full"
+                        className="w-full rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-500"
                     >
                         Save
                     </button>
                 </div>
             </div>
-        </div>
+        </AppDialog>
     );
 };
 
 export default LiveStatusModal;
-
 
 

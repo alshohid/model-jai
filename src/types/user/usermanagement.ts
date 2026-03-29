@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserManagementResponse {
   success: boolean;
   message: string;
@@ -7,6 +8,7 @@ export interface UserManagementResponse {
 }
 
 export interface User {
+  game: any;
   id: number;
   name: string;
   email: string;
