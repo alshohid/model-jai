@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFacebookLoginMutation, useGoogleLoginMutation, useRegisterUserMutation } from "@/redux/features/auth/authapi";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
@@ -13,6 +13,7 @@ import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
+import { IAuthRegisterParams } from "@/types/user/auth";
 
 
 interface SelectedGame {
@@ -23,12 +24,28 @@ interface SelectedGame {
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     const [registerUser, { isLoading }] = useRegisterUserMutation();
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm<IAuthRegisterParams>();
     const [googleLogin] = useGoogleLoginMutation();
     const [facebookLogin] = useFacebookLoginMutation();
 
     const [gamePickerOpen, setGamePickerOpen] = useState(false);
     const [selectedGame, setSelectedGame] = useState<SelectedGame | null>(null);
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const referralFromUrl = new URLSearchParams(window.location.search).get("ref");
+        if (referralFromUrl) {
+            sessionStorage.setItem("pending_referral", referralFromUrl);
+        }
+    }, []);
+
+    const getReferralId = () => {
+        if (typeof window === "undefined") return null;
+
+        const referralFromUrl = new URLSearchParams(window.location.search).get("ref");
+        return referralFromUrl || sessionStorage.getItem("pending_referral");
+    };
 
     const handleGoogleLogin = async () => {
         await executeSocialLogin(() => googleLogin().unwrap());
@@ -38,16 +55,19 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         await executeSocialLogin(() => facebookLogin().unwrap());
     };
 
-    const onSubmit = async (data: any) => {
-        const payload = {
+    const onSubmit = async (data: IAuthRegisterParams) => {
+        const payload: IAuthRegisterParams = {
             ...data,
             game_id: selectedGame?.id ?? null,
-            referral_id: null,
+            referral_id: getReferralId(),
         };
 
         const result = await registerUser(payload);
 
         if ("data" in result) {
+            if (typeof window !== "undefined") {
+                sessionStorage.removeItem("pending_referral");
+            }
             toast.success(result.data?.message ?? "User registered successfully");
             onGoLogin();
         } else if ("error" in result) {

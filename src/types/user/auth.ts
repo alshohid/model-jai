@@ -75,6 +75,8 @@ export interface IAuthRegisterParams {
   email: string;
   password: string;
   c_password: string;
+  game_id?: number | null;
+  referral_id?: string | null;
 }
 
 export interface IAuthRegisterResponse {

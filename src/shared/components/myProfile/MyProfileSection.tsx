@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 "use client"
 import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
 import MyProfilePanel from "./MyProfilePanel"
@@ -11,12 +9,8 @@ import { useWithdrawRequestMutation } from "@/redux/features/pointstore/buypoint
 import { toast } from "sonner";
 import { useEditProfileMutation, useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import ProfileSkeleton from "./ProfileSkeleton";
-import { IUser, IUserStats } from "@/types/user/auth";
+import { IUserStats } from "@/types/user/auth";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
-
-const REFERRAL_ARTIST_ID = "michael-rohan";
-const REFERRAL_ARTIST_NAME = "Michael Rohan";
-const REFERRAL_NEXT_MATCH_ID = "demo-match-123";
 
 const MyProfileSection = () => {
     const [openEdit, setOpenEdit] = useState(false);
@@ -28,7 +22,7 @@ const MyProfileSection = () => {
     const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
     const user = meData?.data?.user;
-
+    const fallbackAvatar = "/images/home/pro_1.jpg";
 
     const stats: IUserStats | undefined = meData?.data
         ? {
@@ -59,25 +53,20 @@ const MyProfileSection = () => {
         }
     }
     const openReferralSheet = () => {
-        if (typeof window !== "undefined") {
-            setReferralShareUrl(
-                `${window.location.origin}/live-stream/match/${REFERRAL_NEXT_MATCH_ID}?ref=ref_${REFERRAL_ARTIST_ID}_${Date.now()}`
-            );
+        if (!user?.referral_no) {
+            toast.error("Referral link is not available right now");
+            return;
         }
+
+        if (typeof window === "undefined") return;
+
+        setReferralShareUrl(
+            `${window.location.origin}/register?ref=${encodeURIComponent(user.referral_no)}`
+        );
         setReferralLinkOpen(true);
     };
 
     const isBigBoss = false;
-    const profile = {
-        name: "Michael Rohan",
-        email: "michael@gmail.com",
-        contact: "+636514165165",
-        nationality: "Nigerian",
-        avatar: "/images/home/pro_1.jpg",
-        posts: 125,
-        followers: "115k",
-        following: "225k",
-    };
 
     return (
         <div className="container py-5 md:py-10">
@@ -135,12 +124,12 @@ const MyProfileSection = () => {
             <EditProfileDialog
                 open={openEdit}
                 onOpenChange={setOpenEdit}
-                avatarSrc={getSafeImageSrc(user?.image) ?? profile.avatar}
+                avatarSrc={getSafeImageSrc(user?.image, fallbackAvatar)}
                 defaultValues={{
-                    name: user?.name ?? profile.name,
-                    email: user?.email ?? profile.email,
-                    contact: user?.phone_number ?? profile.contact,
-                    nationality: user?.nationality ?? profile.nationality,
+                    name: user?.name ?? "",
+                    email: user?.email ?? "",
+                    contact: user?.phone_number ?? "",
+                    nationality: user?.nationality ?? "",
                 }}
                 isLoading={isEditProfileLoading}
                 onSave={async (data) => {
@@ -161,7 +150,7 @@ const MyProfileSection = () => {
                             toast.success("Profile updated successfully");
                             setOpenEdit(false);
                         }
-                    } catch (error) {
+                    } catch {
                         toast.error("Profile update failed")
                     }
 
@@ -170,7 +159,11 @@ const MyProfileSection = () => {
             <SendMoneyDialog
                 open={sendMoneyOpen}
                 onOpenChange={setSendMoneyOpen}
-                defaultValues={{ senderName: "Michael Rohan", email: "michael@gmail.com", amount: "100" }}
+                defaultValues={{
+                    senderName: user?.name ?? "",
+                    email: user?.email ?? "",
+                    amount: "",
+                }}
                 onSend={(data) => console.log("send money", data)}
             />
             <WithdrawalDialog
@@ -189,10 +182,10 @@ const MyProfileSection = () => {
             <ReferralShareSheet
                 open={referralLinkOpen}
                 onOpenChange={setReferralLinkOpen}
-                title={`Support ${REFERRAL_ARTIST_NAME}`}
+                title={user?.name ? `Support ${user.name}` : "Share Referral Link"}
                 shareUrl={referralShareUrl}
-                onCopy={(link) => console.log("Copied:", link)}
-                onShare={(link) => console.log("Shared:", link)}
+                onCopy={() => toast.success("Referral link copied")}
+                onShare={() => toast.success("Referral link shared")}
             />
 
         </div>
