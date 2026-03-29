@@ -4,6 +4,7 @@ import { ApiResponse } from "@/types/common/api";
 import {
   ISuspendUserParams,
   IUserCreateParams,
+  ReferralUsersResponse,
   SingleUserResponse,
   User,
   UserManagementResponse,
@@ -51,6 +52,18 @@ const UserManagementApi = baseApi.injectEndpoints({
         formData: true,
       }),
       invalidatesTags: ["ManageUser"],
+    }),
+
+    getReferralLinkUsedUser: builder.query<
+      ReferralUsersResponse,
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: "/referral-link-used",
+        method: "GET",
+        params: { per_page: limit, page: page },
+      }),
+      providesTags: ["ManageUser"],
     }),
     searchPlayer: builder.query<any, string>({
       query: (keyword: string) => ({
@@ -157,5 +170,6 @@ export const {
   useAdminChangeSettingsMutation,
   useSearchPlayerQuery,
   useViewSingleArtistProfileQuery,
+  useGetReferralLinkUsedUserQuery,
 } = UserManagementApi;
 export default UserManagementApi;

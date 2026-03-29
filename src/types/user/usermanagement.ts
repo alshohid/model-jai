@@ -73,3 +73,22 @@ export interface SingleUserResponse {
   message: string;
   data: User;
 }
+export type ReferralUser = {
+  rank_no: string;
+  user_name: string;
+  range_points: (string | number)[];
+};
+
+export type ReferralUsersResponse = {
+  status: boolean;
+  message: string;
+  data: ReferralUser[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    prev: boolean;
+    next: boolean;
+  };
+};
