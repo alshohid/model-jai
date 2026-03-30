@@ -61,7 +61,7 @@ export default function MatchPointsCard({
         e?.stopPropagation();
         if (showShareSheet && typeof window !== "undefined" && matchId && playerRef) {
             setShareUrl(
-                `${window.location.origin}/live-stream/match/${matchId}?ref=ref_${playerRef}_${Date.now()}`
+                `${window.location.origin}/register?ref=${encodeURIComponent(playerRef)}`
             );
             setShareSheetOpen(true);
         } else {

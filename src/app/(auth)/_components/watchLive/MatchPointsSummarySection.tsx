@@ -29,6 +29,7 @@ export default function MatchPointsSummarySection({
     className,
     onSupportLeft,
     onSupportRight,
+    userReferralNo,
 
 
 
@@ -203,7 +204,7 @@ export default function MatchPointsSummarySection({
                             positive={true}
                             shareTitle={`Support ${left.playerName}`}
                             matchId={matchId}
-                            playerRef="left"
+                            playerRef={userReferralNo}
                             onClick={() => handleCardClick("left")}
                         />
 
@@ -226,7 +227,7 @@ export default function MatchPointsSummarySection({
                             positive={false}
                             shareTitle={`Support ${right.playerName}`}
                             matchId={matchId}
-                            playerRef="right"
+                            playerRef={userReferralNo}
                             onClick={() => handleCardClick("right")}
                         />
                     </div>

@@ -19,6 +19,7 @@ import { MatchDetailsSkeleton } from "@/components/ui/MatchDetailsSkeleton";
 import { useGetTikTokAndTwitchLiveStatusQuery } from "@/redux/features/support/supportManagement";
 import { useLiveStatus } from "@/shared/hooks/useLiveStatus";
 import MatchRulesModal from "@/shared/components/modal/MatchRulesModal";
+import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 
 export default function MatchDetails({
     params,
@@ -31,11 +32,13 @@ export default function MatchDetails({
         useGetSingleMatchByMatchIdQuery(matchId);
     const { isLive: isLiveStatus, mode: liveMode } = useLiveStatus()
     const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
+    const { data: meData } = useGetMeDataQuery()
     const currentMatch = useMemo(() => {
         return (
             matchData?.data || null
         );
     }, [matchData]);
+    const userReferralNo = meData?.data?.user?.referral_no || "";
     const liveStore = useMatchDemoStore(matchId, currentMatch);
     const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus && matchData?.data?.type === "live";
     const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
@@ -89,6 +92,7 @@ export default function MatchDetails({
                             isLive={isLiveContinue}
                             matchId={matchId}
                             tipEnabled={tipEnabled}
+                            userReferralNo={userReferralNo}
 
                             left={{
                                 playerName: liveStore.left.name,

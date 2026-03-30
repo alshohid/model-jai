@@ -10,6 +10,7 @@ export interface MatchPointsSummarySectionProps {
   leftBoss?: string;
   rightBoss?: string;
   playerId?: number;
+  userReferralNo?: string;
   onSupportLeft?: (amount: number, supporterName?: string) => void;
   onSupportRight?: (amount: number, supporterName?: string) => void;
 }
