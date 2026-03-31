@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useState } from "react";
+import React from "react";
 
 type TipShortcutToggleProps = {
     storageKey?: string;
@@ -38,6 +38,11 @@ const TipShortcutToggle: React.FC<TipShortcutToggleProps> = ({
             const next = !prev;
             try {
                 localStorage.setItem(storageKey, String(next));
+                window.dispatchEvent(
+                    new CustomEvent("tip-shortcut-change", {
+                        detail: { storageKey, value: next },
+                    })
+                );
             } catch (e) {
                 console.log("[Tip Shortcut] localStorage write error:", e);
             }

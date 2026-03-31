@@ -10,7 +10,8 @@ export function PlayerCard({
     status,
     onClick,
     bossSide,
-    topRightBadge
+    topRightBadge,
+    gameLogo
 
 
 }: {
@@ -21,6 +22,7 @@ export function PlayerCard({
     status: "win" | "lose";
     onClick: () => void;
     topRightBadge?: React.ReactNode
+    gameLogo?: string
 }) {
     return (
         <div className={`relative aspect-3/4 overflow-hidden ${bossSide ? "border border-amber-400" : ""}`}>
@@ -40,13 +42,13 @@ export function PlayerCard({
                     )}
                 >
                     {status === "win" ? <Image
-                        src={'/images/home/available_slot.png'}
+                        src={gameLogo || '/images/home/available_slot.png'}
                         alt="images"
                         width={200}
                         height={200}
                         className="w-7.5 h-7.5 md:w-50 md:h-50"
                     /> : <Image
-                        src={'/images/home/taken_slot.png'}
+                        src={gameLogo || '/images/home/taken_slot.png'}
                         alt="images"
                         width={200}
                         height={200}

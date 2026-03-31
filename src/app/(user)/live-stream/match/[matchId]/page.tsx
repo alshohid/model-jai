@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import LiveMatchStage from "@/shared/components/watchLive/LiveMatchStage";
 import MatchPointsSummarySection from "@/app/(auth)/_components/watchLive/MatchPointsSummarySection";
 import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGridSection";
@@ -27,6 +27,7 @@ export default function MatchDetails({
     params: Promise<{ matchId: string }>;
 }) {
     const [rulesModalOpen, setRulesModalOpen] = useState(false);
+    const [tipEnabled, setTipEnabled] = useState(false);
     const { matchId } = React.use(params);
     const { data: matchData, isLoading: isMatchLoading } =
         useGetSingleMatchByMatchIdQuery(matchId);
@@ -54,9 +55,33 @@ export default function MatchDetails({
         handleSkip,
     } = useReferralRedirect();
 
-    const tipEnabled =
-        typeof window !== "undefined" &&
-        localStorage.getItem("tip_shortcut_enabled") === "true";
+    useEffect(() => {
+        const syncTipShortcut = () => {
+            setTipEnabled(localStorage.getItem("tip_shortcut_enabled") === "true");
+        };
+
+        const handleTipShortcutChange = (event: Event) => {
+            const customEvent = event as CustomEvent<{ storageKey?: string; value?: boolean }>;
+            if (customEvent.detail?.storageKey === "tip_shortcut_enabled") {
+                setTipEnabled(Boolean(customEvent.detail.value));
+            }
+        };
+
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === "tip_shortcut_enabled") {
+                setTipEnabled(event.newValue === "true");
+            }
+        };
+
+        syncTipShortcut();
+        window.addEventListener("tip-shortcut-change", handleTipShortcutChange);
+        window.addEventListener("storage", handleStorageChange);
+
+        return () => {
+            window.removeEventListener("tip-shortcut-change", handleTipShortcutChange);
+            window.removeEventListener("storage", handleStorageChange);
+        };
+    }, []);
 
 
     return (
@@ -75,6 +100,7 @@ export default function MatchDetails({
                         middle={liveStore.middle}
                         bossSide={liveStore.bossSide}
                         rules={rules}
+                        gameLogo={liveStore.left.teamLogoSrc || ""}
                         modelPicture={modelPicture}
                         watchingPeopleCount={watchingPeopleCount}
                         onRulesClick={() => setRulesModalOpen(true)}
