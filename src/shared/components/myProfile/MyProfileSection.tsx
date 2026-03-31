@@ -66,7 +66,7 @@ const MyProfileSection = () => {
         setReferralLinkOpen(true);
     };
 
-    const isBigBoss = false;
+    const isBigBoss = user?.role === "artist";
 
     return (
         <div className="container py-5 md:py-10">

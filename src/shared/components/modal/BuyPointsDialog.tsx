@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
@@ -16,9 +15,9 @@ import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 export type PointPack = {
     id: string;
     points: number;
-    price: string; // "17.00"
-    currencySymbol?: string; // "$"
-    currencyCode?: string; // "USD"
+    price: string;
+    currencySymbol?: string;
+    currencyCode?: string;
     imageSrc: string;
 };
 
@@ -45,8 +44,8 @@ export default function BuyPointsDialog({
     const code = pack.currencyCode ?? "USD";
 
     const subtotal = Number(pack.price || 0);
-    const tax = Number((subtotal * 0.1).toFixed(2));
-    const total = subtotal + tax;
+
+    const total = subtotal;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -107,11 +106,9 @@ export default function BuyPointsDialog({
                             </p>
                         </div>
 
-                        {/* Divider */}
                         <div className="mt-4 h-px w-full bg-white/10" />
                     </div>
 
-                    {/* Summary box */}
                     <div
                         className={cn(
                             "mt-4 rounded-[14px]",
@@ -123,13 +120,6 @@ export default function BuyPointsDialog({
                             <span>Subtotal</span>
                             <span>
                                 {toMoney(subtotal, symbol)} {code}
-                            </span>
-                        </div>
-
-                        <div className="mt-2 flex items-center justify-between text-white/80 text-sm">
-                            <span>Tax</span>
-                            <span>
-                                {toMoney(tax, symbol)} {code}
                             </span>
                         </div>
 

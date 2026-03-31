@@ -42,7 +42,7 @@ export default function VideosSection() {
         <section className="w-full pt-5 md:pt-15 container">
             <VideoCarousel
                 items={videos}
-                autoPlay={false}
+                autoPlay={true}
                 onCardClick={(item) => console.log("clicked video:", item)}
             />
         </section>
