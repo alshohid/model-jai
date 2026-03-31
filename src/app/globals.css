@@ -171,6 +171,19 @@ button:not(:disabled),
 }
 
 @layer base {
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  html.lenis {
+    scroll-behavior: auto !important;
+  }
+
+  html.lenis body {
+    min-height: 100%;
+  }
+
   html,
   body {
     height: 100%;
