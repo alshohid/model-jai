@@ -8,6 +8,7 @@ import {
   SingleUserResponse,
   User,
   UserManagementResponse,
+  UsersResponseForSendMoney,
 } from "@/types/user/usermanagement";
 
 const UserManagementApi = baseApi.injectEndpoints({
@@ -20,6 +21,19 @@ const UserManagementApi = baseApi.injectEndpoints({
         url: `/admin/users`,
         method: "GET",
         params: params,
+      }),
+      providesTags: ["ManageUser"],
+    }),
+    getAllListUserForSendMoney: builder.query<
+      UsersResponseForSendMoney,
+      { search: string }
+    >({
+      query: ({ search }) => ({
+        url: "/user-list",
+        method: "GET",
+        params: {
+          search: search,
+        },
       }),
       providesTags: ["ManageUser"],
     }),
@@ -171,5 +185,6 @@ export const {
   useSearchPlayerQuery,
   useViewSingleArtistProfileQuery,
   useGetReferralLinkUsedUserQuery,
+  useGetAllListUserForSendMoneyQuery,
 } = UserManagementApi;
 export default UserManagementApi;

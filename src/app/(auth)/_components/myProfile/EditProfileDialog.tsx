@@ -11,7 +11,9 @@ import { MailIcon } from "@/shared/UI/icon/icon";
 import AppDialog from "@/shared/components/modal/AppDialog";
 
 type EditProfileFormValues = {
-    name: string;
+    first_name: string;
+    middle_name: string;
+    last_name: string;
     email: string;
     contact: string;
     nationality: string;
@@ -41,7 +43,9 @@ export default function EditProfileDialog({
 
     const { register, handleSubmit, reset } = useForm<EditProfileFormValues>({
         defaultValues: {
-            name: defaultValues?.name ?? "",
+            first_name: defaultValues?.first_name ?? "",
+            middle_name: defaultValues?.middle_name ?? "",
+            last_name: defaultValues?.last_name ?? "",
             email: defaultValues?.email ?? "",
             contact: defaultValues?.contact ?? "",
             nationality: defaultValues?.nationality ?? "",
@@ -51,7 +55,9 @@ export default function EditProfileDialog({
     React.useEffect(() => {
         setPreview(avatarSrc);
         reset({
-            name: defaultValues?.name ?? "",
+            first_name: defaultValues?.first_name ?? "",
+            middle_name: defaultValues?.middle_name ?? "",
+            last_name: defaultValues?.last_name ?? "",
             email: defaultValues?.email ?? "",
             contact: defaultValues?.contact ?? "",
             nationality: defaultValues?.nationality ?? "",
@@ -67,11 +73,8 @@ export default function EditProfileDialog({
         setPreview(url);
     };
 
-    // const submit = (data: EditProfileFormValues) => {
-    //     onSave?.({ ...data, avatarFile: file });
-    //     onOpenChange(false);
-    // };
     const submit = (data: EditProfileFormValues) => {
+
         onSave?.({
             ...data,
             image: file,
@@ -127,10 +130,32 @@ export default function EditProfileDialog({
                 onSubmit={handleSubmit(submit)}
                 className={cn("mt-4 rounded-[16px] border border-white/10 bg-white/5 p-4")}
             >
-                <Field label="Name">
+                <div className="grid grid-cols-1 items-center gap-3 sm:grid-cols-2">
+                    <Field label="First Name">
+                        <AuthInput
+                            label="First Name"
+                            name="first_name"
+                            type="text"
+                            register={register as any}
+                            icon={<span className="text-white/60">👤</span>}
+                        />
+                    </Field>
+
+                    <Field label="Middle Name">
+                        <AuthInput
+                            label="Middle Name"
+                            name="middle_name"
+                            type="text"
+                            register={register as any}
+                            icon={<span className="text-white/60">👤</span>}
+                        />
+                    </Field>
+                </div>
+
+                <Field label="Last Name">
                     <AuthInput
-                        label="Name"
-                        name="name"
+                        label="Last Name"
+                        name="last_name"
                         type="text"
                         register={register as any}
                         icon={<span className="text-white/60">👤</span>}
@@ -178,7 +203,7 @@ export default function EditProfileDialog({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
     return (
-        <div className="mt-3 first:mt-0">
+        <div className=" first:mt-0">
             <p className="mb-2 text-white/60 text-[12px]">{label}</p>
             {children}
         </div>

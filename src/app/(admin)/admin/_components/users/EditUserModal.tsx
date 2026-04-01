@@ -27,7 +27,9 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
 
     const user: User | undefined = data?.data;
 
-    const [name, setName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [middleName, setMiddleName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [role, setRole] = useState<"user" | "artist">("user");
 
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -35,7 +37,9 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
 
     useEffect(() => {
         if (user) {
-            setName(user.name);
+            setFirstName(user.first_name ?? "");
+            setMiddleName(user.middle_name ?? "");
+            setLastName(user.last_name ?? "");
             setRole(user.role === "artist" ? "artist" : "user");
             setImagePreview(getSafeImageSrc(user.image));
         }
@@ -55,7 +59,9 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
         try {
             const formData = new FormData();
 
-            formData.append("name", name);
+            formData.append("first_name", firstName);
+            formData.append("middle_name", middleName);
+            formData.append("last_name", lastName);
             formData.append("role", role);
 
             if (imageFile) {
@@ -113,13 +119,42 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                     </label>
                 </div>
 
-                {/* Name */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">First Name</label>
+                        <input
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            placeholder="Enter first name"
+                            className={cn(
+                                "w-full rounded-lg bg-white/5 border border-white/10",
+                                "px-4 py-3 text-white",
+                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            )}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">Middle Name</label>
+                        <input
+                            value={middleName}
+                            onChange={(e) => setMiddleName(e.target.value)}
+                            placeholder="Enter middle name"
+                            className={cn(
+                                "w-full rounded-lg bg-white/5 border border-white/10",
+                                "px-4 py-3 text-white",
+                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            )}
+                        />
+                    </div>
+                </div>
+
                 <div className="space-y-2">
-                    <label className="text-sm text-white/80">Full Name</label>
+                    <label className="text-sm text-white/80">Last Name</label>
                     <input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter full name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Enter last name"
                         className={cn(
                             "w-full rounded-lg bg-white/5 border border-white/10",
                             "px-4 py-3 text-white",

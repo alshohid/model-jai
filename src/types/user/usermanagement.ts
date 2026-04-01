@@ -11,6 +11,9 @@ export interface User {
   game: any;
   id: number;
   name: string;
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
   email: string;
   image?: string;
   provider?: string;
@@ -92,3 +95,15 @@ export type ReferralUsersResponse = {
     next: boolean;
   };
 };
+export interface IUserForSendMoney {
+  id: number;
+  name: string;
+  email: string;
+  image_url: string | null;
+}
+
+export interface UsersResponseForSendMoney {
+  status: boolean;
+  message: string;
+  data: IUserForSendMoney[];
+}

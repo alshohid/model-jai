@@ -131,7 +131,7 @@ export default function MyProfilePanel({
                                 {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />}
                             </div>
 
-                            {/* ── Favourite Game Card (replaces FavoriteButton) ── */}
+
                             {game?.name ? (
                                 <div className="flex-shrink-0 flex flex-col items-center gap-1.5 py-3 md:py-8">
                                     <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">

@@ -11,6 +11,7 @@ import { useEditProfileMutation, useGetMeDataQuery } from "@/redux/features/auth
 import ProfileSkeleton from "./ProfileSkeleton";
 import { IUserStats } from "@/types/user/auth";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { getFullName } from "@/shared/lib/utils/name";
 
 const MyProfileSection = () => {
     const [openEdit, setOpenEdit] = useState(false);
@@ -22,6 +23,7 @@ const MyProfileSection = () => {
     const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
     const user = meData?.data?.user;
+    const userFullName = getFullName(user);
     const fallbackAvatar = "/images/home/pro_1.jpg";
 
     const stats: IUserStats | undefined = meData?.data
@@ -76,7 +78,7 @@ const MyProfileSection = () => {
                 ) : (
                     <MyProfilePanel
                         profile={{
-                            name: user?.name ?? "",
+                            name: userFullName,
                             email: user?.email ?? "",
                             contact: user?.phone_number ?? "",
                             nationality: user?.nationality ?? "",
@@ -126,7 +128,9 @@ const MyProfileSection = () => {
                 onOpenChange={setOpenEdit}
                 avatarSrc={getSafeImageSrc(user?.image, fallbackAvatar)}
                 defaultValues={{
-                    name: user?.name ?? "",
+                    first_name: user?.first_name ?? "",
+                    middle_name: user?.middle_name ?? "",
+                    last_name: user?.last_name ?? "",
                     email: user?.email ?? "",
                     contact: user?.phone_number ?? "",
                     nationality: user?.nationality ?? "",
@@ -136,7 +140,9 @@ const MyProfileSection = () => {
                     try {
                         const formData = new FormData();
 
-                        formData.append("name", data?.name);
+                        formData.append("first_name", data.first_name);
+                        formData.append("middle_name", data.middle_name);
+                        formData.append("last_name", data.last_name);
                         formData.append("phone_number", data?.contact);
                         formData.append("nationality", data?.nationality);
 
@@ -160,11 +166,12 @@ const MyProfileSection = () => {
                 open={sendMoneyOpen}
                 onOpenChange={setSendMoneyOpen}
                 defaultValues={{
-                    senderName: user?.name ?? "",
-                    email: user?.email ?? "",
                     amount: "",
                 }}
-                onSend={(data) => console.log("send money", data)}
+                senderInfo={{
+                    name: userFullName,
+                    email: user?.email ?? "",
+                }}
             />
             <WithdrawalDialog
                 open={withdrawal}

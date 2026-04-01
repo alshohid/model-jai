@@ -53,6 +53,9 @@ export interface ILoginPayload {
 export interface IAuthUser {
   id: number;
   name: string;
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
   email: string;
   image: string | null;
   provider: string | null;
@@ -131,6 +134,9 @@ export interface IUser {
   game: any;
   id: number;
   name: string;
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
   email: string;
   phone_number: string | null;
   nationality: string | null;
@@ -160,6 +166,9 @@ export interface IUserInfoResponse {
 }
 export interface IUpdateUserParams {
   name?: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
   email?: string;
   phone_number?: string | null;
   nationality?: string | null;

@@ -32,6 +32,20 @@ const SupportManagementApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAdminTransaction: builder.query<
+      IUserTransactionsResponse,
+      { page?: number; limit?: number; search?: string }
+    >({
+      query: ({ page, limit, search }) => ({
+        url: `admin/all-transaction`,
+        method: "GET",
+        params: {
+          page,
+          per_page: limit,
+          search: search,
+        },
+      }),
+    }),
     getSupportHistory: builder.query<
       ISupportHistoryResponse,
       {
@@ -108,6 +122,7 @@ export const {
   useGetTikTokAndTwitchLiveStatusQuery,
   usePlaceSupportMutation,
   useSendTipMutation,
+  useGetAdminTransactionQuery,
 } = SupportManagementApi;
 
 export default SupportManagementApi;

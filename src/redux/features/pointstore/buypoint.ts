@@ -7,6 +7,7 @@ import {
   IConnectStripeResponse,
   IStripeStatusResponse,
   IWithdrawRequestData,
+  SupportResponse,
 } from "@/types/user/point";
 
 const BuyPointApi = baseApi.injectEndpoints({
@@ -31,6 +32,17 @@ const BuyPointApi = baseApi.injectEndpoints({
         url: `/stripe/connect`,
         method: "POST",
       }),
+    }),
+    sendCoin: builder.mutation<
+      SupportResponse,
+      { receiver_id: number; amount: number }
+    >({
+      query: (body) => ({
+        url: `/send-coin`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["User"],
     }),
 
     withdrawRequest: builder.mutation<
@@ -99,5 +111,6 @@ export const {
   useRejectWithdrawRequestMutation,
   useGetAutoAcceptStatusQuery,
   useToggleAutoAcceptStatusMutation,
+  useSendCoinMutation,
 } = BuyPointApi;
 export default BuyPointApi;
