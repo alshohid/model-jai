@@ -4,6 +4,7 @@ import {
   IGameCreateParams,
   IGameCreateResponse,
   IGameListResponse,
+  IGameSingleResponse,
 } from "@/types/game/gameList/gameListTypes";
 
 const GameListManagementApi = baseApi.injectEndpoints({
@@ -62,7 +63,7 @@ const GameListManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ["GameList"],
     }),
 
-    viewSingleGameList: builder.query<IGameListResponse, number>({
+    viewSingleGameList: builder.query<IGameSingleResponse, number>({
       query: (id) => ({
         url: `/admin/games/${id}`,
         method: "GET",

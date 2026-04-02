@@ -28,6 +28,12 @@ export interface IGameCategoryResponse {
   };
 }
 
+export interface IGameCategorySingleResponse {
+  success: boolean;
+  message: string;
+  data: IGameCategoryData;
+}
+
 export interface IGameCategoryData {
   id: number;
   name: string;

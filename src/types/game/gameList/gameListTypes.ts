@@ -22,6 +22,12 @@ export interface IGameListResponse {
   data: IGame[];
 }
 
+export interface IGameSingleResponse {
+  status: boolean;
+  message: string;
+  data: IGame;
+}
+
 export interface IGameCreateParams {
   name: string;
   image: File;

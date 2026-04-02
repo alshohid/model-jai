@@ -3,6 +3,7 @@ import { baseApi } from "@/redux/api/baseApi";
 import {
   IGameCategoryCreateParams,
   IGameCategoryResponse,
+  IGameCategorySingleResponse,
 } from "@/types/game/gamecategory/gameCategorytypes";
 
 const GameCategoryApi = baseApi.injectEndpoints({
@@ -52,7 +53,7 @@ const GameCategoryApi = baseApi.injectEndpoints({
       invalidatesTags: ["GameCategory"],
     }),
 
-    viewSingleGameCategory: builder.query<IGameCategoryResponse, number>({
+    viewSingleGameCategory: builder.query<IGameCategorySingleResponse, number>({
       query: (id) => ({
         url: `/admin/categories/${id}`,
         method: "GET",

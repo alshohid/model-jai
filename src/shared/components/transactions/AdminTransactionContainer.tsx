@@ -19,6 +19,10 @@ type AdminTransactionRow = Omit<IUserTransactionItem, "type"> & {
     | "win"
     | "tip";
     invoice_pdf?: string | null;
+    user: {
+        name: string;
+        email: string;
+    };
 };
 
 export default function AdminTransactionContainer() {
@@ -63,7 +67,7 @@ export default function AdminTransactionContainer() {
 
     const tableHeader = [
         "Transaction ID",
-        "User ID",
+        "User",
         "Type",
         "Amount",
         "Balance After",
@@ -77,7 +81,13 @@ export default function AdminTransactionContainer() {
         index: number
     ) => ReactNode)[] = [
             (item) => <span className="text-white">#{item.id}</span>,
-            (item) => <span className="text-white">#{item.user_id}</span>,
+            (item) => (
+                <div className="flex flex-col gap-1">
+                    <span className="text-white">{item?.user?.name}</span>
+                    <span className="text-white">{item?.user?.email}</span>
+
+                </div>
+            ),
             (item) => (
                 <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium capitalize ${getTypeBadgeClass(item.type)}`}>
                     {item.type}

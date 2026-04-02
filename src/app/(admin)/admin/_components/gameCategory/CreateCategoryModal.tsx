@@ -5,6 +5,7 @@ import { useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { useCreateGameCategoryMutation } from "@/redux/features/game/gameCategoryManagement";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export default function CreateCategoryModal({ open, onClose }: any) {
 
@@ -14,6 +15,26 @@ export default function CreateCategoryModal({ open, onClose }: any) {
 
     const [createCategory, { isLoading }] =
         useCreateGameCategoryMutation();
+
+    const getErrorMessage = (error: any) => {
+        const fieldErrors = error?.data?.errors;
+
+        if (fieldErrors && typeof fieldErrors === "object") {
+            const firstFieldError = Object.values(fieldErrors).find(
+                (value) => Array.isArray(value) && value.length > 0
+            ) as string[] | undefined;
+
+            if (firstFieldError?.[0]) {
+                return firstFieldError[0];
+            }
+        }
+
+        return (
+            error?.data?.message ??
+            error?.message ??
+            "Failed to create category"
+        );
+    };
 
     const handleImageChange = (file: File | null) => {
         if (!file) return;
@@ -25,19 +46,25 @@ export default function CreateCategoryModal({ open, onClose }: any) {
     };
 
     const handleSubmit = async () => {
+        try {
+            const formData = new FormData();
 
-        const formData = new FormData();
+            formData.append("name", name);
+            if (image) formData.append("image", image);
 
-        formData.append("name", name);
-        if (image) formData.append("image", image);
+            const response = await createCategory(formData as any).unwrap();
+            toast.success(response?.message ?? "Category created successfully");
 
-        await createCategory(formData as any).unwrap();
+            setName("");
+            setImage(null);
+            setPreview(null);
 
-        setName("");
-        setImage(null);
-        setPreview(null);
+            onClose();
+        } catch (error: any) {
+            toast.error(getErrorMessage(error));
+        }
 
-        onClose();
+
     };
 
     return (
