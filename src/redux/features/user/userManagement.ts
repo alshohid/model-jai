@@ -65,7 +65,7 @@ const UserManagementApi = baseApi.injectEndpoints({
 
         formData: true,
       }),
-      invalidatesTags: ["ManageUser"],
+      invalidatesTags: ["User"],
     }),
 
     getReferralLinkUsedUser: builder.query<
