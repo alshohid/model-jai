@@ -15,8 +15,8 @@ type EditProfileFormValues = {
     middle_name: string;
     last_name: string;
     email: string;
-    contact: string;
-    nationality: string;
+    contact?: string;
+    nationality?: string;
     image?: File | null;
 };
 
@@ -180,16 +180,18 @@ export default function EditProfileDialog({
                         type="text"
                         register={register as any}
                         icon={<span className="text-white/60">📞</span>}
+                        required={false}
                     />
                 </Field>
 
-                <Field label="Nationality">
+                <Field label="Nationality (optional)">
                     <AuthInput
                         label="Nationality"
                         name="nationality"
                         type="text"
                         register={register as any}
                         icon={<span className="text-white/60">🌍</span>}
+                        required={false}
                     />
                 </Field>
 

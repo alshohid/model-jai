@@ -10,7 +10,7 @@ import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon, UserIcon } from "@/shared/UI/icon/icon";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import { IAuthRegisterParams } from "@/types/user/auth";
@@ -24,12 +24,29 @@ interface SelectedGame {
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     const [registerUser, { isLoading }] = useRegisterUserMutation();
-    const { register, handleSubmit } = useForm<IAuthRegisterParams>();
+    const { register, handleSubmit, control, setValue } = useForm<IAuthRegisterParams>({
+        defaultValues: {
+            first_name: "",
+            middle_name: "",
+            last_name: "",
+            email: "",
+            password: "",
+            c_password: "",
+            address: "",
+            zip_code: "",
+            state: "",
+            social_verification_status: false,
+        },
+    });
     const [googleLogin] = useGoogleLoginMutation();
     const [facebookLogin] = useFacebookLoginMutation();
 
     const [gamePickerOpen, setGamePickerOpen] = useState(false);
     const [selectedGame, setSelectedGame] = useState<SelectedGame | null>(null);
+    const isSocialVerificationEnabled = useWatch({
+        control,
+        name: "social_verification_status",
+    }) ?? false;
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -39,6 +56,10 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             sessionStorage.setItem("pending_referral", referralFromUrl);
         }
     }, []);
+
+    useEffect(() => {
+        register("social_verification_status");
+    }, [register]);
 
     const getReferralId = () => {
         if (typeof window === "undefined") return null;
@@ -55,9 +76,21 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         await executeSocialLogin(() => facebookLogin().unwrap());
     };
 
+    const normalizeOptionalText = (value?: string | null) => {
+        const trimmedValue = value?.trim();
+        return trimmedValue ? trimmedValue : null;
+    };
+
     const onSubmit = async (data: IAuthRegisterParams) => {
         const payload: IAuthRegisterParams = {
             ...data,
+            first_name: data.first_name.trim(),
+            middle_name: normalizeOptionalText(data.middle_name),
+            last_name: data.last_name.trim(),
+            address: normalizeOptionalText(data.address),
+            zip_code: normalizeOptionalText(data.zip_code),
+            state: normalizeOptionalText(data.state),
+            social_verification_status: Boolean(data.social_verification_status),
             game_id: selectedGame?.id ?? null,
             referral_id: getReferralId(),
         };
@@ -82,14 +115,29 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                 <div className="text-center">
                     <h2 className="text-[22px] font-semibold text-white">Welcome</h2>
                     <p className="mt-2 text-[13px] text-white/55">
-                        Please enter your name or artist name, email and password
+                        Please enter your name, contact details and password
                     </p>
                 </div>
 
                 <div className="mt-8 space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <AuthInput
+                            label="First Name"
+                            name="first_name"
+                            register={register as any}
+                            icon={<UserIcon />}
+                        />
+                        <AuthInput
+                            label="Middle Name"
+                            name="middle_name"
+                            register={register as any}
+                            icon={<UserIcon />}
+                            required={false}
+                        />
+                    </div>
                     <AuthInput
-                        label="Full name or artist name"
-                        name="name"
+                        label="Last Name"
+                        name="last_name"
                         register={register as any}
                         icon={<UserIcon />}
                     />
@@ -100,6 +148,29 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         register={register as any}
                         icon={<MailIcon />}
                     />
+                    <AuthInput
+                        label="Address"
+                        name="address"
+                        register={register as any}
+                        icon={<UserIcon />}
+                        required={false}
+                    />
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <AuthInput
+                            label="State"
+                            name="state"
+                            register={register as any}
+                            icon={<UserIcon />}
+                            required={false}
+                        />
+                        <AuthInput
+                            label="Zip Code"
+                            name="zip_code"
+                            register={register as any}
+                            icon={<UserIcon />}
+                            required={false}
+                        />
+                    </div>
                     <AuthInput
                         label="Password"
                         name="password"
@@ -114,6 +185,42 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         register={register as any}
                         icon={<LockIcon />}
                     />
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                        <div className="space-y-1">
+                            <p className="text-[13px] font-semibold text-white">
+                                Social Verification Status
+                            </p>
+                            <p className="text-[11px] text-white/45">
+                                Sends `true` or `false` in `social_verification_status`
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setValue(
+                                    "social_verification_status",
+                                    !isSocialVerificationEnabled,
+                                    { shouldDirty: true }
+                                )
+                            }
+                            className={[
+                                "relative h-6 w-12 rounded-full transition-all duration-300 cursor-pointer",
+                                isSocialVerificationEnabled
+                                    ? "bg-[#22CAAD] shadow-[0_0_12px_rgba(34,202,173,0.35)]"
+                                    : "bg-white/15",
+                            ].join(" ")}
+                            aria-label="Toggle social verification status"
+                            aria-pressed={isSocialVerificationEnabled}
+                        >
+                            <span
+                                className={[
+                                    "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300",
+                                    isSocialVerificationEnabled ? "left-6" : "left-0.5",
+                                ].join(" ")}
+                            />
+                        </button>
+                    </div>
 
                     {/* ── Favorite Game Picker Field ── */}
                     <div className="space-y-1.5">

@@ -7,4 +7,5 @@ export type AuthInputProps = {
   register: ReturnType<typeof useForm>["register"];
   name: string;
   readOnly?: boolean;
+  required?: boolean;
 };

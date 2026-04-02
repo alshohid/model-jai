@@ -9,6 +9,7 @@ export interface UserManagementResponse {
 
 export interface User {
   game: any;
+  game_id?: number | null;
   id: number;
   name: string;
   first_name?: string | null;
@@ -25,6 +26,7 @@ export interface User {
   is_permanent_suspended: boolean;
   phone_number?: string;
   nationality?: string;
+  social_verification_status?: boolean | null;
   followers_count?: number;
   following_count?: number;
   total_post?: number;

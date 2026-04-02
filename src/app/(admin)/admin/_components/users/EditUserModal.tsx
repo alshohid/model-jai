@@ -9,11 +9,13 @@ import {
     useViewSingleUserQuery,
     useUpdateUserMutation,
 } from "@/redux/features/user/userManagement";
+import { useGetAllGamesQuery } from "@/redux/features/game/gameListManagement";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { User } from "@/types/user/usermanagement";
+import { IGame } from "@/types/game/gameList/gameListTypes";
 
 interface Props {
     open: boolean;
@@ -23,14 +25,18 @@ interface Props {
 
 export default function EditUserModal({ open, onClose, userId }: Props) {
     const { data } = useViewSingleUserQuery(userId!, { skip: !userId });
+    const { data: gamesResponse } = useGetAllGamesQuery();
     const [updateUser, { isLoading }] = useUpdateUserMutation();
 
     const user: User | undefined = data?.data;
+    const games: IGame[] = gamesResponse?.data ?? [];
 
     const [firstName, setFirstName] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
     const [role, setRole] = useState<"user" | "artist">("user");
+    const [gameId, setGameId] = useState("");
+    const [socialVerificationStatus, setSocialVerificationStatus] = useState(false);
 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState("");
@@ -41,7 +47,16 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
             setMiddleName(user.middle_name ?? "");
             setLastName(user.last_name ?? "");
             setRole(user.role === "artist" ? "artist" : "user");
+            setGameId(
+                user.game_id != null
+                    ? String(user.game_id)
+                    : user.game?.id != null
+                        ? String(user.game.id)
+                        : ""
+            );
+            setSocialVerificationStatus(Boolean(user.social_verification_status));
             setImagePreview(getSafeImageSrc(user.image));
+            setImageFile(null);
         }
     }, [user]);
 
@@ -63,6 +78,11 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
             formData.append("middle_name", middleName);
             formData.append("last_name", lastName);
             formData.append("role", role);
+            formData.append("game_id", gameId);
+            formData.append(
+                "social_verification_status",
+                String(socialVerificationStatus)
+            );
 
             if (imageFile) {
                 formData.append("image", imageFile);
@@ -177,6 +197,53 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                         <option value="user">User</option>
                         <option value="artist">Artist</option>
                     </select>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Favorite Game</label>
+                    <select
+                        value={gameId}
+                        onChange={(e) => setGameId(e.target.value)}
+                        className="w-full rounded-lg bg-black/20 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    >
+                        <option value="">Select a game</option>
+                        {games.map((game) => (
+                            <option key={game.id} value={game.id}>
+                                {game.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+                    <div className="space-y-1">
+                        <p className="text-sm text-white/80">Social Verification Status</p>
+                        <p className="text-xs text-white/50">
+                            {socialVerificationStatus ? "Verified" : "Not Verified"}
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setSocialVerificationStatus((prev) => !prev)
+                        }
+                        className={cn(
+                            "relative h-6 w-12 rounded-full transition-all duration-300",
+                            socialVerificationStatus
+                                ? "bg-[#22CAAD] shadow-[0_0_12px_rgba(34,202,173,0.35)]"
+                                : "bg-white/15"
+                        )}
+                        aria-label="Toggle social verification status"
+                        aria-pressed={socialVerificationStatus}
+                    >
+                        <span
+                            className={cn(
+                                "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300",
+                                socialVerificationStatus ? "left-6" : "left-0.5"
+                            )}
+                        />
+                    </button>
                 </div>
 
                 {/* Buttons */}

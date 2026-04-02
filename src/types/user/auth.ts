@@ -74,10 +74,16 @@ export type IAuthUpdateUserParams = Omit<Partial<IAuthUser>, "avatar"> & {
 };
 
 export interface IAuthRegisterParams {
-  name: string;
+  first_name: string;
+  middle_name?: string | null;
+  last_name: string;
   email: string;
   password: string;
   c_password: string;
+  address?: string | null;
+  zip_code?: string | null;
+  state?: string | null;
+  social_verification_status?: boolean;
   game_id?: number | null;
   referral_id?: string | null;
 }

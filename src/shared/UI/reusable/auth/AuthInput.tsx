@@ -20,7 +20,15 @@ function EyeClosedIcon() {
     );
 }
 
-export function AuthInput({ label, type = "text", icon, register, name, readOnly = false }: AuthInputProps) {
+export function AuthInput({
+    label,
+    type = "text",
+    icon,
+    register,
+    name,
+    readOnly = false,
+    required = true,
+}: AuthInputProps) {
     const isPassword = type === "password";
     const [showPassword, setShowPassword] = useState(false);
 
@@ -49,7 +57,7 @@ export function AuthInput({ label, type = "text", icon, register, name, readOnly
                     text-white/90 placeholder:text-white/35
                     text-[14px]
                     "
-                    {...register(name, { required: true })}
+                    {...register(name, { required })}
                 />
                 {isPassword && (
                     <button
