@@ -55,7 +55,7 @@ export default function VideoCarousel({
                     if (!v) return;
                     if (i === idx) {
                         v.currentTime = 0;
-                        v.play().catch(() => {});
+                        v.play().catch(() => { });
                     } else {
                         v.pause();
                     }
@@ -92,7 +92,7 @@ export default function VideoCarousel({
                         if (v && i !== idx) v.pause();
                     });
                     video.currentTime = 0;
-                    video.play().catch(() => {});
+                    video.play().catch(() => { });
                     setPlayingIndex(idx);
                 }
             }
@@ -161,7 +161,7 @@ export default function VideoCarousel({
                                 {/* Title */}
                                 <div className="absolute inset-0 flex items-center justify-center px-[38px] py-[164px]">
                                     <h3 className="w-[293px] h-[38px] text-center text-white text-[24px] leading-[160%] tracking-[0.005em] font-porterSansBlock">
-                                        {item.title}
+                                        {/* {item.title} */}
                                     </h3>
                                 </div>
                             </button>
