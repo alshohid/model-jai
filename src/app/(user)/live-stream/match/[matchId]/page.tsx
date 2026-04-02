@@ -46,8 +46,10 @@ export default function MatchDetails({
     const supportClosed = isLiveContinue;
     const rules = currentMatch?.rules ?? null;
     const modelPicture = matchData?.model_picture ?? "/images/home/middle.png";
+    const matchType = currentMatch?.type;
     const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
 
+    console.log("matchType", matchType);
     const {
         showRegistrationPrompt,
         handleRegister,
@@ -116,9 +118,13 @@ export default function MatchDetails({
                         <MatchPointsSummarySection
 
                             isLive={isLiveContinue}
+                            matchType={matchType}
+                            gameId={currentMatch?.game_id}
                             matchId={matchId}
                             tipEnabled={tipEnabled}
                             userReferralNo={userReferralNo}
+                            leftPlayerImageSrc={liveStore.left.imageSrc}
+                            rightPlayerImageSrc={liveStore.right.imageSrc}
 
                             left={{
                                 playerName: liveStore.left.name,

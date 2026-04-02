@@ -68,12 +68,32 @@ const MatchManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["PopularArtist"],
     }),
-    goVote: builder.mutation<IPopularArtistSingleResponse, number>({
-      query: (id) => ({
+    goVote: builder.mutation<
+      IPopularArtistSingleResponse,
+      | number
+      | {
+          matchForVotingId: number;
+          playerId?: number;
+          voteCount?: number;
+        }
+    >({
+      query: (payload) => {
+        const matchForVotingId =
+          typeof payload === "number" ? payload : payload.matchForVotingId;
+        const playerId = typeof payload === "number" ? undefined : payload.playerId;
+        const voteCount =
+          typeof payload === "number" ? undefined : payload.voteCount;
+
+        return {
         url: `/vote`,
         method: "POST",
-        params: { match_for_voting_id: id },
-      }),
+        params: {
+          match_for_voting_id: matchForVotingId,
+          ...(playerId ? { player_id: playerId } : {}),
+          ...(voteCount ? { vote_count: voteCount } : {}),
+        },
+      };
+      },
       invalidatesTags: ["PopularArtist"],
     }),
     createPopularArtistVote: builder.mutation<
