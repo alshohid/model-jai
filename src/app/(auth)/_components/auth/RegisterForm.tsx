@@ -190,9 +190,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                             <p className="text-[13px] font-semibold text-white">
                                 Social Verification Status
                             </p>
-                            <p className="text-[11px] text-white/45">
-                                Sends `true` or `false` in `social_verification_status`
-                            </p>
+
                         </div>
 
                         <button
