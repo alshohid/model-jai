@@ -5,6 +5,8 @@ import { useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { useCreateGameListMutation } from "@/redux/features/game/gameListManagement";
 import { useGetAllGameCategoriesQuery } from "@/redux/features/game/gameCategoryManagement";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/utils";
 
 export default function CreateGameModal({ open, onClose }: any) {
 
@@ -19,22 +21,28 @@ export default function CreateGameModal({ open, onClose }: any) {
         useGetAllGameCategoriesQuery({ page: 1, limit: 100 });
 
     const handleSubmit = async () => {
+        try {
+            if (!categoryId || !image) return;
 
-        if (!categoryId || !image) return;
+            const formData = new FormData();
 
-        const formData = new FormData();
+            formData.append("name", name);
+            formData.append("category_id", String(categoryId));
+            formData.append("image", image);
 
-        formData.append("name", name);
-        formData.append("category_id", String(categoryId));
-        formData.append("image", image);
+            await createGame(formData as any).unwrap();
+            toast.success("Game created successfully");
 
-        await createGame(formData as any).unwrap();
+            setName("");
+            setCategoryId(null);
+            setImage(null);
 
-        setName("");
-        setCategoryId(null);
-        setImage(null);
+            onClose();
+        } catch (error) {
+            toast.error(getErrorMessage(error));
+        }
 
-        onClose();
+
     };
 
     return (
