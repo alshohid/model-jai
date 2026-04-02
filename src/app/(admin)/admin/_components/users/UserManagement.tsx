@@ -41,6 +41,10 @@ export type RankRowItem = {
     image?: string;
     favGameImg?: string;
     favGameName?: string;
+    state?: string | null;
+    zip_code?: string | null;
+    address?: string | null;
+    isVerified?: boolean | null;
     meta?: {
         page: number;
         limit: number;
@@ -104,7 +108,11 @@ export default function UserManagement() {
             is_permanent_suspended: user?.is_permanent_suspended,
             image: user?.image,
             favGameImg: user?.game?.image,
-            favGameName: user?.game?.name
+            favGameName: user?.game?.name,
+            state: user?.state,
+            zip_code: user?.zip_code,
+            address: user?.address,
+            isVerified: user?.social_verification_status
         })) ?? [];
 
     const meta = {
@@ -114,7 +122,7 @@ export default function UserManagement() {
         prev: Boolean(usersData?.links?.prev),
         next: Boolean(usersData?.links?.next),
     };
-    const tableHeader = ["User Name", "Image", "Favorite Game", "Role", "Email", "Status", "Actions"];
+    const tableHeader = ["User Name", "Image", "Verified", "State", "Zip Code", "Address", "Favorite Game", "Role", "Email", "Status", "Actions"];
 
 
     const handleSuspendClick = (item: RankRowItem) => {
@@ -130,9 +138,7 @@ export default function UserManagement() {
     };
 
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
-
         (item) => {
-            console.log(item);
             const status = getSuspendStatus(item);
 
             const color =
@@ -147,13 +153,38 @@ export default function UserManagement() {
         (item) => {
             return (
                 <div>
-                    <img src={item.image} alt="user" width={100} height={100} className="object-cover rounded-full h-16 w-16" />
+                    <img
+                        src={item.image || "/images/home/avatar_1.png"}
+                        alt="user"
+                        width={100}
+                        height={100}
+                        className="object-cover rounded-full h-16 w-16"
+                    />
                 </div>
             )
         },
+        (item) => (
+            <span
+                className={cn(
+                    "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
+                    item.isVerified
+                        ? "bg-[#22CAAD]/15 text-[#7DF3DD]"
+                        : "bg-white/10 text-white/65"
+                )}
+            >
+                {item.isVerified ? "Verified" : "Not Verified"}
+            </span>
+        ),
+        (item) => <span className="text-[#FFFFFF]">{item.state || "N/A"}</span>,
+        (item) => <span className="text-[#FFFFFF]">{item.zip_code || "N/A"}</span>,
+        (item) => (
+            <span className="block max-w-[220px] truncate text-[#FFFFFF]" title={item.address || "N/A"}>
+                {item.address || "N/A"}
+            </span>
+        ),
         (item) => <div className="text-[#FFFFFF]">
             <img src={item?.favGameImg ?? "/assets/images/user.png"} alt="user" width={100} height={100} className="object-cover rounded-full h-12 w-12" />
-            <p>{item?.favGameName}</p>
+            <p>{item?.favGameName || "N/A"}</p>
         </div>,
         (item) => <span className="text-[#FFFFFF]">{item.referral_used_by}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.game_name}</span>,
@@ -290,7 +321,7 @@ export default function UserManagement() {
                     tableHeader={tableHeader}
                     tableRowDataRenderers={tableRowDataRenderers}
                     isBg={false}
-                    minTableWidthPx={1320}
+                    minTableWidthPx={1560}
                     variant="rank-dark"
                 />
 

@@ -15,29 +15,55 @@ interface Props {
 export default function CreateUserModal({ isOpen, onClose }: Props) {
     const [createUser, { isLoading }] = useCreateUserMutation();
 
-    const [name, setName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [middleName, setMiddleName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [state, setState] = useState("");
+    const [zipCode, setZipCode] = useState("");
+    const [address, setAddress] = useState("");
     const [role, setRole] = useState<"user" | "artist">("user");
 
     const resetForm = () => {
-        setName("");
+        setFirstName("");
+        setMiddleName("");
+        setLastName("");
         setEmail("");
         setPassword("");
+        setState("");
+        setZipCode("");
+        setAddress("");
         setRole("user");
     };
 
+    const normalizeOptionalText = (value: string) => {
+        const trimmedValue = value.trim();
+        return trimmedValue ? trimmedValue : null;
+    };
+
     const handleCreate = async () => {
-        if (!name || !email || !password) {
+        if (!firstName.trim() || !lastName.trim() || !email.trim() || !password) {
             toast.error("Please fill all fields");
             return;
         }
 
+        const fullName = [firstName, middleName, lastName]
+            .map((part) => part.trim())
+            .filter(Boolean)
+            .join(" ");
+
         try {
             const res = await createUser({
-                name,
-                email,
+                first_name: firstName.trim(),
+                middle_name: normalizeOptionalText(middleName),
+                last_name: lastName.trim(),
+                name: fullName,
+                email: email.trim(),
                 password,
+                state: normalizeOptionalText(state),
+                zip_code: normalizeOptionalText(zipCode),
+                address: normalizeOptionalText(address),
                 role,
             }).unwrap();
 
@@ -62,13 +88,42 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
                     </p>
                 </div>
 
-                {/* Name */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">First Name</label>
+                        <input
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            placeholder="Enter first name"
+                            className={cn(
+                                "w-full rounded-lg bg-white/5 border border-white/10",
+                                "px-4 py-3 text-white",
+                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            )}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">Middle Name</label>
+                        <input
+                            value={middleName}
+                            onChange={(e) => setMiddleName(e.target.value)}
+                            placeholder="Enter middle name"
+                            className={cn(
+                                "w-full rounded-lg bg-white/5 border border-white/10",
+                                "px-4 py-3 text-white",
+                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            )}
+                        />
+                    </div>
+                </div>
+
                 <div className="space-y-2">
-                    <label className="text-sm text-white/80">Full Name</label>
+                    <label className="text-sm text-white/80">Last Name</label>
                     <input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter full name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Enter last name"
                         className={cn(
                             "w-full rounded-lg bg-white/5 border border-white/10",
                             "px-4 py-3 text-white",
@@ -99,6 +154,38 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
                         placeholder="Enter password"
                         className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                     />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Address (optional)</label>
+                    <input
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Enter address"
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">State (optional)</label>
+                        <input
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
+                            placeholder="Enter state"
+                            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">Zip Code (optional)</label>
+                        <input
+                            value={zipCode}
+                            onChange={(e) => setZipCode(e.target.value)}
+                            placeholder="Enter zip code"
+                            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        />
+                    </div>
                 </div>
 
                 {/* Role */}

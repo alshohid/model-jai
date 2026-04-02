@@ -30,6 +30,10 @@ export interface User {
   followers_count?: number;
   following_count?: number;
   total_post?: number;
+  state?: string;
+  zip_code?: string;
+  address?: string;
+  isVerified?: boolean;
 }
 
 export interface PaginationMeta {
@@ -60,9 +64,15 @@ export interface PaginationLinks {
   next: string | null;
 }
 export interface IUserCreateParams {
+  first_name: string;
+  middle_name?: string | null;
+  last_name: string;
   name: string;
   email: string;
   password: string;
+  state?: string | null;
+  zip_code?: string | null;
+  address?: string | null;
   role?: "user" | "super_admin" | "artist";
 }
 
