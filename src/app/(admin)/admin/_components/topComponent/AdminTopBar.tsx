@@ -6,7 +6,9 @@ import { cn } from "@/shared/lib/utils/cn";
 import NotificationButton from "../reusable/NotificationButton";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useNotifications } from "@/shared/providers/hook/useNotificaton";
-import { LoaderPinwheel } from "lucide-react";
+import { LoaderPinwheel, User } from "lucide-react";
+import Image from "next/image";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 function titleFromPath(pathname: string) {
     if (pathname.startsWith("/admin/dashboard/matches")) return "Match Management";
@@ -27,6 +29,7 @@ export default function AdminTopBar({
     const pathname = usePathname();
     const title = titleFromPath(pathname);
     const { data, isLoading } = useGetMeDataQuery()
+    const avatarSrc = getSafeImageSrc(data?.data?.user?.image, "");
     if (isLoading) {
         return <div>
             <LoaderPinwheel />
@@ -77,17 +80,19 @@ export default function AdminTopBar({
                             <p className="text-white text-sm font-medium leading-none">{data?.data?.user?.name}</p>
                             <p className="text-white/45 text-xs mt-1">Agency Manager</p>
                         </div>
-
-                        <button
-                            type="button"
-                            className={cn(
-                                "size-10 rounded-full",
-                                "bg-white/10 border border-white/10",
-                                "text-white/80"
+                        <div className="flex items-center justify-center size-10 rounded-full border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] shadow-[0_8px_20px_rgba(0,0,0,0.18)] overflow-hidden">
+                            {avatarSrc ? (
+                                <Image
+                                    src={avatarSrc}
+                                    alt="profile"
+                                    width={40}
+                                    height={40}
+                                    className="rounded-full size-10 object-cover"
+                                />
+                            ) : (
+                                <User size={18} className="text-white/70" />
                             )}
-                            aria-label="Profile"
-                            onClick={() => console.log("profile menu")}
-                        />
+                        </div>
                     </div>
                 </div>
             </div>

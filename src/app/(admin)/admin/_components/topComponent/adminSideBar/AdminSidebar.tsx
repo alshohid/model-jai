@@ -57,6 +57,15 @@ export default function AdminSidebar({
 
     const [logoutAdmin, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
+    const isPathActive = (href?: string) => {
+        if (!href) return false;
+        if (href === "/admin/dashboard") {
+            return pathname === href;
+        }
+
+        return pathname === href || pathname.startsWith(`${href}/`);
+    };
+
     return (
         <>
             {sidebarOpen && (
@@ -102,9 +111,7 @@ export default function AdminSidebar({
 
                             {menuItems.map((item) => {
 
-                                const isActive = item.href
-                                    ? pathname.startsWith(item.href)
-                                    : false;
+                                const isActive = isPathActive(item.href);
 
                                 // submenu
                                 if (item.children) {
@@ -112,7 +119,7 @@ export default function AdminSidebar({
                                     const isOpen = openMenu === item.label;
 
                                     const parentActive = item.children.some((child) =>
-                                        pathname.startsWith(child.href)
+                                        isPathActive(child.href)
                                     );
 
                                     return (
@@ -161,7 +168,7 @@ export default function AdminSidebar({
                                                 <div className="ml-8 space-y-2">
                                                     {item.children.map((child) => {
 
-                                                        const active = pathname.startsWith(child.href);
+                                                        const active = isPathActive(child.href);
 
                                                         return (
                                                             <Link
