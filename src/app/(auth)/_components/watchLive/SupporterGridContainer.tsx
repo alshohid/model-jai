@@ -5,7 +5,6 @@ import * as React from "react";
 import SupporterGrid, { GridCell, SupportSide } from "@/shared/components/grid/SupporterGrid";
 
 type Props = {
-    matchId?: string;
     matchStatus?: any;
     locked?: boolean;
 
@@ -19,19 +18,17 @@ function makeDummyCells(rows: number, cols: number): GridCell[] {
 
     return Array.from({ length: total }).map((_, i) => {
         const points = pointsPool[i % pointsPool.length];
-        const taken = Math.random() > 0.7;
 
         return {
             id: `c-${i + 1}`,
-            status: taken ? "taken" : "available",
+            status: "available",
             points,
-            ownerSide: taken ? (Math.random() > 0.5 ? "left" : "right") : undefined,
+            ownerSide: undefined,
         };
     });
 }
 
 export default function SupporterGridContainer({
-    matchId,
     matchStatus,
     locked = false,
     selectedSide,

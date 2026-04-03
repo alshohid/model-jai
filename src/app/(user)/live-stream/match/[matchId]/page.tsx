@@ -148,7 +148,7 @@ export default function MatchDetails({
                         />
 
                         <SupporterGridSection
-                            matchId={matchId}
+                            key={matchId}
                             mode={(liveMode as "landscape" | "portrait") || "landscape"}
                             leftBossName={liveStore.left.name}
                             rightBossName={liveStore.right.name}

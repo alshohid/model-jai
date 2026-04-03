@@ -9,7 +9,6 @@ import { SelectSideCard } from "@/shared/components/card/SelectSideCard";
 import { BossCard } from "@/shared/components/card/BossCard";
 
 export default function SupporterGridSection({
-    matchId,
     mode,
     // isLive,
     leftBoss,
@@ -20,7 +19,6 @@ export default function SupporterGridSection({
     leftBossName,
     rightBossName,
 }: {
-    matchId: string;
     mode: "landscape" | "portrait";
     // isLive: boolean;
     leftBoss: { name: string; total: number };
@@ -76,7 +74,6 @@ export default function SupporterGridSection({
                 </div>
 
                 <SupporterGridContainer
-                    matchId={matchId}
                     matchStatus="Upcoming"
                     locked={false}
                     selectedSide={selectedSide}
@@ -86,7 +83,5 @@ export default function SupporterGridSection({
         </section>
     );
 }
-
-
 
 
