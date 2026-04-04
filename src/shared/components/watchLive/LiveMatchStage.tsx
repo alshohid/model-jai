@@ -11,15 +11,13 @@ import TwitchPlayer from "./TwitchPlayer";
 import { formatViewerCount } from "@/shared/lib/utils/formateViewerCount";
 
 export default function LiveMatchStage({
-    matchId,
-    twitchChannel,
+
     isLive,
     mode,
     left,
     right,
     middle,
     bossSide,
-    tipEnabled = false,
     rules,
     onRulesClick,
     onSupportLeft,

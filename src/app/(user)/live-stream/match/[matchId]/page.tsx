@@ -49,7 +49,6 @@ export default function MatchDetails({
     const matchType = currentMatch?.type;
     const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
 
-    console.log("matchType", matchType);
     const {
         showRegistrationPrompt,
         handleRegister,

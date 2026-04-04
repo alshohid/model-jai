@@ -34,34 +34,28 @@ export function PlayerCard({
                 </div>
             ) : null}
 
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-center">
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
                 <div
                     className={cn(
                         "text-xl font-extrabold",
                         status === "win" ? "text-green-400" : "text-red-500"
                     )}
+                    onClick={onClick}
                 >
                     {status === "win" ? <Image
                         src={gameLogo || '/images/home/available_slot.png'}
                         alt="images"
-                        width={200}
-                        height={200}
+                        width={100}
+                        height={100}
                         className="w-7.5 h-7.5 md:w-50 md:h-50"
                     /> : <Image
                         src={gameLogo || '/images/home/taken_slot.png'}
                         alt="images"
-                        width={200}
-                        height={200}
+                        width={100}
+                        height={100}
                         className="w-7.5 h-7.5 md:w-50 md:h-50"
                     />}
                 </div>
-
-                <button
-                    onClick={onClick}
-                    className="text-red-700 font-extrabold text-md md:text-2xl hover:underline"
-                >
-                    {name}
-                </button>
 
                 <div className="text-yellow-400 text-sm md:text-lg flex items-center justify-center gap-1">
                     {points} <PhilippinePeso size={14} />

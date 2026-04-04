@@ -6,7 +6,10 @@ import { ArrowRight, Coins, Sparkles } from "lucide-react";
 
 import LiveSectionHeader from "@/app/(auth)/_components/watchLive/LiveSectionHeader";
 import PointCard from "@/shared/components/card/PointCard";
-import BuyPointsDialog, { PointPack } from "@/shared/components/modal/BuyPointsDialog";
+import BuyPointsDialog, {
+    getCheckoutTotal,
+    PointPack,
+} from "@/shared/components/modal/BuyPointsDialog";
 
 import Image from "next/image";
 import { getErrorMessage } from "@/lib/utils";
@@ -188,8 +191,9 @@ export default function PointStoreListSection() {
         openPurchase(buildCustomPack(customPoints));
     };
 
-    const handleStripePayment = async (pack: PointPack) => {
-        const amount = Number(pack.price);
+    const handleStripePayment = async (pack: PointPack, totalAmount?: number) => {
+        const subtotal = Number(pack.price);
+        const amount = totalAmount ?? getCheckoutTotal(subtotal);
 
         if (!Number.isFinite(amount) || amount <= 0) {
             toast.error("Invalid checkout amount");

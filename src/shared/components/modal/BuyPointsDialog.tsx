@@ -24,6 +24,14 @@ export type PointPack = {
     badge?: string;
 };
 
+export const STRIPE_FEE_RATE = 0.04;
+
+const roundMoney = (n: number) => Math.round(n * 100) / 100;
+
+export const getStripeFee = (amount: number) => roundMoney(amount * STRIPE_FEE_RATE);
+
+export const getCheckoutTotal = (amount: number) => roundMoney(amount + getStripeFee(amount));
+
 function toMoney(n: number, symbol = "$") {
     return `${symbol}${n.toFixed(2)}`;
 }
@@ -38,7 +46,7 @@ export default function BuyPointsDialog({
     open: boolean;
     onOpenChange: (v: boolean) => void;
     pack: PointPack | null;
-    onPay?: (pack: PointPack) => void;
+    onPay?: (pack: PointPack, totalAmount: number) => void;
     isLoading?: boolean;
 }) {
     if (!pack) return null;
@@ -46,7 +54,8 @@ export default function BuyPointsDialog({
     const symbol = pack.currencySymbol ?? "$";
     const code = pack.currencyCode ?? "USD";
     const subtotal = Number(pack.price || 0);
-    const total = subtotal;
+    const stripeFee = getStripeFee(subtotal);
+    const total = getCheckoutTotal(subtotal);
     const title = pack.title ?? `${pack.points.toLocaleString()} Points`;
     const description =
         pack.description ??
@@ -166,6 +175,13 @@ export default function BuyPointsDialog({
                                 </span>
                             </div>
 
+                            <div className="mt-4 flex items-center justify-between gap-4 text-[13px] text-white/80 sm:text-sm">
+                                <span>Stripe Fee (4%)</span>
+                                <span className="text-right">
+                                    {toMoney(stripeFee, symbol)} {code}
+                                </span>
+                            </div>
+
                             <div className="mt-4 h-px w-full bg-white/10" />
 
                             <div className="mt-4 flex items-center justify-between gap-4 text-[13px] text-white/80 sm:text-sm">
@@ -190,7 +206,7 @@ export default function BuyPointsDialog({
                         <StartStreamingButton
                             isLoading={isLoading}
                             className="mt-3 flex h-11 w-full items-center justify-center gap-2 text-base sm:h-auto sm:text-[1.125rem]"
-                            onClick={() => onPay?.(pack)}
+                            onClick={() => onPay?.(pack, total)}
                         >
                             {isLoading ? "Processing..." : "Continue to Stripe"}
                             {!isLoading && <ArrowRight className="size-4" />}
