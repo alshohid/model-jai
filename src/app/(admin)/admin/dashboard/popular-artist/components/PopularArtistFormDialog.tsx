@@ -24,10 +24,15 @@ type FormState = {
   gameId: string;
   playerOneId: string;
   playerTwoId: string;
+  startTime: string;
+  endTime: string;
 };
 
 const selectCls =
   "w-full rounded-lg border border-gray-600 px-3.5 py-3 text-sm text-gray-400 placeholder:text-white focus:outline-none focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/5 transition";
+
+const inputCls =
+  "w-full rounded-lg border border-gray-600 px-3.5 py-3 text-sm text-gray-200 placeholder:text-white/35 focus:outline-none focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/5 transition";
 
 const Field = ({
   label,
@@ -57,7 +62,19 @@ const createInitialState = (
   gameId: values ? String(values.game_id) : "",
   playerOneId: values ? String(values.player_one_id) : "",
   playerTwoId: values ? String(values.player_two_id) : "",
+  startTime: values?.start_time ? toDateTimeLocalValue(values.start_time) : "",
+  endTime: values?.end_time ? toDateTimeLocalValue(values.end_time) : "",
 });
+
+const toDateTimeLocalValue = (value: string) => {
+  const normalized = value.trim().replace(" ", "T");
+  return normalized.slice(0, 16);
+};
+
+const toApiDateTime = (value: string) => {
+  const normalized = value.trim().replace("T", " ");
+  return normalized.length === 16 ? `${normalized}:00` : normalized;
+};
 
 export default function PopularArtistFormDialog({
   open,
@@ -105,12 +122,22 @@ export default function PopularArtistFormDialog({
   );
 
   const handleSubmit = async () => {
-    if (!form.gameId || !form.playerOneId || !form.playerTwoId) {
-      setLocalError("Game and both players are required.");
+    if (
+      !form.gameId ||
+      !form.playerOneId ||
+      !form.playerTwoId ||
+      !form.startTime ||
+      !form.endTime
+    ) {
+      setLocalError("Game, both players, start time, and end time are required.");
       return;
     }
     if (form.playerOneId === form.playerTwoId) {
       setLocalError("Player one and player two must be different.");
+      return;
+    }
+    if (new Date(form.endTime) <= new Date(form.startTime)) {
+      setLocalError("End time must be later than start time.");
       return;
     }
     setLocalError("");
@@ -119,6 +146,8 @@ export default function PopularArtistFormDialog({
       game_id: Number(form.gameId),
       player_one_id: Number(form.playerOneId),
       player_two_id: Number(form.playerTwoId),
+      start_time: toApiDateTime(form.startTime),
+      end_time: toApiDateTime(form.endTime),
     });
   };
 
@@ -187,6 +216,29 @@ export default function PopularArtistFormDialog({
               </select>
               {/* <ChevronDown /> */}
             </div>
+          </Field>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Start Time" required>
+            <input
+              type="datetime-local"
+              step={60}
+              value={form.startTime}
+              onChange={(event) => handleChange("startTime", event.target.value)}
+              className={inputCls}
+            />
+          </Field>
+
+          <Field label="End Time" required>
+            <input
+              type="datetime-local"
+              step={60}
+              value={form.endTime}
+              min={form.startTime || undefined}
+              onChange={(event) => handleChange("endTime", event.target.value)}
+              className={inputCls}
+            />
           </Field>
         </div>
 

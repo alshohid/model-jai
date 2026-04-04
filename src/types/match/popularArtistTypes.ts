@@ -18,6 +18,8 @@ export interface IPopularArtist {
   game_id: number;
   player_one_id: number;
   player_two_id: number;
+  start_time: string;
+  end_time: string;
   total_vote: number;
   created_at: string;
   updated_at: string;
@@ -43,6 +45,8 @@ export interface ICreatePopularArtistPayload {
   game_id: number;
   player_one_id: number;
   player_two_id: number;
+  start_time: string;
+  end_time: string;
 }
 
 export interface IUpdatePopularArtistPayload extends ICreatePopularArtistPayload {

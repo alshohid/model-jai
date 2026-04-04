@@ -165,6 +165,8 @@ export default function PopularArtistPage() {
                 game_id: selectedEntry.game_id,
                 player_one_id: selectedEntry.player_one_id,
                 player_two_id: selectedEntry.player_two_id,
+                start_time: selectedEntry.start_time,
+                end_time: selectedEntry.end_time,
               }
             : undefined
         }
