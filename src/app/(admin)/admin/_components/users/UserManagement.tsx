@@ -7,12 +7,12 @@ import MatchListToolbar from "../reusable/MatchListToolbar";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
 import ActionIconButton from "../reusable/ActionIconButton";
-import { Eye, Pencil, MoreVertical, PlusIcon } from "lucide-react";
+import { Eye, Pencil, MoreVertical, PlusIcon, Trash2 } from "lucide-react";
 import SelectUserAsPlayerDialog from "./SelectUserAsPlayerDialog";
 import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
-import { useChangeUserRoleMutation, useGetAllUsersQuery, useGetTotalUserCountQuery, useSearchUsersQuery } from "@/redux/features/user/userManagement";
+import { useChangeUserRoleMutation, useDeleteUserMutation, useGetAllUsersQuery, useGetTotalUserCountQuery, useSearchUsersQuery } from "@/redux/features/user/userManagement";
 import { getSuspendStatus } from "@/shared/lib/utils/getSuspendStatus";
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
@@ -67,6 +67,7 @@ export default function UserManagement() {
     const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [keyword, setKeyword] = useState("");
+    const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
     const debouncedKeyword = useDebounce(keyword, 400);
     const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
     const limit = 10;
@@ -88,7 +89,7 @@ export default function UserManagement() {
     });
     const [changeUserRole] = useChangeUserRoleMutation();
     const { data: totalUserCount, isLoading: isTotalUserCountLoading } = useGetTotalUserCountQuery();
-    console.log(totalUserCount);
+    const [deleteUser] = useDeleteUserMutation();
 
     const searchUserList =
         searchListData?.data?.map((user) => ({
@@ -137,6 +138,27 @@ export default function UserManagement() {
         setSelectedUser(item);
         setDisableModalOpen(true);
         setOpenDropdownId(null);
+    };
+
+    const handleDeleteUser = async (item: RankRowItem) => {
+        const confirmed = window.confirm(
+            `Are you sure you want to delete ${item.user_name}? This action cannot be undone.`,
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setDeletingUserId(item.id);
+            const response = await deleteUser(item.id).unwrap();
+
+            toast.success(response?.message || "User deleted successfully.");
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Failed to delete user.");
+        } finally {
+            setDeletingUserId(null);
+        }
     };
 
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
@@ -229,6 +251,14 @@ export default function UserManagement() {
                         setSelectedUser(item);
                         setEditModalOpen(true);
                     }}
+                />
+
+                <ActionIconButton
+                    label="Delete"
+                    icon={<Trash2 className="h-4 w-4" />}
+                    tone="danger"
+                    disabled={deletingUserId === item.id}
+                    onClick={() => void handleDeleteUser(item)}
                 />
 
                 <div className="relative">

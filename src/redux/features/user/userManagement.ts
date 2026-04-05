@@ -228,6 +228,13 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["UserPost", "User"],
     }),
+    deleteUser: builder.mutation<any, number>({
+      query: (id) => ({
+        url: `/admin/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ManageUser"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -255,5 +262,6 @@ export const {
   useShowArtistPostByIdQuery,
   useGetTotalUserCountQuery,
   useStartAdminVotingMutation,
+  useDeleteUserMutation,
 } = UserManagementApi;
 export default UserManagementApi;
