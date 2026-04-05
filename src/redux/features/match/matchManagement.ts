@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
 import {
   ICreateMatchPayload,
+  IMatchBasePayload,
   IDeleteMatchResponse,
   IMatchCreateResponse,
   IMatchListResponse,
@@ -15,6 +17,34 @@ import {
   IPopularArtistSingleResponse,
   IUpdatePopularArtistPayload,
 } from "@/types/match/popularArtistTypes";
+
+const buildMatchFormData = (payload: IMatchBasePayload) => {
+  const formData = new FormData();
+
+  formData.append("game_id", String(payload.game_id));
+  formData.append("player_one_id", String(payload.player_one_id));
+  formData.append("player_two_id", String(payload.player_two_id));
+  formData.append("players_bet_amount", String(payload.players_bet_amount));
+  formData.append("type", payload.type);
+  formData.append("match_date", payload.match_date);
+  formData.append("match_time", payload.match_time);
+  formData.append("voting_time", payload.voting_time);
+  formData.append("winner_percentage", String(payload.winner_percentage));
+  formData.append("loser_percentage", String(payload.loser_percentage));
+  formData.append("rules", payload.rules ?? "");
+  formData.append("tiktok_link", payload.tiktok_link ?? "");
+  formData.append("twitch_link", payload.twitch_link ?? "");
+
+  if (payload.player_one_logo instanceof File) {
+    formData.append("player_one_logo", payload.player_one_logo);
+  }
+
+  if (payload.player_two_logo instanceof File) {
+    formData.append("player_two_logo", payload.player_two_logo);
+  }
+
+  return formData;
+};
 
 const MatchManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -80,20 +110,39 @@ const MatchManagementApi = baseApi.injectEndpoints({
       query: (payload) => {
         const matchForVotingId =
           typeof payload === "number" ? payload : payload.matchForVotingId;
-        const playerId = typeof payload === "number" ? undefined : payload.playerId;
+        const playerId =
+          typeof payload === "number" ? undefined : payload.playerId;
         const voteCount =
           typeof payload === "number" ? undefined : payload.voteCount;
 
         return {
-        url: `/vote`,
+          url: `/vote`,
+          method: "POST",
+          params: {
+            match_for_voting_id: matchForVotingId,
+            ...(playerId ? { player_id: playerId } : {}),
+            ...(voteCount ? { vote_count: voteCount } : {}),
+          },
+        };
+      },
+      invalidatesTags: ["PopularArtist"],
+    }),
+    goVoteForPlayer: builder.mutation<
+      any,
+      { matchForVotingId: number; playerId: number; voteCount: number }
+    >({
+      query: (params: {
+        matchForVotingId: number;
+        playerId: number;
+        voteCount: number;
+      }) => ({
+        url: `/vote-player/${params.matchForVotingId}`,
         method: "POST",
         params: {
-          match_for_voting_id: matchForVotingId,
-          ...(playerId ? { player_id: playerId } : {}),
-          ...(voteCount ? { vote_count: voteCount } : {}),
+          player_id: params.playerId,
+          total_vote: params.voteCount,
         },
-      };
-      },
+      }),
       invalidatesTags: ["PopularArtist"],
     }),
     createPopularArtistVote: builder.mutation<
@@ -174,7 +223,8 @@ const MatchManagementApi = baseApi.injectEndpoints({
       query: (body) => ({
         url: "/admin/matches",
         method: "POST",
-        body,
+        body: buildMatchFormData(body),
+        formData: true,
       }),
       invalidatesTags: ["Match"],
     }),
@@ -203,7 +253,8 @@ const MatchManagementApi = baseApi.injectEndpoints({
       query: ({ id, ...body }) => ({
         url: `/admin/matches/${id}`,
         method: "POST",
-        body,
+        body: buildMatchFormData(body),
+        formData: true,
       }),
       invalidatesTags: ["Match"],
     }),
@@ -244,5 +295,6 @@ export const {
   useCreatePopularArtistVoteMutation,
   useUpdatePopularArtistVoteMutation,
   useDeletePopularArtistVoteMutation,
+  useGoVoteForPlayerMutation,
 } = MatchManagementApi;
 export default MatchManagementApi;

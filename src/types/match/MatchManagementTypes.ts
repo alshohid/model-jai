@@ -65,6 +65,9 @@ export interface IMatch {
 
   tiktok_link: string | null;
   twitch_link: string | null;
+  voting_time?: string | null;
+  player_one_logo?: string | null;
+  player_two_logo?: string | null;
 
   confirmation_status: number;
 
@@ -125,6 +128,7 @@ export interface IMatchBasePayload {
 
   match_date: string;
   match_time: string;
+  voting_time: string;
 
   winner_percentage: number;
   loser_percentage: number;
@@ -132,6 +136,8 @@ export interface IMatchBasePayload {
 
   tiktok_link?: string;
   twitch_link?: string;
+  player_one_logo?: File | null;
+  player_two_logo?: File | null;
 }
 export type ICreateMatchPayload = IMatchBasePayload;
 export interface IUpdateMatchPayload extends IMatchBasePayload {

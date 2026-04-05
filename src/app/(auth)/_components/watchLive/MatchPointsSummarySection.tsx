@@ -21,7 +21,7 @@ import { TipCaretButton } from "@/shared/UI/button/TipCaretButton";
 import { useSendTipMutation } from "@/redux/features/support/supportManagement";
 import { toast } from "sonner";
 import AppDialog from "@/shared/components/modal/AppDialog";
-import { useGetVotingPublicListQuery, useGoVoteMutation } from "@/redux/features/match/matchManagement";
+import { useGetVotingPublicListQuery, useGoVoteForPlayerMutation, useGoVoteMutation } from "@/redux/features/match/matchManagement";
 import { getErrorMessage } from "@/lib/utils";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { Clock3, PhilippinePeso, Sparkles } from "lucide-react";
@@ -147,7 +147,7 @@ export default function MatchPointsSummarySection({
     const { data: votingData } = useGetVotingPublicListQuery(undefined, {
         skip: !isCompleted,
     });
-    const [goVote, { isLoading: isVoteSubmitting }] = useGoVoteMutation();
+    const [goVote, { isLoading: isVoteSubmitting }] = useGoVoteForPlayerMutation();
 
     useEffect(() => {
         if (!isCompleted) return;
@@ -384,7 +384,7 @@ export default function MatchPointsSummarySection({
 
             <div>
                 <div className={cn("mx-auto", "md:w-full")}>
-                    {isCompleted ? (
+                    {!isCompleted ? (
                         <div className="px-1 py-6 sm:px-0">
                             <div className="grid grid-cols-[1fr_auto_1fr]  items-start gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4">
                                 <CompletedVotingCard
@@ -435,9 +435,7 @@ export default function MatchPointsSummarySection({
                                         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#6FF9EA]">
                                             Match Voting Pool
                                         </p>
-                                        <p className="mt-1 text-sm leading-6 text-white/62">
-                                            Completed match er jonno premium image voting active ache.
-                                        </p>
+
                                     </div>
                                     <div className="flex items-end justify-between gap-3 sm:block sm:text-right">
                                         <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">

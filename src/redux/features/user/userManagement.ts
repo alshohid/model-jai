@@ -201,6 +201,13 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["UserPost", "User"],
     }),
+    startAdminVoting: builder.mutation<UserPostResponse, number>({
+      query: (id) => ({
+        url: `/admin/start-vote/${id}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["UserPost", "User"],
+    }),
     updateUserPost: builder.mutation<UserPostResponse, UpdateUserPostParams>({
       query: ({ id, body }) => ({
         url: `/posts/${id}`,
@@ -243,5 +250,6 @@ export const {
   useDeleteUserPostMutation,
   useShowArtistPostByIdQuery,
   useGetTotalUserCountQuery,
+  useStartAdminVotingMutation,
 } = UserManagementApi;
 export default UserManagementApi;
