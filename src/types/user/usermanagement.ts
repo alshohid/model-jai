@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ApiResponse } from "@/types/common/api";
 export interface UserManagementResponse {
   success: boolean;
   message: string;
@@ -118,4 +119,25 @@ export interface UsersResponseForSendMoney {
   status: boolean;
   message: string;
   data: IUserForSendMoney[];
+}
+
+export interface UserPost {
+  id: number;
+  image: string;
+  description: string;
+  user_id?: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+export type UserPostsResponse = ApiResponse<UserPost[]>;
+export type UserPostResponse = ApiResponse<UserPost>;
+export type DeleteUserPostResponse = ApiResponse<null>;
+export type ArtistPostsResponse = ApiResponse<{
+  posts: UserPost[];
+}>;
+
+export interface UpdateUserPostParams {
+  id: number;
+  body: FormData;
 }

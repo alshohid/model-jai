@@ -2,12 +2,17 @@
 import { baseApi } from "@/redux/api/baseApi";
 import { ApiResponse } from "@/types/common/api";
 import {
+  ArtistPostsResponse,
+  DeleteUserPostResponse,
   ISuspendUserParams,
   IUserCreateParams,
   ReferralUsersResponse,
   SingleUserResponse,
+  UpdateUserPostParams,
   User,
   UserManagementResponse,
+  UserPostResponse,
+  UserPostsResponse,
   UsersResponseForSendMoney,
 } from "@/types/user/usermanagement";
 
@@ -166,6 +171,45 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ManageUser"],
     }),
+    getAllUserPosts: builder.query<UserPostsResponse, void>({
+      query: () => ({
+        url: `/posts`,
+        method: "GET",
+      }),
+      providesTags: ["UserPost"],
+    }),
+    showArtistPostById: builder.query<ArtistPostsResponse, number>({
+      query: (id) => ({
+        url: `/show_artist_posts/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["UserPost"],
+    }),
+    createUserPost: builder.mutation<UserPostResponse, FormData>({
+      query: (body) => ({
+        url: `/posts`,
+        method: "POST",
+        body,
+        formData: true,
+      }),
+      invalidatesTags: ["UserPost", "User"],
+    }),
+    updateUserPost: builder.mutation<UserPostResponse, UpdateUserPostParams>({
+      query: ({ id, body }) => ({
+        url: `/posts/${id}`,
+        method: "PUT",
+        body,
+        formData: true,
+      }),
+      invalidatesTags: ["UserPost", "User"],
+    }),
+    deleteUserPost: builder.mutation<DeleteUserPostResponse, number>({
+      query: (id) => ({
+        url: `/posts/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["UserPost", "User"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -186,5 +230,10 @@ export const {
   useViewSingleArtistProfileQuery,
   useGetReferralLinkUsedUserQuery,
   useGetAllListUserForSendMoneyQuery,
+  useGetAllUserPostsQuery,
+  useCreateUserPostMutation,
+  useUpdateUserPostMutation,
+  useDeleteUserPostMutation,
+  useShowArtistPostByIdQuery,
 } = UserManagementApi;
 export default UserManagementApi;

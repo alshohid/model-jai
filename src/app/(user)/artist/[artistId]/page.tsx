@@ -3,18 +3,21 @@
 
 import { useParams } from "next/navigation";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
+import MissionarySection from "@/app/(auth)/_components/myProfile/MissionarySection";
 import FooterSection from "@/shared/components/home/FooterSection";
 import ArtistProfilePanel from "@/shared/components/user/ArtistProfilePanel";
 import Skeleton from "@/shared/UI/Skeleton";
-import { useViewSingleArtistProfileQuery } from "@/redux/features/user/userManagement";
+import { useShowArtistPostByIdQuery, useViewSingleArtistProfileQuery } from "@/redux/features/user/userManagement";
 import { toast } from "sonner";
 import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
+
 
 export default function ArtistProfilePage() {
     const params = useParams();
     const artistId = Number(params.artistId);
 
     const { data: profileResponse, isLoading, isError } = useViewSingleArtistProfileQuery(artistId);
+    const { data: postsResponse, isLoading: postsLoading, isError: postsError } = useShowArtistPostByIdQuery(artistId);
     const [followArtist, { isLoading: isFollowing }] = useFollowArtistMutation();
     const [unFollowArtist, { isLoading: isUnfollowing }] = useUnFollowArtistMutation();
 
@@ -29,9 +32,9 @@ export default function ArtistProfilePage() {
     if (isError || !profileResponse?.data) {
         return <div className="py-20 text-center text-red-500">Artist not found or something went wrong!</div>;
     }
-
     const artistData = profileResponse.data;
     const user = artistData.user;
+    const artistPosts = postsResponse?.data?.posts ?? [];
 
 
     const mappedArtist = {
@@ -99,6 +102,14 @@ export default function ArtistProfilePage() {
                         onFollow={handleFollowToggle}
                         onSendTip={handleSendTip}
                         isLoading={isFollowing || isUnfollowing}
+                    />
+                    <MissionarySection
+                        posts={artistPosts}
+                        isLoading={postsLoading}
+                        isError={postsError}
+                        title={`${user.name}'s posts`}
+                        subtitle={`Browse the latest images and captions shared by ${user.name}.`}
+                        withContainer={false}
                     />
                 </div>
             </main>
