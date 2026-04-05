@@ -141,6 +141,13 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ManageUser"],
     }),
+    getTotalUserCount: builder.query<any, void>({
+      query: () => ({
+        url: `/admin/users/count/total`,
+        method: "GET",
+      }),
+      providesTags: ["ManageUser"],
+    }),
     changeUserRole: builder.mutation<ApiResponse<User>, { id: number }>({
       query: ({ id }) => ({
         url: `/admin/users/change_role/${id}`,
@@ -235,5 +242,6 @@ export const {
   useUpdateUserPostMutation,
   useDeleteUserPostMutation,
   useShowArtistPostByIdQuery,
+  useGetTotalUserCountQuery,
 } = UserManagementApi;
 export default UserManagementApi;

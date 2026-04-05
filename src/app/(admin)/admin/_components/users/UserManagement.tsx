@@ -12,7 +12,7 @@ import SelectUserAsPlayerDialog from "./SelectUserAsPlayerDialog";
 import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
-import { useChangeUserRoleMutation, useGetAllUsersQuery, useSearchUsersQuery } from "@/redux/features/user/userManagement";
+import { useChangeUserRoleMutation, useGetAllUsersQuery, useGetTotalUserCountQuery, useSearchUsersQuery } from "@/redux/features/user/userManagement";
 import { getSuspendStatus } from "@/shared/lib/utils/getSuspendStatus";
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useDebounce } from "../../hook/useDebounce";
 import { FiSearch } from "react-icons/fi";
 import { cn } from "@/lib/utils";
+import TotalUserCard from "./TotalUserCard";
 
 
 export type RankRowItem = {
@@ -86,7 +87,8 @@ export default function UserManagement() {
         page, limit
     });
     const [changeUserRole] = useChangeUserRoleMutation();
-
+    const { data: totalUserCount, isLoading: isTotalUserCountLoading } = useGetTotalUserCountQuery();
+    console.log(totalUserCount);
 
     const searchUserList =
         searchListData?.data?.map((user) => ({
@@ -311,6 +313,14 @@ export default function UserManagement() {
                     />
                     <FiSearch className="absolute left-3 text-white/55" />
                 </form>
+                {isTotalUserCountLoading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <TotalUserCard
+                        isLoading={isTotalUserCountLoading}
+                        totalUsers={totalUserCount?.data?.total_users}
+                    />
+                )}
 
             </div>
 
