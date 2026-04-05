@@ -43,6 +43,8 @@ export interface IUserTransactionsResponse {
   message: string;
   data: IUserTransactionItem[];
   meta: IUserTransactionMeta;
+  total_recharge?: string;
+  total_earning?: string;
 }
 export type SupportHistoryMatchType = "upcoming" | "live" | "completed";
 export type SupportHistoryResult = "pending" | "win" | "lose" | "cancelled";

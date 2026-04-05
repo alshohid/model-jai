@@ -10,6 +10,11 @@ import { useGetAdminTransactionQuery } from "@/redux/features/support/supportMan
 import { IUserTransactionItem } from "@/types/support/supportmanagement";
 
 const STEP = 10;
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+});
 
 type AdminTransactionRow = Omit<IUserTransactionItem, "type"> & {
     type:
@@ -24,6 +29,64 @@ type AdminTransactionRow = Omit<IUserTransactionItem, "type"> & {
         email: string;
     };
 };
+
+function formatCurrency(value?: string | number | null) {
+    const numericValue = Number(value ?? 0);
+
+    return currencyFormatter.format(Number.isFinite(numericValue) ? numericValue : 0);
+}
+
+function SummaryCard({
+    label,
+    value,
+    caption,
+    accent,
+}: {
+    label: string;
+    value: string;
+    caption: string;
+    accent: "pink" | "cyan";
+}) {
+    const accentStyles =
+        accent === "pink"
+            ? {
+                glow: "shadow-[0_20px_45px_rgba(255,46,200,0.18)]",
+                ring: "from-[#FF2EC8]/28 via-[#FF7ADB]/16 to-transparent",
+                badge: "border-[#FF8AE1]/30 bg-[#FF2EC8]/14 text-[#FF9BE7]",
+                dot: "from-[#FF2EC8] to-[#FF7ADB]",
+            }
+            : {
+                glow: "shadow-[0_20px_45px_rgba(53,216,255,0.18)]",
+                ring: "from-[#35D8FF]/24 via-[#7BF1FF]/12 to-transparent",
+                badge: "border-[#7BF1FF]/25 bg-[#35D8FF]/12 text-[#8BF4FF]",
+                dot: "from-[#35D8FF] to-[#7BF1FF]",
+            };
+
+    return (
+        <div
+            className={`relative overflow-hidden rounded-[24px] border border-white/10 bg-[#0D1018] p-5 ${accentStyles.glow}`}
+        >
+            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${accentStyles.ring}`} />
+            <div className="pointer-events-none absolute right-[-36px] top-[-36px] h-24 w-24 rounded-full bg-white/6 blur-2xl" />
+
+            <div className="relative">
+                <div className="flex items-center justify-between gap-3">
+                    <span className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] ${accentStyles.badge}`}>
+                        {label}
+                    </span>
+                    <span className={`h-3 w-3 rounded-full bg-gradient-to-br ${accentStyles.dot}`} />
+                </div>
+
+                <p className="mt-5 text-[30px] font-semibold tracking-[-0.03em] text-white">
+                    {value}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-white/58">
+                    {caption}
+                </p>
+            </div>
+        </div>
+    );
+}
 
 export default function AdminTransactionContainer() {
     const [limit, setLimit] = useState(STEP);
@@ -41,6 +104,8 @@ export default function AdminTransactionContainer() {
         (data?.data as AdminTransactionRow[] | undefined) ?? [];
     const total = data?.meta?.total ?? 0;
     const hasMore = currentItems.length < total;
+    const totalRecharge = formatCurrency(data?.total_recharge);
+    const totalEarning = formatCurrency(data?.total_earning);
 
     const handleDownloadInvoice = (url: string, transactionId: number) => {
         const link = document.createElement("a");
@@ -124,29 +189,49 @@ export default function AdminTransactionContainer() {
     return (
         <div className="w-full">
             {/* Header */}
-            <div className="mb-6 flex items-end justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-semibold text-white">Transactions</h2>
-                    <p className="text-sm text-white/60 mt-1">
+            <div className="mb-6 rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+                    <div className="max-w-xl">
+                        <h2 className="text-2xl font-semibold text-white">Transactions</h2>
+                        <p className="mt-1 text-sm text-white/60">
                         View all recharge and withdraw transaction history.
-                    </p>
+                        </p>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2 xl:min-w-[560px] xl:max-w-[620px]">
+                        <SummaryCard
+                            label="Total Recharge"
+                            value={totalRecharge}
+                            caption="Combined value of all successful wallet recharge transactions."
+                            accent="pink"
+                        />
+                        <SummaryCard
+                            label="Total Earning"
+                            value={totalEarning}
+                            caption="Net earnings recorded from platform activity and transaction flow."
+                            accent="cyan"
+                        />
+                    </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <input
-                        type="text"
-                        value={search}
-                        placeholder="Search by user ID or reference"
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-white outline-none placeholder:text-white/35 focus:border-[#FF2EC8] min-w-[260px]"
-                    />
+
+                <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="text"
+                            value={search}
+                            placeholder="Search by user ID or reference"
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="min-w-[260px] rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none placeholder:text-white/35 focus:border-[#FF2EC8]"
+                        />
+                    </div>
+                    {total > 0 && (
+                        <p className="shrink-0 text-[13px] text-white/40">
+                            Showing{" "}
+                            <span className="font-medium text-white">{currentItems.length}</span> of{" "}
+                            <span className="font-medium text-white">{total}</span>
+                        </p>
+                    )}
                 </div>
-                {total > 0 && (
-                    <p className="text-[13px] text-white/40 flex-shrink-0">
-                        Showing{" "}
-                        <span className="text-white font-medium">{currentItems.length}</span> of{" "}
-                        <span className="text-white font-medium">{total}</span>
-                    </p>
-                )}
             </div>
 
             {/* Table */}
