@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
 import { ApiResponse } from "@/types/common/api";
+import { IMatch } from "@/types/match/MatchManagementTypes";
 import {
   ArtistPostsResponse,
   DeleteUserPostResponse,
@@ -201,12 +202,15 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["UserPost", "User"],
     }),
-    startAdminVoting: builder.mutation<UserPostResponse, number>({
+    startAdminVoting: builder.mutation<
+      ApiResponse<{ matchData?: IMatch }>,
+      number
+    >({
       query: (id) => ({
         url: `/admin/start-vote/${id}`,
         method: "POST",
       }),
-      invalidatesTags: ["UserPost", "User"],
+      invalidatesTags: ["Match", "PopularArtist"],
     }),
     updateUserPost: builder.mutation<UserPostResponse, UpdateUserPostParams>({
       query: ({ id, body }) => ({

@@ -13,6 +13,7 @@ import authReducer from "./features/auth/authSlice";
 import { baseApi } from "./api/baseApi";
 import liveStatusReducer from "./features/live/liveStatusReducer";
 import notificationReducer from "./features/notification/notificationReducer";
+import matchVotingReducer from "./features/match/matchVotingReducer";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     auth: authReducer,
     liveStatus: liveStatusReducer,
     notification: notificationReducer,
+    matchVoting: matchVotingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -26,6 +26,8 @@ export interface IPlayer {
   name?: string;
   image_url?: string;
   image?: string;
+  full_name?: string | null;
+  total_votes?: number | null;
 }
 export interface ITopSupporterUser {
   id: number;
@@ -65,7 +67,8 @@ export interface IMatch {
 
   tiktok_link: string | null;
   twitch_link: string | null;
-  voting_time?: string | null;
+  vote_start_time?: string | null;
+  voting_time?: number | string | null;
   player_one_logo?: string | null;
   player_two_logo?: string | null;
 

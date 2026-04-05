@@ -20,6 +20,7 @@ import { useGetTikTokAndTwitchLiveStatusQuery } from "@/redux/features/support/s
 import { useLiveStatus } from "@/shared/hooks/useLiveStatus";
 import MatchRulesModal from "@/shared/components/modal/MatchRulesModal";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import MatchVotingProvider from "@/shared/providers/MatchVotingProvider";
 
 export default function MatchDetails({
     params,
@@ -48,7 +49,9 @@ export default function MatchDetails({
     const modelPicture = matchData?.model_picture ?? "/images/home/middle.png";
     const matchType = currentMatch?.type;
     const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
-
+    const playerOneLogo = currentMatch?.player_one_logo;
+    const playerTwoLogo = currentMatch?.player_two_logo;
+    console.log(playerOneLogo, playerTwoLogo, "currentMatch")
     const {
         showRegistrationPrompt,
         handleRegister,
@@ -92,6 +95,8 @@ export default function MatchDetails({
                 <div className="w-full">
                     <LiveMatchStage
                         matchId={matchId}
+                        playerOneLogo={playerOneLogo}
+                        playerTwoLogo={playerTwoLogo}
                         twitchChannel={twitchChannel}
                         isLive={isLiveContinue}
                         mode={liveMode as "portrait" | "landscape" | undefined}
@@ -114,37 +119,45 @@ export default function MatchDetails({
                     />
 
                     <div className="container">
-                        <MatchPointsSummarySection
-
-                            isLive={isLiveContinue}
-                            matchType={matchType}
-                            gameId={currentMatch?.game_id}
+                        <MatchVotingProvider
                             matchId={matchId}
-                            tipEnabled={tipEnabled}
-                            userReferralNo={userReferralNo}
+                            matchData={currentMatch}
                             leftPlayerImageSrc={liveStore.left.imageSrc}
                             rightPlayerImageSrc={liveStore.right.imageSrc}
+                        >
+                            <MatchPointsSummarySection
 
-                            left={{
-                                playerName: liveStore.left.name,
-                                teamLogoSrc: liveStore.left.teamLogoSrc || "",
-                                points: liveStore.left.points,
-                                playerId: liveStore.left.id,
-                            }}
-                            right={{
-                                playerName: liveStore.right.name,
-                                teamLogoSrc: liveStore.right.teamLogoSrc || "",
-                                points: liveStore.right.points,
-                                playerId: liveStore.right.id,
-                            }}
-                            // supportOpen={false}
-                            onSupportLeft={(amount, supporterName) =>
-                                liveStore.support("left", amount, supporterName)
-                            }
-                            onSupportRight={(amount, supporterName) =>
-                                liveStore.support("right", amount, supporterName)
-                            }
-                        />
+                                isLive={isLiveContinue}
+                                matchType={matchType}
+                                gameId={currentMatch?.game_id}
+                                matchId={matchId}
+                                matchData={currentMatch}
+                                tipEnabled={tipEnabled}
+                                userReferralNo={userReferralNo}
+                                leftPlayerImageSrc={liveStore.left.imageSrc}
+                                rightPlayerImageSrc={liveStore.right.imageSrc}
+
+                                left={{
+                                    playerName: liveStore.left.name,
+                                    teamLogoSrc: liveStore.left.teamLogoSrc || "",
+                                    points: liveStore.left.points,
+                                    playerId: liveStore.left.id,
+                                }}
+                                right={{
+                                    playerName: liveStore.right.name,
+                                    teamLogoSrc: liveStore.right.teamLogoSrc || "",
+                                    points: liveStore.right.points,
+                                    playerId: liveStore.right.id,
+                                }}
+                                // supportOpen={false}
+                                onSupportLeft={(amount, supporterName) =>
+                                    liveStore.support("left", amount, supporterName)
+                                }
+                                onSupportRight={(amount, supporterName) =>
+                                    liveStore.support("right", amount, supporterName)
+                                }
+                            />
+                        </MatchVotingProvider>
 
                         <SupporterGridSection
                             key={matchId}

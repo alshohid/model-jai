@@ -7,6 +7,8 @@ export interface StageProps {
   tipEnabled?: boolean;
   rules: string | null;
   onRulesClick: () => void;
+  playerTwoLogo?: string;
+  playerOneLogo?: string;
 
   mode?: "landscape" | "portrait";
   supportClosed: boolean;

@@ -21,37 +21,50 @@ import { TipCaretButton } from "@/shared/UI/button/TipCaretButton";
 import { useSendTipMutation } from "@/redux/features/support/supportManagement";
 import { toast } from "sonner";
 import AppDialog from "@/shared/components/modal/AppDialog";
-import { useGetVotingPublicListQuery, useGoVoteForPlayerMutation, useGoVoteMutation } from "@/redux/features/match/matchManagement";
+import { useGoVoteForPlayerMutation } from "@/redux/features/match/matchManagement";
 import { getErrorMessage } from "@/lib/utils";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { Clock3, PhilippinePeso, Sparkles } from "lucide-react";
+import { useMatchVoting } from "@/shared/providers/hook/useMatchVoting";
+import { useAppDispatch } from "@/redux/store";
+import { applyLocalVote } from "@/redux/features/match/matchVotingReducer";
 
 type VoteSide = "left" | "right";
 
-function formatClock(value: Date) {
-    return value.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-    });
+function parseApiDateTime(value?: string | null) {
+    if (!value) return null;
+
+    const normalized = value.includes("T") ? value : value.replace(" ", "T");
+    const date = new Date(normalized);
+
+    return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function formatUtcClock(value: Date) {
-    return value.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-        timeZone: "UTC",
-    });
+function getVotingEndTime(
+    voteStartTime?: string | null,
+    votingTime?: number | string | null,
+) {
+    const startTime = parseApiDateTime(voteStartTime);
+    const votingMinutes = Number(votingTime ?? 0);
+
+    if (!startTime || !Number.isFinite(votingMinutes) || votingMinutes <= 0) {
+        return null;
+    }
+
+    return new Date(startTime.getTime() + votingMinutes * 60 * 1000);
 }
 
-function formatDay(value: Date) {
-    return value.toLocaleDateString([], {
-        weekday: "short",
-        day: "2-digit",
-    });
+function formatCountdown(remainingMs: number) {
+    const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 function CompletedVotingCard({
@@ -59,19 +72,25 @@ function CompletedVotingCard({
     imageSrc,
     accentClassName,
     onClick,
+    disabled = false,
 }: {
     playerName: string;
     imageSrc: string;
     accentClassName: string;
     onClick: () => void;
+    disabled?: boolean;
 }) {
     return (
         <button
             type="button"
             onClick={onClick}
+            disabled={disabled}
             className={cn(
                 "group relative w-full min-w-0 overflow-hidden rounded-[24px] border border-white/10 bg-[#17181F] px-2.5 py-3 text-left shadow-[0_18px_48px_rgba(0,0,0,0.36)]",
-                "transition-transform duration-300 active:scale-[0.98] sm:rounded-[28px] sm:p-4"
+                "transition-transform duration-300 sm:rounded-[28px] sm:p-4",
+                disabled
+                    ? "cursor-not-allowed opacity-75"
+                    : "active:scale-[0.98] hover:-translate-y-1"
             )}
         >
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))]" />
@@ -123,8 +142,6 @@ function CompletedVotingCard({
 
 export default function MatchPointsSummarySection({
     isLive,
-    matchType,
-    gameId,
     tipEnabled,
     left,
     right,
@@ -135,47 +152,72 @@ export default function MatchPointsSummarySection({
     userReferralNo,
     leftPlayerImageSrc,
     rightPlayerImageSrc,
+    matchData,
 }: MatchPointsSummarySectionProps) {
+    const dispatch = useAppDispatch();
     const tipSystem = useTipSystem();
     const supportDialog = useSupportDialog();
     const [sendTip, { isLoading: isTipSending }] = useSendTipMutation();
-    const isCompleted = matchType === "completed";
     const [currentTime, setCurrentTime] = useState(() => new Date());
     const [voteModalOpen, setVoteModalOpen] = useState(false);
     const [selectedVoteSide, setSelectedVoteSide] = useState<VoteSide>("left");
     const [voteCount, setVoteCount] = useState("1");
-    const { data: votingData } = useGetVotingPublicListQuery(undefined, {
-        skip: !isCompleted,
-    });
-    const [goVote, { isLoading: isVoteSubmitting }] = useGoVoteForPlayerMutation();
+    const { votingSession } = useMatchVoting(matchId);
+    const defaultVoteLeftImage = getSafeImageSrc(
+        matchData?.player_one_logo || leftPlayerImageSrc,
+        "/images/home/avatar_img.png",
+    );
+    const defaultVoteRightImage = getSafeImageSrc(
+        matchData?.player_two_logo || rightPlayerImageSrc,
+        "/images/home/avatar_img.png",
+    );
+    const effectiveVoteStartTime =
+        votingSession?.voteStartTime ?? matchData?.vote_start_time ?? null;
+    const effectiveVotingTime =
+        votingSession?.votingTime ?? matchData?.voting_time ?? null;
+    const [goVoteForPlayer, { isLoading: isVoteSubmitting }] =
+        useGoVoteForPlayerMutation();
 
     useEffect(() => {
-        if (!isCompleted) return;
-
         const timer = window.setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
 
         return () => window.clearInterval(timer);
-    }, [isCompleted]);
+    }, []);
 
-    const votingMatch = useMemo(() => {
-        if (!isCompleted) return null;
+    const votingEndTime = useMemo(
+        () => getVotingEndTime(effectiveVoteStartTime, effectiveVotingTime),
+        [effectiveVoteStartTime, effectiveVotingTime],
+    );
+    const remainingVotingMs = votingEndTime
+        ? Math.max(0, votingEndTime.getTime() - currentTime.getTime())
+        : 0;
+    const isVotingStarted = Boolean(effectiveVoteStartTime && votingEndTime);
+    const isVotingOpen = Boolean(votingEndTime && remainingVotingMs > 0);
+    const isVotingFinished = Boolean(votingEndTime && remainingVotingMs <= 0);
+    const shouldShowVotingPanel = isVotingStarted;
+    const isVoteModalVisible = voteModalOpen && isVotingOpen;
+    const routeMatchId = useMemo(() => {
+        const parsedMatchId = Number(matchId);
 
-        return (
-            votingData?.data?.find((voteItem) => {
-                const sameGame = gameId ? String(voteItem.game_id) === String(gameId) : true;
-                const sameOrder =
-                    voteItem.player_one_id === left.playerId &&
-                    voteItem.player_two_id === right.playerId;
-                const reverseOrder =
-                    voteItem.player_one_id === right.playerId &&
-                    voteItem.player_two_id === left.playerId;
-
-                return sameGame && (sameOrder || reverseOrder);
-            }) ?? null
-        );
-    }, [gameId, isCompleted, left.playerId, right.playerId, votingData]);
+        return Number.isInteger(parsedMatchId) && parsedMatchId > 0
+            ? parsedMatchId
+            : null;
+    }, [matchId]);
+    const voteTargetMatchId = routeMatchId ?? votingSession?.matchForVotingId ?? null;
+    const totalVotes = Number(votingSession?.totalVotes ?? 0);
+    const votingWindowMinutes = Number(effectiveVotingTime ?? 0);
+    const votingWindowLabel =
+        votingWindowMinutes > 0 ? `${votingWindowMinutes} Min Window` : "Voting Session";
+    const leftVoteImage = getSafeImageSrc(
+        votingSession?.playerOneImage || defaultVoteLeftImage,
+        "/images/home/avatar_img.png",
+    );
+    const rightVoteImage = getSafeImageSrc(
+        votingSession?.playerTwoImage || defaultVoteRightImage,
+        "/images/home/avatar_img.png",
+    );
 
     const handleSupportConfirm = async (
         side: "left" | "right" | "middle",
@@ -208,8 +250,17 @@ export default function MatchPointsSummarySection({
     };
 
     const handleVoteCardClick = (side: VoteSide) => {
-        if (!votingMatch) {
-            toast.error("Voting is not available for this match yet.");
+        if (!isVotingOpen) {
+            toast.error(
+                isVotingFinished
+                    ? "Voting has already finished for this match."
+                    : "Voting is not available for this match yet.",
+            );
+            return;
+        }
+
+        if (!voteTargetMatchId) {
+            toast.error("Voting match id not found.");
             return;
         }
 
@@ -254,16 +305,21 @@ export default function MatchPointsSummarySection({
         ? {
             id: left.playerId,
             name: left.playerName,
-            image: getSafeImageSrc(leftPlayerImageSrc, "/images/home/avatar_img.png"),
+            image: leftVoteImage,
         }
         : {
             id: right.playerId,
             name: right.playerName,
-            image: getSafeImageSrc(rightPlayerImageSrc, "/images/home/avatar_img.png"),
+            image: rightVoteImage,
         };
 
     const handleVoteSubmit = async () => {
-        if (!votingMatch) {
+        if (!isVotingOpen) {
+            toast.error("Voting window is closed for this match.");
+            return;
+        }
+
+        if (!voteTargetMatchId) {
             toast.error("Voting match not found.");
             return;
         }
@@ -276,12 +332,21 @@ export default function MatchPointsSummarySection({
         }
 
         try {
-            const response = await goVote({
-                matchForVotingId: votingMatch.id,
+            const response = await goVoteForPlayer({
+                matchForVotingId: voteTargetMatchId,
                 playerId: selectedVotePlayer.id,
                 voteCount: parsedVoteCount,
             }).unwrap();
 
+            if (matchId) {
+                dispatch(
+                    applyLocalVote({
+                        matchId,
+                        playerId: selectedVotePlayer.id,
+                        voteCount: parsedVoteCount,
+                    }),
+                );
+            }
             toast.success(response.message || "Vote submitted successfully");
             setVoteModalOpen(false);
             setVoteCount("1");
@@ -384,14 +449,15 @@ export default function MatchPointsSummarySection({
 
             <div>
                 <div className={cn("mx-auto", "md:w-full")}>
-                    {!isCompleted ? (
+                    {shouldShowVotingPanel ? (
                         <div className="px-1 py-6 sm:px-0">
                             <div className="grid grid-cols-[1fr_auto_1fr]  items-start gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4">
                                 <CompletedVotingCard
                                     playerName={left.playerName}
-                                    imageSrc={getSafeImageSrc(leftPlayerImageSrc, "/images/home/avatar_img.png")}
+                                    imageSrc={leftVoteImage}
                                     accentClassName="text-[#F472FF]"
                                     onClick={() => handleVoteCardClick("left")}
+                                    disabled={!isVotingOpen}
                                 />
 
                                 <div className="flex flex-col items-center justify-start px-0.5 pt-12 sm:justify-center sm:px-1 sm:pt-0">
@@ -401,13 +467,13 @@ export default function MatchPointsSummarySection({
                                         <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top,rgba(217,70,239,0.18),transparent_40%),radial-gradient(circle_at_bottom,rgba(34,238,223,0.16),transparent_45%)]" />
                                         <div className="relative text-center">
                                             <p className="text-[7px] font-bold uppercase tracking-[0.14em] text-[#5DF6EC] sm:text-[11px] sm:tracking-[0.24em]">
-                                                {formatDay(currentTime)}
+                                                {isVotingOpen ? "Time Left" : "Session Closed"}
                                             </p>
                                             <p className="mt-1 font-mono text-[13px] font-extrabold leading-none text-[#F472FF] sm:text-[24px]">
-                                                {formatClock(currentTime)}
+                                                {isVotingOpen ? formatCountdown(remainingVotingMs) : "00:00"}
                                             </p>
                                             <p className="mt-1 font-mono text-[8px] font-bold leading-none text-[#5DF6EC] sm:text-[15px]">
-                                                {formatUtcClock(currentTime)}
+                                                {votingWindowLabel}
                                             </p>
                                         </div>
                                     </div>
@@ -417,15 +483,16 @@ export default function MatchPointsSummarySection({
                                         </span>
                                     </div>
                                     <p className="mt-1 text-center text-[9px] font-semibold uppercase tracking-[0.18em] text-white/45 sm:text-[10px] sm:tracking-[0.24em]">
-                                        Voting Open
+                                        {isVotingOpen ? "Voting Open" : "Voting Finished"}
                                     </p>
                                 </div>
 
                                 <CompletedVotingCard
                                     playerName={right.playerName}
-                                    imageSrc={getSafeImageSrc(rightPlayerImageSrc, "/images/home/avatar_img.png")}
+                                    imageSrc={rightVoteImage}
                                     accentClassName="text-[#F472FF]"
                                     onClick={() => handleVoteCardClick("right")}
+                                    disabled={!isVotingOpen}
                                 />
                             </div>
 
@@ -435,14 +502,18 @@ export default function MatchPointsSummarySection({
                                         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#6FF9EA]">
                                             Match Voting Pool
                                         </p>
-
+                                        <p className="mt-1 text-sm leading-6 text-white/62">
+                                            {isVotingOpen
+                                                ? "Premium player voting is now live. Cast your votes to support the standout performance."
+                                                : "The voting session has ended. The final vote total is shown below."}
+                                        </p>
                                     </div>
                                     <div className="flex items-end justify-between gap-3 sm:block sm:text-right">
                                         <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
                                             Total Votes
                                         </p>
                                         <p className="mt-1 text-xl font-semibold text-white">
-                                            {votingMatch?.total_vote ?? 0}
+                                            {totalVotes}
                                         </p>
                                     </div>
                                 </div>
@@ -489,7 +560,7 @@ export default function MatchPointsSummarySection({
                     )}
                 </div>
 
-                {!isCompleted && (
+                {!shouldShowVotingPanel && (
                     <SupportDialog
                         open={supportDialog.isOpen}
                         onOpenChange={supportDialog.closeDialog}
@@ -503,7 +574,7 @@ export default function MatchPointsSummarySection({
             </div>
 
             <AppDialog
-                open={voteModalOpen}
+                open={isVoteModalVisible}
                 onOpenChange={setVoteModalOpen}
                 title="Premium Vote"
                 className="max-w-[420px]"
@@ -527,7 +598,7 @@ export default function MatchPointsSummarySection({
                                 </h3>
                                 <p className="mt-1 flex items-center gap-2 text-sm text-white/55">
                                     <Clock3 size={15} className="text-[#F472FF]" />
-                                    Completed match voting session
+                                    {isVotingOpen ? "Live voting session is active" : "Voting session is closed"}
                                 </p>
                             </div>
                         </div>
@@ -565,7 +636,7 @@ export default function MatchPointsSummarySection({
                         </button>
                         <button
                             type="button"
-                            disabled={isVoteSubmitting || !votingMatch}
+                            disabled={isVoteSubmitting || !voteTargetMatchId || !isVotingOpen}
                             onClick={handleVoteSubmit}
                             className="h-12 flex-1 rounded-[18px] bg-[linear-gradient(135deg,#F472FF_0%,#6FF9EA_100%)] px-4 text-sm font-semibold text-[#0A0C12] shadow-[0_18px_40px_rgba(111,249,234,0.2)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
                         >

@@ -24,13 +24,17 @@ export default function LiveMatchStage({
     onSupportRight,
     watchingPeopleCount,
     modelPicture,
-    gameLogo
+    gameLogo,
+    playerOneLogo,
+    playerTwoLogo
 }: StageProps & {
     rules?: string | null;
     onRulesClick?: () => void;
     watchingPeopleCount?: number;
     modelPicture?: string;
     gameLogo?: string;
+
+
 }) {
     const supportDialog = useSupportDialog();
 
@@ -68,7 +72,7 @@ export default function LiveMatchStage({
                             points={left.points}
                             status="lose"
                             bossSide={bossSide === "left"}
-                            gameLogo={gameLogo}
+                            gameLogo={playerOneLogo ?? gameLogo}
                             onClick={() => supportDialog.openDialog("left")}
                         />
 
@@ -119,7 +123,7 @@ export default function LiveMatchStage({
                         name={right.name}
                         points={right.points}
                         status="win"
-                        gameLogo={gameLogo}
+                        gameLogo={playerTwoLogo ?? gameLogo}
                         bossSide={bossSide === "right"}
                         onClick={() => supportDialog.openDialog("right")}
                         topRightBadge={

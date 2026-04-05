@@ -1,3 +1,4 @@
+import { IMatch } from "@/types/match/MatchManagementTypes";
 import { TeamInfo } from "@/shared/components/watchLive/types";
 
 export interface MatchPointsSummarySectionProps {
@@ -15,6 +16,7 @@ export interface MatchPointsSummarySectionProps {
   userReferralNo?: string;
   leftPlayerImageSrc?: string;
   rightPlayerImageSrc?: string;
+  matchData?: IMatch | null;
   onSupportLeft?: (amount: number, supporterName?: string) => void;
   onSupportRight?: (amount: number, supporterName?: string) => void;
 }
