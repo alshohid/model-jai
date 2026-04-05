@@ -44,6 +44,13 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    appleLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
+      query: () => ({
+        url: "/apple/redirect",
+        method: "GET",
+      }),
+      invalidatesTags: ["User"],
+    }),
 
     followArtist: builder.mutation<ApiResponse<IUserInfoResponse>, number>({
       query: (id) => ({
@@ -94,13 +101,15 @@ const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-    resetPassword: builder.mutation<ApiResponse<unknown>, IResetPasswordParams>({
-      query: (body) => ({
-        url: "/reset_password",
-        method: "POST",
-        body,
-      }),
-    }),
+    resetPassword: builder.mutation<ApiResponse<unknown>, IResetPasswordParams>(
+      {
+        query: (body) => ({
+          url: "/reset_password",
+          method: "POST",
+          body,
+        }),
+      },
+    ),
   }),
   overrideExisting: true,
 });
@@ -117,5 +126,6 @@ export const {
   useForgotPasswordMutation,
   useVerifyForgotPasswordMutation,
   useResetPasswordMutation,
+  useAppleLoginMutation,
 } = authApi;
 export default authApi;

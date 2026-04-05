@@ -4,7 +4,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFacebookLoginMutation, useGoogleLoginMutation, useRegisterUserMutation } from "@/redux/features/auth/authapi";
+import { useAppleLoginMutation, useFacebookLoginMutation, useGoogleLoginMutation, useRegisterUserMutation } from "@/redux/features/auth/authapi";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
 import { LockIcon, MailIcon, UserIcon } from "@/shared/UI/icon/icon";
@@ -40,6 +40,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     });
     const [googleLogin] = useGoogleLoginMutation();
     const [facebookLogin] = useFacebookLoginMutation();
+    const [appleLogin] = useAppleLoginMutation();
 
     const [gamePickerOpen, setGamePickerOpen] = useState(false);
     const [selectedGame, setSelectedGame] = useState<SelectedGame | null>(null);
@@ -74,6 +75,10 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
 
     const handleFacebookLogin = async () => {
         await executeSocialLogin(() => facebookLogin().unwrap());
+    };
+
+    const handleAppleLogin = async () => {
+        await executeSocialLogin(() => appleLogin().unwrap());
     };
 
     const normalizeOptionalText = (value?: string | null) => {
@@ -295,7 +300,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
 
                     <div className="mt-6 flex items-center justify-center gap-3">
                         <SocialButton kind="google" handleSocialLogin={handleGoogleLogin} />
-                        <SocialButton kind="apple" handleSocialLogin={() => console.log("apple")} />
+                        <SocialButton kind="apple" handleSocialLogin={handleAppleLogin} />
                         <SocialButton kind="facebook" handleSocialLogin={handleFacebookLogin} />
                     </div>
 

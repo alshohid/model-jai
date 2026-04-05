@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
+import { useAppleLoginMutation, useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
 import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
 import { handleAfterLogin } from "@/lib/helper/loginHelper";
 
@@ -28,9 +28,14 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const { register, handleSubmit } = useForm<ILoginParams>();
     const [googleLogin] = useGoogleLoginMutation();
     const [facebookLogin] = useFacebookLoginMutation();
+    const [appleLogin] = useAppleLoginMutation();
 
     const handleGoogleLogin = async () => {
         await executeSocialLogin(() => googleLogin().unwrap());
+    };
+
+    const handleAppleLogin = async () => {
+        await executeSocialLogin(() => appleLogin().unwrap());
     };
 
     const handleFacebookLogin = async () => {
@@ -99,9 +104,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
 
                 <div className="mt-6 flex items-center justify-center gap-3">
                     <SocialButton kind="google" handleSocialLogin={handleGoogleLogin} />
-                    <SocialButton kind="apple" handleSocialLogin={() => {
-                        console.log("apple");
-                    }} />
+                    <SocialButton kind="apple" handleSocialLogin={handleAppleLogin} />
                     <SocialButton kind="facebook" handleSocialLogin={handleFacebookLogin} />
                 </div>
 
