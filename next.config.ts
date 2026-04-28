@@ -8,23 +8,26 @@ const nextConfig: NextConfig = {
         hostname: "model.devlaro.com",
         pathname: "/**",
       },
+
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        pathname: "/**",
+        hostname: "app.modelbossoffers.com",
+        pathname: "/storage/**",
       },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        pathname: "/**",
-      },
+
       {
         protocol: "http",
-        hostname: "192.168.7.192",
+        hostname: "localhost",
         pathname: "/**",
       },
     ],
+
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60,
   },
+
+  reactStrictMode: true,
+  devIndicators: false,
 };
 
 export default nextConfig;
