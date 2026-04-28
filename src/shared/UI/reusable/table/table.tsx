@@ -5,12 +5,160 @@ import * as React from "react"
 
 
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+type TableProps = React.ComponentProps<"table"> & {
+    containerClassName?: string
+}
+
+function isInteractiveTarget(target: EventTarget | null) {
+    if (!(target instanceof Element)) return false
+
+    return Boolean(
+        target.closest(
+            "a, button, input, select, textarea, label, summary, [role='button'], [data-no-table-drag='true']"
+        )
+    )
+}
+
+function Table({ className, containerClassName, ...props }: TableProps) {
+    const containerRef = React.useRef<HTMLDivElement | null>(null)
+    const dragStateRef = React.useRef({
+        pointerId: null as number | null,
+        startX: 0,
+        scrollLeft: 0,
+        moved: false,
+        active: false,
+    })
+    const suppressClickRef = React.useRef(false)
+    const [isOverflowing, setIsOverflowing] = React.useState(false)
+    const [isDragging, setIsDragging] = React.useState(false)
+
+    const updateOverflowState = React.useCallback(() => {
+        const container = containerRef.current
+        if (!container) return
+
+        setIsOverflowing(container.scrollWidth > container.clientWidth + 1)
+    }, [])
+
+    const stopDragging = React.useCallback(() => {
+        dragStateRef.current.active = false
+        dragStateRef.current.pointerId = null
+        suppressClickRef.current = dragStateRef.current.moved
+        dragStateRef.current.moved = false
+        setIsDragging(false)
+
+        document.body.style.userSelect = ""
+    }, [])
+
+    React.useEffect(() => {
+        updateOverflowState()
+
+        const container = containerRef.current
+        if (!container) return
+
+        const table = container.querySelector("table")
+        const observer = new ResizeObserver(() => {
+            updateOverflowState()
+        })
+
+        observer.observe(container)
+
+        if (table instanceof HTMLElement) {
+            observer.observe(table)
+        }
+
+        return () => {
+            observer.disconnect()
+            document.body.style.userSelect = ""
+        }
+    }, [props.children, updateOverflowState])
+
+    const handlePointerDown = React.useCallback(
+        (event: React.PointerEvent<HTMLDivElement>) => {
+            if (event.pointerType !== "mouse" || event.button !== 0) return
+            if (!isOverflowing || isInteractiveTarget(event.target)) return
+
+            const container = containerRef.current
+            if (!container) return
+
+            dragStateRef.current.pointerId = event.pointerId
+            dragStateRef.current.startX = event.clientX
+            dragStateRef.current.scrollLeft = container.scrollLeft
+            dragStateRef.current.moved = false
+            dragStateRef.current.active = true
+
+            container.setPointerCapture(event.pointerId)
+            document.body.style.userSelect = "none"
+            setIsDragging(true)
+            event.preventDefault()
+        },
+        [isOverflowing]
+    )
+
+    const handlePointerMove = React.useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+        const container = containerRef.current
+        const dragState = dragStateRef.current
+
+        if (!container || !dragState.active || dragState.pointerId !== event.pointerId) {
+            return
+        }
+
+        const deltaX = event.clientX - dragState.startX
+
+        if (!dragState.moved && Math.abs(deltaX) > 4) {
+            dragState.moved = true
+        }
+
+        if (!dragState.moved) {
+            return
+        }
+
+        container.scrollLeft = dragState.scrollLeft - deltaX
+        event.preventDefault()
+    }, [])
+
+    const handlePointerUp = React.useCallback(
+        (event: React.PointerEvent<HTMLDivElement>) => {
+            const container = containerRef.current
+            const pointerId = dragStateRef.current.pointerId
+
+            if (!container || pointerId !== event.pointerId) {
+                return
+            }
+
+            if (container.hasPointerCapture(event.pointerId)) {
+                container.releasePointerCapture(event.pointerId)
+            }
+
+            stopDragging()
+        },
+        [stopDragging]
+    )
+
+    const handleClickCapture = React.useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+        if (!suppressClickRef.current) return
+
+        suppressClickRef.current = false
+        event.preventDefault()
+        event.stopPropagation()
+    }, [])
+
     return (
         <div
+            ref={containerRef}
             data-slot="table-container"
-            className="relative w-full overflow-x-auto "
-
+            className={cn(
+                "relative w-full overflow-x-auto overflow-y-hidden overscroll-x-contain [-webkit-overflow-scrolling:touch]",
+                isOverflowing && "cursor-grab",
+                isDragging && "cursor-grabbing select-none",
+                containerClassName
+            )}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            onLostPointerCapture={handlePointerUp}
+            onClickCapture={handleClickCapture}
+            onDragStart={(event) => event.preventDefault()}
         >
             <table
                 data-slot="table"

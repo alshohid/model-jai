@@ -113,7 +113,7 @@ const ReuseAbleTable = <T extends TableItem>({
                     ) : (
                         <Table
                             className="w-full"
-                        // style={{ minWidth: `${minTableWidthPx}px` }}
+                            style={minTableWidthPx ? { minWidth: `${minTableWidthPx}px` } : undefined}
                         >
 
                             <TableCaption />
