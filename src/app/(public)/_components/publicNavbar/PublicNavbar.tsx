@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import AuthButton from "@/shared/UI/button/AuthButton";
-import PointsButton from "@/shared/UI/button/PointsButton";
 import { cn } from "@/shared/lib/utils/cn";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
 import MobileNavSheet from "./MobileNavDrawer";
+import PointsMenuButton from "./PointsMenuButton";
 import NavbarSearch, { NavbarSearchProvider } from "./NavbarSearch";
 import { Bell } from "lucide-react";
 import { useAuth } from "@/redux/features/auth/hooks";
@@ -109,25 +107,18 @@ export default function PublicNavbar() {
                                                 <Skeleton className="h-8 w-20 rounded-md bg-black/10" />
                                             </div>
                                         ) : (
-                                            <PointsButton
+                                            <PointsMenuButton
                                                 points={Number(userProfileData?.total_balance || 0)}
-                                                icon={"/images/home/point_icon.png" as any}
-                                                onClick={() => console.log("open buy points")}
                                                 size="compact"
-                                                className=" block md:hidden"
-
+                                                className="block md:hidden"
                                             />
                                         )}
                                         {isMeDataFetching || isMeDataLoading ? <div className="hidden md:block">
                                             <Skeleton />
-                                        </div> : <PointsButton
+                                        </div> : <PointsMenuButton
                                             points={Number(userProfileData?.total_balance || 0)}
-                                            icon={"/images/home/point_icon.png" as any}
-                                            onClick={() => console.log("open buy points")}
                                             size="default"
-                                            className=" hidden md:block "
-
-
+                                            className="hidden md:block"
                                         />}
 
                                         {isMeDataLoading || isMeDataFetching ? <div className="animate-pulse size-10 rounded-full bg-black/10" /> : <ProfileDropdown avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"} />}
@@ -160,4 +151,3 @@ export default function PublicNavbar() {
         </>
     );
 }
-

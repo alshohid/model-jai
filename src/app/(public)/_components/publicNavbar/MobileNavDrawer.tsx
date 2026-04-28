@@ -5,8 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/lib/utils/cn";
 import AuthButton from "@/shared/UI/button/AuthButton";
-import PointsButton from "@/shared/UI/button/PointsButton";
 import ProfileDropdown from "@/shared/components/dropdown/ProfileDropdown";
+import PointsMenuButton from "./PointsMenuButton";
 
 
 import {
@@ -173,10 +173,8 @@ export default function MobileNavSheet({
                             {isAuthenticated && (role === "user" || role === "artist") ? (
 
                                 <div className="flex  items-center justify-between gap-3">
-                                    {isMeDataLoading ? <Skeleton className="w-[100px] h-[40px]" /> : <PointsButton
+                                    {isMeDataLoading ? <Skeleton className="w-[100px] h-[40px]" /> : <PointsMenuButton
                                         points={Number(points) || 0}
-                                        icon={"/images/home/point_icon.png"}
-                                        onClick={() => console.log("open buy points")}
                                     />}
                                     {avatarSrc ? <ProfileDropdown avatarSrc={avatarSrc} /> : null}
                                 </div>
