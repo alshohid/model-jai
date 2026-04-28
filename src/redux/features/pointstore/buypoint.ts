@@ -4,9 +4,12 @@ import { ApiResponse } from "@/types/common/api";
 import {
   IBuyPointParams,
   IBuyPointResponse,
-  IConnectStripeResponse,
-  IStripeStatusResponse,
+  IConnectPaymentMethodParams,
+  IConnectPaymentResponse,
+  IPaymentStatusResponse,
   IWithdrawRequestData,
+  IWithdrawRequestParams,
+  PaymentMethodId,
   SupportResponse,
 } from "@/types/user/point";
 
@@ -21,17 +24,37 @@ const BuyPointApi = baseApi.injectEndpoints({
         }),
       },
     ),
-    getStripeStatus: builder.query<IStripeStatusResponse, void>({
-      query: () => ({
-        url: `/stripe/status`,
+    getPaymentStatus: builder.query<IPaymentStatusResponse, PaymentMethodId>({
+      query: (paymentMethod) => ({
+        url: `/${paymentMethod}/status`,
         method: "GET",
       }),
+      providesTags: ["User"],
     }),
-    connectStripe: builder.mutation<ApiResponse<IConnectStripeResponse>, void>({
-      query: () => ({
-        url: `/stripe/connect`,
-        method: "POST",
+    connectPaymentMethod: builder.mutation<
+      ApiResponse<IConnectPaymentResponse>,
+      IConnectPaymentMethodParams
+    >({
+      query: ({ paymentMethod, ...body }) => {
+        const payload = Object.keys(body).length > 0 ? body : undefined;
+
+        return {
+          url: `/${paymentMethod}/connect`,
+          method: "POST",
+          body: payload,
+        };
+      },
+      invalidatesTags: ["User"],
+    }),
+    disconnectPaymentMethod: builder.mutation<
+      ApiResponse<null>,
+      PaymentMethodId
+    >({
+      query: (paymentMethod) => ({
+        url: `/${paymentMethod}/disconnect`,
+        method: "DELETE",
       }),
+      invalidatesTags: ["User"],
     }),
     sendCoin: builder.mutation<
       SupportResponse,
@@ -47,7 +70,7 @@ const BuyPointApi = baseApi.injectEndpoints({
 
     withdrawRequest: builder.mutation<
       ApiResponse<IWithdrawRequestData>,
-      { coin_amount: number }
+      IWithdrawRequestParams
     >({
       query: (body) => ({
         url: `/withdraw/request`,
@@ -103,8 +126,9 @@ const BuyPointApi = baseApi.injectEndpoints({
 
 export const {
   useBuyPointMutation,
-  useGetStripeStatusQuery,
-  useConnectStripeMutation,
+  useGetPaymentStatusQuery,
+  useConnectPaymentMethodMutation,
+  useDisconnectPaymentMethodMutation,
   useWithdrawRequestMutation,
   useAllWithdrawRequestsListQuery,
   useAcceptWithdrawRequestMutation,

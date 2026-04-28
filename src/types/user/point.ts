@@ -1,15 +1,48 @@
+export type PaymentMethodId = "stripe" | "paypal" | "moncash" | "bitpay";
+
 export interface IBuyPointParams {
   amount: number;
+  payment_method: PaymentMethodId;
 }
 
 export interface IBuyPointResponse {
   url: string;
 }
-export interface IStripeStatusResponse {
+export interface IPaymentStatusResponse {
   connected: boolean;
+  paypal_email?: string | null;
+  moncash_number?: string | null;
+  bitpay_wallet?: string | null;
+  stripe_email?: string | null;
+  stripe_account_email?: string | null;
+  stripe_account_id?: string | null;
+  email?: string | null;
+  account_id?: string | null;
 }
-export interface IConnectStripeResponse {
-  url: string;
+
+export interface IConnectPaymentResponse {
+  url?: string;
+  connected?: boolean;
+  paypal_email?: string | null;
+  moncash_number?: string | null;
+  bitpay_wallet?: string | null;
+  stripe_email?: string | null;
+  stripe_account_email?: string | null;
+  stripe_account_id?: string | null;
+  email?: string | null;
+  account_id?: string | null;
+}
+
+export interface IConnectPaymentMethodParams {
+  paymentMethod: PaymentMethodId;
+  paypal_email?: string;
+  moncash_number?: string;
+  bitpay_wallet?: string;
+}
+
+export interface IWithdrawRequestParams {
+  coin_amount: number;
+  payment_method?: PaymentMethodId;
 }
 export interface IWithdrawRequestData {
   id: number;
@@ -17,6 +50,7 @@ export interface IWithdrawRequestData {
   withdraw_no: string;
   coin_amount: number;
   usd_amount: number;
+  payment_method?: PaymentMethodId;
   status: "pending" | "paid" | "accepted" | "declined";
   created_at: string;
   updated_at: string;

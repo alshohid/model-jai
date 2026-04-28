@@ -11,6 +11,8 @@ import {
     DialogClose,
 } from "@/components/ui/dialog";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
+import PaymentMethodLogo from "@/shared/components/payment/PaymentMethodLogo";
+import { PaymentMethodConfig } from "@/shared/constants/paymentMethods";
 
 export type PointPack = {
     id: string;
@@ -24,14 +26,6 @@ export type PointPack = {
     badge?: string;
 };
 
-export const STRIPE_FEE_RATE = 0.04;
-
-const roundMoney = (n: number) => Math.round(n * 100) / 100;
-
-export const getStripeFee = (amount: number) => roundMoney(amount * STRIPE_FEE_RATE);
-
-export const getCheckoutTotal = (amount: number) => roundMoney(amount + getStripeFee(amount));
-
 function toMoney(n: number, symbol = "$") {
     return `${symbol}${n.toFixed(2)}`;
 }
@@ -40,13 +34,21 @@ export default function BuyPointsDialog({
     open,
     onOpenChange,
     pack,
+    paymentMethod,
+    paymentConnected,
+    connectedAccountLabel,
     onPay,
+    onManageWallet,
     isLoading
 }: {
     open: boolean;
     onOpenChange: (v: boolean) => void;
     pack: PointPack | null;
-    onPay?: (pack: PointPack, totalAmount: number) => void;
+    paymentMethod: PaymentMethodConfig;
+    paymentConnected?: boolean;
+    connectedAccountLabel?: string | null;
+    onPay?: (pack: PointPack) => void;
+    onManageWallet?: () => void;
     isLoading?: boolean;
 }) {
     if (!pack) return null;
@@ -54,12 +56,10 @@ export default function BuyPointsDialog({
     const symbol = pack.currencySymbol ?? "$";
     const code = pack.currencyCode ?? "USD";
     const subtotal = Number(pack.price || 0);
-    const stripeFee = getStripeFee(subtotal);
-    const total = getCheckoutTotal(subtotal);
     const title = pack.title ?? `${pack.points.toLocaleString()} Points`;
     const description =
         pack.description ??
-        "You will be redirected to Stripe to complete your purchase securely.";
+        `You will be redirected to ${paymentMethod.name} to complete your purchase securely.`;
     const badge = pack.badge ?? "Secure Checkout";
 
     return (
@@ -134,7 +134,7 @@ export default function BuyPointsDialog({
                                     </p>
                                     <div className="mt-3 flex items-center gap-2.5 text-[13px] text-white/65 sm:text-sm">
                                         <ShieldCheck className="size-4 text-[#9FE8FF]" />
-                                        Secure Stripe hosted checkout
+                                        Secure {paymentMethod.name} checkout
                                     </div>
                                 </div>
 
@@ -153,7 +153,7 @@ export default function BuyPointsDialog({
                                             Pay Today
                                         </p>
                                         <p className="mt-1.5 text-[24px] font-semibold text-white sm:text-[26px]">
-                                            {toMoney(total, symbol)}
+                                            {toMoney(subtotal, symbol)}
                                         </p>
                                         <p className="text-xs text-white/45">{code}</p>
                                     </div>
@@ -176,15 +176,6 @@ export default function BuyPointsDialog({
                             </div>
 
                             <div className="mt-4 flex items-center justify-between gap-4 text-[13px] text-white/80 sm:text-sm">
-                                <span>Stripe Fee (4%)</span>
-                                <span className="text-right">
-                                    {toMoney(stripeFee, symbol)} {code}
-                                </span>
-                            </div>
-
-                            <div className="mt-4 h-px w-full bg-white/10" />
-
-                            <div className="mt-4 flex items-center justify-between gap-4 text-[13px] text-white/80 sm:text-sm">
                                 <span>Points Delivered</span>
                                 <span className="text-right">{pack.points.toLocaleString()} pts</span>
                             </div>
@@ -192,23 +183,64 @@ export default function BuyPointsDialog({
                             <div className="mt-4 flex items-center justify-between gap-4">
                                 <span className="text-base font-semibold text-white sm:text-[17px]">Total</span>
                                 <span className="text-right text-base font-semibold text-white sm:text-[17px]">
-                                    {toMoney(total, symbol)} {code}
+                                    {toMoney(subtotal, symbol)} {code}
                                 </span>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 rounded-[18px] border border-white/10 bg-white/5 p-4">
+                            <div className="flex items-start gap-3">
+                                <PaymentMethodLogo
+                                    method={paymentMethod}
+                                    className="size-12 rounded-[16px]"
+                                />
+
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <p className="text-sm font-semibold text-white">
+                                            {paymentMethod.name}
+                                        </p>
+                                        <span
+                                            className={cn(
+                                                "rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]",
+                                                paymentConnected
+                                                    ? "bg-[#00C3FF]/14 text-[#9FE8FF]"
+                                                    : "bg-[#FF7A9E]/14 text-[#FFB3C8]"
+                                            )}
+                                        >
+                                            {paymentConnected ? "Connected" : "Connect Required"}
+                                        </span>
+                                    </div>
+
+                                    <p className="mt-1 text-sm leading-6 text-white/55">
+                                        {paymentConnected
+                                            ? connectedAccountLabel || `${paymentMethod.name} account connected`
+                                            : `Connect your ${paymentMethod.name} account from your profile before checkout.`}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="sticky bottom-0 relative z-10 border-t border-white/10 bg-[#120B14]/95 px-4 pb-4 pt-3 backdrop-blur-xl sm:px-6 sm:pb-5 sm:pt-4">
                         <p className="text-[11px] leading-5 text-white/45 sm:text-xs">
-                            After clicking continue, Stripe will open in a secure hosted page for payment completion.
+                            {paymentConnected
+                                ? `After clicking continue, ${paymentMethod.name} will open in a secure hosted page for payment completion.`
+                                : `Connect ${paymentMethod.name} first to continue with this checkout.`}
                         </p>
 
                         <StartStreamingButton
                             isLoading={isLoading}
                             className="mt-3 flex h-11 w-full items-center justify-center gap-2 text-base sm:h-auto sm:text-[1.125rem]"
-                            onClick={() => onPay?.(pack, total)}
+                            onClick={() =>
+                                paymentConnected ? onPay?.(pack) : onManageWallet?.()
+                            }
                         >
-                            {isLoading ? "Processing..." : "Continue to Stripe"}
+                            {isLoading
+                                ? "Processing..."
+                                : paymentConnected
+                                    ? `Continue with ${paymentMethod.name}`
+                                    : "Connect Account"}
                             {!isLoading && <ArrowRight className="size-4" />}
                         </StartStreamingButton>
                     </div>

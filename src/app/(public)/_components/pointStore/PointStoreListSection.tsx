@@ -6,10 +6,7 @@ import { ArrowRight, Coins, Sparkles } from "lucide-react";
 
 import LiveSectionHeader from "@/app/(auth)/_components/watchLive/LiveSectionHeader";
 import PointCard from "@/shared/components/card/PointCard";
-import BuyPointsDialog, {
-    getCheckoutTotal,
-    PointPack,
-} from "@/shared/components/modal/BuyPointsDialog";
+import BuyPointsDialog, { PointPack } from "@/shared/components/modal/BuyPointsDialog";
 
 import Image from "next/image";
 import { getErrorMessage } from "@/lib/utils";
@@ -17,6 +14,13 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { useBuyPointMutation } from "@/redux/features/pointstore/buypoint";
 import { cn } from "@/shared/lib/utils/cn";
 import { toast } from "sonner";
+import {
+    getPaymentMethodConfig,
+    PAYMENT_METHODS,
+} from "@/shared/constants/paymentMethods";
+import PaymentMethodLogo from "@/shared/components/payment/PaymentMethodLogo";
+import { usePaymentConnectionStatuses } from "@/shared/hooks/usePaymentConnectionStatuses";
+import { PaymentMethodId } from "@/types/user/point";
 
 const POINT_IMAGE_SRC = "/images/home/coin.png";
 const CUSTOM_PACK_ID = "custom-pack";
@@ -39,7 +43,7 @@ const parsePositiveInteger = (value: string | null | undefined) => {
 const buildCustomPack = (points: number): PointPack => ({
     id: CUSTOM_PACK_ID,
     title: `${formatPoints(points)} Custom Points`,
-    description: "Choose your exact point amount and continue with the same secure Stripe checkout flow.",
+    description: "Choose your exact point amount and continue with your selected payment method.",
     badge: "Flexible Amount",
     points,
     price: points.toFixed(2),
@@ -134,10 +138,17 @@ export default function PointStoreListSection() {
 
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<PointPack | null>(null);
+    const [paymentMethodId, setPaymentMethodId] = useState<PaymentMethodId>("paypal");
     const [customAmount, setCustomAmount] = useState(
         () => String(parsePositiveInteger(searchParams.get("amount")) ?? DEFAULT_CUSTOM_POINTS)
     );
     const customPoints = useMemo(() => parsePositiveInteger(customAmount), [customAmount]);
+    const paymentMethod = getPaymentMethodConfig(paymentMethodId);
+    const { allMethods: paymentStatuses } = usePaymentConnectionStatuses({
+        enabled: canPurchase,
+    });
+    const selectedPaymentStatus =
+        paymentStatuses.find((item) => item.method.id === paymentMethodId) ?? null;
 
     const setPurchaseInUrl = ({ packId, amount }: { packId?: string; amount?: number }) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -191,27 +202,39 @@ export default function PointStoreListSection() {
         openPurchase(buildCustomPack(customPoints));
     };
 
-    const handleStripePayment = async (pack: PointPack, totalAmount?: number) => {
-        const subtotal = Number(pack.price);
-        const amount = totalAmount ?? getCheckoutTotal(subtotal);
+    const routeToWalletSetup = () => {
+        toast.error(`Connect your ${paymentMethod.name} account first`);
+        router.push(`/user-profile?wallet=${paymentMethodId}`);
+    };
 
-        if (!Number.isFinite(amount) || amount <= 0) {
+    const handlePayment = async (pack: PointPack) => {
+        const subtotal = Number(pack.price);
+
+        if (!Number.isFinite(subtotal) || subtotal <= 0) {
             toast.error("Invalid checkout amount");
             return;
         }
 
+        if (!selectedPaymentStatus?.connected) {
+            routeToWalletSetup();
+            return;
+        }
+
         try {
-            const result = await buyPoint({ amount }).unwrap();
+            const result = await buyPoint({
+                amount: subtotal,
+                payment_method: paymentMethodId,
+            }).unwrap();
             const checkoutUrl = result?.data?.url;
             if (!checkoutUrl) {
-                console.log("Stripe URL missing", result);
-                toast.error("Stripe URL missing");
+                console.log("Checkout URL missing", result);
+                toast.error("Checkout URL missing");
                 return;
             }
             window.location.href = checkoutUrl;
         } catch (error) {
-            console.log("Stripe payment error:", error);
-            toast.error(getErrorMessage(error, "Stripe payment error"));
+            console.log("Checkout payment error:", error);
+            toast.error(getErrorMessage(error, "Checkout payment error"));
         }
     };
 
@@ -289,7 +312,7 @@ export default function PointStoreListSection() {
                             </h2>
 
                             <p className="mt-4 max-w-lg text-base leading-7 text-white/65">
-                                Use the custom checkout for an exact point amount, or pick a ready-made bundle and continue with secure Stripe payment.
+                                Use the custom checkout for an exact point amount, or pick a ready-made bundle and continue with your preferred payment method.
                             </p>
                         </div>
 
@@ -305,12 +328,68 @@ export default function PointStoreListSection() {
                                         Choose your points
                                     </h3>
                                     <p className="mt-2 hidden text-sm leading-6 text-white/55 sm:block">
-                                        Enter an amount and continue with Stripe checkout.
+                                        Enter an amount and continue with your selected payment method.
                                     </p>
                                 </div>
 
                                 <div className="rounded-full border border-[#00C3FF]/20 bg-[#00C3FF]/10 px-3 py-1 text-xs font-medium text-[#9FE8FF] sm:text-sm">
                                     {formatPoints(customPoints ?? 0)} pts
+                                </div>
+                            </div>
+
+                            <div className="mt-5">
+                                <p className="text-sm font-medium text-white/70">
+                                    Payment method
+                                </p>
+
+                                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                    {PAYMENT_METHODS.map((method) => {
+                                        const status = paymentStatuses.find(
+                                            (item) => item.method.id === method.id
+                                        );
+                                        const isActive = paymentMethodId === method.id;
+
+                                        return (
+                                            <button
+                                                key={method.id}
+                                                type="button"
+                                                onClick={() => setPaymentMethodId(method.id)}
+                                                className={cn(
+                                                    "flex items-center gap-3 rounded-[18px] border px-3 py-3 text-left transition",
+                                                    isActive
+                                                        ? "border-[#00C3FF]/40 bg-[#00C3FF]/12"
+                                                        : "border-white/10 bg-white/5 hover:border-white/20"
+                                                )}
+                                            >
+                                                <PaymentMethodLogo
+                                                    method={method}
+                                                    className="size-11 rounded-[15px]"
+                                                />
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <p className="text-sm font-semibold text-white">
+                                                            {method.name}
+                                                        </p>
+                                                        {canPurchase ? (
+                                                            <span
+                                                                className={cn(
+                                                                    "rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]",
+                                                                    status?.connected
+                                                                        ? "bg-[#00C3FF]/14 text-[#9FE8FF]"
+                                                                        : "bg-white/8 text-white/45"
+                                                                )}
+                                                            >
+                                                                {status?.connected ? "Connected" : "Connect"}
+                                                            </span>
+                                                        ) : null}
+                                                    </div>
+                                                    <p className="mt-1 text-xs text-white/55">
+                                                        {method.description}
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
@@ -373,7 +452,7 @@ export default function PointStoreListSection() {
                                 </div>
                                 <div className="mt-3 flex items-center justify-between text-sm text-white/65">
                                     <span>Payment provider</span>
-                                    <span>Stripe</span>
+                                    <span>{paymentMethod.name}</span>
                                 </div>
                             </div>
 
@@ -383,7 +462,7 @@ export default function PointStoreListSection() {
                                 </p>
                             ) : (
                                 <p className="mt-3 hidden text-sm text-white/45 sm:block">
-                                    The checkout amount follows the same pricing used for the preset bundles.
+                                    We will send your selected amount and payment method directly to checkout.
                                 </p>
                             )}
 
@@ -439,8 +518,12 @@ export default function PointStoreListSection() {
                     open={open}
                     onOpenChange={onOpenChange}
                     pack={selected}
+                    paymentMethod={paymentMethod}
+                    paymentConnected={selectedPaymentStatus?.connected}
+                    connectedAccountLabel={selectedPaymentStatus?.identifier}
+                    onManageWallet={routeToWalletSetup}
                     isLoading={isLoading}
-                    onPay={(pack) => handleStripePayment(pack)}
+                    onPay={(pack) => handlePayment(pack)}
                 />
             </div>
         </div>
