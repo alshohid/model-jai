@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
@@ -112,7 +113,7 @@ const ReuseAbleTable = <T extends TableItem>({
                     ) : (
                         <Table
                             className="w-full"
-                            // style={{ minWidth: `${minTableWidthPx}px` }}
+                        // style={{ minWidth: `${minTableWidthPx}px` }}
                         >
 
                             <TableCaption />
