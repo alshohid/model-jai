@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { MdClose } from "react-icons/md";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/shared/lib/utils/cn";
 import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
@@ -45,10 +45,10 @@ const menuItems = [
 
 export default function AdminSidebar({
     sidebarOpen,
-    toggleSidebar,
+    closeSidebar,
 }: {
     sidebarOpen: boolean;
-    toggleSidebar: () => void;
+    closeSidebar: () => void;
 }) {
     const pathname = usePathname();
     const dispatch = useAppDispatch();
@@ -57,37 +57,73 @@ export default function AdminSidebar({
 
     const [logoutAdmin, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
 
-    const isPathActive = (href?: string) => {
+    const isPathActive = useCallback((href?: string) => {
         if (!href) return false;
         if (href === "/admin/dashboard") {
             return pathname === href;
         }
 
         return pathname === href || pathname.startsWith(`${href}/`);
+    }, [pathname]);
+
+    useEffect(() => {
+        const activeMenu = menuItems.find((item) =>
+            item.children?.some((child) => isPathActive(child.href))
+        );
+
+        setOpenMenu(activeMenu?.label ?? null);
+    }, [isPathActive]);
+
+    useEffect(() => {
+        if (!sidebarOpen) {
+            return;
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                closeSidebar();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [closeSidebar, sidebarOpen]);
+
+    const handleMobileNavigation = () => {
+        if (window.innerWidth < 1024) {
+            closeSidebar();
+        }
     };
 
     return (
         <>
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
-                    onClick={toggleSidebar}
+                    className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+                    onClick={closeSidebar}
                 />
             )}
 
             <aside
+                id="admin-sidebar"
+                data-lenis-prevent
+                data-lenis-prevent-wheel
                 className={cn(
-                    "fixed left-0 top-0 z-50 h-screen",
-                    "w-[300px] xl:w-[350px]",
+                    "fixed inset-y-0 left-0 z-50 h-dvh max-h-dvh overflow-y-auto overflow-x-hidden",
+                    "w-[min(86vw,300px)] sm:w-[300px] xl:w-[350px]",
                     "lg:translate-x-0",
                     sidebarOpen ? "translate-x-0" : "-translate-x-full",
                     "transition-transform duration-300 ease-in-out",
                     "border-r border-white/10",
                     "bg-gradient-to-b from-[#2B2B2C] to-[#171717]",
-                    "shadow-[10px_0_50px_rgba(0,0,0,0.55)]"
+                    "shadow-[10px_0_50px_rgba(0,0,0,0.55)]",
+                    "touch-pan-y overscroll-y-contain",
+                    "[-webkit-overflow-scrolling:touch]",
+                    "[-ms-overflow-style:none] [scrollbar-width:none]",
+                    "[&::-webkit-scrollbar]:hidden"
                 )}
             >
-                <div className="h-full flex flex-col px-4 md:px-6 py-6">
+                <div className="flex min-h-full flex-col px-4 py-5 sm:px-5 md:px-6 md:py-6">
 
                     {/* header */}
                     <div className="flex items-center justify-between">
@@ -98,15 +134,16 @@ export default function AdminSidebar({
 
                         <button
                             type="button"
-                            onClick={toggleSidebar}
+                            onClick={closeSidebar}
                             className="lg:hidden inline-flex items-center justify-center size-10 rounded-xl bg-white/5 border border-white/10 text-white/80"
+                            aria-label="Close sidebar"
                         >
                             <MdClose size={22} />
                         </button>
                     </div>
 
                     {/* menu */}
-                    <nav className="mt-6 flex-1">
+                    <nav className="mt-6 pr-1">
                         <div className="space-y-2">
 
                             {menuItems.map((item) => {
@@ -127,6 +164,7 @@ export default function AdminSidebar({
 
                                             {/* Parent */}
                                             <button
+                                                type="button"
                                                 onClick={() =>
                                                     setOpenMenu(isOpen ? null : item.label)
                                                 }
@@ -174,6 +212,7 @@ export default function AdminSidebar({
                                                             <Link
                                                                 key={child.href}
                                                                 href={child.href}
+                                                                onClick={handleMobileNavigation}
                                                                 className={cn(
                                                                     "group flex items-center gap-3",
                                                                     "px-3 py-2.5 rounded-[10px]",
@@ -216,6 +255,7 @@ export default function AdminSidebar({
                                     <Link
                                         key={item.href}
                                         href={item.href!}
+                                        onClick={handleMobileNavigation}
                                         className={cn(
                                             "group flex items-center gap-3",
                                             "px-4 py-3 rounded-[14px]",
@@ -240,38 +280,40 @@ export default function AdminSidebar({
                     </nav>
 
                     {/* logout */}
-                    <div className="w-full flex justify-end px-4 py-2">
-                        <div className={cn(
-                            "flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/5 transition rounded-[14px]",
-                            isLogoutLoading && "opacity-50 cursor-not-allowed"
-                        )}>
-                            <button
-                                disabled={isLogoutLoading}
-                                onClick={async () => {
-                                    try {
-                                        await logoutAdmin();
+                    <div className="mt-auto pt-5">
+                        <div className="w-full flex justify-end px-3 py-2">
+                            <div className={cn(
+                                "flex items-center gap-1.5 rounded-[12px] border border-white/10 px-3 py-1.5 text-sm hover:bg-white/5 transition",
+                                isLogoutLoading && "opacity-50 cursor-not-allowed"
+                            )}>
+                                <button
+                                    disabled={isLogoutLoading}
+                                    onClick={async () => {
+                                        try {
+                                            await logoutAdmin();
 
-                                    } catch (error) {
-                                        console.log(error);
-                                    } finally {
-                                        dispatch(adminLogOut())
-                                        router.replace("/admin");
-                                    }
-                                }}
-                                className="text-white/75 px-3 py-2"
-                            >
-                                {isLogoutLoading ? "Logging out..." : "Logout"}
-                            </button>
+                                        } catch (error) {
+                                            console.log(error);
+                                        } finally {
+                                            dispatch(adminLogOut())
+                                            router.replace("/admin");
+                                        }
+                                    }}
+                                    className="px-2 py-1 text-sm text-white/75"
+                                >
+                                    {isLogoutLoading ? "Logging out..." : "Logout"}
+                                </button>
 
-                            <LogOutIcon size={22} />
+                                <LogOutIcon size={18} />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* footer */}
-                    <div className="pt-4 border-t border-white/10">
-                        <p className="text-white/40 text-xs">
-                            © {new Date().getFullYear()} Model Boss Admin
-                        </p>
+                        {/* footer */}
+                        <div className="pt-4 border-t border-white/10">
+                            <p className="text-white/40 text-xs">
+                                © {new Date().getFullYear()} Model Boss Admin
+                            </p>
+                        </div>
                     </div>
 
                 </div>
