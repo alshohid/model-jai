@@ -188,13 +188,12 @@ export default function AdminTransactionContainer() {
 
     return (
         <div className="w-full">
-            {/* Header */}
             <div className="mb-6 rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
                 <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
                     <div className="max-w-xl">
                         <h2 className="text-2xl font-semibold text-white">Transactions</h2>
                         <p className="mt-1 text-sm text-white/60">
-                        View all recharge and withdraw transaction history.
+                            View all recharge and withdraw transaction history.
                         </p>
                     </div>
 
@@ -221,9 +220,10 @@ export default function AdminTransactionContainer() {
                             value={search}
                             placeholder="Search by user ID or reference"
                             onChange={(e) => setSearch(e.target.value)}
-                            className="min-w-[260px] rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none placeholder:text-white/35 focus:border-[#FF2EC8]"
+                            className="w-full min-w-0 sm:min-w-[280px] rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none placeholder:text-white/35 focus:border-[#FF2EC8]"
                         />
                     </div>
+
                     {total > 0 && (
                         <p className="shrink-0 text-[13px] text-white/40">
                             Showing{" "}
