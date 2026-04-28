@@ -92,7 +92,51 @@ export const normalizeTimeValue = (value?: string | null) => {
     return value.slice(0, 5);
 };
 
-export const normalizeVotingMinutesValue = (
+const padDateTimeUnit = (value: number) => String(value).padStart(2, "0");
+
+const formatDateForInput = (date: Date) =>
+    `${date.getFullYear()}-${padDateTimeUnit(date.getMonth() + 1)}-${padDateTimeUnit(date.getDate())}`;
+
+const formatDateTimeForInput = (date: Date) =>
+    [
+        formatDateForInput(date),
+        `${padDateTimeUnit(date.getHours())}:${padDateTimeUnit(date.getMinutes())}`,
+    ].join("T");
+
+const getCurrentDate = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+};
+
+export const getMinMatchDateValue = () => formatDateForInput(getCurrentDate());
+
+export const isMatchDateBeforeToday = (value?: string | null) => {
+    if (!value) return false;
+
+    const selectedDate = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(selectedDate.getTime())) {
+        return true;
+    }
+
+    return selectedDate.getTime() < getCurrentDate().getTime();
+};
+
+const getRoundedCurrentDateTime = () => {
+    const now = new Date();
+
+    if (now.getSeconds() > 0 || now.getMilliseconds() > 0) {
+        now.setMinutes(now.getMinutes() + 1);
+    }
+
+    now.setSeconds(0, 0);
+    return now;
+};
+
+export const getMinVotingDateTimeValue = () =>
+    formatDateTimeForInput(getRoundedCurrentDateTime());
+
+export const normalizeVotingDateTimeInputValue = (
     value?: string | number | null,
 ) => {
     if (value === null || typeof value === "undefined") return "";
@@ -100,21 +144,40 @@ export const normalizeVotingMinutesValue = (
     const rawValue = String(value).trim();
     if (!rawValue) return "";
 
-    if (/^\d+$/.test(rawValue)) {
-        return rawValue;
+    const normalized = rawValue.replace(" ", "T");
+
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(normalized)) {
+        return normalized.slice(0, 16);
     }
 
-    const parts = rawValue
-        .split(":")
-        .map((part) => Number(part))
-        .filter((part) => Number.isFinite(part));
+    return "";
+};
 
-    if (parts.length >= 2) {
-        const [hours, minutes] = parts;
-        return String(hours * 60 + minutes);
+export const formatVotingDateTimeForApi = (value?: string | null) => {
+    if (!value) return "";
+
+    const normalized = value.trim().replace("T", " ");
+
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(normalized)) {
+        return `${normalized}:00`;
     }
 
-    return rawValue;
+    if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(normalized)) {
+        return normalized;
+    }
+
+    return normalized;
+};
+
+export const isVotingDateTimeBeforeMin = (value?: string | null) => {
+    if (!value) return false;
+
+    const selectedDate = new Date(value);
+    if (Number.isNaN(selectedDate.getTime())) {
+        return true;
+    }
+
+    return selectedDate.getTime() < getRoundedCurrentDateTime().getTime();
 };
 
 export const getMatchLogoPreview = (value?: string | null) => {
@@ -167,25 +230,25 @@ export function LogoUploadField({
 }) {
     return (
         <Field label={label} required={required}>
-            <div className="rounded-[18px] border border-white/10 bg-white/[0.04] p-3">
-                <div className="relative flex min-h-[100px] items-center justify-center overflow-hidden rounded-[16px] border border-dashed border-white/12 bg-[#0F0B11] px-4 py-5">
+            <div className="rounded-[16px] border border-white/10 bg-white/[0.04] p-2.5">
+                <div className="relative flex min-h-[84px] items-center justify-center overflow-hidden rounded-[14px] border border-dashed border-white/12 bg-[#0F0B11] px-3 py-3.5">
                     {previewSrc ? (
                         <div className="flex h-full w-full items-center justify-center">
                             <img
                                 src={previewSrc}
                                 alt={`${label} preview`}
-                                className="max-h-[72px] max-w-[72px] rounded-xl border border-white/10 bg-white/5 object-contain p-1.5"
+                                className="max-h-[60px] max-w-[60px] rounded-lg border border-white/10 bg-white/5 object-contain p-1"
                             />
                         </div>
                     ) : (
-                        <div className="px-5 text-center">
-                            <div className="mx-auto flex size-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[#FF2EC8]">
-                                <ImagePlus className="size-4" />
+                        <div className="px-4 text-center">
+                            <div className="mx-auto flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[#FF2EC8]">
+                                <ImagePlus className="size-3.5" />
                             </div>
-                            <p className="mt-3 text-sm font-medium text-white">
+                            <p className="mt-2.5 text-[13px] font-medium text-white">
                                 Upload {label.toLowerCase()}
                             </p>
-                            <p className="mt-2 text-xs leading-5 text-white/45">
+                            <p className="mt-1.5 text-[11px] leading-4 text-white/45">
                                 PNG, JPG, or WEBP looks best here.
                             </p>
                         </div>
@@ -195,23 +258,23 @@ export function LogoUploadField({
                         <button
                             type="button"
                             onClick={onClear}
-                            className="absolute right-3 top-3 inline-flex size-9 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white transition hover:bg-black/75"
+                            className="absolute right-2.5 top-2.5 inline-flex size-8 items-center justify-center rounded-full border border-white/10 bg-black/60 text-white transition hover:bg-black/75"
                             aria-label={`Remove ${label}`}
                         >
-                            <X className="size-4" />
+                            <X className="size-3.5" />
                         </button>
                     ) : null}
                 </div>
 
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2.5">
                     <label
                         htmlFor={inputId}
-                        className="inline-flex cursor-pointer items-center rounded-full border border-[#FF2EC8]/25 bg-[#FF2EC8]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#FF79DE] transition hover:bg-[#FF2EC8]/15"
+                        className="inline-flex cursor-pointer items-center rounded-full border border-[#FF2EC8]/25 bg-[#FF2EC8]/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FF79DE] transition hover:bg-[#FF2EC8]/15"
                     >
                         {buttonLabel ?? (previewSrc ? "Change logo" : "Choose logo")}
                     </label>
 
-                    <div className="max-w-[210px] text-right">
+                    <div className="max-w-[180px] text-right">
                         <p className="truncate text-xs font-medium text-white/70">
                             {fileName || (previewSrc ? "Current logo ready" : "No file selected")}
                         </p>

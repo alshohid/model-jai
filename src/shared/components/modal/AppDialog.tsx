@@ -30,30 +30,31 @@ export default function AppDialog({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
+                data-lenis-prevent
+                data-lenis-prevent-wheel
                 className={cn(
                     "p-0 border-0 bg-transparent shadow-none",
-                    "w-[92vw] max-w-[460px]",
-                    // ✅ mobile viewport safe height (address bar issue fix)
-                    "max-h-[calc(100dvh-24px)]",
+                    "w-[calc(100vw-16px)] sm:w-[92vw] max-w-[460px]",
+                    "max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)]",
                     className
                 )}
             >
                 <div
+                    data-lenis-prevent
+                    data-lenis-prevent-wheel
                     className={cn(
-                        "relative overflow-hidden",
+                        "relative flex min-h-0 flex-col overflow-hidden",
                         "rounded-[18px]",
                         "bg-[#160F16]/90 backdrop-blur-xl",
                         "border border-white/10",
                         "shadow-[0_22px_70px_rgba(0,0,0,0.55)]",
-                        // ✅ keep container within viewport
-                        "max-h-[calc(100dvh-24px)]"
+                        "max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)]"
                     )}
                 >
-                    {/* Header (fixed) */}
-                    <DialogHeader className="px-5 pt-5 pb-4">
+                    <DialogHeader className="shrink-0 px-4 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-5">
                         <div className="flex items-start justify-between gap-3">
                             {title ? (
-                                <DialogTitle className="text-white text-[20px] sm:text-[22px] font-semibold">
+                                <DialogTitle className="text-[18px] font-semibold text-white sm:text-[22px]">
                                     {title}
                                 </DialogTitle>
                             ) : (
@@ -79,9 +80,12 @@ export default function AppDialog({
 
                     {/* Body (scrollable) */}
                     <div
+                        data-lenis-prevent
+                        data-lenis-prevent-wheel
                         className={cn(
-                            "px-5 pb-5 overflow-y-auto",
-                            "max-h-[calc(100dvh-24px-76px)]",
+                            "min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-4",
+                            "[-webkit-overflow-scrolling:touch]",
+                            "sm:px-5 sm:pb-5",
                             bodyClassName
                         )}
                     >

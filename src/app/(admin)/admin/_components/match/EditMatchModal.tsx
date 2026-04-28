@@ -18,13 +18,18 @@ import {
     ChevronDown,
     createEmptyMatchForm,
     ErrorBanner,
+    formatVotingDateTimeForApi,
     Field,
     getMatchLogoPreview,
+    getMinMatchDateValue,
+    getMinVotingDateTimeValue,
     inputCls,
+    isMatchDateBeforeToday,
+    isVotingDateTimeBeforeMin,
     LogoUploadField,
     MatchFormState,
     normalizeTimeValue,
-    normalizeVotingMinutesValue,
+    normalizeVotingDateTimeInputValue,
     readImagePreview,
     selectCls,
     textareaCls,
@@ -48,6 +53,8 @@ export default function EditMatchModal({
     const { data: players } = useGetAllPlayerQuery();
     const [updateMatch, { isLoading: isMatchUpdateLoading }] =
         useUpdateMatchMutation();
+    const minMatchDate = getMinMatchDateValue();
+    const minVotingDateTime = getMinVotingDateTimeValue();
 
     const [form, setForm] = useState<MatchFormState>(createEmptyMatchForm());
     const [error, setError] = useState("");
@@ -94,7 +101,7 @@ export default function EditMatchModal({
             players_bet_amount: String(match.player_one_bet ?? ""),
             match_date: match.match_date ?? "",
             match_time: normalizeTimeValue(match.match_time),
-            voting_time: normalizeVotingMinutesValue(match.voting_time),
+            voting_time: normalizeVotingDateTimeInputValue(match.voting_time),
             type: match.type ?? "upcoming",
             winner_percentage: Number(match.winner_percentage ?? 0),
             loser_percentage: Number(match.loser_percentage ?? 0),
@@ -169,8 +176,13 @@ export default function EditMatchModal({
             return;
         }
 
-        if (Number(form.voting_time) <= 0) {
-            setError("Voting time must be a positive minute value like 30 or 40.");
+        if (isMatchDateBeforeToday(form.match_date)) {
+            setError("Match date cannot be earlier than today.");
+            return;
+        }
+
+        if (isVotingDateTimeBeforeMin(form.voting_time)) {
+            setError("Voting date and time must be now or a future time.");
             return;
         }
 
@@ -190,7 +202,7 @@ export default function EditMatchModal({
                 players_bet_amount: Number(form.players_bet_amount),
                 match_date: form.match_date,
                 match_time: normalizeTimeValue(form.match_time),
-                voting_time: normalizeVotingMinutesValue(form.voting_time),
+                voting_time: formatVotingDateTimeForApi(form.voting_time),
                 type: "upcoming",
                 winner_percentage: Number(form.winner_percentage),
                 loser_percentage: Number(form.loser_percentage),
@@ -226,12 +238,12 @@ export default function EditMatchModal({
             }}
             title="Edit Match"
             className="max-w-[720px]"
-            bodyClassName="pb-6"
+            bodyClassName="pb-4 sm:pb-6"
         >
             {isLoading ? (
                 <EditMatchSkeleton />
             ) : (
-                <form onSubmit={handleSubmit} className="space-y-5 py-4">
+                <form onSubmit={handleSubmit} className="space-y-4 py-3 sm:space-y-5 sm:py-4">
                     <ErrorBanner message={error} />
 
                     <Field label="Game" required>
@@ -443,8 +455,8 @@ export default function EditMatchModal({
                                             />
                                             <span
                                                 className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all duration-200 ${checked
-                                                        ? "border-[#FF2EC8] bg-[#FF2EC8]"
-                                                        : "border-white/20 bg-white/5"
+                                                    ? "border-[#FF2EC8] bg-[#FF2EC8]"
+                                                    : "border-white/20 bg-white/5"
                                                     }`}
                                             >
                                                 {checked ? (
@@ -477,6 +489,7 @@ export default function EditMatchModal({
                             <input
                                 type="date"
                                 value={form.match_date}
+                                min={minMatchDate}
                                 onChange={(event) =>
                                     setField("match_date", event.target.value)
                                 }
@@ -495,22 +508,23 @@ export default function EditMatchModal({
                             />
                         </Field>
 
-                        <Field label="Voting Time" required>
-                            <div className="relative">
+                        <Field label="Voting Date&Time" required>
+                            <div>
                                 <input
-                                    type="number"
-                                    min="1"
-                                    step="1"
-                                    placeholder="40"
+                                    type="datetime-local"
                                     value={form.voting_time}
+                                    min={
+                                        form.voting_time &&
+                                            form.voting_time < minVotingDateTime
+                                            ? form.voting_time
+                                            : minVotingDateTime
+                                    }
+                                    step="60"
                                     onChange={(event) =>
                                         setField("voting_time", event.target.value)
                                     }
-                                    className={`${inputCls} pr-16`}
+                                    className={inputCls}
                                 />
-                                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45">
-                                    Min
-                                </span>
                             </div>
                         </Field>
                     </div>

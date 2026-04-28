@@ -13,12 +13,16 @@ import {
     ChevronDown,
     createEmptyMatchForm,
     ErrorBanner,
+    formatVotingDateTimeForApi,
     Field,
+    getMinMatchDateValue,
+    getMinVotingDateTimeValue,
+    isMatchDateBeforeToday,
+    isVotingDateTimeBeforeMin,
     inputCls,
     LogoUploadField,
     MatchFormState,
     normalizeTimeValue,
-    normalizeVotingMinutesValue,
     readImagePreview,
     selectCls,
     textareaCls,
@@ -45,6 +49,8 @@ export default function CreateMatchModal({
     const { data: games } = useGetAllGamesQuery();
     const { data: players } = useGetAllPlayerQuery();
     const [createMatch, { isLoading }] = useCreateMatchMutation();
+    const minMatchDate = getMinMatchDateValue();
+    const minVotingDateTime = getMinVotingDateTimeValue();
 
     const setField = <K extends keyof MatchFormState>(
         key: K,
@@ -115,8 +121,13 @@ export default function CreateMatchModal({
             return;
         }
 
-        if (Number(form.voting_time) <= 0) {
-            setError("Voting time must be a positive minute value like 30 or 40.");
+        if (isMatchDateBeforeToday(form.match_date)) {
+            setError("Match date cannot be earlier than today.");
+            return;
+        }
+
+        if (isVotingDateTimeBeforeMin(form.voting_time)) {
+            setError("Voting date and time must be now or a future time.");
             return;
         }
 
@@ -133,7 +144,7 @@ export default function CreateMatchModal({
                 players_bet_amount: Number(form.players_bet_amount),
                 match_date: form.match_date,
                 match_time: normalizeTimeValue(form.match_time),
-                voting_time: normalizeVotingMinutesValue(form.voting_time),
+                voting_time: formatVotingDateTimeForApi(form.voting_time),
                 type: "upcoming",
                 winner_percentage: Number(form.winner_percentage),
                 loser_percentage: Number(form.loser_percentage),
@@ -169,9 +180,9 @@ export default function CreateMatchModal({
             }}
             title="Create Match"
             className="max-w-[720px]"
-            bodyClassName="pb-6"
+            bodyClassName="pb-4 sm:pb-6"
         >
-            <form onSubmit={handleSubmit} className="space-y-5 py-4">
+            <form onSubmit={handleSubmit} className="space-y-4 py-3 sm:space-y-5 sm:py-4">
                 <ErrorBanner message={error} />
 
                 <Field label="Game" required>
@@ -366,8 +377,8 @@ export default function CreateMatchModal({
                                         />
                                         <span
                                             className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all duration-200 ${checked
-                                                    ? "border-[#FF2EC8] bg-[#FF2EC8]"
-                                                    : "border-white/20 bg-white/5"
+                                                ? "border-[#FF2EC8] bg-[#FF2EC8]"
+                                                : "border-white/20 bg-white/5"
                                                 }`}
                                         >
                                             {checked ? (
@@ -400,6 +411,7 @@ export default function CreateMatchModal({
                         <input
                             type="date"
                             value={form.match_date}
+                            min={minMatchDate}
                             onChange={(event) =>
                                 setField("match_date", event.target.value)
                             }
@@ -418,22 +430,19 @@ export default function CreateMatchModal({
                         />
                     </Field>
 
-                    <Field label="Voting Time" required>
+                    <Field label="Voting Date&Time" required>
                         <div className="relative">
                             <input
-                                type="number"
-                                min="1"
-                                step="1"
-                                placeholder="40"
+                                type="datetime-local"
                                 value={form.voting_time}
+                                min={minVotingDateTime}
+                                step="60"
                                 onChange={(event) =>
                                     setField("voting_time", event.target.value)
                                 }
-                                className={`${inputCls} pr-16`}
+                                className={inputCls}
                             />
-                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45">
-                                Min
-                            </span>
+
                         </div>
                     </Field>
                 </div>
