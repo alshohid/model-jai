@@ -30,7 +30,7 @@ export function getEcho() {
     wsPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT || 8080),
     wssPort: Number(process.env.NEXT_PUBLIC_REVERB_PORT || 8080),
     forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME || "http") === "https",
-    enabledTransports: ["ws", "wss"],
+    enabledTransports: ["wss"],
     disableStats: true,
 
     authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/broadcasting/auth`,
