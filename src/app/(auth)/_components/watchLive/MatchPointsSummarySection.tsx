@@ -4,6 +4,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/shared/lib/utils/cn";
 import MatchPointsCard from "@/shared/components/card/MatchPointsCard";
@@ -31,7 +32,6 @@ import { Clock3, PhilippinePeso, Sparkles } from "lucide-react";
 import { useMatchVoting } from "@/shared/providers/hook/useMatchVoting";
 import { useAppDispatch } from "@/redux/store";
 import { applyLocalVote } from "@/redux/features/match/matchVotingReducer";
-import Image from "next/image";
 
 type VoteSide = "left" | "right";
 
@@ -68,7 +68,7 @@ function CompletedVotingCard({
     return (
         <div
             className={cn(
-                "w-full min-w-0 overflow-hidden rounded-[24px] border border-white/10 bg-[#17181F] p-2.5 text-left shadow-[0_18px_48px_rgba(0,0,0,0.36)] sm:rounded-[28px] sm:p-4",
+                "w-full min-w-0 overflow-hidden rounded-[18px] border border-white/10 bg-[#17181F] p-1.5 text-left shadow-[0_14px_36px_rgba(0,0,0,0.34)] sm:rounded-[28px] sm:p-4",
                 disabled ? "opacity-75" : ""
             )}
         >
@@ -77,17 +77,17 @@ function CompletedVotingCard({
                 onClick={onClick}
                 disabled={disabled}
                 className={cn(
-                    "group relative block w-full rounded-[22px] text-left transition-transform duration-300 sm:rounded-[26px]",
+                    "group relative block w-full rounded-[16px] text-left transition-transform duration-300 sm:rounded-[26px]",
                     disabled
                         ? "cursor-not-allowed"
                         : "active:scale-[0.98] hover:-translate-y-1"
                 )}
             >
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))]" />
-                <div className="absolute inset-[2px] rounded-[22px] border border-white/6 sm:rounded-[26px]" />
+                <div className="absolute inset-[2px] rounded-[16px] border border-white/6 sm:rounded-[26px]" />
 
-                <div className="relative flex min-h-[220px] flex-col justify-between px-1 py-1 sm:min-h-[276px]">
-                    <div className="mx-auto mb-3 size-12 overflow-hidden rounded-full border-2 border-white/12 shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:mb-4 sm:size-16">
+                <div className="relative flex min-h-[168px] flex-col justify-between px-1 py-1 sm:min-h-[276px]">
+                    <div className="mx-auto mb-2 size-10 overflow-hidden rounded-full border-2 border-white/12 shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:mb-4 sm:size-16">
                         <img
                             src={imageSrc}
                             alt={playerName}
@@ -95,12 +95,12 @@ function CompletedVotingCard({
                         />
                     </div>
 
-                    <p className="text-center text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40 sm:text-[12px] sm:tracking-[0.28em]">
+                    <p className="text-center text-[8px] font-semibold uppercase tracking-[0.2em] text-white/40 sm:text-[12px] sm:tracking-[0.28em]">
                         Vote
                     </p>
                     <h3
                         className={cn(
-                            "mx-auto mt-2 max-w-[8ch] break-words text-center text-[1rem] md:text-[2rem] font-semibold leading-[0.92]",
+                            "mx-auto mt-1.5 max-w-[8ch] break-words text-center text-[0.8rem] font-semibold leading-[0.95] sm:mt-2 sm:text-[1rem] md:text-[2rem]",
                             "drop-shadow-[0_0_14px_rgba(217,70,239,0.45)]",
                             accentClassName
                         )}
@@ -108,28 +108,28 @@ function CompletedVotingCard({
                         {playerName}
                     </h3>
 
-                    <div className="mt-3 text-center">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">
+                    <div className="mt-2 text-center">
+                        <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-white/45 sm:text-[10px] sm:tracking-[0.24em]">
                             Current Votes
                         </p>
-                        <p className="mt-1 text-lg font-bold text-white sm:text-2xl">
+                        <p className="mt-1 text-base font-bold text-white sm:text-2xl">
                             {voteCount}
                         </p>
                     </div>
 
-                    <div className="mt-4 rounded-[18px] border border-white/8 bg-[#090B11] px-2 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:py-3">
-                        <div className="flex items-center justify-between gap-2">
+                    <div className="mt-3 rounded-[14px] border border-white/8 bg-[#090B11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:py-3">
+                        <div className="flex items-center justify-between gap-1.5">
                             <div
                                 className={cn(
-                                    " size-4 rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:size-11",
+                                    "size-3 rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:size-11",
                                     "bg-[radial-gradient(circle_at_30%_30%,#d946ef,#7e22ce_72%)]"
                                 )}
                             />
                             <div className="flex min-w-0 items-center justify-end gap-1.5 text-white">
-                                <span className="text-right text-[8px] font-semibold uppercase tracking-[0.12em] text-white/48 sm:text-[11px] sm:tracking-[0.24em]">
+                                <span className="text-right text-[7px] font-semibold uppercase tracking-[0.08em] text-white/48 sm:text-[11px] sm:tracking-[0.24em]">
                                     Vote Now
                                 </span>
-                                <PhilippinePeso size={16} className="shrink-0 text-white/92 sm:size-7" />
+                                <PhilippinePeso size={12} className="shrink-0 text-white/92 sm:size-7" />
                             </div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@ function CompletedVotingCard({
             <button
                 type="button"
                 onClick={onShareClick}
-                className="mt-3 flex h-10 w-full items-center justify-center rounded-[16px] bg-navActive px-3 text-xs font-semibold text-white shadow-[4px_4px_0_0_rgba(255,255,255,1),inset_0_0_0_2px_rgba(255,255,255,1)] transition hover:opacity-95"
+                className="mt-2.5 flex h-8 w-full items-center justify-center rounded-[14px] bg-navActive px-2 text-[11px] font-semibold leading-tight text-white shadow-[3px_3px_0_0_rgba(255,255,255,1),inset_0_0_0_2px_rgba(255,255,255,1)] transition hover:opacity-95 sm:mt-3 sm:h-10 sm:rounded-[16px] sm:px-3 sm:text-xs sm:shadow-[4px_4px_0_0_rgba(255,255,255,1),inset_0_0_0_2px_rgba(255,255,255,1)]"
             >
                 Share Referral
             </button>
@@ -487,7 +487,7 @@ export default function MatchPointsSummarySection({
                 <div className={cn("mx-auto", "md:w-full")}>
                     {shouldShowVotingPanel ? (
                         <div className="px-1 py-6 sm:px-0">
-                            <div className="grid grid-cols-[1fr_auto_1fr]  items-start gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4">
+                            <div className="grid grid-cols-[minmax(0,1fr)_68px_minmax(0,1fr)] items-start gap-1.5 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4">
                                 <CompletedVotingCard
                                     playerName={left.playerName}
                                     imageSrc={leftVoteImage}
@@ -498,29 +498,29 @@ export default function MatchPointsSummarySection({
                                     voteCount={leftPlayerVotes}
                                 />
 
-                                <div className="flex flex-col items-center justify-start px-0.5 pt-12 sm:justify-center sm:px-1 sm:pt-0">
-                                    <div className="relative flex size-[80px] items-center justify-center rounded-full bg-[#090B12] shadow-[0_0_0_2px_rgba(34,238,223,0.92),0_0_0_6px_rgba(217,70,239,0.92),0_0_26px_rgba(34,238,223,0.18)] sm:size-[108px]">
-                                        <div className="absolute inset-[4px] rounded-full bg-[#0C0F16] ring-2 ring-[#0E1822]" />
-                                        <div className="absolute inset-[8px] rounded-full border border-[#D946EF]/75 shadow-[inset_0_0_14px_rgba(217,70,239,0.16)]" />
+                                <div className="flex flex-col items-center justify-start px-0 pt-7 sm:justify-center sm:px-1 sm:pt-0">
+                                    <div className="relative flex size-[68px] items-center justify-center rounded-full bg-[#090B12] shadow-[0_0_0_2px_rgba(34,238,223,0.92),0_0_0_5px_rgba(217,70,239,0.92),0_0_18px_rgba(34,238,223,0.16)] sm:size-[108px] sm:shadow-[0_0_0_2px_rgba(34,238,223,0.92),0_0_0_6px_rgba(217,70,239,0.92),0_0_26px_rgba(34,238,223,0.18)]">
+                                        <div className="absolute inset-[3px] rounded-full bg-[#0C0F16] ring-2 ring-[#0E1822] sm:inset-[4px]" />
+                                        <div className="absolute inset-[7px] rounded-full border border-[#D946EF]/75 shadow-[inset_0_0_14px_rgba(217,70,239,0.16)] sm:inset-[8px]" />
                                         <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top,rgba(217,70,239,0.18),transparent_40%),radial-gradient(circle_at_bottom,rgba(34,238,223,0.16),transparent_45%)]" />
                                         <div className="relative text-center">
-                                            <p className="text-[7px] font-bold uppercase tracking-[0.14em] text-[#5DF6EC] sm:text-[11px] sm:tracking-[0.24em]">
+                                            <p className="text-[5px] font-bold uppercase tracking-[0.08em] text-[#5DF6EC] sm:text-[11px] sm:tracking-[0.24em]">
                                                 {isVotingOpen ? "Time Left" : "Session Closed"}
                                             </p>
-                                            <p className="mt-1 font-mono text-[13px] font-extrabold leading-none text-[#F472FF] sm:text-[24px]">
+                                            <p className="mt-0.5 font-mono text-[10px] font-extrabold leading-none text-[#F472FF] sm:mt-1 sm:text-[24px]">
                                                 {isVotingOpen ? formatCountdown(remainingVotingMs) : "00:00"}
                                             </p>
-                                            <p className="mt-1 font-mono text-[8px] font-bold leading-none text-[#5DF6EC] sm:text-[15px]">
+                                            <p className="mt-0.5 font-mono text-[6px] font-bold leading-none text-[#5DF6EC] sm:mt-1 sm:text-[15px]">
                                                 {votingWindowLabel}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="mt-2 flex items-center gap-1 text-white/90 sm:mt-3">
-                                        <span className="-rotate-12 text-[26px] font-black leading-none sm:text-[42px]">
+                                    <div className="mt-1.5 flex items-center gap-1 text-white/90 sm:mt-3">
+                                        <span className="-rotate-12 text-[18px] font-black leading-none sm:text-[42px]">
                                             VS
                                         </span>
                                     </div>
-                                    <p className="mt-1 text-center text-[9px] font-semibold uppercase tracking-[0.18em] text-white/45 sm:text-[10px] sm:tracking-[0.24em]">
+                                    <p className="mt-1 text-center text-[7px] font-semibold uppercase tracking-[0.1em] text-white/45 sm:text-[10px] sm:tracking-[0.24em]">
                                         {isVotingOpen ? "Voting Open" : "Voting Finished"}
                                     </p>
                                 </div>
