@@ -51,6 +51,7 @@ export default function MatchDetails({
     const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
     const playerOneLogo = currentMatch?.player_one_logo;
     const playerTwoLogo = currentMatch?.player_two_logo;
+    const isVoteClosed = isLiveStatus && matchData?.data?.type === "live"
     console.log(playerOneLogo, playerTwoLogo, "currentMatch")
     const {
         showRegistrationPrompt,
@@ -158,34 +159,39 @@ export default function MatchDetails({
                                 }
                             />
                         </MatchVotingProvider>
+                        {
+                            !isVoteClosed ? (
+                                <>
+                                    <SupporterGridSection
+                                        key={matchId}
+                                        mode={(liveMode as "landscape" | "portrait") || "landscape"}
+                                        leftBossName={liveStore.left.name}
+                                        rightBossName={liveStore.right.name}
+                                        leftBoss={{
+                                            name: liveStore.leftBoss.name,
+                                            total: liveStore.left.points,
+                                        }}
+                                        rightBoss={{
+                                            name: liveStore.rightBoss.name,
+                                            total: liveStore.right.points,
+                                        }}
+                                        leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
+                                        rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
+                                        onSupport={liveStore.support}
+                                    />
 
-                        <SupporterGridSection
-                            key={matchId}
-                            mode={(liveMode as "landscape" | "portrait") || "landscape"}
-                            leftBossName={liveStore.left.name}
-                            rightBossName={liveStore.right.name}
-                            leftBoss={{
-                                name: liveStore.leftBoss.name,
-                                total: liveStore.left.points,
-                            }}
-                            rightBoss={{
-                                name: liveStore.rightBoss.name,
-                                total: liveStore.right.points,
-                            }}
-                            leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
-                            rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
-                            onSupport={liveStore.support}
-                        />
-
-                        <RankingSection
-                            data={liveStore.rankingSupporters}
-                            isLoading={isMatchLoading}
-                        />
+                                    <RankingSection
+                                        data={liveStore.rankingSupporters}
+                                        isLoading={isMatchLoading}
+                                    />
+                                </>
+                            ) : (null)
+                        }
                     </div>
 
-                    <LatestNewsSection />
+                    {/* <LatestNewsSection />
                     <TakeGameSection />
-                    <FooterSection />
+                    <FooterSection /> */}
                 </div>
             )}
 

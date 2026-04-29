@@ -7,6 +7,7 @@ import {
   clearMatchVotingSession,
 } from "@/redux/features/match/matchVotingReducer";
 import { useAppDispatch } from "@/redux/store";
+import { attachRealtimeChannelDebug, logRealtimeLifecycle } from "@/shared/lib/realtimeDebug";
 import { IMatch } from "@/types/match/MatchManagementTypes";
 import { getEcho } from "@/shared/lib/echo";
 
@@ -84,14 +85,14 @@ export default function MatchVotingProvider({
           : true;
         const sameOrder =
           voteItem.player_one_id ===
-            (matchData.player_one?.id ?? matchData.player_one_id) &&
+          (matchData.player_one?.id ?? matchData.player_one_id) &&
           voteItem.player_two_id ===
-            (matchData.player_two?.id ?? matchData.player_two_id);
+          (matchData.player_two?.id ?? matchData.player_two_id);
         const reverseOrder =
           voteItem.player_one_id ===
-            (matchData.player_two?.id ?? matchData.player_two_id) &&
+          (matchData.player_two?.id ?? matchData.player_two_id) &&
           voteItem.player_two_id ===
-            (matchData.player_one?.id ?? matchData.player_one_id);
+          (matchData.player_one?.id ?? matchData.player_one_id);
 
         return sameGame && (sameOrder || reverseOrder);
       }) ?? null
@@ -153,15 +154,26 @@ export default function MatchVotingProvider({
   useEffect(() => {
     if (!currentMatchId) return;
 
+    const channelName = `match.${currentMatchId}`;
     const echo = getEcho();
     if (!echo) {
+      logRealtimeLifecycle(
+        "MatchVotingProvider",
+        "Echo client unavailable; skipping channel subscription",
+        { channelName, matchId: currentMatchId },
+      );
+
       return () => {
         dispatch(clearMatchVotingSession(currentMatchId));
       };
     }
 
-    const channelName = `match.${currentMatchId}`;
     const channel = echo.channel(channelName);
+    const detachRealtimeDebug = attachRealtimeChannelDebug(channel, {
+      channelName,
+      channelType: "public",
+      scope: "MatchVotingProvider",
+    });
 
     const syncVotingSession = (event: IVotingChannelPayload) => {
       const payload = extractVotingPayload(event);
@@ -198,6 +210,11 @@ export default function MatchVotingProvider({
     channel.listen(".voting.updated", syncVotingSession);
 
     return () => {
+      detachRealtimeDebug();
+      logRealtimeLifecycle("MatchVotingProvider", "Leaving channel", {
+        channelName,
+        channelType: "public",
+      });
       echo.leave(channelName);
       dispatch(clearMatchVotingSession(currentMatchId));
     };

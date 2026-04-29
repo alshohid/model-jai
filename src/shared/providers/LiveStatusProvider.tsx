@@ -6,6 +6,10 @@ import { getEcho } from "@/shared/lib/echo";
 import { useGetLiveStatusQuery } from "@/redux/features/dashboard/dashboardManagement";
 import { useAppDispatch } from "@/redux/store";
 import { setLiveStatus } from "@/redux/features/live/liveStatusReducer";
+import {
+    attachRealtimeChannelDebug,
+    logRealtimeLifecycle,
+} from "@/shared/lib/realtimeDebug";
 // import { ILiveStatusChangedEvent } from "@/types/liveMatchDetails/liveStatus";
 
 
@@ -24,20 +28,35 @@ export default function LiveStatusProvider({
     // socket listener -> redux
     useEffect(() => {
         const echo = getEcho();
-        if (!echo) return;
-
         const channelName = "live-status-updates";
+        if (!echo) {
+            logRealtimeLifecycle(
+                "LiveStatusProvider",
+                "Echo client unavailable; skipping channel subscription",
+                { channelName },
+            );
+            return;
+        }
 
         const channel = echo.channel(channelName);
+        const detachRealtimeDebug = attachRealtimeChannelDebug(channel, {
+            channelName,
+            channelType: "public",
+            scope: "LiveStatusProvider",
+        });
 
         channel.listen(".status.changed", (event: any) => {
             if (event?.liveStatus) {
-
                 dispatch(setLiveStatus(event.liveStatus));
             }
         });
 
         return () => {
+            detachRealtimeDebug();
+            logRealtimeLifecycle("LiveStatusProvider", "Leaving channel", {
+                channelName,
+                channelType: "public",
+            });
             echo.leave(channelName);
         };
     }, [dispatch]);

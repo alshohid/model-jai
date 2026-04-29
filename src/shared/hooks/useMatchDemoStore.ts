@@ -4,6 +4,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getEcho } from "@/shared/lib/echo";
+import {
+  attachRealtimeChannelDebug,
+  logRealtimeLifecycle,
+} from "@/shared/lib/realtimeDebug";
 import { usePlaceSupportMutation } from "@/redux/features/support/supportManagement";
 import {
   IMatch,
@@ -131,21 +135,37 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
   }, []);
 
   useEffect(() => {
-    const echo = getEcho();
-    if (!echo || !matchId) return;
-
     const channelName = `match.${matchId}`;
-    console.log("Joining channel:", channelName);
+    const echo = getEcho();
+    if (!echo || !matchId) {
+      if (matchId) {
+        logRealtimeLifecycle(
+          "useMatchDemoStore",
+          "Echo client unavailable; skipping channel subscription",
+          { channelName, matchId },
+        );
+      }
+
+      return;
+    }
 
     const channel = echo.channel(channelName);
+    const detachRealtimeDebug = attachRealtimeChannelDebug(channel, {
+      channelName,
+      channelType: "public",
+      scope: "useMatchDemoStore",
+    });
 
     channel.listen(".support.placed", (event: ISupportPlacedEvent) => {
-      console.log("support placed event received:", event);
       applySupportData(event.data);
     });
 
     return () => {
-      console.log("Leaving channel:", channelName);
+      detachRealtimeDebug();
+      logRealtimeLifecycle("useMatchDemoStore", "Leaving channel", {
+        channelName,
+        channelType: "public",
+      });
       echo.leave(channelName);
     };
   }, [matchId, applySupportData]);

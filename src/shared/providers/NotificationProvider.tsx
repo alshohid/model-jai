@@ -16,6 +16,10 @@ import {
 } from "../lib/notificationMapper";
 import { IRawNotificationData } from "@/types/notifications/NotitficationsTypes";
 import MatchRulesModal from "../components/modal/MatchRulesModal";
+import {
+    attachRealtimeChannelDebug,
+    logRealtimeLifecycle,
+} from "@/shared/lib/realtimeDebug";
 
 
 interface IMatchCreatedPayload {
@@ -59,21 +63,30 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
         if (!userId) return;
 
         const echo = getEcho();
-        if (!echo) return;
+        if (!echo) {
+            logRealtimeLifecycle(
+                "NotificationProvider",
+                "Echo client unavailable; skipping notification channels",
+                { userId },
+            );
+            return;
+        }
 
         const cleanups: Array<() => void> = [];
 
         // 1) Match created notification for user
         const matchChannelName = `user.${userId}`;
         const matchChannel = echo.private(matchChannelName);
-
-
+        const detachMatchChannelDebug = attachRealtimeChannelDebug(matchChannel, {
+            channelName: matchChannelName,
+            channelType: "private",
+            scope: "NotificationProvider",
+        });
 
         matchChannel.listen(".match.created", (event: IMatchCreatedPayload) => {
             console.log("Match created notification:", event);
 
             const isPlayer = event.player_ids?.includes(Number(userId)) ?? false;
-
 
             dispatch(addNotification(mapSocketMatchCreatedNotification(event)));
             if (isPlayer && event.rules) {
@@ -86,19 +99,36 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
         });
 
         cleanups.push(() => {
+            detachMatchChannelDebug();
+            logRealtimeLifecycle("NotificationProvider", "Leaving channel", {
+                channelName: matchChannelName,
+                channelType: "private",
+            });
             echo.leave(`private-${matchChannelName}`);
         });
 
         // 2) Private user/admin notifications
         const privateNotificationChannelName = `App.Models.User.${userId}`;
         const privateNotificationChannel = echo.private(privateNotificationChannelName);
+        const detachPrivateNotificationDebug = attachRealtimeChannelDebug(
+            privateNotificationChannel,
+            {
+                channelName: privateNotificationChannelName,
+                channelType: "private",
+                scope: "NotificationProvider",
+            },
+        );
 
         privateNotificationChannel.notification((notification: IRawNotificationData) => {
-            console.log("Private notification received:", notification);
             dispatch(addNotification(mapSocketPrivateNotification(notification)));
         });
 
         cleanups.push(() => {
+            detachPrivateNotificationDebug();
+            logRealtimeLifecycle("NotificationProvider", "Leaving channel", {
+                channelName: privateNotificationChannelName,
+                channelType: "private",
+            });
             echo.leave(`private-${privateNotificationChannelName}`);
         });
 
@@ -106,13 +136,25 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
         if (role === "super_admin" && Number(userId) === 1) {
             const adminChannelName = "App.Models.User.1";
             const adminChannel = echo.private(adminChannelName);
+            const detachAdminChannelDebug = attachRealtimeChannelDebug(
+                adminChannel,
+                {
+                    channelName: adminChannelName,
+                    channelType: "private",
+                    scope: "NotificationProvider",
+                },
+            );
 
             adminChannel.notification((notification: IRawNotificationData) => {
-                console.log("Admin private notification received:", notification);
                 dispatch(addNotification(mapSocketPrivateNotification(notification)));
             });
 
             cleanups.push(() => {
+                detachAdminChannelDebug();
+                logRealtimeLifecycle("NotificationProvider", "Leaving channel", {
+                    channelName: adminChannelName,
+                    channelType: "private",
+                });
                 echo.leave(`private-${adminChannelName}`);
             });
         }
