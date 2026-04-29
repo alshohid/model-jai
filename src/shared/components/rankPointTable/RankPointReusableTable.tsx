@@ -15,8 +15,8 @@ export type SupporterRowItem = {
 
 const RankPointReusableTable = ({ data, isLoading }: { data: SupporterRowItem[]; isLoading: boolean }) => {
     const tableHeader = [
-        "Rank No",
-        "Name",
+        "Rank Boss No",
+        "Boss Name",
         "User ID",
         "Range Point Match Support From Highest to Lowest",
     ];

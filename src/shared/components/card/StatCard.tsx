@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 
 export function StatCard({
@@ -22,6 +23,7 @@ export function StatCard({
                             alt="image"
                             width={400}
                             height={400}
+                            className="w-16 h-16 rounded-full object-cover"
                         />
 
                         : (
@@ -37,7 +39,7 @@ export function StatCard({
                 </div>
 
                 <div className="min-w-0">
-                    <p className="text-white text-[18px] font-semibold leading-tight">
+                    <p className="text-white text-[18px] text-wrap font-semibold leading-tight">
                         {label}
                     </p>
                     <p className="text-white/85 text-[18px] font-medium mt-1">{value}</p>

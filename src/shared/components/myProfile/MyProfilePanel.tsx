@@ -254,7 +254,7 @@ export default function MyProfilePanel({
                                                         </p>
                                                         <span
                                                             className={cn(
-                                                                "rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]",
+                                                                "rounded-full px-2.5 py-1 text-wrap text-[10px] font-semibold uppercase tracking-[0.18em]",
                                                                 item.connected
                                                                     ? "bg-[#00C3FF]/14 text-[#9FE8FF]"
                                                                     : "bg-white/8 text-white/45"
@@ -264,7 +264,7 @@ export default function MyProfilePanel({
                                                         </span>
                                                     </div>
 
-                                                    <p className="mt-1 text-xs leading-5 text-white/55">
+                                                    <p className="mt-1 max-w-full break-words whitespace-normal text-xs leading-5 text-white/55">
                                                         {item.connected
                                                             ? item.identifier || `${item.method.name} account connected`
                                                             : item.method.description}
@@ -281,7 +281,7 @@ export default function MyProfilePanel({
                                                                 onSelectPaymentMethod?.(item.method.id)
                                                             }
                                                             className={cn(
-                                                                "rounded-full border px-3 py-2 text-xs font-medium transition",
+                                                                "rounded-full border px-3 py-2 text-wrap text-xs font-medium transition",
                                                                 isSelected
                                                                     ? "border-[#00C3FF]/40 bg-[#00C3FF]/14 text-[#C8F4FF]"
                                                                     : "border-white/12 bg-white/6 text-white/70 hover:text-white"
@@ -295,7 +295,7 @@ export default function MyProfilePanel({
                                                                 onDisconnectPaymentMethod?.(item.method.id)
                                                             }
                                                             disabled={isBusy}
-                                                            className="rounded-full border border-white/12 bg-black/30 px-3 py-2 text-xs font-medium text-white/65 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-full border border-white/12 bg-black/30 px-3 py-2 text-wrap text-xs font-medium text-white/65 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                                                         >
                                                             {isBusy && walletActionMode === "disconnect"
                                                                 ? "Disconnecting..."
@@ -309,7 +309,7 @@ export default function MyProfilePanel({
                                                             onConnectPaymentMethod?.(item.method.id)
                                                         }
                                                         disabled={isBusy || item.isLoading}
-                                                        className="rounded-full border border-white/12 bg-white/8 px-3 py-2 text-xs font-medium text-white transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-60"
+                                                        className="rounded-full border border-white/12 bg-white/8 px-3 py-2 text-wrap text-xs font-medium text-white transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-60"
                                                     >
                                                         {isBusy && walletActionMode === "connect"
                                                             ? "Connecting..."
