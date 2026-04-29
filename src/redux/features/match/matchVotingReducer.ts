@@ -1,6 +1,7 @@
 "use client";
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ITopVoterItem } from "@/types/match/MatchManagementTypes";
 
 export interface IMatchVotingSession {
   matchId: string;
@@ -15,6 +16,7 @@ export interface IMatchVotingSession {
   playerOneVotes?: number;
   playerTwoVotes?: number;
   totalVotes?: number;
+  topVoters?: ITopVoterItem[];
   isHydrated: boolean;
 }
 

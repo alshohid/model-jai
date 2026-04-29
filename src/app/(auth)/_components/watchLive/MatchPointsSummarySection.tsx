@@ -4,8 +4,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/shared/lib/utils/cn";
 import MatchPointsCard from "@/shared/components/card/MatchPointsCard";
+import VotingRankTable from "@/shared/components/rankPointTable/VotingRankTable";
 import SupportDialog from "@/shared/components/watchLive/SupportDialog";
 import FlyingPeso from "@/shared/components/watchLive/FlyingPeso";
 import TipPopover from "@/shared/components/watchLive/TipPopover";
@@ -24,10 +26,12 @@ import { useGoVoteForPlayerMutation } from "@/redux/features/match/matchManageme
 import { getErrorMessage } from "@/lib/utils";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { getVotingEndTime } from "@/shared/lib/utils/votingTime";
+import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet";
 import { Clock3, PhilippinePeso, Sparkles } from "lucide-react";
 import { useMatchVoting } from "@/shared/providers/hook/useMatchVoting";
 import { useAppDispatch } from "@/redux/store";
 import { applyLocalVote } from "@/redux/features/match/matchVotingReducer";
+import Image from "next/image";
 
 type VoteSide = "left" | "right";
 
@@ -49,70 +53,97 @@ function CompletedVotingCard({
     imageSrc,
     accentClassName,
     onClick,
+    onShareClick,
     disabled = false,
+    voteCount = 0,
 }: {
     playerName: string;
     imageSrc: string;
     accentClassName: string;
     onClick: () => void;
+    onShareClick: () => void;
     disabled?: boolean;
+    voteCount?: number;
 }) {
     return (
-        <button
-            type="button"
-            onClick={onClick}
-            disabled={disabled}
+        <div
             className={cn(
-                "group relative w-full min-w-0 overflow-hidden rounded-[24px] border border-white/10 bg-[#17181F] px-2.5 py-3 text-left shadow-[0_18px_48px_rgba(0,0,0,0.36)]",
-                "transition-transform duration-300 sm:rounded-[28px] sm:p-4",
-                disabled
-                    ? "cursor-not-allowed opacity-75"
-                    : "active:scale-[0.98] hover:-translate-y-1"
+                "w-full min-w-0 overflow-hidden rounded-[24px] border border-white/10 bg-[#17181F] p-2.5 text-left shadow-[0_18px_48px_rgba(0,0,0,0.36)] sm:rounded-[28px] sm:p-4",
+                disabled ? "opacity-75" : ""
             )}
         >
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))]" />
-            <div className="absolute inset-[2px] rounded-[22px] border border-white/6 sm:rounded-[26px]" />
+            <button
+                type="button"
+                onClick={onClick}
+                disabled={disabled}
+                className={cn(
+                    "group relative block w-full rounded-[22px] text-left transition-transform duration-300 sm:rounded-[26px]",
+                    disabled
+                        ? "cursor-not-allowed"
+                        : "active:scale-[0.98] hover:-translate-y-1"
+                )}
+            >
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))]" />
+                <div className="absolute inset-[2px] rounded-[22px] border border-white/6 sm:rounded-[26px]" />
 
-            <div className="relative flex min-h-[220px] flex-col justify-between sm:min-h-[276px]">
-                <div className="mx-auto mb-3 size-12 overflow-hidden rounded-full border-2 border-white/12 shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:mb-4 sm:size-16">
-                    <img
-                        src={imageSrc}
-                        alt={playerName}
-                        className="h-full w-full object-cover"
-                    />
-                </div>
-
-                <p className="text-center text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40 sm:text-[12px] sm:tracking-[0.28em]">
-                    Vote
-                </p>
-                <h3
-                    className={cn(
-                        "mx-auto mt-2 max-w-[8ch] break-words text-center text-[1rem] md:text-[2rem] font-semibold leading-[0.92]",
-                        "drop-shadow-[0_0_14px_rgba(217,70,239,0.45)]",
-                        accentClassName
-                    )}
-                >
-                    {playerName}
-                </h3>
-
-                <div className="mt-4 rounded-[18px] border border-white/8 bg-[#090B11] px-2 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:py-3">
-                    <div className="flex items-center justify-between gap-2">
-                        <div
-                            className={cn(
-                                " size-4 rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:size-11",
-                                "bg-[radial-gradient(circle_at_30%_30%,#d946ef,#7e22ce_72%)]"
-                            )}
+                <div className="relative flex min-h-[220px] flex-col justify-between px-1 py-1 sm:min-h-[276px]">
+                    <div className="mx-auto mb-3 size-12 overflow-hidden rounded-full border-2 border-white/12 shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:mb-4 sm:size-16">
+                        <img
+                            src={imageSrc}
+                            alt={playerName}
+                            className="h-full w-full object-cover"
                         />
-                        <div className="flex min-w-0 items-center justify-end gap-1.5 text-white">
-                            <span className="text-right text-[8px] font-semibold uppercase tracking-[0.12em] text-white/48 sm:text-[11px] sm:tracking-[0.24em]">
-                                Vote Now
-                            </span>
-                            <PhilippinePeso size={16} className="shrink-0 text-white/92 sm:size-7" />
+                    </div>
+
+                    <p className="text-center text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40 sm:text-[12px] sm:tracking-[0.28em]">
+                        Vote
+                    </p>
+                    <h3
+                        className={cn(
+                            "mx-auto mt-2 max-w-[8ch] break-words text-center text-[1rem] md:text-[2rem] font-semibold leading-[0.92]",
+                            "drop-shadow-[0_0_14px_rgba(217,70,239,0.45)]",
+                            accentClassName
+                        )}
+                    >
+                        {playerName}
+                    </h3>
+
+                    <div className="mt-3 text-center">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">
+                            Current Votes
+                        </p>
+                        <p className="mt-1 text-lg font-bold text-white sm:text-2xl">
+                            {voteCount}
+                        </p>
+                    </div>
+
+                    <div className="mt-4 rounded-[18px] border border-white/8 bg-[#090B11] px-2 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:mt-5 sm:rounded-[24px] sm:px-4 sm:py-3">
+                        <div className="flex items-center justify-between gap-2">
+                            <div
+                                className={cn(
+                                    " size-4 rounded-full shadow-[0_10px_24px_rgba(0,0,0,0.35)] sm:size-11",
+                                    "bg-[radial-gradient(circle_at_30%_30%,#d946ef,#7e22ce_72%)]"
+                                )}
+                            />
+                            <div className="flex min-w-0 items-center justify-end gap-1.5 text-white">
+                                <span className="text-right text-[8px] font-semibold uppercase tracking-[0.12em] text-white/48 sm:text-[11px] sm:tracking-[0.24em]">
+                                    Vote Now
+                                </span>
+                                <PhilippinePeso size={16} className="shrink-0 text-white/92 sm:size-7" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </button>
+            </button>
+
+            <button
+                type="button"
+                onClick={onShareClick}
+                className="mt-3 flex h-10 w-full items-center justify-center rounded-[16px] bg-navActive px-3 text-xs font-semibold text-white shadow-[4px_4px_0_0_rgba(255,255,255,1),inset_0_0_0_2px_rgba(255,255,255,1)] transition hover:opacity-95"
+            >
+                Share Referral
+            </button>
+        </div>
     );
 }
 
@@ -132,11 +163,15 @@ export default function MatchPointsSummarySection({
     matchData,
 }: MatchPointsSummarySectionProps) {
     const dispatch = useAppDispatch();
+    const searchParams = useSearchParams();
     const tipSystem = useTipSystem();
     const supportDialog = useSupportDialog();
     const [sendTip, { isLoading: isTipSending }] = useSendTipMutation();
     const [currentTime, setCurrentTime] = useState(() => new Date());
     const [voteModalOpen, setVoteModalOpen] = useState(false);
+    const [shareSheetOpen, setShareSheetOpen] = useState(false);
+    const [shareSheetTitle, setShareSheetTitle] = useState("");
+    const [shareUrl, setShareUrl] = useState("");
     const [selectedVoteSide, setSelectedVoteSide] = useState<VoteSide>("left");
     const [voteCount, setVoteCount] = useState("1");
     const { votingSession } = useMatchVoting(matchId);
@@ -183,7 +218,16 @@ export default function MatchPointsSummarySection({
             : null;
     }, [matchId]);
     const voteTargetMatchId = routeMatchId ?? votingSession?.matchForVotingId ?? null;
-    const totalVotes = Number(votingSession?.totalVotes ?? 0);
+    const leftPlayerVotes = Number(
+        votingSession?.playerOneVotes ?? matchData?.player_one_votes ?? 0,
+    );
+    const rightPlayerVotes = Number(
+        votingSession?.playerTwoVotes ?? matchData?.player_two_votes ?? 0,
+    );
+    const totalVotes = Number(
+        votingSession?.totalVotes ?? leftPlayerVotes + rightPlayerVotes,
+    );
+    const topVoters = votingSession?.topVoters ?? matchData?.top_voters ?? [];
     const votingWindowMinutes = Number(effectiveVotingTime ?? 0);
     const votingWindowLabel =
         votingWindowMinutes > 0 ? `${votingWindowMinutes} Min Window` : "Voting Session";
@@ -195,6 +239,21 @@ export default function MatchPointsSummarySection({
         votingSession?.playerTwoImage || defaultVoteRightImage,
         "/images/home/avatar_img.png",
     );
+    const currentPlatform = searchParams.get("platform") || "tiktok";
+
+    const handleVoteShare = (playerName: string) => {
+        if (typeof window === "undefined" || !routeMatchId) {
+            toast.error("Match link is not available right now.");
+            return;
+        }
+
+        const nextShareUrl =
+            `${window.location.origin}/live-stream/match/${routeMatchId}?platform=${encodeURIComponent(currentPlatform)}`;
+
+        setShareSheetTitle(`Vote for ${playerName}`);
+        setShareUrl(nextShareUrl);
+        setShareSheetOpen(true);
+    };
 
     const handleSupportConfirm = async (
         side: "left" | "right" | "middle",
@@ -434,7 +493,9 @@ export default function MatchPointsSummarySection({
                                     imageSrc={leftVoteImage}
                                     accentClassName="text-[#F472FF]"
                                     onClick={() => handleVoteCardClick("left")}
+                                    onShareClick={() => handleVoteShare(left.playerName)}
                                     disabled={!isVotingOpen}
+                                    voteCount={leftPlayerVotes}
                                 />
 
                                 <div className="flex flex-col items-center justify-start px-0.5 pt-12 sm:justify-center sm:px-1 sm:pt-0">
@@ -469,11 +530,13 @@ export default function MatchPointsSummarySection({
                                     imageSrc={rightVoteImage}
                                     accentClassName="text-[#F472FF]"
                                     onClick={() => handleVoteCardClick("right")}
+                                    onShareClick={() => handleVoteShare(right.playerName)}
                                     disabled={!isVotingOpen}
+                                    voteCount={rightPlayerVotes}
                                 />
                             </div>
 
-                            <div className="mt-4 rounded-[24px] border border-white/10 bg-white/[0.04] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+                            <div className="mt-4 hidden md:block rounded-[24px] border border-white/10 bg-white/[0.04] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                                     <div>
                                         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#6FF9EA]">
@@ -494,6 +557,38 @@ export default function MatchPointsSummarySection({
                                         </p>
                                     </div>
                                 </div>
+                            </div>
+
+
+                            <div className="mt-6 space-y-3">
+                                <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                                    <div className="hidden md:block">
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#6FF9EA]">
+                                            Big Boss Voter Table
+                                        </p>
+                                        <p className="mt-1 text-sm text-white/58">
+                                            Realtime top voters and their vote breakdown for this live match.
+                                        </p>
+                                    </div>
+                                    <p className="text-xs font-medium uppercase tracking-[0.22em] text-white/38">
+                                        Live Ranking
+                                    </p>
+                                </div>
+                                <div className="rounded-xl bg-black/40 border border-white/10 p-3">
+                                    <div className="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-black">
+                                        <Image src={topVoters[0]?.user?.image ?? ""} alt={topVoters[0]?.user?.name ?? ""} fill className="object-cover" />
+                                    </div>
+
+                                    <div className="mt-3 text-white/80 text-[0.5rem] md:text-[12px] font-semibold">
+                                        Big Boss Voter
+                                    </div>
+                                    <div className="text-white font-black text-[0.7rem] md:text-[1rem]">
+                                        {topVoters[0]?.user?.name}
+                                    </div>
+
+                                </div>
+
+                                <VotingRankTable data={topVoters} />
                             </div>
                         </div>
                     ) : (
@@ -622,6 +717,15 @@ export default function MatchPointsSummarySection({
                     </div>
                 </div>
             </AppDialog>
+
+            <ReferralShareSheet
+                open={shareSheetOpen}
+                onOpenChange={setShareSheetOpen}
+                title={shareSheetTitle}
+                shareUrl={shareUrl}
+                onCopy={() => toast.success("Match share link copied")}
+                onShare={() => toast.success("Match share link shared")}
+            />
         </section>
     );
 }

@@ -61,7 +61,13 @@ export default function LiveMatchStage({
 
     return (
         <section className="w-full bg-black text-white">
-            <div className="mx-auto w-full pt-2">
+            <div className="mx-auto w-full pt-2 relative">
+                <div className="absolute right-0 top-0 z-30">
+                    <div className="rounded-bl-xl border border-white/10 bg-black/70 px-2 py-1 text-[8px] font-bold backdrop-blur sm:rounded-full sm:px-3 sm:text-[11px]">
+                        {formatViewerCount(watchingPeopleCount || 0)} watching
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-3 gap-1 mb-2">
 
                     {/* ── Left Player + Rules Button ── */}
@@ -126,11 +132,6 @@ export default function LiveMatchStage({
                         gameLogo={playerTwoLogo ?? gameLogo}
                         bossSide={bossSide === "right"}
                         onClick={() => supportDialog.openDialog("right")}
-                        topRightBadge={
-                            <div className="rounded-full bg-black/70 px-2 py-1 text-[11px] font-bold border border-white/10 backdrop-blur">
-                                {formatViewerCount(watchingPeopleCount || 0)} watching
-                            </div>
-                        }
                     />
                 </div>
 

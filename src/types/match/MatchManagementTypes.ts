@@ -42,6 +42,14 @@ export interface ITopSupporterItem {
   supporter: ITopSupporterUser;
 }
 
+export interface ITopVoterItem {
+  user_id: number;
+  serial_no: string;
+  total_votes: number | string;
+  vote_breakdown: string;
+  user: ITopSupporterUser;
+}
+
 export interface IMatch {
   id: number;
   match_no: string | number;
@@ -87,8 +95,13 @@ export interface IMatch {
   winner?: IPlayer | null;
 
   top_supporters?: ITopSupporterItem[];
+  top_voters?: ITopVoterItem[];
   player_one_top_supporter?: ITopSupporterUser | null;
   player_two_top_supporter?: ITopSupporterUser | null;
+  player_one_votes?: number | string | null;
+  player_two_votes?: number | string | null;
+  player_one_total_supporter?: number | string | null;
+  player_two_total_supporter?: number | string | null;
 }
 export interface IPaginationMeta {
   current_page: number;
@@ -108,6 +121,20 @@ export interface IMatchSingleResponse {
   status: boolean;
   message: string;
   data: IMatch;
+}
+export interface IMatchDetailsResponse {
+  status: boolean;
+  message: string;
+  data: IMatch;
+  model_picture?: string | null;
+  top_supporters?: ITopSupporterItem[];
+  top_voters?: ITopVoterItem[];
+  player_one_top_supporter?: ITopSupporterUser | null;
+  player_one_total_supporter?: number | string | null;
+  player_two_top_supporter?: ITopSupporterUser | null;
+  player_two_total_supporter?: number | string | null;
+  player_one_votes?: number | string | null;
+  player_two_votes?: number | string | null;
 }
 export interface IMatchCreateResponse {
   status: boolean;

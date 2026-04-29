@@ -36,9 +36,34 @@ export default function MatchDetails({
     const { data: twitchLiveData } = useGetTikTokAndTwitchLiveStatusQuery();
     const { data: meData } = useGetMeDataQuery()
     const currentMatch = useMemo(() => {
-        return (
-            matchData?.data || null
-        );
+        if (!matchData?.data) return null;
+
+        return {
+            ...matchData.data,
+            top_supporters:
+                matchData.top_supporters ?? matchData.data.top_supporters ?? [],
+            top_voters: matchData.top_voters ?? matchData.data.top_voters ?? [],
+            player_one_top_supporter:
+                matchData.player_one_top_supporter ??
+                matchData.data.player_one_top_supporter ??
+                null,
+            player_two_top_supporter:
+                matchData.player_two_top_supporter ??
+                matchData.data.player_two_top_supporter ??
+                null,
+            player_one_votes:
+                matchData.player_one_votes ?? matchData.data.player_one_votes ?? null,
+            player_two_votes:
+                matchData.player_two_votes ?? matchData.data.player_two_votes ?? null,
+            player_one_total_supporter:
+                matchData.player_one_total_supporter ??
+                matchData.data.player_one_total_supporter ??
+                null,
+            player_two_total_supporter:
+                matchData.player_two_total_supporter ??
+                matchData.data.player_two_total_supporter ??
+                null,
+        };
     }, [matchData]);
     const userReferralNo = meData?.data?.user?.referral_no || "";
     const liveStore = useMatchDemoStore(matchId, currentMatch);
@@ -96,8 +121,8 @@ export default function MatchDetails({
                 <div className="w-full">
                     <LiveMatchStage
                         matchId={matchId}
-                        playerOneLogo={playerOneLogo}
-                        playerTwoLogo={playerTwoLogo}
+                        playerOneLogo={playerOneLogo ?? undefined}
+                        playerTwoLogo={playerTwoLogo ?? undefined}
                         twitchChannel={twitchChannel}
                         isLive={isLiveContinue}
                         mode={liveMode as "portrait" | "landscape" | undefined}

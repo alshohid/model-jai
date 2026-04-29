@@ -5,6 +5,7 @@ import {
   IMatchBasePayload,
   IDeleteMatchResponse,
   IMatchCreateResponse,
+  IMatchDetailsResponse,
   IMatchListResponse,
   IMatchSingleResponse,
   IMatchUpdateResponse,
@@ -198,7 +199,7 @@ const MatchManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Match"],
     }),
-    getSingleMatchByMatchId: builder.query({
+    getSingleMatchByMatchId: builder.query<IMatchDetailsResponse, string | number>({
       query: (id) => ({
         url: `/match/${id}`,
         method: "GET",

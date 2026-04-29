@@ -8,7 +8,7 @@ import {
 } from "@/redux/features/match/matchVotingReducer";
 import { useAppDispatch } from "@/redux/store";
 import { attachRealtimeChannelDebug, logRealtimeLifecycle } from "@/shared/lib/realtimeDebug";
-import { IMatch } from "@/types/match/MatchManagementTypes";
+import { IMatch, ITopVoterItem } from "@/types/match/MatchManagementTypes";
 import { getEcho } from "@/shared/lib/echo";
 
 interface MatchVotingProviderProps extends PropsWithChildren {
@@ -25,13 +25,16 @@ interface IVotingChannelPayload {
     vote_start_time?: string | null;
     voting_time?: number | string | null;
     total_vote?: number | null;
+    top_voters?: ITopVoterItem[];
     player_one?: {
       id?: number;
+      name?: string | null;
       image?: string | null;
       total_votes?: number | null;
     };
     player_two?: {
       id?: number;
+      name?: string | null;
       image?: string | null;
       total_votes?: number | null;
     };
@@ -42,13 +45,16 @@ interface IVotingChannelPayload {
     vote_start_time?: string | null;
     voting_time?: number | string | null;
     total_vote?: number | null;
+    top_voters?: ITopVoterItem[];
     player_one?: {
       id?: number;
+      name?: string | null;
       image?: string | null;
       total_votes?: number | null;
     };
     player_two?: {
       id?: number;
+      name?: string | null;
       image?: string | null;
       total_votes?: number | null;
     };
@@ -56,7 +62,13 @@ interface IVotingChannelPayload {
 }
 
 function extractVotingPayload(event: IVotingChannelPayload) {
-  return event?.matchData ?? event?.data ?? null;
+  if (event?.matchData) return event.matchData;
+  if (event?.data && "match_id" in event.data) return event.data;
+  if ("match_id" in event || "player_one" in event || "top_voters" in event) {
+    return event as NonNullable<IVotingChannelPayload["data"]>;
+  }
+
+  return null;
 }
 
 export default function MatchVotingProvider({
@@ -110,6 +122,15 @@ export default function MatchVotingProvider({
         playerTwoId: matchData.player_two?.id ?? matchData.player_two_id ?? null,
         voteStartTime: matchData.vote_start_time ?? null,
         votingTime: matchData.voting_time ?? null,
+        topVoters: matchData.top_voters ?? [],
+        playerOneVotes:
+          matchData.player_one_votes != null
+            ? Number(matchData.player_one_votes)
+            : undefined,
+        playerTwoVotes:
+          matchData.player_two_votes != null
+            ? Number(matchData.player_two_votes)
+            : undefined,
         playerOneImage:
           matchData.player_one_logo ||
           matchData.player_one?.image_url ||
@@ -181,12 +202,16 @@ export default function MatchVotingProvider({
 
       dispatch(
         upsertMatchVotingSession({
-          matchId: String(payload.match_id ?? currentMatchId),
+          matchId: currentMatchId,
           matchForVotingId: payload.match_for_voting_id ?? undefined,
           voteStartTime: payload.vote_start_time ?? null,
           votingTime: payload.voting_time ?? null,
           totalVotes:
-            payload.total_vote != null ? Number(payload.total_vote) : undefined,
+            payload.total_vote != null
+              ? Number(payload.total_vote)
+              : Number(payload.player_one?.total_votes ?? 0) +
+                Number(payload.player_two?.total_votes ?? 0),
+          topVoters: payload.top_voters ?? undefined,
           playerOneId: payload.player_one?.id ?? undefined,
           playerTwoId: payload.player_two?.id ?? undefined,
           playerOneImage: payload.player_one?.image ?? undefined,
@@ -208,6 +233,7 @@ export default function MatchVotingProvider({
     channel.listen(".voting.started", syncVotingSession);
     channel.listen(".vote.placed", syncVotingSession);
     channel.listen(".voting.updated", syncVotingSession);
+    channel.listen(".match.vote.updated", syncVotingSession);
 
     return () => {
       detachRealtimeDebug();
