@@ -22,6 +22,8 @@ function parseApiDateTime(value?: string | null) {
 }
 
 function getVotingEndTime(match: IMatch) {
+    console.log("match.vote_start_time", match.vote_start_time);
+    console.log("match.voting_time", match.voting_time);
     const startTime = parseApiDateTime(match.vote_start_time);
     const votingMinutes = Number(match.voting_time ?? 0);
 
