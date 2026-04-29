@@ -11,28 +11,7 @@ import { useGetUpcomingMatchDataQuery } from "@/redux/features/dashboard/dashboa
 import LiveController from "./LiveController";
 import { useStartAdminVotingMutation } from "@/redux/features/user/userManagement";
 import { getErrorMessage } from "@/lib/utils";
-
-function parseApiDateTime(value?: string | null) {
-    if (!value) return null;
-
-    const normalized = value.includes("T") ? value : value.replace(" ", "T");
-    const date = new Date(normalized);
-
-    return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function getVotingEndTime(match: IMatch) {
-    console.log("match.vote_start_time", match.vote_start_time);
-    console.log("match.voting_time", match.voting_time);
-    const startTime = parseApiDateTime(match.vote_start_time);
-    const votingMinutes = Number(match.voting_time ?? 0);
-
-    if (!startTime || !Number.isFinite(votingMinutes) || votingMinutes <= 0) {
-        return null;
-    }
-
-    return new Date(startTime.getTime() + votingMinutes * 60 * 1000);
-}
+import { getVotingEndTime } from "@/shared/lib/utils/votingTime";
 
 function formatCountdown(remainingMs: number) {
     const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
@@ -63,14 +42,13 @@ function VotingStatusCell({
     const canStartVoting =
         item.type === "live" &&
         item.confirmation_status === 1 &&
-        item.winner_id == null &&
-        Number(item.voting_time ?? 0) > 0;
+        item.winner_id == null && item.voting_time !== null;
 
     if (!canStartVoting) {
         return <span className="text-white/40">-</span>;
     }
 
-    const endTime = getVotingEndTime(item);
+    const endTime = getVotingEndTime(item.vote_start_time, item.voting_time);
 
     if (!item.vote_start_time || !endTime) {
         return (

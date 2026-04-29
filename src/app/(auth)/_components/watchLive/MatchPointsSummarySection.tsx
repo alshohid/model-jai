@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 
-
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -24,35 +23,13 @@ import AppDialog from "@/shared/components/modal/AppDialog";
 import { useGoVoteForPlayerMutation } from "@/redux/features/match/matchManagement";
 import { getErrorMessage } from "@/lib/utils";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { getVotingEndTime } from "@/shared/lib/utils/votingTime";
 import { Clock3, PhilippinePeso, Sparkles } from "lucide-react";
 import { useMatchVoting } from "@/shared/providers/hook/useMatchVoting";
 import { useAppDispatch } from "@/redux/store";
 import { applyLocalVote } from "@/redux/features/match/matchVotingReducer";
 
 type VoteSide = "left" | "right";
-
-function parseApiDateTime(value?: string | null) {
-    if (!value) return null;
-
-    const normalized = value.includes("T") ? value : value.replace(" ", "T");
-    const date = new Date(normalized);
-
-    return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function getVotingEndTime(
-    voteStartTime?: string | null,
-    votingTime?: number | string | null,
-) {
-    const startTime = parseApiDateTime(voteStartTime);
-    const votingMinutes = Number(votingTime ?? 0);
-
-    if (!startTime || !Number.isFinite(votingMinutes) || votingMinutes <= 0) {
-        return null;
-    }
-
-    return new Date(startTime.getTime() + votingMinutes * 60 * 1000);
-}
 
 function formatCountdown(remainingMs: number) {
     const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
