@@ -32,7 +32,7 @@ const RankPointReusableTable = ({ data, isLoading }: { data: SupporterRowItem[];
     })) ?? [];
 
     const tableRowDataRenderers: ((item: SupporterRowItem, index: number) => ReactNode)[] = [
-        (item) => <span className="text-[#FFFFFF]">{item.serial_no}</span>,
+        (item) => <span className="text-[#FFFFFF] border border-white p-2 rounded-md">{item.serial_no}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.supporter?.name ?? "N/A"}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.user_id}</span>,
         (item) => <span className="text-[#FFFFFF]">{item.supported_amounts}</span>,
