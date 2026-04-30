@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import AuthContainer from "../_components/auth/AuthContainer";
+import AuthContainerSkeleton from "../_components/auth/AuthContainerSkeleton";
 
 const Login = () => {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<AuthContainerSkeleton />}>
             <AuthContainer />
         </Suspense>
     )
