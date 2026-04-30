@@ -34,6 +34,7 @@ import { useAppDispatch } from "@/redux/store";
 import { applyLocalVote } from "@/redux/features/match/matchVotingReducer";
 
 type VoteSide = "left" | "right";
+const VOTE_PRICE_USD = 0.5;
 
 function formatCountdown(remainingMs: number) {
     const totalSeconds = Math.max(0, Math.floor(remainingMs / 1000));
@@ -46,6 +47,13 @@ function formatCountdown(remainingMs: number) {
     }
 
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function formatVoteUsd(amount: number) {
+    return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: amount % 1 === 0 ? 0 : 1,
+        maximumFractionDigits: 2,
+    }).format(amount);
 }
 
 function CompletedVotingCard({
@@ -348,6 +356,12 @@ export default function MatchPointsSummarySection({
             name: right.playerName,
             image: rightVoteImage,
         };
+    const parsedVoteCount = Number(voteCount);
+    const hasValidVoteCount =
+        Number.isInteger(parsedVoteCount) && parsedVoteCount > 0;
+    const totalVoteCost = hasValidVoteCount
+        ? parsedVoteCount * VOTE_PRICE_USD
+        : 0;
 
     const handleVoteSubmit = async () => {
         if (!isVotingOpen) {
@@ -359,8 +373,6 @@ export default function MatchPointsSummarySection({
             toast.error("Voting match not found.");
             return;
         }
-
-        const parsedVoteCount = Number(voteCount);
 
         if (!Number.isInteger(parsedVoteCount) || parsedVoteCount <= 0) {
             toast.error("Enter a valid vote count.");
@@ -693,9 +705,28 @@ export default function MatchPointsSummarySection({
                             />
                             <PhilippinePeso size={20} className="text-white/70" />
                         </div>
-                        <p className="mt-3 text-sm leading-6 text-white/52">
-                            Ekjon user ek sathe onek vote dite parbe. Count likhe submit korlei vote request pathano hobe.
-                        </p>
+                        <div className="mt-3 rounded-[18px] border border-[#6FF9EA]/18 bg-[linear-gradient(135deg,rgba(111,249,234,0.08),rgba(244,114,255,0.08))] px-4 py-3">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#6FF9EA]">
+                                        Vote Rate
+                                    </p>
+                                    <p className="mt-1 text-sm text-white/70">
+                                        1 vote = $0.5
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">
+                                        Live Total
+                                    </p>
+                                    <p className="mt-1 text-sm font-semibold text-white sm:text-base">
+                                        {hasValidVoteCount
+                                            ? `${parsedVoteCount} ${parsedVoteCount === 1 ? "vote" : "votes"} = $${formatVoteUsd(totalVoteCost)}`
+                                            : "Enter a valid vote count"}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex gap-3">

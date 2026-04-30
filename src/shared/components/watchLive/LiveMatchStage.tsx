@@ -146,6 +146,7 @@ export default function LiveMatchStage({
                     >
                         {mode === "landscape" || mode === "portrait" ? (
                             <TwitchPlayer />
+
                         ) : (
                             <Image
                                 src="/images/home/demo_pitch.jpg"
