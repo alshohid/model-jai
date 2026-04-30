@@ -25,6 +25,11 @@ export type AppDropdownItem =
         className?: string;
         isLogoutLoading?: boolean;
     }
+    | {
+        type: "custom";
+        content: React.ReactNode;
+        className?: string;
+    }
     | { type: "separator" }
     | { type: "label"; label: string };
 
@@ -65,6 +70,14 @@ export default function AppDropdownMenu({
                 )}
             >
                 {items.map((it, idx) => {
+                    if (it.type === "custom") {
+                        return (
+                            <div key={idx} className={cn("px-1 py-1", it.className)}>
+                                {it.content}
+                            </div>
+                        );
+                    }
+
                     if (it.type === "separator") return <DropdownMenuSeparator key={idx} className="bg-white/10" />;
 
                     if (it.type === "label") {
