@@ -61,6 +61,69 @@ interface IVotingChannelPayload {
   };
 }
 
+type VotingSideLike = {
+  id?: number | string | null;
+  image?: string | null;
+  image_url?: string | null;
+  total_votes?: number | string | null;
+};
+
+function hasSameId(
+  leftId?: number | string | null,
+  rightId?: number | string | null,
+) {
+  return leftId != null && rightId != null && String(leftId) === String(rightId);
+}
+
+function normalizeVotingSides<T extends VotingSideLike>(
+  playerOne: T | undefined,
+  playerTwo: T | undefined,
+  currentPlayerOneId?: number | string | null,
+  currentPlayerTwoId?: number | string | null,
+) {
+  const isSameOrder =
+    hasSameId(playerOne?.id, currentPlayerOneId) &&
+    hasSameId(playerTwo?.id, currentPlayerTwoId);
+  const isReverseOrder =
+    hasSameId(playerOne?.id, currentPlayerTwoId) &&
+    hasSameId(playerTwo?.id, currentPlayerOneId);
+
+  if (isReverseOrder) {
+    return {
+      playerOne: playerTwo,
+      playerTwo: playerOne,
+    };
+  }
+
+  if (isSameOrder) {
+    return {
+      playerOne,
+      playerTwo,
+    };
+  }
+
+  return {
+    playerOne,
+    playerTwo,
+  };
+}
+
+function hasMatchingPlayerPair(
+  playerOneId?: number | string | null,
+  playerTwoId?: number | string | null,
+  currentPlayerOneId?: number | string | null,
+  currentPlayerTwoId?: number | string | null,
+) {
+  const isSameOrder =
+    hasSameId(playerOneId, currentPlayerOneId) &&
+    hasSameId(playerTwoId, currentPlayerTwoId);
+  const isReverseOrder =
+    hasSameId(playerOneId, currentPlayerTwoId) &&
+    hasSameId(playerTwoId, currentPlayerOneId);
+
+  return isSameOrder || isReverseOrder;
+}
+
 function extractVotingPayload(event: IVotingChannelPayload) {
   if (event?.matchData) return event.matchData;
   if (event?.data && "match_id" in event.data) return event.data;
@@ -80,6 +143,15 @@ export default function MatchVotingProvider({
 }: MatchVotingProviderProps) {
   const dispatch = useAppDispatch();
   const currentMatchId = matchId ? String(matchId) : "";
+  const currentPlayerOneId =
+    matchData?.player_one?.id ?? matchData?.player_one_id ?? null;
+  const currentPlayerTwoId =
+    matchData?.player_two?.id ?? matchData?.player_two_id ?? null;
+  const initialTotalVotes =
+    matchData?.player_one_votes != null || matchData?.player_two_votes != null
+      ? Number(matchData?.player_one_votes ?? 0) +
+        Number(matchData?.player_two_votes ?? 0)
+      : undefined;
 
   const { data: votingData, refetch: refetchVotingList } =
     useGetVotingPublicListQuery(undefined, {
@@ -118,11 +190,12 @@ export default function MatchVotingProvider({
       upsertMatchVotingSession({
         matchId: currentMatchId,
         gameId: matchData.game_id,
-        playerOneId: matchData.player_one?.id ?? matchData.player_one_id ?? null,
-        playerTwoId: matchData.player_two?.id ?? matchData.player_two_id ?? null,
+        playerOneId: currentPlayerOneId,
+        playerTwoId: currentPlayerTwoId,
         voteStartTime: matchData.vote_start_time ?? null,
         votingTime: matchData.voting_time ?? null,
         topVoters: matchData.top_voters ?? [],
+        totalVotes: initialTotalVotes,
         playerOneVotes:
           matchData.player_one_votes != null
             ? Number(matchData.player_one_votes)
@@ -147,7 +220,10 @@ export default function MatchVotingProvider({
     );
   }, [
     currentMatchId,
+    currentPlayerOneId,
+    currentPlayerTwoId,
     dispatch,
+    initialTotalVotes,
     leftPlayerImageSrc,
     matchData,
     rightPlayerImageSrc,
@@ -155,22 +231,41 @@ export default function MatchVotingProvider({
 
   useEffect(() => {
     if (!currentMatchId || !votingMatch) return;
+    const normalizedVotingPlayers = normalizeVotingSides(
+      votingMatch.player_one
+        ? {
+            id: votingMatch.player_one_id,
+            image: votingMatch.player_one.image_url || votingMatch.player_one.image || null,
+          }
+        : undefined,
+      votingMatch.player_two
+        ? {
+            id: votingMatch.player_two_id,
+            image: votingMatch.player_two.image_url || votingMatch.player_two.image || null,
+          }
+        : undefined,
+      currentPlayerOneId,
+      currentPlayerTwoId,
+    );
 
     dispatch(
       upsertMatchVotingSession({
         matchId: currentMatchId,
         matchForVotingId: votingMatch.id,
         gameId: votingMatch.game_id,
-        playerOneId: votingMatch.player_one_id,
-        playerTwoId: votingMatch.player_two_id,
-        totalVotes: votingMatch.total_vote ?? 0,
-        playerOneImage:
-          votingMatch.player_one?.image_url || votingMatch.player_one?.image || undefined,
-        playerTwoImage:
-          votingMatch.player_two?.image_url || votingMatch.player_two?.image || undefined,
+        playerOneId: currentPlayerOneId ?? votingMatch.player_one_id,
+        playerTwoId: currentPlayerTwoId ?? votingMatch.player_two_id,
+        playerOneImage: normalizedVotingPlayers.playerOne?.image ?? undefined,
+        playerTwoImage: normalizedVotingPlayers.playerTwo?.image ?? undefined,
       }),
     );
-  }, [currentMatchId, dispatch, votingMatch]);
+  }, [
+    currentMatchId,
+    currentPlayerOneId,
+    currentPlayerTwoId,
+    dispatch,
+    votingMatch,
+  ]);
 
   useEffect(() => {
     if (!currentMatchId) return;
@@ -196,9 +291,47 @@ export default function MatchVotingProvider({
       scope: "MatchVotingProvider",
     });
 
-    const syncVotingSession = (event: IVotingChannelPayload) => {
+    const syncVotingSession = (
+      eventName: string,
+      event: IVotingChannelPayload,
+    ) => {
       const payload = extractVotingPayload(event);
       if (!payload) return;
+      const payloadPlayerOneId = payload.player_one?.id ?? null;
+      const payloadPlayerTwoId = payload.player_two?.id ?? null;
+      const hasPayloadPlayerPair =
+        payloadPlayerOneId != null && payloadPlayerTwoId != null;
+      const matchesCurrentPlayers = hasMatchingPlayerPair(
+        payloadPlayerOneId,
+        payloadPlayerTwoId,
+        currentPlayerOneId,
+        currentPlayerTwoId,
+      );
+
+      if (hasPayloadPlayerPair && !matchesCurrentPlayers) {
+        logRealtimeLifecycle(
+          "MatchVotingProvider",
+          "Ignoring vote payload for a different player pair",
+          {
+            eventName,
+            channelName,
+            currentMatchId,
+            payloadMatchId: payload.match_id ?? null,
+            payloadPlayerOneId,
+            payloadPlayerTwoId,
+            currentPlayerOneId,
+            currentPlayerTwoId,
+          },
+        );
+        return;
+      }
+
+      const normalizedRealtimePlayers = normalizeVotingSides(
+        payload.player_one,
+        payload.player_two,
+        currentPlayerOneId,
+        currentPlayerTwoId,
+      );
 
       dispatch(
         upsertMatchVotingSession({
@@ -207,22 +340,29 @@ export default function MatchVotingProvider({
           voteStartTime: payload.vote_start_time ?? null,
           votingTime: payload.voting_time ?? null,
           totalVotes:
-            payload.total_vote != null
-              ? Number(payload.total_vote)
-              : Number(payload.player_one?.total_votes ?? 0) +
-                Number(payload.player_two?.total_votes ?? 0),
+            normalizedRealtimePlayers.playerOne?.total_votes != null ||
+            normalizedRealtimePlayers.playerTwo?.total_votes != null
+              ? Number(normalizedRealtimePlayers.playerOne?.total_votes ?? 0) +
+                Number(normalizedRealtimePlayers.playerTwo?.total_votes ?? 0)
+              : payload.total_vote != null
+                ? Number(payload.total_vote)
+                : undefined,
           topVoters: payload.top_voters ?? undefined,
-          playerOneId: payload.player_one?.id ?? undefined,
-          playerTwoId: payload.player_two?.id ?? undefined,
-          playerOneImage: payload.player_one?.image ?? undefined,
-          playerTwoImage: payload.player_two?.image ?? undefined,
+          playerOneId:
+            currentPlayerOneId ?? normalizedRealtimePlayers.playerOne?.id ?? undefined,
+          playerTwoId:
+            currentPlayerTwoId ?? normalizedRealtimePlayers.playerTwo?.id ?? undefined,
+          playerOneImage:
+            normalizedRealtimePlayers.playerOne?.image ?? undefined,
+          playerTwoImage:
+            normalizedRealtimePlayers.playerTwo?.image ?? undefined,
           playerOneVotes:
-            payload.player_one?.total_votes != null
-              ? Number(payload.player_one.total_votes)
+            normalizedRealtimePlayers.playerOne?.total_votes != null
+              ? Number(normalizedRealtimePlayers.playerOne.total_votes)
               : undefined,
           playerTwoVotes:
-            payload.player_two?.total_votes != null
-              ? Number(payload.player_two.total_votes)
+            normalizedRealtimePlayers.playerTwo?.total_votes != null
+              ? Number(normalizedRealtimePlayers.playerTwo.total_votes)
               : undefined,
         }),
       );
@@ -230,10 +370,18 @@ export default function MatchVotingProvider({
       void refetchVotingList();
     };
 
-    channel.listen(".voting.started", syncVotingSession);
-    channel.listen(".vote.placed", syncVotingSession);
-    channel.listen(".voting.updated", syncVotingSession);
-    channel.listen(".match.vote.updated", syncVotingSession);
+    channel.listen(".voting.started", (event: IVotingChannelPayload) =>
+      syncVotingSession(".voting.started", event),
+    );
+    channel.listen(".vote.placed", (event: IVotingChannelPayload) =>
+      syncVotingSession(".vote.placed", event),
+    );
+    channel.listen(".voting.updated", (event: IVotingChannelPayload) =>
+      syncVotingSession(".voting.updated", event),
+    );
+    channel.listen(".match.vote.updated", (event: IVotingChannelPayload) =>
+      syncVotingSession(".match.vote.updated", event),
+    );
 
     return () => {
       detachRealtimeDebug();
@@ -244,7 +392,13 @@ export default function MatchVotingProvider({
       echo.leave(channelName);
       dispatch(clearMatchVotingSession(currentMatchId));
     };
-  }, [currentMatchId, dispatch, refetchVotingList]);
+  }, [
+    currentMatchId,
+    currentPlayerOneId,
+    currentPlayerTwoId,
+    dispatch,
+    refetchVotingList,
+  ]);
 
   return children;
 }

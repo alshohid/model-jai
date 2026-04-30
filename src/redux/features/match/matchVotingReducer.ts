@@ -68,11 +68,7 @@ const matchVotingSlice = createSlice({
             key === "playerOneVotes" ||
             key === "playerTwoVotes"
           ) {
-            const prevValue = Number(sessionRecord[key] ?? 0);
-            sessionRecord[key] = Math.max(
-              prevValue,
-              Number(value),
-            );
+            sessionRecord[key] = Number(value);
             return;
           }
 

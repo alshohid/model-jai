@@ -30,8 +30,6 @@ import { getVotingEndTime } from "@/shared/lib/utils/votingTime";
 import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet";
 import { Clock3, PhilippinePeso, Sparkles } from "lucide-react";
 import { useMatchVoting } from "@/shared/providers/hook/useMatchVoting";
-import { useAppDispatch } from "@/redux/store";
-import { applyLocalVote } from "@/redux/features/match/matchVotingReducer";
 
 type VoteSide = "left" | "right";
 const VOTE_PRICE_USD = 0.5;
@@ -170,7 +168,6 @@ export default function MatchPointsSummarySection({
     rightPlayerImageSrc,
     matchData,
 }: MatchPointsSummarySectionProps) {
-    const dispatch = useAppDispatch();
     const searchParams = useSearchParams();
     const tipSystem = useTipSystem();
     const supportDialog = useSupportDialog();
@@ -232,9 +229,14 @@ export default function MatchPointsSummarySection({
     const rightPlayerVotes = Number(
         votingSession?.playerTwoVotes ?? matchData?.player_two_votes ?? 0,
     );
-    const totalVotes = Number(
-        votingSession?.totalVotes ?? leftPlayerVotes + rightPlayerVotes,
-    );
+    const hasSideVoteCounts =
+        votingSession?.playerOneVotes != null ||
+        votingSession?.playerTwoVotes != null ||
+        matchData?.player_one_votes != null ||
+        matchData?.player_two_votes != null;
+    const totalVotes = hasSideVoteCounts
+        ? leftPlayerVotes + rightPlayerVotes
+        : Number(votingSession?.totalVotes ?? 0);
     const topVoters = votingSession?.topVoters ?? matchData?.top_voters ?? [];
     const votingWindowMinutes = Number(effectiveVotingTime ?? 0);
     const votingWindowLabel =
@@ -385,16 +387,6 @@ export default function MatchPointsSummarySection({
                 playerId: selectedVotePlayer.id,
                 voteCount: parsedVoteCount,
             }).unwrap();
-
-            if (matchId) {
-                dispatch(
-                    applyLocalVote({
-                        matchId,
-                        playerId: selectedVotePlayer.id,
-                        voteCount: parsedVoteCount,
-                    }),
-                );
-            }
             toast.success(response.message || "Vote submitted successfully");
             setVoteModalOpen(false);
             setVoteCount("1");
