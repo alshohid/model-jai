@@ -227,13 +227,11 @@ export default function PointStoreListSection() {
             }).unwrap();
             const checkoutUrl = result?.data?.url;
             if (!checkoutUrl) {
-                console.log("Checkout URL missing", result);
                 toast.error("Checkout URL missing");
                 return;
             }
             window.location.href = checkoutUrl;
         } catch (error) {
-            console.log("Checkout payment error:", error);
             toast.error(getErrorMessage(error, "Checkout payment error"));
         }
     };

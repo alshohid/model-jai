@@ -43,7 +43,6 @@ export default function VideosSection() {
             <VideoCarousel
                 items={videos}
                 autoPlay={true}
-                onCardClick={(item) => console.log("clicked video:", item)}
             />
         </section>
     );

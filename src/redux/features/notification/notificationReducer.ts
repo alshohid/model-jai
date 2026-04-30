@@ -32,9 +32,7 @@ const notificationSlice = createSlice({
     },
 
     addNotification: (state, action: PayloadAction<IAppNotificationItem>) => {
-      console.log("action.payload", action.payload);
       const exists = state.items.some((item) => item.id === action.payload.id);
-      console.log("exists", exists);
       if (!exists) {
         state.items = [action.payload, ...state.items];
         state.unreadCount = countUnread(state.items);

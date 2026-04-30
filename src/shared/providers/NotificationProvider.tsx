@@ -84,8 +84,6 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
         });
 
         matchChannel.listen(".match.created", (event: IMatchCreatedPayload) => {
-            console.log("Match created notification:", event);
-
             const isPlayer = event.player_ids?.includes(Number(userId)) ?? false;
 
             dispatch(addNotification(mapSocketMatchCreatedNotification(event)));

@@ -25,12 +25,8 @@ function buildChannelMeta({
 }
 
 export function logRealtimeConnection(message: string, details?: unknown) {
-    if (typeof details === "undefined") {
-        console.log(`[realtime:echo] ${message}`);
-        return;
-    }
-
-    console.log(`[realtime:echo] ${message}`, details);
+    void message;
+    void details;
 }
 
 export function logRealtimeLifecycle(
@@ -38,12 +34,9 @@ export function logRealtimeLifecycle(
     message: string,
     details?: unknown,
 ) {
-    if (typeof details === "undefined") {
-        console.log(`[realtime:${scope}] ${message}`);
-        return;
-    }
-
-    console.log(`[realtime:${scope}] ${message}`, details);
+    void scope;
+    void message;
+    void details;
 }
 
 export function attachRealtimeChannelDebug(

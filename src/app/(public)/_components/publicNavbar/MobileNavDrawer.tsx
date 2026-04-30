@@ -162,7 +162,6 @@ export default function MobileNavSheet({
                                 <TipShortcutToggle
                                     storageKey="tip_shortcut_enabled"
                                     defaultOn={false}
-                                    onChange={(v) => console.log("Tip shortcut (parent):", v)}
                                 />
                             </div>
                         )}

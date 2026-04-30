@@ -37,7 +37,6 @@ export default function ChooseCategorySection() {
                     ) : (
                         <CategoryCarousel
                             items={items}
-                            onItemClick={(item) => console.log("clicked:", item)}
                         />
                     )}
                 </div>

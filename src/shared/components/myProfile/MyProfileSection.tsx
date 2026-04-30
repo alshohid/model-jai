@@ -183,8 +183,7 @@ const MyProfileSection = () => {
 
             }
 
-        } catch (error) {
-            console.log("withdrawal error ", error)
+        } catch {
             toast.error("Withdrawal request failed")
         }
     }

@@ -292,8 +292,7 @@ export default function AdminSidebar({
                                         try {
                                             await logoutAdmin();
 
-                                        } catch (error) {
-                                            console.log(error);
+                                        } catch {
                                         } finally {
                                             dispatch(adminLogOut())
                                             router.replace("/admin");

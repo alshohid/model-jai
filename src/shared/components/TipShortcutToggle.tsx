@@ -25,8 +25,7 @@ const TipShortcutToggle: React.FC<TipShortcutToggleProps> = ({
                 // if not set, keep defaultOn and persist it
                 localStorage.setItem(storageKey, String(defaultOn));
             }
-        } catch (e) {
-            console.log("[Tip Shortcut] localStorage read error:", e);
+        } catch {
         } finally {
             setHydrated(true);
         }
@@ -43,10 +42,8 @@ const TipShortcutToggle: React.FC<TipShortcutToggleProps> = ({
                         detail: { storageKey, value: next },
                     })
                 );
-            } catch (e) {
-                console.log("[Tip Shortcut] localStorage write error:", e);
+            } catch {
             }
-            console.log("[Tip Shortcut] changed:", next ? "ON" : "OFF");
             onChange?.(next);
             return next;
         });

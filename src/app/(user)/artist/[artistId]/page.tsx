@@ -86,10 +86,7 @@ export default function ArtistProfilePage() {
         }
     };
 
-    const handleSendTip = () => {
-        console.log("Open Tip Modal for:", artistId);
-
-    };
+    const handleSendTip = () => undefined;
 
     return (
         <div className="min-h-screen flex flex-col">

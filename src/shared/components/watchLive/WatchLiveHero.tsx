@@ -126,7 +126,6 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                     rightPlayerImg={s.rightPlayerImg}
                                     versusImg={s.versusImg}
                                     voteRequired={s.voteRequired}
-                                    onWatch={() => console.log(s)}
                                     className="w-full h-full max-w-none rounded-none"
                                 />
                             </div>

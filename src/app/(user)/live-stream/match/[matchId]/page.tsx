@@ -77,7 +77,6 @@ export default function MatchDetails({
     const playerOneLogo = currentMatch?.player_one_logo;
     const playerTwoLogo = currentMatch?.player_two_logo;
     const isVoteClosed = isLiveStatus && matchData?.data?.type === "live"
-    console.log(playerOneLogo, playerTwoLogo, "currentMatch")
     const {
         showRegistrationPrompt,
         handleRegister,

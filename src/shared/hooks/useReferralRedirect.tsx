@@ -26,10 +26,6 @@ export function useReferralRedirect() {
             
             if (!isLoggedIn) {
                 setShowRegistrationPrompt(true);
-            } else {
-                // User is logged in, just track the referral
-                // You can call an API here to track the referral
-                console.log("Referral tracked:", ref);
             }
         }
     }, [searchParams]);

@@ -13,9 +13,6 @@ const WalletDepositeSection = () => {
                     balance="35000"
                     withdrawable="0.00"
                     bonus="0.00"
-                    onDeposit={(v) => {
-                        console.log("DEPOSIT SUBMIT 👉", v);
-                    }}
                 /> : ""
 
             }
