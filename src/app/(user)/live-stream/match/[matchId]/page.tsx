@@ -76,6 +76,8 @@ export default function MatchDetails({
     const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
     const playerOneLogo = currentMatch?.player_one_logo;
     const playerTwoLogo = currentMatch?.player_two_logo;
+    const leftBossSupporterCount = Number(currentMatch?.player_one_total_supporter ?? 0);
+    const rightBossSupporterCount = Number(currentMatch?.player_two_total_supporter ?? 0);
     const isVoteClosed = isLiveStatus && matchData?.data?.type === "live"
     const {
         showRegistrationPrompt,
@@ -193,11 +195,11 @@ export default function MatchDetails({
                                         rightBossName={liveStore.right.name}
                                         leftBoss={{
                                             name: liveStore.leftBoss.name,
-                                            total: liveStore.left.points,
+                                            total: leftBossSupporterCount,
                                         }}
                                         rightBoss={{
                                             name: liveStore.rightBoss.name,
-                                            total: liveStore.right.points,
+                                            total: rightBossSupporterCount,
                                         }}
                                         leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
                                         rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
