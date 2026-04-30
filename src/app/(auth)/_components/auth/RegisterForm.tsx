@@ -14,6 +14,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import { IAuthRegisterParams } from "@/types/user/auth";
+import { ClipboardTypeIcon, Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon } from "lucide-react";
 
 
 interface SelectedGame {
@@ -147,6 +148,12 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         icon={<UserIcon />}
                     />
                     <AuthInput
+                        label="Artist Name"
+                        name="artist_name"
+                        register={register as any}
+                        icon={<Edit className="size-4 text-white" />}
+                    />
+                    <AuthInput
                         label="Email"
                         name="email"
                         type="email"
@@ -157,22 +164,29 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         label="Address"
                         name="address"
                         register={register as any}
-                        icon={<UserIcon />}
+                        icon={<MapPinnedIcon className="size-4 text-white" />}
+                        required={false}
+                    /> <AuthInput
+                        label="City"
+                        name="city"
+                        register={register as any}
+                        icon={<MapIcon className="size-4 text-white" />}
                         required={false}
                     />
+
                     <div className="grid gap-4 md:grid-cols-2">
                         <AuthInput
                             label="State"
                             name="state"
                             register={register as any}
-                            icon={<UserIcon />}
+                            icon={<MapIcon className="size-4 text-white" />}
                             required={false}
                         />
                         <AuthInput
                             label="Zip Code"
                             name="zip_code"
                             register={register as any}
-                            icon={<UserIcon />}
+                            icon={<MailboxIcon className="size-4 text-white" />}
                             required={false}
                         />
                     </div>
@@ -327,7 +341,6 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         </>
     );
 }
-
 
 
 
