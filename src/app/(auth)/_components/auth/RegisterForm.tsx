@@ -30,10 +30,12 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             first_name: "",
             middle_name: "",
             last_name: "",
+            artist_name: "",
             email: "",
             password: "",
             c_password: "",
             address: "",
+            city: "",
             zip_code: "",
             state: "",
             social_verification_status: false,
@@ -93,7 +95,9 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             first_name: data.first_name.trim(),
             middle_name: normalizeOptionalText(data.middle_name),
             last_name: data.last_name.trim(),
+            artist_name: data.artist_name.trim(),
             address: normalizeOptionalText(data.address),
+            city: normalizeOptionalText(data.city),
             zip_code: normalizeOptionalText(data.zip_code),
             state: normalizeOptionalText(data.state),
             social_verification_status: Boolean(data.social_verification_status),
@@ -341,7 +345,6 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         </>
     );
 }
-
 
 
 
