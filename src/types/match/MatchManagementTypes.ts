@@ -69,6 +69,7 @@ export interface IMatch {
   winner_id: number | null;
 
   type: MatchType;
+  pin_to_top?: 0 | 1;
 
   winner_percentage: number;
   loser_percentage: number;

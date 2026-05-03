@@ -199,7 +199,10 @@ const MatchManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["Match"],
     }),
-    getSingleMatchByMatchId: builder.query<IMatchDetailsResponse, string | number>({
+    getSingleMatchByMatchId: builder.query<
+      IMatchDetailsResponse,
+      string | number
+    >({
       query: (id) => ({
         url: `/match/${id}`,
         method: "GET",
@@ -259,6 +262,13 @@ const MatchManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Match"],
     }),
+    pinUnpinMatch: builder.mutation<any, number>({
+      query: (id) => ({
+        url: `/admin/pin-unpin-match/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Match"],
+    }),
 
     viewSingleMatch: builder.query<IMatchSingleResponse, number>({
       query: (id) => ({
@@ -297,5 +307,6 @@ export const {
   useUpdatePopularArtistVoteMutation,
   useDeletePopularArtistVoteMutation,
   useGoVoteForPlayerMutation,
+  usePinUnpinMatchMutation,
 } = MatchManagementApi;
 export default MatchManagementApi;
