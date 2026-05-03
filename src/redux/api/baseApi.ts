@@ -134,6 +134,7 @@ export const baseApi = createApi({
     "Notification",
     "PopularArtist",
     "UserPost",
+    "Credentials",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<ILoginPayload, ILoginParams>({

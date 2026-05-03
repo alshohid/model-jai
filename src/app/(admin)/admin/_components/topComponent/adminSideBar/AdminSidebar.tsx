@@ -8,7 +8,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
 import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIcon";
-import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon, User } from "lucide-react";
+import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon, User, Key } from "lucide-react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
 import { adminLogOut } from "@/redux/features/auth/authSlice";
@@ -39,6 +39,8 @@ const menuItems = [
             { label: "News", href: "/admin/dashboard/news", icon: <NewspaperIcon /> },
             { label: "All Transactions", href: "/admin/dashboard/all-transactions", icon: <WalletIcon /> },
             { label: "Account Settings", href: "/admin/dashboard/profile", icon: <User /> },
+
+
         ],
     },
 ];

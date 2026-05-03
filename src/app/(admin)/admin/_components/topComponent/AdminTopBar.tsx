@@ -7,7 +7,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import NotificationButton from "../reusable/NotificationButton";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useNotifications } from "@/shared/providers/hook/useNotificaton";
-import { ArrowDownLeft, ChevronDown, LoaderPinwheel, Settings, TrendingUp, User } from "lucide-react";
+import { ArrowDownLeft, ChevronDown, Key, LoaderPinwheel, Settings, TrendingUp, User } from "lucide-react";
 import Image from "next/image";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import AppDropdownMenu, { type AppDropdownItem } from "@/shared/components/dropdown/AppDropdownMenu";
@@ -130,6 +130,11 @@ export default function AdminTopBar({
             href: "/admin/dashboard/profile",
             icon: <Settings className="h-4 w-4" />,
         },
+        {
+            label: "Credential Settings",
+            href: "/admin/dashboard/credential-settings",
+            icon: <Key className="h-4 w-4" />,
+        },
     ];
 
     if (isLoading) {
@@ -235,20 +240,20 @@ export default function AdminTopBar({
                     </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2 lg:hidden">
-                        <TransactionHeaderStat
-                            label="Recharge"
-                            value={totalRecharge}
-                            icon={<ArrowDownLeft size={18} />}
-                            tone="pink"
-                            isLoading={isTransactionSummaryLoading}
-                        />
-                        <TransactionHeaderStat
-                            label="Earning"
-                            value={totalEarning}
-                            icon={<TrendingUp size={18} />}
-                            tone="cyan"
-                            isLoading={isTransactionSummaryLoading}
-                        />
+                    <TransactionHeaderStat
+                        label="Recharge"
+                        value={totalRecharge}
+                        icon={<ArrowDownLeft size={18} />}
+                        tone="pink"
+                        isLoading={isTransactionSummaryLoading}
+                    />
+                    <TransactionHeaderStat
+                        label="Earning"
+                        value={totalEarning}
+                        icon={<TrendingUp size={18} />}
+                        tone="cyan"
+                        isLoading={isTransactionSummaryLoading}
+                    />
                 </div>
             </div>
         </header>
