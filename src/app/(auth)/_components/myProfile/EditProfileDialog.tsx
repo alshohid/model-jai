@@ -18,6 +18,8 @@ type EditProfileFormValues = {
     contact?: string;
     nationality?: string;
     image?: File | null;
+    artist_name?: string;
+    city?: string;
 };
 
 type Props = {
@@ -49,6 +51,8 @@ export default function EditProfileDialog({
             email: defaultValues?.email ?? "",
             contact: defaultValues?.contact ?? "",
             nationality: defaultValues?.nationality ?? "",
+            artist_name: defaultValues?.artist_name ?? "",
+            city: defaultValues?.city ?? "",
         },
     });
 
@@ -61,6 +65,8 @@ export default function EditProfileDialog({
             email: defaultValues?.email ?? "",
             contact: defaultValues?.contact ?? "",
             nationality: defaultValues?.nationality ?? "",
+            artist_name: defaultValues?.artist_name ?? "",
+            city: defaultValues?.city ?? "",
         });
     }, [avatarSrc, defaultValues, reset, open]);
 
@@ -83,7 +89,7 @@ export default function EditProfileDialog({
 
     return (
         <AppDialog open={open} onOpenChange={onOpenChange} title="Edit Profile">
-            <div className={cn("rounded-[16px] border border-white/10 bg-white/5 p-4")}>
+            {/* <div className={cn("rounded-[16px] border border-white/10 bg-white/5 p-4")}>
                 <div className="relative overflow-hidden rounded-[16px] bg-white/5 border border-white/10">
                     <div className="relative w-full h-[clamp(180px,32vh,320px)]">
                         <Image
@@ -97,7 +103,6 @@ export default function EditProfileDialog({
                         />
                     </div>
 
-                    {/* upload button overlay */}
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 w-full flex justify-center">
                         <button
                             type="button"
@@ -123,9 +128,47 @@ export default function EditProfileDialog({
                         onChange={onPick}
                     />
                 </div>
+            </div> */}
+            <div className="relative overflow-hidden rounded-[16px] bg-white/5 border border-white/10">
+                <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] max-h-[320px] min-h-[180px]">
+                    <Image
+                        src={preview}
+                        alt="Profile preview"
+                        fill
+                        priority
+                        className="object-contain"
+                        unoptimized
+                    />
+                </div>
+
+                {/* upload button overlay */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 w-full flex justify-center">
+                    <button
+                        type="button"
+                        onClick={() => fileRef.current?.click()}
+                        className={cn(
+                            "cursor-pointer",
+                            "h-[34px] px-4 sm:px-5 rounded-[8px]",
+                            "bg-[#FF2EC8] text-white text-[12px] sm:text-[13px] font-medium",
+                            "border border-white/35",
+                            "shadow-[0_6px_20px_rgba(255,46,200,0.25)]",
+                            "hover:opacity-95 transition",
+                            "max-w-[90%] whitespace-nowrap"
+                        )}
+                    >
+                        Upload Profile Picture
+                    </button>
+                </div>
+
+                <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={onPick}
+                />
             </div>
 
-            {/* ✅ Form card */}
             <form
                 onSubmit={handleSubmit(submit)}
                 className={cn("mt-4 rounded-[16px] border border-white/10 bg-white/5 p-4")}
@@ -137,16 +180,18 @@ export default function EditProfileDialog({
                             name="first_name"
                             type="text"
                             register={register as any}
+                            required={true}
                             icon={<span className="text-white/60">👤</span>}
                         />
                     </Field>
 
-                    <Field label="Middle Name">
+                    <Field label="Middle Name (optional)">
                         <AuthInput
-                            label="Middle Name"
+                            label="Middle Name "
                             name="middle_name"
                             type="text"
                             register={register as any}
+                            required={false}
                             icon={<span className="text-white/60">👤</span>}
                         />
                     </Field>
@@ -170,6 +215,28 @@ export default function EditProfileDialog({
                         readOnly={true}
                         register={register as any}
                         icon={<MailIcon />}
+                    />
+                </Field>
+
+                <Field label="Artist Name">
+                    <AuthInput
+                        label="Artist Name"
+                        name="artist_name"
+                        type="text"
+                        register={register as any}
+                        required={false}
+                        icon={<span className="text-white/60">👤</span>}
+                    />
+                </Field>
+
+                <Field label="City">
+                    <AuthInput
+                        label="City"
+                        name="city"
+                        type="text"
+                        required={false}
+                        register={register as any}
+                        icon={<span className="text-white/60">👤</span>}
                     />
                 </Field>
 

@@ -162,6 +162,8 @@ export interface IUser {
   following_count: number;
   created_at: string;
   total_balance: number;
+  artist_name?: string | null;
+  city?: string | null;
 }
 export interface IUserInfoResponse {
   user: IUser;

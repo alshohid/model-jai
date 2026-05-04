@@ -289,6 +289,8 @@ const MyProfileSection = () => {
                     email: user?.email ?? "",
                     contact: user?.phone_number ?? "",
                     nationality: user?.nationality ?? "",
+                    artist_name: user?.artist_name ?? "",
+                    city: user?.city ?? "",
                 }}
                 isLoading={isEditProfileLoading}
                 onSave={async (data) => {
@@ -298,6 +300,8 @@ const MyProfileSection = () => {
                         formData.append("first_name", data.first_name);
                         formData.append("middle_name", data.middle_name);
                         formData.append("last_name", data.last_name);
+                        formData.append("artist_name", data.artist_name || "");
+                        formData.append("city", data.city || "");
                         formData.append("phone_number", data.contact ?? "");
                         formData.append("nationality", data.nationality ?? "");
 
