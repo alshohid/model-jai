@@ -89,46 +89,7 @@ export default function EditProfileDialog({
 
     return (
         <AppDialog open={open} onOpenChange={onOpenChange} title="Edit Profile">
-            {/* <div className={cn("rounded-[16px] border border-white/10 bg-white/5 p-4")}>
-                <div className="relative overflow-hidden rounded-[16px] bg-white/5 border border-white/10">
-                    <div className="relative w-full h-[clamp(180px,32vh,320px)]">
-                        <Image
-                            src={preview}
-                            alt="Profile preview"
-                            fill
-                            priority
-                            sizes="(max-width: 520px) 92vw, 520px"
-                            className="object-cover rounded-lg"
-                            unoptimized
-                        />
-                    </div>
 
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 w-full flex justify-center">
-                        <button
-                            type="button"
-                            onClick={() => fileRef.current?.click()}
-                            className={cn(
-                                "cursor-pointer",
-                                "h-[34px] px-5 rounded-[8px]",
-                                "bg-[#FF2EC8] text-white text-[13px] font-medium",
-                                "border border-white/35",
-                                "shadow-[0_6px_20px_rgba(255,46,200,0.25)]",
-                                "hover:opacity-95 transition"
-                            )}
-                        >
-                            Upload Profile Picture
-                        </button>
-                    </div>
-
-                    <input
-                        ref={fileRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={onPick}
-                    />
-                </div>
-            </div> */}
             <div className="relative overflow-hidden rounded-[16px] bg-white/5 border border-white/10">
                 <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] max-h-[320px] min-h-[180px]">
                     <Image
