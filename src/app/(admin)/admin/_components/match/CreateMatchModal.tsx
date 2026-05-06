@@ -430,7 +430,7 @@ export default function CreateMatchModal({
                         />
                     </Field>
 
-                    <Field label="Voting Date&Time" required>
+                    <Field label="Voting Date&Time">
                         <div className="relative">
                             <input
                                 type="datetime-local"
@@ -440,6 +440,7 @@ export default function CreateMatchModal({
                                 onChange={(event) =>
                                     setField("voting_time", event.target.value)
                                 }
+                                required={false}
                                 className={inputCls}
                             />
 

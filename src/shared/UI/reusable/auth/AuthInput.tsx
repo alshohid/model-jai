@@ -55,7 +55,7 @@ export function AuthInput({
                     className="
                     w-full bg-transparent outline-none
                     text-white/90 placeholder:text-white/35
-                    text-[14px]
+                    text-[0.75rem] md:text-[0.87rem]
                     "
                     {...register(name, { required })}
                 />

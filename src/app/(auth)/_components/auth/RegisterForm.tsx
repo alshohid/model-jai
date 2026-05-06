@@ -130,21 +130,21 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                 </div>
 
                 <div className="mt-8 space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-4">
                         <AuthInput
                             label="First Name"
                             name="first_name"
                             register={register as any}
                             icon={<UserIcon />}
                         />
-                        <AuthInput
-                            label="Middle Name"
-                            name="middle_name"
-                            register={register as any}
-                            icon={<UserIcon />}
-                            required={false}
-                        />
                     </div>
+                    <AuthInput
+                        label="Middle Name (Optional)"
+                        name="middle_name"
+                        register={register as any}
+                        icon={<UserIcon />}
+                        required={false}
+                    />
                     <AuthInput
                         label="Last Name"
                         name="last_name"
