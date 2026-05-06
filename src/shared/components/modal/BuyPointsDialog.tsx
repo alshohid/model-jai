@@ -35,20 +35,14 @@ export default function BuyPointsDialog({
     onOpenChange,
     pack,
     paymentMethod,
-    paymentConnected,
-    connectedAccountLabel,
     onPay,
-    onManageWallet,
     isLoading
 }: {
     open: boolean;
     onOpenChange: (v: boolean) => void;
     pack: PointPack | null;
     paymentMethod: PaymentMethodConfig;
-    paymentConnected?: boolean;
-    connectedAccountLabel?: string | null;
     onPay?: (pack: PointPack) => void;
-    onManageWallet?: () => void;
     isLoading?: boolean;
 }) {
     if (!pack) return null;
@@ -203,19 +197,15 @@ export default function BuyPointsDialog({
                                         <span
                                             className={cn(
                                                 "rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]",
-                                                paymentConnected
-                                                    ? "bg-[#00C3FF]/14 text-[#9FE8FF]"
-                                                    : "bg-[#FF7A9E]/14 text-[#FFB3C8]"
+                                                "bg-[#00C3FF]/14 text-[#9FE8FF]"
                                             )}
                                         >
-                                            {paymentConnected ? "Connected" : "Connect Required"}
+                                            Selected Method
                                         </span>
                                     </div>
 
                                     <p className="mt-1 text-sm leading-6 text-white/55">
-                                        {paymentConnected
-                                            ? connectedAccountLabel || `${paymentMethod.name} account connected`
-                                            : `Connect your ${paymentMethod.name} account from your profile before checkout.`}
+                                        {paymentMethod.description}
                                     </p>
                                 </div>
                             </div>
@@ -224,23 +214,17 @@ export default function BuyPointsDialog({
 
                     <div className="sticky bottom-0 relative z-10 border-t border-white/10 bg-[#120B14]/95 px-4 pb-4 pt-3 backdrop-blur-xl sm:px-6 sm:pb-5 sm:pt-4">
                         <p className="text-[11px] leading-5 text-white/45 sm:text-xs">
-                            {paymentConnected
-                                ? `After clicking continue, ${paymentMethod.name} will open in a secure hosted page for payment completion.`
-                                : `Connect ${paymentMethod.name} first to continue with this checkout.`}
+                            {`After clicking continue, ${paymentMethod.name} will open in a secure hosted page for payment completion.`}
                         </p>
 
                         <StartStreamingButton
                             isLoading={isLoading}
                             className="mt-3 flex h-11 w-full items-center justify-center gap-2 text-base sm:h-auto sm:text-[1.125rem]"
-                            onClick={() =>
-                                paymentConnected ? onPay?.(pack) : onManageWallet?.()
-                            }
+                            onClick={() => onPay?.(pack)}
                         >
                             {isLoading
                                 ? "Processing..."
-                                : paymentConnected
-                                    ? `Continue with ${paymentMethod.name}`
-                                    : "Connect Account"}
+                                : `Continue with ${paymentMethod.name}`}
                             {!isLoading && <ArrowRight className="size-4" />}
                         </StartStreamingButton>
                     </div>

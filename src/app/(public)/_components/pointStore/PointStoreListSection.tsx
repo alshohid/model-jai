@@ -19,7 +19,6 @@ import {
     PAYMENT_METHODS,
 } from "@/shared/constants/paymentMethods";
 import PaymentMethodLogo from "@/shared/components/payment/PaymentMethodLogo";
-import { usePaymentConnectionStatuses } from "@/shared/hooks/usePaymentConnectionStatuses";
 import { PaymentMethodId } from "@/types/user/point";
 
 const POINT_IMAGE_SRC = "/images/home/coin.png";
@@ -144,11 +143,6 @@ export default function PointStoreListSection() {
     );
     const customPoints = useMemo(() => parsePositiveInteger(customAmount), [customAmount]);
     const paymentMethod = getPaymentMethodConfig(paymentMethodId);
-    const { allMethods: paymentStatuses } = usePaymentConnectionStatuses({
-        enabled: canPurchase,
-    });
-    const selectedPaymentStatus =
-        paymentStatuses.find((item) => item.method.id === paymentMethodId) ?? null;
 
     const setPurchaseInUrl = ({ packId, amount }: { packId?: string; amount?: number }) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -202,21 +196,11 @@ export default function PointStoreListSection() {
         openPurchase(buildCustomPack(customPoints));
     };
 
-    const routeToWalletSetup = () => {
-        toast.error(`Connect your ${paymentMethod.name} account first`);
-        router.push(`/user-profile?wallet=${paymentMethodId}`);
-    };
-
     const handlePayment = async (pack: PointPack) => {
         const subtotal = Number(pack.price);
 
         if (!Number.isFinite(subtotal) || subtotal <= 0) {
             toast.error("Invalid checkout amount");
-            return;
-        }
-
-        if (!selectedPaymentStatus?.connected) {
-            routeToWalletSetup();
             return;
         }
 
@@ -342,9 +326,6 @@ export default function PointStoreListSection() {
 
                                 <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     {PAYMENT_METHODS.map((method) => {
-                                        const status = paymentStatuses.find(
-                                            (item) => item.method.id === method.id
-                                        );
                                         const isActive = paymentMethodId === method.id;
 
                                         return (
@@ -364,23 +345,9 @@ export default function PointStoreListSection() {
                                                     className="size-11 rounded-[15px]"
                                                 />
                                                 <div className="min-w-0 flex-1">
-                                                    <div className="flex items-center justify-between gap-2">
-                                                        <p className="text-sm font-semibold text-white">
-                                                            {method.name}
-                                                        </p>
-                                                        {canPurchase ? (
-                                                            <span
-                                                                className={cn(
-                                                                    "rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em]",
-                                                                    status?.connected
-                                                                        ? "bg-[#00C3FF]/14 text-[#9FE8FF]"
-                                                                        : "bg-white/8 text-white/45"
-                                                                )}
-                                                            >
-                                                                {status?.connected ? "Connected" : "Connect"}
-                                                            </span>
-                                                        ) : null}
-                                                    </div>
+                                                    <p className="text-sm font-semibold text-white">
+                                                        {method.name}
+                                                    </p>
                                                     <p className="mt-1 text-xs text-white/55">
                                                         {method.description}
                                                     </p>
@@ -517,9 +484,6 @@ export default function PointStoreListSection() {
                     onOpenChange={onOpenChange}
                     pack={selected}
                     paymentMethod={paymentMethod}
-                    paymentConnected={selectedPaymentStatus?.connected}
-                    connectedAccountLabel={selectedPaymentStatus?.identifier}
-                    onManageWallet={routeToWalletSetup}
                     isLoading={isLoading}
                     onPay={(pack) => handlePayment(pack)}
                 />
