@@ -16,7 +16,7 @@ export default function TwitchPlayer() {
             const embed = new Twitch.Embed("twitch-embed", {
                 width: "100%",
                 height: 450,
-                channel: "theburntpeanut_247",
+                channel: "tmodelbossoffers",
                 autoplay: true,
                 muted: false,
                 layout: "video",
