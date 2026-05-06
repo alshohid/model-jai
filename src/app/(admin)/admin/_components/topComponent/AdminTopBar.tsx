@@ -5,13 +5,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import { cn } from "@/shared/lib/utils/cn";
 import NotificationButton from "../reusable/NotificationButton";
-import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import { useGetMeDataQuery, useLogoutUserMutation } from "@/redux/features/auth/authapi";
 import { useNotifications } from "@/shared/providers/hook/useNotificaton";
-import { ArrowDownLeft, ChevronDown, Key, LoaderPinwheel, Settings, TrendingUp, User } from "lucide-react";
+import { ArrowDownLeft, ChevronDown, Key, LoaderPinwheel, LogOutIcon, Settings, TrendingUp, User } from "lucide-react";
 import Image from "next/image";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import AppDropdownMenu, { type AppDropdownItem } from "@/shared/components/dropdown/AppDropdownMenu";
 import { useGetAdminTransactionQuery } from "@/redux/features/support/supportManagement";
+import { adminLogOut } from "@/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/redux/store";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -107,11 +109,13 @@ export default function AdminTopBar({
     sidebarOpen: boolean;
     toggleSidebar: () => void;
 }) {
+    const dispatch = useAppDispatch();
     const router = useRouter()
     const { unreadCount } = useNotifications()
     const pathname = usePathname();
     const title = titleFromPath(pathname);
     const { data, isLoading } = useGetMeDataQuery()
+    const [logoutAdmin, { isLoading: isLogoutLoading }] = useLogoutUserMutation();
     const avatarSrc = getSafeImageSrc(data?.data?.user?.image, "");
     const {
         totalRecharge,
@@ -127,6 +131,17 @@ export default function AdminTopBar({
             }),
         }
     );
+
+    const handleAdminLogout = async () => {
+        try {
+            await logoutAdmin();
+        } catch {
+        } finally {
+            dispatch(adminLogOut());
+            router.replace("/admin");
+        }
+    };
+
     const profileMenuItems: AppDropdownItem[] = [
         { type: "label", label: "Admin Menu" },
         {
@@ -138,6 +153,13 @@ export default function AdminTopBar({
             label: "Credential Settings",
             href: "/admin/dashboard/credential-settings",
             icon: <Key className="h-4 w-4" />,
+        },
+        { type: "separator" },
+        {
+            label: "Logout",
+            onSelect: handleAdminLogout,
+            icon: <LogOutIcon className="h-4 w-4" />,
+            className: "text-red-200 focus:text-red-100",
         },
     ];
 
@@ -210,6 +232,7 @@ export default function AdminTopBar({
                             sideOffset={12}
                             items={profileMenuItems}
                             contentClassName="min-w-[190px]"
+                            isLogoutLoading={isLogoutLoading}
                             trigger={
                                 <button
                                     type="button"
