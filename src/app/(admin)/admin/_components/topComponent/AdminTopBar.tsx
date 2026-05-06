@@ -51,11 +51,15 @@ function TransactionHeaderStat({
                 icon: "text-[#7DF2FF]",
                 glow: "shadow-[0_10px_28px_rgba(53,216,255,0.12)]",
             };
+    const router = useRouter()
 
     return (
         <div
+            onClick={() => {
+                router.push("/admin/dashboard/all-transactions")
+            }}
             className={cn(
-                "min-w-[148px] rounded-full border px-3 py-2.5 backdrop-blur-xl",
+                "min-w-[148px] rounded-full border px-3 py-2.5 backdrop-blur-xl cursor-pointer",
                 "transition-colors duration-200 hover:bg-white/[0.05]",
                 toneClasses.shell,
                 toneClasses.glow

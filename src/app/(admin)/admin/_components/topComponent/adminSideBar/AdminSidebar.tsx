@@ -312,7 +312,7 @@ export default function AdminSidebar({
                         {/* footer */}
                         <div className="pt-4 border-t border-white/10">
                             <p className="text-white/40 text-xs">
-                                © {new Date().getFullYear()} Model Boss Admin
+                                &copy; {new Date().getFullYear()} Model Boss Admin
                             </p>
                         </div>
                     </div>
