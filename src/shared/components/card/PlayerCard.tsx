@@ -2,6 +2,7 @@
 import { PhilippinePeso } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/shared/lib/utils/cn";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 export function PlayerCard({
     image,
@@ -24,9 +25,15 @@ export function PlayerCard({
     topRightBadge?: React.ReactNode
     gameLogo?: string
 }) {
+    const playerImageSrc = getSafeImageSrc(image, "/images/home/avatar_1.png");
+    const statusLogoSrc = getSafeImageSrc(
+        gameLogo,
+        status === "win" ? "/images/home/available_slot.png" : "/images/home/taken_slot.png"
+    );
+
     return (
         <div className={`relative aspect-3/4 overflow-hidden ${bossSide ? "border border-amber-400" : ""}`}>
-            <Image src={image} fill className="object-cover" alt={name} />
+            <Image src={playerImageSrc} fill className="object-cover" alt={name} />
             <div className="absolute inset-0 bg-black/40" />
             {topRightBadge ? (
                 <div className="absolute top-2 right-2 z-20">
@@ -43,13 +50,13 @@ export function PlayerCard({
                     onClick={onClick}
                 >
                     {status === "win" ? <Image
-                        src={gameLogo || '/images/home/available_slot.png'}
+                        src={statusLogoSrc}
                         alt="images"
                         width={100}
                         height={100}
                         className="w-7.5 h-7.5 md:w-50 md:h-50"
                     /> : <Image
-                        src={gameLogo || '/images/home/taken_slot.png'}
+                        src={statusLogoSrc}
                         alt="images"
                         width={100}
                         height={100}

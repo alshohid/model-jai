@@ -11,9 +11,19 @@ export function isValidHttpUrl(value: unknown): value is string {
   }
 }
 
+export function isSafeImageSrc(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const v = value.trim();
+  if (!v) return false;
+
+  if (v.startsWith("/")) return true;
+
+  return isValidHttpUrl(v);
+}
+
 export function getSafeImageSrc(
   src: unknown,
   fallback = "/images/home/pro_1.jpg",
 ) {
-  return isValidHttpUrl(src) ? src : fallback;
+  return isSafeImageSrc(src) ? src : fallback;
 }
