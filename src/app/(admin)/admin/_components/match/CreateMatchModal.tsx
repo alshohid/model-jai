@@ -104,8 +104,8 @@ export default function CreateMatchModal({
             !form.player_two_id ||
             !form.players_bet_amount ||
             !form.match_date ||
-            !form.match_time ||
-            !form.voting_time
+            !form.match_time
+            // !form.voting_time
         ) {
             setError("Please fill in all required fields, including voting time.");
             return;
