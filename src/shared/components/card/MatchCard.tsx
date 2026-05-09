@@ -110,7 +110,7 @@ export default function MatchCard(props: Props) {
                     </div>
                 </div>
 
-                <div className="mt-1 px-0.5 md:mt-4 md:px-1">
+                <div className="mt-1 px-0.5 md:mt-4 md:px-1  ">
                     <div className="flex items-center justify-between gap-3">
                         <span className={statusStyle}>{statusLabel}</span>
                         <div className="flex size-14 md:size-20 shrink-0 items-center justify-center">
