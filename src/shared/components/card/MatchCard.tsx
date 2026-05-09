@@ -1,14 +1,11 @@
-import WatchStreamButton from "@/shared/UI/button/WatchStreamButton";
+/* eslint-disable @next/next/no-img-element */
 import clsx from "clsx";
 import { SocialLinks } from "../cardComponent/SocialLinks";
-import { Meta } from "../cardComponent/Meta";
-import { GameLogo } from "../cardComponent/GameLogo";
-import { PlayerImage } from "../cardComponent/PlayerImage";
-import { Versus } from "../cardComponent/Versus";
 import { useState } from "react";
 import MatchRulesModal from "@/shared/components/modal/MatchRulesModal";
+import { CalendarDays, Clock3, Info, Play } from "lucide-react";
 
-type MatchStatus = "upcoming" | "past" | "live";
+type MatchStatus = "upcoming" | "past" | "live" | "completed";
 
 type Props = {
     status: MatchStatus;
@@ -26,45 +23,47 @@ type Props = {
     onWatch?: () => void;
 };
 
-export default function MatchCard({
-    status,
-    title,
-    dateText,
-    timeText,
-    gameLogoSrc,
-    leftPlayerImg,
-    rightPlayerImg,
-    voteRequired = true,
-    className = "",
-    versusImg,
-    rules,
-    onWatch,
-}: Props) {
+export default function MatchCard(props: Props) {
+    const {
+        status,
+        title,
+        dateText,
+        timeText,
+        gameLogoSrc,
+        leftPlayerImg,
+        rightPlayerImg,
+        className = "",
+        rules,
+        onWatch,
+    } = props;
     const [rulesOpen, setRulesOpen] = useState(false);
 
+    const normalizedStatus =
+        status === "past" ? "completed" : status;
+
+    const statusLabel =
+        normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1);
+
     const statusStyle = clsx(
-        "px-2 md:px-3 py-0 md:py-1 rounded-md text-xs border",
-        status === "live"
-            ? "bg-red-500/25 text-red-100 border-red-400/30"
-            : "bg-white/10 text-white/70 border-white/15"
+        "inline-flex items-center rounded-[9px] border px-1 md:px-2.5 py-0.5 md:py-1 text-[9px] md:text-[11px] font-medium leading-none",
+        normalizedStatus === "live"
+            ? "border-red-400/20 bg-red-500/18 text-red-100"
+            : normalizedStatus === "completed"
+                ? "border-white/10 bg-white/[0.05] text-white/55"
+                : "border-white/10 bg-white/[0.06] text-white/78"
     );
 
     return (
         <>
             <article
                 className={clsx(
-                    "w-full flex flex-col rounded-[16px]",
-                    "bg-matchCardBg border border-matchCardBorder backdrop-blur-[16px]",
+                    "w-full overflow-hidden rounded-[20px] border border-white/10 p-2.5",
+                    "md:rounded-[24px] md:p-3",
                     className
                 )}
             >
-                <div className="overflow-hidden px-3 py-2 md:p-6">
-                    {/* PLAYERS */}
-                    <div className="relative grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr]
-                        aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10 p-2 md:p-5">
-                        <PlayerImage src={leftPlayerImg} />
-                        <Versus src={versusImg} />
-                        <PlayerImage src={rightPlayerImg} />
+                <div className="relative overflow-hidden rounded-[18px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(61,69,77,0.95),rgba(35,40,47,0.98)_74%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:rounded-[20px]">
+                    <div className="relative aspect-[1.48/1]">
                         {rules && (
                             <button
                                 type="button"
@@ -72,70 +71,95 @@ export default function MatchCard({
                                     e.stopPropagation();
                                     setRulesOpen(true);
                                 }}
-                                className="
-                                    absolute top-1 left-0 z-20
-                                    flex items-center gap-1
-                                    pl-1.5 pr-2 py-1 rounded-full
-                                    text-[#FF2EC8] text-[8px] md:text-[10px] font-bold uppercase tracking-wider
-                                    hover:bg-[#FF2EC8]/15 hover:border-[#FF2EC8]
-                                    transition-all duration-200
-                                    shadow-[0_0_10px_rgba(255,46,200,0.3)]
-                                    cursor-pointer
-                                "
+                                className="absolute left-1 top-1 z-20 inline-flex size-4 items-center justify-center rounded-full bg-[#8a4673] text-white shadow-[0_0_18px_rgba(255,55,186,0.45)] transition hover:scale-105 md:size-6"
+                                aria-label="View rules"
                             >
-                                <span className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#FF2EC8] flex items-center justify-center flex-shrink-0 shadow-[0_0_6px_rgba(255,46,200,0.6)]">
-                                    <span className="text-white font-black text-[10px] leading-none">!</span>
-                                </span>
-
+                                <Info className="size-2.5 md:size-3" />
                             </button>
                         )}
-                    </div>
 
-                    {/* INFO */}
-                    <div className="mt-2">
-                        {/* MOBILE HEADER */}
-                        <div className="flex items-center gap-2 md:hidden">
-                            <span className={statusStyle}>{status}</span>
-                            <GameLogo src={gameLogoSrc} mobile />
+                        <div className="absolute inset-y-0 left-0 w-[48%] overflow-hidden">
+                            <img
+                                src={leftPlayerImg}
+                                alt={`${title} player one`}
+                                className="h-full w-full object-cover object-top"
+                            />
                         </div>
 
-                        {/* DESKTOP LOGO */}
-                        <div className="hidden md:block">
-                            <GameLogo src={gameLogoSrc} />
+                        <div className="absolute inset-y-0 right-0 w-[48%] overflow-hidden">
+                            <img
+                                src={rightPlayerImg}
+                                alt={`${title} player two`}
+                                className="h-full w-full object-cover object-top"
+                            />
                         </div>
 
-                        <div className="flex flex-col gap-2 md:gap-3">
-                            <div className="hidden md:flex">
-                                <span className={statusStyle}>{status}</span>
+                        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[20%] -translate-x-1/2 bg-[linear-gradient(180deg,rgba(27,34,40,0.12),rgba(17,20,24,0.36),rgba(27,34,40,0.12))]" />
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,12,0.02),rgba(8,10,12,0.1)_45%,rgba(8,10,12,0.3)_100%)]" />
+
+                        <div className="absolute inset-y-0 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
+                            <div className="flex flex-col items-center justify-center text-[10px] font-semibold uppercase leading-none tracking-[0.28em] text-[#8cc8ea] drop-shadow-[0_4px_10px_rgba(61,207,255,0.18)] md:text-[11px]">
+                                <span>V</span>
+                                <span className="my-1 text-[8px] tracking-[0.16em] text-white/45 md:text-[9px]">/</span>
+                                <span>s</span>
                             </div>
-
-                            <h3 className="text-white font-semibold text-[12px] md:text-[18px] leading-tight">
-                                {title}
-                            </h3>
-
-                            <div className="flex gap-x-1 md:gap-x-6 text-white/75 text-xs md:text-sm">
-                                <Meta icon="🗓" text={dateText} />
-                                <Meta icon="🕒" text={timeText} />
-                            </div>
-                        </div>
-
-                        {/* ACTION */}
-                        <div className="mt-2 md:mt-5">
-                            <WatchStreamButton label="Watch stream" onClick={onWatch} />
-                            <SocialLinks />
-                            {/* {voteRequired ? (
-                                <p className="mt-2 md:mt-3 text-center text-xs md:text-base font-medium text-[#FF2EC8]">
-                                    Tiktok Vote Required
-                                </p>
-                            ) : (
-                                <SocialLinks />
-                            )} */}
                         </div>
                     </div>
                 </div>
+
+                <div className="mt-1 px-0.5 md:mt-4 md:px-1">
+                    <div className="flex items-center justify-between gap-3">
+                        <span className={statusStyle}>{statusLabel}</span>
+                        <div className="flex size-14 md:size-20 shrink-0 items-center justify-center">
+                            <img
+                                src={gameLogoSrc}
+                                alt={`${title} logo`}
+                                className="h-full w-full object-contain"
+                            />
+                        </div>
+                    </div>
+
+                    <h3 className="mt-2 text-[1rem] font-semibold leading-none tracking-[-0.02em] text-white md:mt-3 md:text-[1.5rem]">
+                        {title}
+                    </h3>
+
+                    <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] gap-2 text-white/72 md:mt-4">
+                        <div className="flex min-w-0 items-center gap-1.5">
+                            <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-[4px] bg-[#22313c] text-[#69d8ff] ring-1 ring-white/8 md:size-5">
+                                <CalendarDays className="size-1.5 md:size-3" />
+                            </span>
+                            <span className="truncate whitespace-nowrap text-[0.5rem] leading-none md:text-[0.7rem]">
+                                {dateText}
+                            </span>
+                        </div>
+
+                        <div className="flex min-w-0 items-center gap-1.5 justify-self-end text-right">
+                            <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-white/15 text-white/80 ring-1 ring-white/8 md:size-5">
+                                <Clock3 className="size-1.5 md:size-3" />
+                            </span>
+                            <span className="whitespace-nowrap text-[0.5rem] leading-none md:text-[0.7rem]">
+                                {timeText}
+                            </span>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={onWatch}
+                        className="mt-4 inline-flex h-10 w-full flex-nowrap items-center justify-center gap-2 rounded-full border border-[#d15b9c66] bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] px-3 text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:border-[#d15b9c99] hover:text-white md:mt-5 md:h-12 md:gap-3 md:px-4"
+                    >
+                        <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white/90 text-black shadow-[0_6px_14px_rgba(255,255,255,0.12)]">
+                            <Play className="ml-0.5 size-4 fill-current" />
+                        </span>
+                        <span className="whitespace-nowrap text-[13px] leading-none font-light sm:text-sm">
+                            Watch stream
+                        </span>
+                    </button>
+
+                    <SocialLinks className="mt-3 md:mt-4" />
+                </div>
             </article>
 
-            {/* Rules Modal */}
             {rules && (
                 <MatchRulesModal
                     open={rulesOpen}

@@ -8,25 +8,37 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
 import { useState } from "react";
 import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
-export type MatchStatus = "upcoming" | "past" | "live";
+export type MatchStatus = "upcoming" | "past" | "live" | "completed";
 const LoadingSkeleton = () => (
     <div className="grid gap-3 md:gap-6 w-full grid-cols-2 md:grid-cols-3 place-items-center">
         {[...Array(6)].map((_, index) => (
             <div
                 key={index}
-                className="w-full max-w-[250px] bg-[#2e2e2e] p-3 rounded-lg animate-pulse"
+                className="w-full max-w-[176px] rounded-[20px] border border-white/10 bg-[#272d34] p-2.5 shadow-[0_18px_40px_rgba(0,0,0,0.22)] animate-pulse sm:max-w-[190px] md:max-w-[240px] md:rounded-[24px] md:p-3"
             >
-                <div className="h-32 bg-gray-600 rounded-md mb-3"></div>
-                <div className="h-5 bg-gray-600 mb-2 rounded-md"></div>
-                <div className="h-4 bg-gray-600 mb-2 rounded-md"></div>
-                <div className="h-5 bg-gray-600 rounded-md"></div>
+                <div className="aspect-[1.48/1] rounded-[18px] bg-white/10"></div>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                    <div className="h-6 w-20 rounded-[9px] bg-white/10"></div>
+                    <div className="size-10 rounded-full bg-white/10 md:size-12"></div>
+                </div>
+                <div className="mt-3 h-7 w-24 rounded-md bg-white/10"></div>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div className="h-8 rounded-md bg-white/10"></div>
+                    <div className="h-8 rounded-md bg-white/10"></div>
+                </div>
+                <div className="mt-4 h-11 rounded-full bg-white/10"></div>
+                <div className="mt-3 flex justify-center gap-3">
+                    <div className="size-8 rounded-[10px] bg-white/10"></div>
+                    <div className="size-8 rounded-[10px] bg-white/10"></div>
+                </div>
             </div>
         ))}
     </div>
 );
 export default function LiveStreamsSection() {
-    const [page, setPage] = useState(1);
+    const [page] = useState(1);
     const limit = 10;
     const { data, isLoading } = useGetAllPublicMatchListQuery({
         page,
@@ -79,9 +91,9 @@ export default function LiveStreamsSection() {
                             title={match.game.name}
                             dateText={formateDate(match.match_date)}
                             timeText={formateTime(match.match_time)}
-                            gameLogoSrc={match.game.image || "/images/home/gameLogo.png"}
-                            leftPlayerImg={match.player_one?.image_url || "/images/home/leftPlayerImg.png"}
-                            rightPlayerImg={match.player_two?.image_url || "/images/home/rightPlayerImg.png"}
+                            gameLogoSrc={getSafeImageSrc(match.game.image, "/images/home/gameLogo.png")}
+                            leftPlayerImg={getSafeImageSrc(match.player_one?.image_url || match.player_one?.image, "/images/home/leftPlayerImg.png")}
+                            rightPlayerImg={getSafeImageSrc(match.player_two?.image_url || match.player_two?.image, "/images/home/rightPlayerImg.png")}
                             voteRequired={match.confirmation_status === 0} // If confirmation is 0, vote is required
                             watchHref={match.tiktok_link || "#"} // Assuming you are passing TikTok link
                             versusImg="/images/home/versus.png" // Static or dynamic image
@@ -94,4 +106,3 @@ export default function LiveStreamsSection() {
         </section>
     );
 }
-
