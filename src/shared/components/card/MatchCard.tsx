@@ -4,6 +4,7 @@ import { SocialLinks } from "../cardComponent/SocialLinks";
 import { useState } from "react";
 import MatchRulesModal from "@/shared/components/modal/MatchRulesModal";
 import { CalendarDays, Clock3, Info, Play } from "lucide-react";
+import Image from "next/image";
 
 type MatchStatus = "upcoming" | "past" | "live" | "completed";
 
@@ -38,7 +39,7 @@ export default function MatchCard(props: Props) {
         rules,
         tiktokLink,
         twitchLink,
-        versusImg,
+        versusImg = "/images/home/versus.png",
         onWatch,
     } = props;
     const [rulesOpen, setRulesOpen] = useState(false);
@@ -103,11 +104,7 @@ export default function MatchCard(props: Props) {
                         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,12,0.02),rgba(8,10,12,0.1)_45%,rgba(8,10,12,0.3)_100%)]" />
 
                         <div className="absolute inset-y-0 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
-                            <div className="flex flex-col items-center justify-center text-[10px] font-semibold uppercase leading-none tracking-[0.28em] text-[#8cc8ea] drop-shadow-[0_4px_10px_rgba(61,207,255,0.18)] md:text-[11px]">
-                                <span>V</span>
-                                <span className="my-1 text-[8px] tracking-[0.16em] text-white/45 md:text-[9px]">/</span>
-                                <span>s</span>
-                            </div>
+                            <Image src={versusImg} alt="versus" className="w-6 h-6 md:w-8 md:h-8" width={40} height={40} />
                         </div>
                     </div>
                 </div>

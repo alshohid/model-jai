@@ -23,6 +23,7 @@ interface TipPopoverProps {
     onOpenCustom: () => void;
     onBackToMenu: () => void;
     onSendCustom: (name: string, amount: number) => void;
+    defaultSenderName?: string;
     isLoading?: boolean;
 }
 
@@ -39,16 +40,17 @@ export default function TipPopover({
     onOpenCustom,
     onBackToMenu,
     onSendCustom,
+    defaultSenderName = DEFAULT_NAME,
     isLoading,
 }: TipPopoverProps) {
-    const [name, setName] = useState(DEFAULT_NAME);
+    const [name, setName] = useState(defaultSenderName);
     const [amount, setAmount] = useState<number>(DEFAULT_AMOUNT);
 
     useEffect(() => {
         if (!open) return;
-        setName(DEFAULT_NAME);
+        setName(defaultSenderName);
         setAmount(DEFAULT_AMOUNT);
-    }, [open, side]);
+    }, [defaultSenderName, open, side]);
 
     if (!open) return null;
 

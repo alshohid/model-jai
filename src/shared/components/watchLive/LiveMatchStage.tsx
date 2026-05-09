@@ -26,7 +26,8 @@ export default function LiveMatchStage({
     modelPicture,
     gameLogo,
     playerOneLogo,
-    playerTwoLogo
+    playerTwoLogo,
+    tiktokLink,
 }: StageProps & {
     rules?: string | null;
     onRulesClick?: () => void;
@@ -119,6 +120,23 @@ export default function LiveMatchStage({
                             alt="host"
                         />
                         <div className="absolute inset-0 bg-black/30" />
+                        {tiktokLink ? (
+                            <a
+                                href={tiktokLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="absolute bottom-2 right-2 z-10 inline-flex size-7 items-center justify-center rounded-full border border-white/12 bg-black/65 shadow-[0_10px_24px_rgba(0,0,0,0.32)] backdrop-blur transition hover:scale-105 hover:bg-black/75 sm:size-9"
+                                aria-label="Open TikTok stream"
+                            >
+                                <Image
+                                    src="/images/home/tiktok_1.png"
+                                    alt="TikTok"
+                                    width={18}
+                                    height={18}
+                                    className="h-4 w-4 object-contain sm:h-5 sm:w-5"
+                                />
+                            </a>
+                        ) : null}
                         <div className="absolute bottom-2 w-full text-center text-[#80f03f] font-extrabold">
                             {middle.label}
                         </div>

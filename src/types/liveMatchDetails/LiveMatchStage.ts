@@ -3,6 +3,7 @@ import { Side } from "@/shared/hooks/useMatchDemoStore";
 export interface StageProps {
   matchId: string;
   twitchChannel: string;
+  tiktokLink?: string | null;
   isLive: boolean;
   tipEnabled?: boolean;
   rules: string | null;

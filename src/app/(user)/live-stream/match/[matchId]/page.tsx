@@ -7,9 +7,6 @@ import SupporterGridSection from "@/app/(auth)/_components/watchLive/SupporterGr
 import { useMatchDemoStore } from "@/shared/hooks/useMatchDemoStore";
 import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 import RankingSection from "@/app/(public)/_components/rankingSection/RankingSection";
-import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
-import TakeGameSection from "@/shared/components/home/TakeGameSection";
-import FooterSection from "@/shared/components/home/FooterSection";
 import {
     useReferralRedirect,
     ReferralRegistrationPrompt,
@@ -76,6 +73,7 @@ export default function MatchDetails({
     const watchingPeopleCount = twitchLiveData?.data?.stream?.viewer_count || 0;
     const playerOneLogo = currentMatch?.player_one_logo;
     const playerTwoLogo = currentMatch?.player_two_logo;
+    const tiktokLink = currentMatch?.tiktok_link ?? null;
     const leftBossSupporterCount = Number(currentMatch?.player_one_total_supporter ?? 0);
     const rightBossSupporterCount = Number(currentMatch?.player_two_total_supporter ?? 0);
     const isVoteClosed = isLiveStatus && matchData?.data?.type === "live"
@@ -135,6 +133,7 @@ export default function MatchDetails({
                         rules={rules}
                         gameLogo={liveStore.left.teamLogoSrc || ""}
                         modelPicture={modelPicture}
+                        tiktokLink={tiktokLink}
                         watchingPeopleCount={watchingPeopleCount}
                         onRulesClick={() => setRulesModalOpen(true)}
                         onSupportLeft={(amount, supporterName) =>

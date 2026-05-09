@@ -249,6 +249,7 @@ export default function MatchPointsSummarySection({
         votingSession?.playerTwoImage || defaultVoteRightImage,
         "/images/home/avatar_img.png",
     );
+    const middleTipName = "Model";
     const currentPlatform = searchParams.get("platform") || "tiktok";
 
     const handleVoteShare = (playerName: string) => {
@@ -428,6 +429,7 @@ export default function MatchPointsSummarySection({
                                 side="left"
                                 view={tipSystem.tipView}
                                 align="left"
+                                defaultSenderName={left.playerName}
                                 onClose={tipSystem.closeTip}
                                 // onPesto={() => handleSendTip("left", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
@@ -449,6 +451,7 @@ export default function MatchPointsSummarySection({
                                 side="middle"
                                 view={tipSystem.tipView}
                                 align="center"
+                                defaultSenderName={middleTipName}
                                 onClose={tipSystem.closeTip}
                                 // onPesto={() => handleSendTip("middle", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
@@ -471,6 +474,7 @@ export default function MatchPointsSummarySection({
                                 side="right"
                                 view={tipSystem.tipView}
                                 align="right"
+                                defaultSenderName={right.playerName}
                                 onClose={tipSystem.closeTip}
                                 // onPesto={() => handleSendTip("right", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
@@ -641,7 +645,7 @@ export default function MatchPointsSummarySection({
                         onOpenChange={supportDialog.closeDialog}
                         playerName={getPlayerName()}
                         side={supportDialog.selectedSide}
-                        defaultSupporterName={supportDialog.selectedSide === "left" ? left.playerName : right.playerName}
+                        defaultSupporterName={getPlayerName()}
                         defaultAmount={100}
                         onConfirm={handleSupportConfirm}
                     />
