@@ -58,6 +58,7 @@ export default function MatchPointsCard({
         : `${sign}${points}`;
 
     const showShareSheet = Boolean(shareTitle && matchId && playerRef);
+    const isRightSide = matchSide === "right";
 
     const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
         e?.stopPropagation();
@@ -82,27 +83,33 @@ export default function MatchPointsCard({
         >
             <div
                 onClick={onClick}
-                className={`flex flex-col md:flex-row ${matchSide === "right" ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center gap-2 md:gap-5`}
+                className={cn(
+                    "flex flex-col gap-2 md:gap-5",
+                    isRightSide
+                        ? "items-end text-right md:flex-row md:items-center md:text-left"
+                        : "items-start text-left md:flex-row md:items-center"
+                )}
             >
                 {/* Logo */}
                 <div
                     className={cn(
                         "shrink-0 rounded-full overflow-hidden bg-white/5 flex items-center justify-center",
+                        isRightSide ? "self-end md:self-auto" : "self-start md:self-auto",
                         compact
-                            ? "w-[36px] h-[36px]"
-                            : "w-[64px] h-[64px] md:w-[80px] md:h-[80px]"
+                            ? "w-[50px] h-[50px]"
+                            : "w-[100px] h-[100px] md:w-[100px] md:h-[100px]"
                     )}
                 >
                     <Image
                         src={teamLogoSrc}
                         alt={`${playerName} team`}
-                        width={80}
-                        height={80}
+                        width={50}
+                        height={50}
                         className="w-full h-full object-cover"
                     />
                 </div>
 
-                <div className="min-w-0 flex-1">
+                <div className={cn("min-w-0 flex-1", isRightSide ? "text-right md:text-left" : "text-left")}>
                     {/* Player name */}
                     <div
                         className={cn(
@@ -123,7 +130,12 @@ export default function MatchPointsCard({
                     >
                         {title}
 
-                        <div className="flex items-center gap-1 max-w-full overflow-hidden">
+                        <div
+                            className={cn(
+                                "flex max-w-full items-center gap-1 overflow-hidden",
+                                isRightSide ? "justify-end md:justify-start" : "justify-start"
+                            )}
+                        >
                             <span
                                 className={cn(
                                     "font-extrabold tabular-nums truncate number-safe",
@@ -143,7 +155,12 @@ export default function MatchPointsCard({
                     </div>
 
                     {/* Share button */}
-                    <div className={compact ? "mt-2" : "mt-4"}>
+                    <div
+                        className={cn(
+                            compact ? "mt-2" : "mt-4",
+                            isRightSide ? "flex justify-end md:justify-start" : "flex justify-start"
+                        )}
+                    >
                         <StartStreamingButton
                             onClick={handleShareClick}
                             className={cn(
