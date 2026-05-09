@@ -12,16 +12,12 @@ import {
     readLoginOtpSession,
 } from "@/shared/lib/auth/loginOtpFlow";
 import { maskEmail } from "@/shared/lib/auth/maskEmail";
-import AuthRecoveryShell from "./AuthRecoveryShell";
 import OtpCodeFieldGroup from "./OtpCodeFieldGroup";
 import { useOtpInput } from "./useOtpInput";
+import AuthPageShell from "./AuthPageShell";
+import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 
 const OTP_LENGTH = 6;
-
-const loginSteps = [
-    { id: 1, label: "Login", hint: "Submit credentials" },
-    { id: 2, label: "OTP", hint: "Verify access code" },
-];
 
 export default function LoginOtpForm() {
     const router = useRouter();
@@ -68,20 +64,24 @@ export default function LoginOtpForm() {
     };
 
     return (
-        <AuthRecoveryShell
-            step={2}
-            steps={loginSteps}
-            eyebrow="Login Verification"
-            title="Verify OTP"
-            description={
-                email ? `Code sent to ${maskEmail(email)}` : "Enter your 6 digit code"
-            }
-            heroEyebrow="Secure Login"
-            heroTitle="Confirm your sign in."
-            heroDescription="Enter the one-time password sent to your email to complete your login securely."
-        >
-            <div className="space-y-4 sm:space-y-5">
-                <div>
+        <AuthPageShell>
+            <div className="text-center">
+                <h2 className="text-[22px] font-semibold text-white">Verify OTP</h2>
+                <p className="mt-2 text-[13px] leading-6 text-white/55">
+                    {email
+                        ? `Enter the 6 digit code sent to ${maskEmail(email)}`
+                        : "Enter the 6 digit code sent to your email"}
+                </p>
+            </div>
+
+            <form
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    void handleSubmit();
+                }}
+                className="mt-8 space-y-4"
+            >
+                <div className="rounded-[18px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45 sm:text-[12px] sm:tracking-[0.28em]">
                         Verification Code
                     </p>
@@ -94,16 +94,14 @@ export default function LoginOtpForm() {
                     />
                 </div>
 
-                <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={isVerifying}
-                    className="w-full rounded-[12px] bg-[#FF00C8] px-4 py-2.5 text-[13px] font-semibold tracking-wide text-white shadow-[0_10px_22px_rgba(0,0,0,0.35)] transition-transform duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:py-3 sm:text-[16px]"
-                >
-                    {isVerifying ? "Verifying..." : "Verify & Continue"}
-                </button>
+                <PrimaryButton
+                    isLoading={isVerifying}
+                    loadingText="Verifying..."
+                    text="Verify & Continue"
+                    variant="pink"
+                />
 
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-3 pt-1">
                     <button
                         type="button"
                         onClick={handleChangeEmail}
@@ -113,11 +111,11 @@ export default function LoginOtpForm() {
                         Change email
                     </button>
 
-                    <p className="text-[12px] text-white/45 sm:text-sm">
+                    <p className="text-[13px] text-white/45">
                         Need a new code? Go back and log in again.
                     </p>
                 </div>
-            </div>
-        </AuthRecoveryShell>
+            </form>
+        </AuthPageShell>
     );
 }
