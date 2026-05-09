@@ -22,6 +22,7 @@ type Props = {
     onWatch?: () => void;
     tiktokLink: string;
     twitchLink: string;
+    versusImg?: string;
 };
 
 export default function MatchCard(props: Props) {
@@ -37,6 +38,7 @@ export default function MatchCard(props: Props) {
         rules,
         tiktokLink,
         twitchLink,
+        versusImg,
         onWatch,
     } = props;
     const [rulesOpen, setRulesOpen] = useState(false);
