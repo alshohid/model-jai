@@ -1,20 +1,21 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
     type CarouselApi,
 } from "@/components/ui/carousel";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 
 export type VideoCarouselItem = {
     id: string;
     title: string;
-    videoSrc: string;      // ✅ mp4/webm
-    posterSrc?: string;    // ✅ optional fallback image
+    videoSrc: string;
+    posterSrc?: string;
 };
 
 type Props = {
@@ -22,10 +23,6 @@ type Props = {
     className?: string;
     cardClassName?: string;
     onCardClick?: (item: VideoCarouselItem, index: number) => void;
-    autoPlay?: boolean;
-    muted?: boolean;
-    loop?: boolean;
-    suspendPlayback?: boolean;
 };
 
 export default function VideoCarousel({
@@ -33,42 +30,16 @@ export default function VideoCarousel({
     className,
     cardClassName,
     onCardClick,
-    autoPlay = true,
-    muted = true,
-    loop = true,
-    suspendPlayback = false,
 }: Props) {
     const [api, setApi] = React.useState<CarouselApi | null>(null);
     const [current, setCurrent] = React.useState(0);
     const count = api ? api.scrollSnapList().length : items.length;
-    const [playingIndex, setPlayingIndex] = React.useState<number | null>(autoPlay ? 0 : null);
-
-    const videoRefs = React.useRef<(HTMLVideoElement | null)[]>([]);
 
     React.useEffect(() => {
         if (!api) return;
 
         const onSelect = () => {
-            const idx = api.selectedScrollSnap();
-            setCurrent(idx);
-
-            if (autoPlay && !suspendPlayback) {
-                videoRefs.current.forEach((v, i) => {
-                    if (!v) return;
-                    if (i === idx) {
-                        v.currentTime = 0;
-                        v.play().catch(() => { });
-                    } else {
-                        v.pause();
-                    }
-                });
-                setPlayingIndex(idx);
-            } else {
-                videoRefs.current.forEach((v) => {
-                    if (v) v.pause();
-                });
-                setPlayingIndex(null);
-            }
+            setCurrent(api.selectedScrollSnap());
         };
 
         queueMicrotask(() => onSelect());
@@ -77,44 +48,7 @@ export default function VideoCarousel({
         return () => {
             api.off("select", onSelect);
         };
-    }, [api, autoPlay, suspendPlayback]);
-
-    React.useEffect(() => {
-        if (suspendPlayback) {
-            videoRefs.current.forEach((video) => {
-                video?.pause();
-            });
-            return;
-        }
-
-        if (!autoPlay) return;
-
-        const activeVideo = videoRefs.current[current];
-        activeVideo?.play().catch(() => { });
-    }, [autoPlay, current, suspendPlayback]);
-
-    const isPaused = (idx: number) =>
-        autoPlay ? idx !== current : playingIndex !== idx;
-
-    const handleCardClick = (item: VideoCarouselItem, idx: number) => {
-        if (!autoPlay) {
-            const video = videoRefs.current[idx];
-            if (video) {
-                if (playingIndex === idx) {
-                    video.pause();
-                    setPlayingIndex(null);
-                } else {
-                    videoRefs.current.forEach((v, i) => {
-                        if (v && i !== idx) v.pause();
-                    });
-                    video.currentTime = 0;
-                    video.play().catch(() => { });
-                    setPlayingIndex(idx);
-                }
-            }
-        }
-        onCardClick?.(item, idx);
-    };
+    }, [api]);
 
     return (
         <div className={cn("w-full", className)}>
@@ -148,62 +82,34 @@ export default function VideoCarousel({
                         {items.map((item, idx) => (
                             <CarouselItem
                                 key={item.id}
-                                className="basis-[212px] p-0 sm:basis-[240px] md:basis-[280px] lg:basis-[300px] xl:basis-[320px]"
+                                className="basis-[280px] p-0 sm:basis-[340px] md:basis-[400px] lg:basis-[440px] xl:basis-[480px]"
                             >
                                 <button
                                     type="button"
-                                    onClick={() => handleCardClick(item, idx)}
+                                    onClick={() => onCardClick?.(item, idx)}
                                     className={cn(
                                         "cursor-pointer select-none",
-                                        "relative aspect-[10/16] w-full overflow-hidden rounded-[24px]",
+                                        "group relative aspect-video w-full overflow-hidden rounded-[24px]",
                                         "border border-white/10 bg-[#09070D]",
                                         "shadow-[0_22px_60px_rgba(0,0,0,0.3)]",
                                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60",
                                         cardClassName
                                     )}
-                                    aria-label="Open video"
+                                    aria-label={item.title || "Open video"}
                                 >
-                                    <video
-                                        ref={(el) => {
-                                            videoRefs.current[idx] = el;
-                                        }}
-                                        src={item.videoSrc}
-                                        poster={item.posterSrc}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                        autoPlay={autoPlay && idx === current && !suspendPlayback}
-                                        muted={muted}
-                                        loop={loop}
-                                        playsInline
-                                        preload="metadata"
+                                    <Image
+                                        src={item.posterSrc || "/images/home/cat_1.png"}
+                                        alt={item.title || "Video thumbnail"}
+                                        fill
+                                        sizes="(max-width: 640px) 280px, (max-width: 768px) 340px, (max-width: 1024px) 400px, 480px"
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                        priority={idx === 0}
                                     />
 
-                                    {isPaused(idx) && (
-                                        <div
-                                            className={cn(
-                                                "absolute inset-0 flex items-center justify-center",
-                                                "z-10"
-                                            )}
-                                            aria-hidden
-                                        >
-                                            <div
-                                                className={cn(
-                                                    "flex items-center justify-center",
-                                                    "h-14 w-14 rounded-full sm:h-16 sm:w-16",
-                                                    "bg-white/20 backdrop-blur-sm border-2 border-white/40",
-                                                    "text-white"
-                                                )}
-                                            >
-                                                <Play className="ml-1 size-7 fill-white sm:size-8" />
-                                            </div>
-                                        </div>
-                                    )}
+                                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,4,8,0.06),rgba(4,4,8,0.18)_48%,rgba(4,4,8,0.5)_100%)]" />
 
-                                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,4,8,0.04),rgba(4,4,8,0.18)_40%,rgba(4,4,8,0.62)_100%)]" />
-
-                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 p-3 sm:p-3.5">
-                                        <div className="rounded-[18px] border border-white/10 bg-black/35 px-3 py-2.5 backdrop-blur-md">
-                                            <div className="h-1.5 w-9 rounded-full bg-[#7CF7FF]" />
-                                        </div>
+                                    <div className="pointer-events-none absolute bottom-4 right-4 flex size-12 items-center justify-center rounded-full bg-black/45 text-white shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md sm:size-14">
+                                        <ArrowUpRight className="size-5 sm:size-6" />
                                     </div>
                                 </button>
                             </CarouselItem>

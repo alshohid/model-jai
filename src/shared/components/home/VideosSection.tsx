@@ -33,7 +33,7 @@ export default function VideosSection() {
                     {Array.from({ length: 4 }).map((_, index) => (
                         <div
                             key={index}
-                            className="aspect-[10/16] rounded-[24px] bg-white/10 animate-pulse"
+                            className="aspect-video rounded-[24px] bg-white/10 animate-pulse"
                         />
                     ))}
                 </div>
@@ -45,9 +45,6 @@ export default function VideosSection() {
         <section className="w-full pt-5 md:pt-15 container">
             <VideoCarousel
                 items={videos}
-                autoPlay={true}
-                muted={true}
-                suspendPlayback={Boolean(selectedVideo)}
                 onCardClick={(item) => setSelectedVideo(item)}
             />
             <VideoPreviewDialog
