@@ -28,7 +28,12 @@ export function TipCaretButton({
                     )}
                     aria-label="Tip menu"
                 >
-                    <ChevronDown className="h-5 w-5 text-white/90" />
+                    <ChevronDown
+                        className={cn(
+                            "h-5 w-5 text-white/90 transition-transform duration-200",
+                            isOpen ? "rotate-180" : "rotate-0"
+                        )}
+                    />
                 </button>
                 {children}
             </div>

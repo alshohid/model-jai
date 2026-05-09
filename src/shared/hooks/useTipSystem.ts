@@ -72,21 +72,21 @@ export function useTipSystem(): UseTipSystemReturn {
     setFlyingCoins((prev) => prev.filter((coin) => coin.id !== id));
   }, []);
 
-  // Close tip on outside click
+  // Close tip when clicking anywhere outside the active caret/popover.
   useEffect(() => {
-    function handleDocMouseDown(e: MouseEvent) {
+    function handleDocPointerDown(e: PointerEvent) {
       if (!tipOpen) return;
       const target = e.target as Element | null;
       if (!target) return;
       if (target.closest("[data-tip-popover]")) return;
       if (target.closest(`[data-tip-caret="${tipOpen}"]`)) return;
-      e.stopImmediatePropagation();
+      closeTip();
     }
 
-    document.addEventListener("mousedown", handleDocMouseDown, true);
+    document.addEventListener("pointerdown", handleDocPointerDown, true);
     return () =>
-      document.removeEventListener("mousedown", handleDocMouseDown, true);
-  }, [tipOpen]);
+      document.removeEventListener("pointerdown", handleDocPointerDown, true);
+  }, [closeTip, tipOpen]);
 
   return {
     tipOpen,

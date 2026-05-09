@@ -428,7 +428,6 @@ export default function MatchPointsSummarySection({
                                 side="left"
                                 view={tipSystem.tipView}
                                 align="left"
-                                triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
                                 // onPesto={() => handleSendTip("left", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
@@ -450,7 +449,6 @@ export default function MatchPointsSummarySection({
                                 side="middle"
                                 view={tipSystem.tipView}
                                 align="center"
-                                triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
                                 // onPesto={() => handleSendTip("middle", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
@@ -473,7 +471,6 @@ export default function MatchPointsSummarySection({
                                 side="right"
                                 view={tipSystem.tipView}
                                 align="right"
-                                triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
                                 // onPesto={() => handleSendTip("right", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}

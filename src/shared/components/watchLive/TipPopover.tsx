@@ -23,7 +23,6 @@ interface TipPopoverProps {
     onOpenCustom: () => void;
     onBackToMenu: () => void;
     onSendCustom: (name: string, amount: number) => void;
-    triggerFly: (side: SupportSide) => void;
     isLoading?: boolean;
 }
 
@@ -40,7 +39,6 @@ export default function TipPopover({
     onOpenCustom,
     onBackToMenu,
     onSendCustom,
-    triggerFly,
     isLoading,
 }: TipPopoverProps) {
     const [name, setName] = useState(DEFAULT_NAME);
@@ -60,13 +58,6 @@ export default function TipPopover({
             : align === "right"
                 ? "right-2"
                 : "left-1/2 -translate-x-1/2";
-
-    const handlePesoClick = () => {
-        onSendCustom(name, 10);
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => triggerFly(side), i * 100);
-        }
-    };
 
     const handleSend = () => {
         onSendCustom(name, amount);
