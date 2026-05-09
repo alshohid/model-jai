@@ -430,7 +430,7 @@ export default function MatchPointsSummarySection({
                                 align="left"
                                 triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
-                                onPesto={() => handleSendTip("left", 10)}
+                                // onPesto={() => handleSendTip("left", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
                                 onSendCustom={async (name, amount) => {
@@ -452,7 +452,7 @@ export default function MatchPointsSummarySection({
                                 align="center"
                                 triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
-                                onPesto={() => handleSendTip("middle", 10)}
+                                // onPesto={() => handleSendTip("middle", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
                                 onSendCustom={async (name, amount) => {
@@ -475,7 +475,7 @@ export default function MatchPointsSummarySection({
                                 align="right"
                                 triggerFly={tipSystem.triggerFlyingCoin}
                                 onClose={tipSystem.closeTip}
-                                onPesto={() => handleSendTip("right", 10)}
+                                // onPesto={() => handleSendTip("right", 10)}
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
                                 onSendCustom={async (name, amount) => {
@@ -606,6 +606,7 @@ export default function MatchPointsSummarySection({
                                 positive={true}
                                 shareTitle={`Support ${left.playerName}`}
                                 matchId={matchId}
+                                matchSide="left"
                                 playerRef={userReferralNo}
                                 onClick={() => handleCardClick("left")}
                             />
@@ -629,6 +630,7 @@ export default function MatchPointsSummarySection({
                                 positive={false}
                                 shareTitle={`Support ${right.playerName}`}
                                 matchId={matchId}
+                                matchSide="right"
                                 playerRef={userReferralNo}
                                 onClick={() => handleCardClick("right")}
                             />

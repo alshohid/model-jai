@@ -19,7 +19,7 @@ interface TipPopoverProps {
     view: TipView;
     align?: "left" | "center" | "right";
     onClose: () => void;
-    onPesto: () => void;
+    onPesto?: () => void;
     onOpenCustom: () => void;
     onBackToMenu: () => void;
     onSendCustom: (name: string, amount: number) => void;
@@ -92,8 +92,8 @@ export default function TipPopover({
                     <div className="p-1 md:p-3 flex items-center gap-2">
                         <button
                             type="button"
-                            disabled={amount < 10 || isLoading}
-                            onClick={handlePesoClick}
+                            disabled={isLoading}
+                            onClick={onPesto}
                             className={cn(
                                 "h-7 px-3 rounded-full",
                                 "bg-white/10 hover:bg-white/15 transition",

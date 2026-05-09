@@ -20,6 +20,7 @@ type Props = {
     className?: string;
     positive: boolean;
     onClick: () => void;
+    matchSide?: "left" | "right";
 };
 
 export default function MatchPointsCard({
@@ -34,7 +35,8 @@ export default function MatchPointsCard({
     compact = true,
     className,
     positive,
-    onClick
+    onClick,
+    matchSide,
 }: Props) {
     const [shareSheetOpen, setShareSheetOpen] = useState(false);
     const [shareUrl, setShareUrl] = useState("");
@@ -80,7 +82,7 @@ export default function MatchPointsCard({
         >
             <div
                 onClick={onClick}
-                className="flex flex-col md:flex-row md:items-center gap-2 md:gap-5"
+                className={`flex flex-col md:flex-row ${matchSide === "right" ? 'md:flex-row-reverse' : 'md:flex-row'} md:items-center gap-2 md:gap-5`}
             >
                 {/* Logo */}
                 <div
