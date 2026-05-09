@@ -17,7 +17,7 @@ import WinnerSelectModal from "./WinnerSelectModal";
 import Link from "next/link";
 import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
 import MatchConfirmationModal from "./MatchConfirmationModal";
-import { Button } from "@/components/ui/button";
+
 
 export default function MatchManagement() {
     const [page, setPage] = useState(1);
@@ -64,6 +64,7 @@ export default function MatchManagement() {
         "Players Bet",
         "Player One Total Support",
         "Player Two Total Support",
+        "Remove/Restore",
         "Pin Status",
         "Confirm Match",
         "Winner",
@@ -183,8 +184,8 @@ export default function MatchManagement() {
                         disabled={isUpdating}
                         onClick={() => handlePinUnpin(item)}
                         className={`whitespace-nowrap rounded-md px-3 py-1 text-xs text-white disabled:cursor-not-allowed disabled:opacity-60 ${isPinned
-                                ? "bg-red-600 hover:bg-red-500"
-                                : "bg-purple-600 hover:bg-purple-500"
+                            ? "bg-red-600 hover:bg-red-500"
+                            : "bg-purple-600 hover:bg-purple-500"
                             }`}
                     >
                         {isUpdating ? "Updating..." : isPinned ? "Unpin" : "Set Pin"}
