@@ -7,6 +7,9 @@ import {
   IAuthRegisterParams,
   IAuthRegisterResponse,
   IGoogleRedirectData,
+  ILoginPayload,
+  IVerifyLoginOtpParams,
+  IVerifyLoginOtpPayload,
   IVerifyForgotPasswordParams,
   IUserInfoResponse,
 } from "@/types/user/auth";
@@ -101,6 +104,23 @@ const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    verifyLoginOtp: builder.mutation<
+      IVerifyLoginOtpPayload,
+      IVerifyLoginOtpParams
+    >({
+      query: (body) => ({
+        url: "/verify-login-otp",
+        method: "POST",
+        body,
+      }),
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          const { handleAuthSuccess } = await import("./authHelpers");
+          handleAuthSuccess(data as ILoginPayload, dispatch);
+        } catch {}
+      },
+    }),
     resetPassword: builder.mutation<ApiResponse<unknown>, IResetPasswordParams>(
       {
         query: (body) => ({
@@ -125,6 +145,7 @@ export const {
   useUnFollowArtistMutation,
   useForgotPasswordMutation,
   useVerifyForgotPasswordMutation,
+  useVerifyLoginOtpMutation,
   useResetPasswordMutation,
   useAppleLoginMutation,
 } = authApi;

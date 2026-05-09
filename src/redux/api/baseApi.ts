@@ -149,11 +149,7 @@ export const baseApi = createApi({
           const { handleAuthSuccess } =
             await import("../features/auth/authHelpers");
           handleAuthSuccess(data, dispatch);
-        } catch (error) {
-          toast.error(
-            getErrorMessage(error, "Login failed. Please try again."),
-          );
-        }
+        } catch {}
       },
     }),
   }),

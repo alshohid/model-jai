@@ -17,6 +17,9 @@ import { useForm } from "react-hook-form";
 import { useAppleLoginMutation, useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
 import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
 import { handleAfterLogin } from "@/lib/helper/loginHelper";
+import { resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
+import { clearLoginOtpSession, writeLoginOtpSession } from "@/shared/lib/auth/loginOtpFlow";
+import { toast } from "sonner";
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
@@ -45,16 +48,34 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
 
     const onSubmit = async (data: ILoginParams) => {
         try {
+            setErrorLogin("");
             const loginResult = await logIn({
                 email: data.email,
                 password: data.password,
-
             }).unwrap()
 
             if (loginResult.success) {
-                const role = loginResult?.data?.user?.role;
-                handleAfterLogin(role, redirect, router);
+                const flowResult = resolveLoginFlowResult(loginResult);
+
+                if (flowResult.kind === "authenticated") {
+                    clearLoginOtpSession();
+                    handleAfterLogin(flowResult.role, redirect, router);
+                    return;
+                }
+
+                if (flowResult.kind === "otp") {
+                    writeLoginOtpSession({
+                        email: flowResult.email,
+                        redirect,
+                        loginPath: "/login",
+                    });
+                    toast.success(loginResult.message || "OTP sent successfully");
+                    router.push("/login/verify");
+                    return;
+                }
             }
+
+            setErrorLogin("Unexpected login response. Please try again.");
 
         } catch (error: unknown) {
             setErrorLogin(getErrorMessage(error, "Login failed. Please try again."));

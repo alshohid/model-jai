@@ -4,17 +4,25 @@ import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import { LeftHeroPanel } from "@/shared/UI/reusable/auth/LeftHeroPanel";
 import { cn } from "@/shared/lib/utils/cn";
 
-type Step = 1 | 2 | 3;
+type FlowStep = {
+    id: number;
+    label: string;
+    hint: string;
+};
 
 type Props = {
-    step: Step;
+    step: number;
     eyebrow?: string;
     title?: string;
     description?: string;
+    steps?: FlowStep[];
+    heroEyebrow?: string;
+    heroTitle?: string;
+    heroDescription?: string;
     children: React.ReactNode;
 };
 
-const steps: { id: Step; label: string; hint: string }[] = [
+const defaultSteps: FlowStep[] = [
     { id: 1, label: "Email", hint: "Request access code" },
     { id: 2, label: "OTP", hint: "Verify ownership" },
     { id: 3, label: "Reset", hint: "Create a new password" },
@@ -25,8 +33,14 @@ export default function AuthRecoveryShell({
     eyebrow,
     title,
     description,
+    steps,
+    heroEyebrow = "Secure Recovery",
+    heroTitle = "Recover your account.",
+    heroDescription = "Verify email, confirm OTP, then set a new password.",
     children,
 }: Props) {
+    const flowSteps = steps ?? defaultSteps;
+
     return (
         <div className="min-h-screen bg-[#0B0D12] px-2.5 py-2.5 sm:px-4 sm:py-5">
             <div className="container overflow-hidden rounded-[18px] border border-white/10 bg-[#0B0D12] shadow-[0_30px_80px_rgba(0,0,0,0.55)] sm:rounded-[24px]">
@@ -36,13 +50,13 @@ export default function AuthRecoveryShell({
                         <div className="absolute inset-0 bg-gradient-to-br from-[#FF2EC8]/20 via-transparent to-[#24C3FF]/10" />
                         <div className="absolute inset-x-8 bottom-8 rounded-[24px] border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
                             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#24C3FF]">
-                                Secure Recovery
+                                {heroEyebrow}
                             </p>
                             <h2 className="mt-3 text-3xl font-semibold text-white">
-                                Recover your account.
+                                {heroTitle}
                             </h2>
                             <p className="mt-3 max-w-md text-sm leading-6 text-white/65">
-                                Verify email, confirm OTP, then set a new password.
+                                {heroDescription}
                             </p>
                         </div>
                     </div>
@@ -58,8 +72,13 @@ export default function AuthRecoveryShell({
 
                             <div className="mt-3 rounded-[18px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.04))] p-2 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:mt-5 sm:rounded-[22px] sm:p-3.5 lg:p-5">
                                 <div className="rounded-[16px] border border-white/8 bg-[#090B10]/85 p-3 sm:rounded-[18px] sm:p-4">
-                                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
-                                        {steps.map((item) => {
+                                    <div
+                                        className="grid gap-1.5 sm:gap-2.5"
+                                        style={{
+                                            gridTemplateColumns: `repeat(${flowSteps.length}, minmax(0, 1fr))`,
+                                        }}
+                                    >
+                                        {flowSteps.map((item) => {
                                             const isActive = item.id === step;
                                             const isComplete = item.id < step;
 

@@ -2,18 +2,15 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, RefreshCcw } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
+import { handleAfterLogin } from "@/lib/helper/loginHelper";
+import { useVerifyLoginOtpMutation } from "@/redux/features/auth/authapi";
 import {
-    useForgotPasswordMutation,
-    useVerifyForgotPasswordMutation,
-} from "@/redux/features/auth/authapi";
-import {
-    mergeForgotPasswordSession,
-    readForgotPasswordSession,
-    writeForgotPasswordSession,
-} from "@/shared/lib/auth/forgotPasswordFlow";
+    clearLoginOtpSession,
+    readLoginOtpSession,
+} from "@/shared/lib/auth/loginOtpFlow";
 import { maskEmail } from "@/shared/lib/auth/maskEmail";
 import AuthRecoveryShell from "./AuthRecoveryShell";
 import OtpCodeFieldGroup from "./OtpCodeFieldGroup";
@@ -21,13 +18,19 @@ import { useOtpInput } from "./useOtpInput";
 
 const OTP_LENGTH = 6;
 
-export default function ForgotPasswordOtpForm() {
+const loginSteps = [
+    { id: 1, label: "Login", hint: "Submit credentials" },
+    { id: 2, label: "OTP", hint: "Verify access code" },
+];
+
+export default function LoginOtpForm() {
     const router = useRouter();
-    const [verifyForgotPassword, { isLoading: isVerifying }] = useVerifyForgotPasswordMutation();
-    const [resendOtp, { isLoading: isResending }] = useForgotPasswordMutation();
-    const session = useMemo(() => readForgotPasswordSession(), []);
+    const [verifyLoginOtp, { isLoading: isVerifying }] =
+        useVerifyLoginOtpMutation();
+    const session = useMemo(() => readLoginOtpSession(), []);
     const email = session?.email ?? "";
-    const token = session?.token ?? "";
+    const redirect = session?.redirect;
+    const loginPath = session?.loginPath || "/login";
     const {
         otpDigits,
         otp,
@@ -35,14 +38,13 @@ export default function ForgotPasswordOtpForm() {
         updateDigit,
         handleKeyDown,
         handlePaste,
-        reset,
     } = useOtpInput(OTP_LENGTH);
 
     useEffect(() => {
-        if (!email || !token) {
-            router.replace("/forgot-password");
+        if (!email) {
+            router.replace(loginPath);
         }
-    }, [email, token, router]);
+    }, [email, loginPath, router]);
 
     const handleSubmit = async () => {
         if (otp.length !== OTP_LENGTH) {
@@ -51,36 +53,32 @@ export default function ForgotPasswordOtpForm() {
         }
 
         try {
-            const response = await verifyForgotPassword({ email, otp }).unwrap();
-            mergeForgotPasswordSession({ otp });
+            const response = await verifyLoginOtp({ email, otp }).unwrap();
+            clearLoginOtpSession();
             toast.success(response.message || "OTP verified successfully");
-            router.push("/forgot-password/reset");
+            handleAfterLogin(response?.data?.user?.role, redirect, router);
         } catch (error) {
             toast.error(getErrorMessage(error, "OTP verification failed"));
         }
     };
 
-    const handleResend = async () => {
-        try {
-            const response = await resendOtp({ email }).unwrap();
-            writeForgotPasswordSession({
-                email: response.data.email,
-                token: response.data.token,
-            });
-            reset();
-            inputRefs.current[0]?.focus();
-            toast.success(response.message || "OTP sent successfully");
-        } catch (error) {
-            toast.error(getErrorMessage(error, "Failed to resend OTP"));
-        }
+    const handleChangeEmail = () => {
+        clearLoginOtpSession();
+        router.push(loginPath);
     };
 
     return (
         <AuthRecoveryShell
             step={2}
-            eyebrow="OTP Verification"
+            steps={loginSteps}
+            eyebrow="Login Verification"
             title="Verify OTP"
-            description={email ? `Code sent to ${maskEmail(email)}` : "Enter your 6 digit code"}
+            description={
+                email ? `Code sent to ${maskEmail(email)}` : "Enter your 6 digit code"
+            }
+            heroEyebrow="Secure Login"
+            heroTitle="Confirm your sign in."
+            heroDescription="Enter the one-time password sent to your email to complete your login securely."
         >
             <div className="space-y-4 sm:space-y-5">
                 <div>
@@ -102,28 +100,22 @@ export default function ForgotPasswordOtpForm() {
                     disabled={isVerifying}
                     className="w-full rounded-[12px] bg-[#FF00C8] px-4 py-2.5 text-[13px] font-semibold tracking-wide text-white shadow-[0_10px_22px_rgba(0,0,0,0.35)] transition-transform duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:py-3 sm:text-[16px]"
                 >
-                    {isVerifying ? "Verifying..." : "Verify OTP"}
+                    {isVerifying ? "Verifying..." : "Verify & Continue"}
                 </button>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <button
                         type="button"
-                        onClick={() => router.push("/forgot-password")}
+                        onClick={handleChangeEmail}
                         className="inline-flex w-fit items-center gap-2 text-[12px] text-white/55 transition hover:text-white sm:text-sm"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         Change email
                     </button>
 
-                    <button
-                        type="button"
-                        onClick={handleResend}
-                        disabled={isResending}
-                        className="inline-flex w-fit items-center gap-2 text-[12px] text-[#24C3FF] transition hover:text-[#67d6ff] disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm"
-                    >
-                        <RefreshCcw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        {isResending ? "Resending..." : "Resend code"}
-                    </button>
+                    <p className="text-[12px] text-white/45 sm:text-sm">
+                        Need a new code? Go back and log in again.
+                    </p>
                 </div>
             </div>
         </AuthRecoveryShell>

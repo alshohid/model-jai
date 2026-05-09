@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ApiResponse } from "../common/api";
+
 export type IRefreshTokenPayload = {
   success: boolean;
   data?: {
@@ -17,6 +19,11 @@ export interface ILoginParams {
   password: string;
 }
 
+export interface IVerifyLoginOtpParams {
+  email: string;
+  otp: string;
+}
+
 export type IAuthUserRole = "user" | "super_admin" | "artist" | null;
 export const RoleUtils = {
   isAdmin: (role?: IAuthUserRole | null) => role === "super_admin",
@@ -32,24 +39,20 @@ export const RoleUtils = {
   },
 };
 
-export interface ILoginPayload {
-  success: boolean;
-  message: string;
-  type?: IAuthUserRole; // Legacy role location
-  data?: {
-    access_token?: string;
-    refresh_token?: string;
-    token_type?: string;
-    expires_in?: number;
-    user?: {
-      name?: string;
-      email?: string;
-      image?: string | null;
-      email_verified?: boolean;
-      role?: IAuthUserRole | string;
-    };
-  };
+export interface ILoginChallengeData {
+  email?: string;
 }
+
+export type IAuthSessionData = ILoginChallengeData & {
+  access_token?: string;
+  refresh_token?: string;
+  token_type?: string;
+  expires_in?: number;
+  user?: IUser;
+};
+
+export type ILoginPayload = ApiResponse<IAuthSessionData>;
+export type IVerifyLoginOtpPayload = ApiResponse<IAuthSessionData>;
 export interface IAuthUser {
   id: number;
   name: string;

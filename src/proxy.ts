@@ -96,6 +96,7 @@ export const config = {
     "/transactions",
     "/notifications",
     "/login",
+    "/login/verify",
     "/register",
     "/payment-success",
     "/payment-cancel",
