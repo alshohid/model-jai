@@ -15,12 +15,13 @@ type Props = {
     gameLogoSrc: string;
     leftPlayerImg: string;
     rightPlayerImg: string;
-    watchHref: string;
+    watchHref?: string;
     voteRequired?: boolean;
     className?: string;
-    versusImg: string;
     rules?: string | null;
     onWatch?: () => void;
+    tiktokLink: string;
+    twitchLink: string;
 };
 
 export default function MatchCard(props: Props) {
@@ -34,6 +35,8 @@ export default function MatchCard(props: Props) {
         rightPlayerImg,
         className = "",
         rules,
+        tiktokLink,
+        twitchLink,
         onWatch,
     } = props;
     const [rulesOpen, setRulesOpen] = useState(false);
@@ -156,7 +159,7 @@ export default function MatchCard(props: Props) {
                         </span>
                     </button>
 
-                    <SocialLinks className="mt-3 md:mt-4" />
+                    <SocialLinks className="mt-3 md:mt-4" tiktokLink={tiktokLink} twitchLink={twitchLink} />
                 </div>
             </article>
 

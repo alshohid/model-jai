@@ -4,11 +4,13 @@ import { cn } from "@/shared/lib/utils/cn";
 
 type Props = {
     className?: string;
+    tiktokLink: string;
+    twitchLink: string;
 };
 
-export const SocialLinks = ({ className }: Props) => (
+export const SocialLinks = ({ className, tiktokLink, twitchLink }: Props) => (
     <div className={cn("flex items-center justify-center gap-3", className)}>
-        <Link href="https://www.tiktok.com/">
+        {tiktokLink && <Link href={tiktokLink}>
             <span className="flex size-8 items-center justify-center rounded-[10px] bg-black shadow-[0_8px_18px_rgba(0,0,0,0.22)] ring-1 ring-white/10 sm:size-9">
                 <Image
                     src="/images/home/tiktok_1.png"
@@ -18,8 +20,8 @@ export const SocialLinks = ({ className }: Props) => (
                     className="h-[18px] w-[18px] object-contain"
                 />
             </span>
-        </Link>
-        <Link href="https://www.twitch.tv/">
+        </Link>}
+        {twitchLink && <Link href={twitchLink}>
             <span className="flex size-8 items-center justify-center rounded-[10px] bg-[#9146FF] shadow-[0_8px_18px_rgba(145,70,255,0.3)] ring-1 ring-white/10 sm:size-9">
                 <Image
                     src="/images/home/twitch.png"
@@ -29,6 +31,6 @@ export const SocialLinks = ({ className }: Props) => (
                     className="h-[18px] w-[18px] object-contain"
                 />
             </span>
-        </Link>
+        </Link>}
     </div>
 );

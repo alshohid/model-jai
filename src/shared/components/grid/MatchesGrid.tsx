@@ -64,9 +64,9 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
                     leftPlayerImg={match.player_one?.image_url || "/images/home/leftPlayerImg.png"}
                     rightPlayerImg={match.player_two?.image_url || "/images/home/rightPlayerImg.png"}
                     voteRequired={match.confirmation_status === 0}
-                    watchHref={match.tiktok_link || "#"}
                     rules={match.rules ?? null}
-                    versusImg="/images/home/versus.png"
+                    tiktokLink={match.tiktok_link ?? "#"}
+                    twitchLink={match.twitch_link ?? "#"}
                     onWatch={() => handleWatch(match.id!, match.platform || "tiktok")}
                 />
             ))}
