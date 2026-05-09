@@ -269,6 +269,13 @@ const MatchManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Match"],
     }),
+    removeViewMatch: builder.mutation<IMatchUpdateResponse, number>({
+      query: (id) => ({
+        url: `/admin/remove-view-match/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Match"],
+    }),
 
     viewSingleMatch: builder.query<IMatchSingleResponse, number>({
       query: (id) => ({
@@ -308,5 +315,6 @@ export const {
   useDeletePopularArtistVoteMutation,
   useGoVoteForPlayerMutation,
   usePinUnpinMatchMutation,
+  useRemoveViewMatchMutation,
 } = MatchManagementApi;
 export default MatchManagementApi;

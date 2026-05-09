@@ -9,6 +9,7 @@ import {
     useDeleteMatchMutation,
     useGetAllMatchesQuery,
     usePinUnpinMatchMutation,
+    useRemoveViewMatchMutation,
 } from "@/redux/features/match/matchManagement";
 import CreateMatchModal from "./CreateMatchModal";
 import ViewMatchModal from "./ViewMatchModal";
@@ -33,6 +34,7 @@ export default function MatchManagement() {
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [confirmMatchId, setConfirmMatchId] = useState<number | null>(null);
     const [pinLoadingId, setPinLoadingId] = useState<number | null>(null);
+    const [removeLoadingId, setRemoveLoadingId] = useState<number | null>(null);
 
     const { data, isLoading, refetch } = useGetAllMatchesQuery({
         page,
@@ -42,6 +44,7 @@ export default function MatchManagement() {
 
     const [deleteMatch] = useDeleteMatchMutation();
     const [pinUnpinMatch] = usePinUnpinMatchMutation();
+    const [removeViewMatch] = useRemoveViewMatchMutation();
 
     const matches: IMatch[] = data?.data ?? [];
 
@@ -122,6 +125,27 @@ export default function MatchManagement() {
         }
     };
 
+    const handleRemoveRestore = async (item: IMatch) => {
+        if (!item.id) return;
+
+        const isRemoved = Number(item.remove_status) === 1;
+        const confirmMessage = isRemoved
+            ? "Are you sure you want to restore this match?"
+            : "Are you sure you want to remove this match from view?";
+
+        if (!confirm(confirmMessage)) return;
+
+        try {
+            setRemoveLoadingId(item.id);
+            await removeViewMatch(item.id).unwrap();
+            await refetch();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setRemoveLoadingId(null);
+        }
+    };
+
     const tableRowDataRenderers: ((item: IMatch, index: number) => ReactNode)[] = [
         (item) => <span className="text-white">{item.match_no}</span>,
 
@@ -165,32 +189,41 @@ export default function MatchManagement() {
 
         (item) => <span className="text-white">{item.player_two_total}</span>,
 
-        // Pin / Unpin Column
+        (item) => {
+            const isRemoved = Number(item.remove_status) === 1;
+            const isUpdating = removeLoadingId === item.id;
+
+            return (
+                <button
+                    type="button"
+                    disabled={isUpdating}
+                    onClick={() => handleRemoveRestore(item)}
+                    className={`inline-flex min-w-[110px] items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60 ${isRemoved
+                        ? "bg-emerald-600 hover:bg-emerald-500"
+                        : "bg-amber-600 hover:bg-amber-500"
+                        }`}
+                >
+                    {isUpdating ? "Updating..." : isRemoved ? "Restore Match" : "Remove Match"}
+                </button>
+            );
+        },
+
         (item) => {
             const isPinned = Number(item.pin_to_top) === 1;
             const isUpdating = pinLoadingId === item.id;
 
             return (
-                <div className="flex items-center gap-2">
-                    <span
-                        className={`whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium text-white ${isPinned ? "bg-green-600" : "bg-slate-600"
-                            }`}
-                    >
-                        {isPinned ? "Pinned" : "Not Pinned"}
-                    </span>
-
-                    <button
-                        type="button"
-                        disabled={isUpdating}
-                        onClick={() => handlePinUnpin(item)}
-                        className={`whitespace-nowrap rounded-md px-3 py-1 text-xs text-white disabled:cursor-not-allowed disabled:opacity-60 ${isPinned
-                            ? "bg-red-600 hover:bg-red-500"
-                            : "bg-purple-600 hover:bg-purple-500"
-                            }`}
-                    >
-                        {isUpdating ? "Updating..." : isPinned ? "Unpin" : "Set Pin"}
-                    </button>
-                </div>
+                <button
+                    type="button"
+                    disabled={isUpdating}
+                    onClick={() => handlePinUnpin(item)}
+                    className={`inline-flex min-w-[110px] items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60 ${isPinned
+                        ? "bg-red-600 hover:bg-red-500"
+                        : "bg-purple-600 hover:bg-purple-500"
+                        }`}
+                >
+                    {isUpdating ? "Updating..." : isPinned ? "Unpin Match" : "Set Pin"}
+                </button>
             );
         },
 

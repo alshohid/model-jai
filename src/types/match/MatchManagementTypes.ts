@@ -55,6 +55,7 @@ export interface IMatch {
   match_no: string | number;
   platform?: string;
   status: MatchType;
+  remove_status?: 0 | 1;
 
   player_one_id?: number;
   player_two_id?: number;
