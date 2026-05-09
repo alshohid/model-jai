@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import { handleAfterLogin } from "@/lib/helper/loginHelper";
+import { useAuth } from "@/redux/features/auth/hooks";
+import { resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
 import { useVerifyLoginOtpMutation } from "@/redux/features/auth/authapi";
 import {
     clearLoginOtpSession,
     readLoginOtpSession,
+    writeLoginOtpSession,
 } from "@/shared/lib/auth/loginOtpFlow";
 import { maskEmail } from "@/shared/lib/auth/maskEmail";
 import OtpCodeFieldGroup from "./OtpCodeFieldGroup";
@@ -21,10 +24,13 @@ const OTP_LENGTH = 6;
 
 export default function LoginOtpForm() {
     const router = useRouter();
+    const { logIn, isLoading: isResending } = useAuth();
     const [verifyLoginOtp, { isLoading: isVerifying }] =
         useVerifyLoginOtpMutation();
-    const session = useMemo(() => readLoginOtpSession(), []);
+    const [session, setSession] = useState(() => readLoginOtpSession());
+    const [errorMessage, setErrorMessage] = useState("");
     const email = session?.email ?? "";
+    const password = session?.password ?? "";
     const redirect = session?.redirect;
     const loginPath = session?.loginPath || "/login";
     const {
@@ -34,6 +40,7 @@ export default function LoginOtpForm() {
         updateDigit,
         handleKeyDown,
         handlePaste,
+        reset,
     } = useOtpInput(OTP_LENGTH);
 
     useEffect(() => {
@@ -44,22 +51,72 @@ export default function LoginOtpForm() {
 
     const handleSubmit = async () => {
         if (otp.length !== OTP_LENGTH) {
+            setErrorMessage("Enter the 6 digit OTP");
             toast.error("Enter the 6 digit OTP");
             return;
         }
 
         try {
+            setErrorMessage("");
             const response = await verifyLoginOtp({ email, otp }).unwrap();
             clearLoginOtpSession();
+            setSession(null);
             toast.success(response.message || "OTP verified successfully");
             handleAfterLogin(response?.data?.user?.role, redirect, router);
         } catch (error) {
-            toast.error(getErrorMessage(error, "OTP verification failed"));
+            const message = getErrorMessage(error, "OTP verification failed");
+            setErrorMessage(message);
+            toast.error(message);
+        }
+    };
+
+    const handleResend = async () => {
+        if (!email || !password) {
+            clearLoginOtpSession();
+            setSession(null);
+            toast.error("Please log in again to request a new code");
+            router.replace(loginPath);
+            return;
+        }
+
+        try {
+            setErrorMessage("");
+            const response = await logIn({ email, password }).unwrap();
+            const flowResult = resolveLoginFlowResult(response);
+
+            if (flowResult.kind === "authenticated") {
+                clearLoginOtpSession();
+                setSession(null);
+                toast.success(response.message || "Logged in successfully");
+                handleAfterLogin(flowResult.role, redirect, router);
+                return;
+            }
+
+            if (flowResult.kind === "otp") {
+                const nextSession = {
+                    email: flowResult.email,
+                    password,
+                    redirect,
+                    loginPath,
+                };
+
+                writeLoginOtpSession(nextSession);
+                setSession(nextSession);
+                reset();
+                inputRefs.current[0]?.focus();
+                toast.success(response.message || "A new OTP has been sent");
+                return;
+            }
+
+            throw new Error("Unexpected login response. Please try again.");
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Failed to send a new code"));
         }
     };
 
     const handleChangeEmail = () => {
         clearLoginOtpSession();
+        setSession(null);
         router.push(loginPath);
     };
 
@@ -88,9 +145,19 @@ export default function LoginOtpForm() {
                     <OtpCodeFieldGroup
                         digits={otpDigits}
                         inputRefs={inputRefs}
-                        onDigitChange={updateDigit}
+                        onDigitChange={(index, value) => {
+                            if (errorMessage) {
+                                setErrorMessage("");
+                            }
+                            updateDigit(index, value);
+                        }}
                         onKeyDown={handleKeyDown}
-                        onPaste={handlePaste}
+                        onPaste={(event) => {
+                            if (errorMessage) {
+                                setErrorMessage("");
+                            }
+                            handlePaste(event);
+                        }}
                     />
                 </div>
 
@@ -101,7 +168,24 @@ export default function LoginOtpForm() {
                     variant="pink"
                 />
 
+                {errorMessage ? (
+                    <p className="flex items-start gap-2 text-[13px] leading-5 text-[#ff6c6c]">
+                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>{errorMessage}</span>
+                    </p>
+                ) : null}
+
                 <div className="flex flex-col gap-3 pt-1">
+                    <button
+                        type="button"
+                        onClick={handleResend}
+                        disabled={isResending || isVerifying}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-[14px] border border-[#a84ae6]/70 bg-[linear-gradient(180deg,rgba(168,74,230,0.08),rgba(168,74,230,0.03))] px-4 py-3 text-[14px] font-semibold text-[#d978ff] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition hover:border-[#cf6eff] hover:text-[#f09cff] disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                        <RefreshCcw className="h-4 w-4" />
+                        {isResending ? "Sending..." : "Send a new code"}
+                    </button>
+
                     <button
                         type="button"
                         onClick={handleChangeEmail}
@@ -112,7 +196,7 @@ export default function LoginOtpForm() {
                     </button>
 
                     <p className="text-[13px] text-white/45">
-                        Need a new code? Go back and log in again.
+                        Didn&apos;t receive the code? Request a fresh one or use a different email.
                     </p>
                 </div>
             </form>

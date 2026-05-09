@@ -66,6 +66,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                 if (flowResult.kind === "otp") {
                     writeLoginOtpSession({
                         email: flowResult.email,
+                        password: data.password,
                         redirect,
                         loginPath: "/login",
                     });

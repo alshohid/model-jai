@@ -53,6 +53,7 @@ export default function AdminLoginForm() {
                 if (flowResult.kind === "otp") {
                     writeLoginOtpSession({
                         email: flowResult.email,
+                        password: data.password,
                         redirect,
                         loginPath: "/admin",
                     });

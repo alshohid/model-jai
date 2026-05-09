@@ -4,6 +4,7 @@ const LOGIN_OTP_STORAGE_KEY = "login_otp_flow";
 
 export type LoginOtpSession = {
     email: string;
+    password?: string;
     redirect?: string | null;
     loginPath?: string;
 };
