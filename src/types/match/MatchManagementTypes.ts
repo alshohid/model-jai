@@ -160,7 +160,7 @@ export interface IMatchBasePayload {
 
   match_date: string;
   match_time: string;
-  voting_time: string;
+  voting_time?: string;
 
   winner_percentage: number;
   loser_percentage: number;

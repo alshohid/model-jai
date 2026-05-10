@@ -29,7 +29,9 @@ const buildMatchFormData = (payload: IMatchBasePayload) => {
   formData.append("type", payload.type);
   formData.append("match_date", payload.match_date);
   formData.append("match_time", payload.match_time);
-  formData.append("voting_time", payload.voting_time);
+  if (payload.voting_time?.trim()) {
+    formData.append("voting_time", payload.voting_time);
+  }
   formData.append("winner_percentage", String(payload.winner_percentage));
   formData.append("loser_percentage", String(payload.loser_percentage));
   formData.append("rules", payload.rules ?? "");

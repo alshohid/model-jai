@@ -151,6 +151,7 @@ export default function EditMatchModal({
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        const formattedVotingTime = formatVotingDateTimeForApi(form.voting_time);
 
         if (
             !matchId ||
@@ -159,10 +160,10 @@ export default function EditMatchModal({
             !form.player_two_id ||
             !form.players_bet_amount ||
             !form.match_date ||
-            !form.match_time ||
-            !form.voting_time
+            !form.match_time
+
         ) {
-            setError("Please fill in all required fields, including voting time.");
+            setError("Please fill in all required fields.");
             return;
         }
 
@@ -181,7 +182,7 @@ export default function EditMatchModal({
             return;
         }
 
-        if (isVotingDateTimeBeforeMin(form.voting_time)) {
+        if (form.voting_time && isVotingDateTimeBeforeMin(form.voting_time)) {
             setError("Voting date and time must be now or a future time.");
             return;
         }
@@ -202,7 +203,7 @@ export default function EditMatchModal({
                 players_bet_amount: Number(form.players_bet_amount),
                 match_date: form.match_date,
                 match_time: normalizeTimeValue(form.match_time),
-                voting_time: formatVotingDateTimeForApi(form.voting_time),
+                voting_time: formattedVotingTime || undefined,
                 type: "upcoming",
                 winner_percentage: Number(form.winner_percentage),
                 loser_percentage: Number(form.loser_percentage),
@@ -508,7 +509,7 @@ export default function EditMatchModal({
                             />
                         </Field>
 
-                        <Field label="Voting Date&Time" required>
+                        <Field label="Voting Date&Time" required={false}>
                             <div>
                                 <input
                                     type="datetime-local"
