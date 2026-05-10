@@ -12,10 +12,7 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import constants from "@/constant";
 import { logOut, setCredentials } from "../features/auth/authSlice";
-import {
-  ILoginParams,
-  ILoginPayload,
-} from "@/types/user/auth";
+import { ILoginParams, ILoginPayload } from "@/types/user/auth";
 import { requestTokenRefresh } from "@/shared/lib/auth/tokenRefresh";
 
 const baseQuery = fetchBaseQuery({
@@ -49,7 +46,6 @@ const baseQueryWithReauth: BaseQueryFn<
   if (result?.error?.status === 401) {
     const state = api.getState() as RootState;
 
-    // Only attempt refresh if user was logged in
     if (state.auth.token) {
       try {
         if (!isRefreshing) {
@@ -85,8 +81,11 @@ const baseQueryWithReauth: BaseQueryFn<
               (refreshResult.data as { data?: { access_token?: string } })?.data
                 ?.access_token ?? null;
             const refreshToken =
-              (refreshResult.data as { data?: { refresh_token?: string | null } })
-                ?.data?.refresh_token ?? null;
+              (
+                refreshResult.data as {
+                  data?: { refresh_token?: string | null };
+                }
+              )?.data?.refresh_token ?? null;
 
             if (!accessToken) {
               throw new Error("No access token in refresh response");
@@ -102,7 +101,6 @@ const baseQueryWithReauth: BaseQueryFn<
           } else {
             throw new Error("Refresh failed");
           }
-
         } else {
           await refreshPromise;
         }
@@ -111,9 +109,10 @@ const baseQueryWithReauth: BaseQueryFn<
         result = await baseQuery(args, api, extraOptions);
       } catch (error) {
         api.dispatch(logOut());
-        toast.error("Session expired — please log in again.", {
-          description: getErrorMessage(error),
-        });
+        // toast.error("Session expired — please log in again.", {
+        //   description: getErrorMessage(error),
+        // });
+        toast.error("Session expired — please log in again.");
       } finally {
         isRefreshing = false;
         refreshPromise = null;
