@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, RefreshCcw } from "lucide-react";
 import { toast } from "sonner";
@@ -29,6 +29,7 @@ export default function LoginOtpForm() {
         useVerifyLoginOtpMutation();
     const [session, setSession] = useState(() => readLoginOtpSession());
     const [errorMessage, setErrorMessage] = useState("");
+    const isCompletingLogin = useRef(false);
     const email = session?.email ?? "";
     const password = session?.password ?? "";
     const redirect = session?.redirect;
@@ -44,7 +45,7 @@ export default function LoginOtpForm() {
     } = useOtpInput(OTP_LENGTH);
 
     useEffect(() => {
-        if (!email) {
+        if (!email && !isCompletingLogin.current) {
             router.replace(loginPath);
         }
     }, [email, loginPath, router]);
@@ -59,6 +60,7 @@ export default function LoginOtpForm() {
         try {
             setErrorMessage("");
             const response = await verifyLoginOtp({ email, otp }).unwrap();
+            isCompletingLogin.current = true;
             clearLoginOtpSession();
             setSession(null);
             toast.success(response.message || "OTP verified successfully");
@@ -85,6 +87,7 @@ export default function LoginOtpForm() {
             const flowResult = resolveLoginFlowResult(response);
 
             if (flowResult.kind === "authenticated") {
+                isCompletingLogin.current = true;
                 clearLoginOtpSession();
                 setSession(null);
                 toast.success(response.message || "Logged in successfully");
@@ -115,6 +118,7 @@ export default function LoginOtpForm() {
     };
 
     const handleChangeEmail = () => {
+        isCompletingLogin.current = false;
         clearLoginOtpSession();
         setSession(null);
         router.push(loginPath);

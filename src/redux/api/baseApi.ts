@@ -15,8 +15,8 @@ import { logOut, setCredentials } from "../features/auth/authSlice";
 import {
   ILoginParams,
   ILoginPayload,
-  IRefreshTokenPayload,
 } from "@/types/user/auth";
+import { requestTokenRefresh } from "@/shared/lib/auth/tokenRefresh";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: constants.baseApiURL,
@@ -39,13 +39,6 @@ type RefreshResult = QueryReturnValue<
 let refreshPromise: Promise<RefreshResult> | null = null;
 let isRefreshing = false;
 
-const extractRefreshTokens = (payload: IRefreshTokenPayload) => {
-  const accessToken = payload?.data?.access_token ?? null;
-  const refreshToken = payload?.data?.access_token ?? null;
-
-  return { accessToken, refreshToken };
-};
-
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -63,26 +56,34 @@ const baseQueryWithReauth: BaseQueryFn<
           isRefreshing = true;
 
           const state = api.getState() as RootState;
-          const refreshToken = state.auth.refreshToken;
+          const refreshCredential = state.auth.refreshToken ?? state.auth.token;
 
-          refreshPromise = Promise.resolve(
-            baseQuery(
-              {
-                url: "/refresh",
-                method: "POST",
-                body: { access_token: refreshToken },
+          if (!refreshCredential) {
+            throw new Error("No token available for refresh");
+          }
+
+          refreshPromise = requestTokenRefresh(refreshCredential)
+            .then((tokens) => ({
+              data: {
+                data: {
+                  access_token: tokens.accessToken,
+                  refresh_token: tokens.refreshToken,
+                },
               },
-              api,
-              extraOptions,
-            ),
-          );
+            }))
+            .catch((error) => {
+              throw error;
+            }) as Promise<RefreshResult>;
 
           const refreshResult = await refreshPromise;
 
           if (refreshResult?.data) {
-            const { accessToken, refreshToken } = extractRefreshTokens(
-              refreshResult.data as IRefreshTokenPayload,
-            );
+            const accessToken =
+              (refreshResult.data as { data?: { access_token?: string } })?.data
+                ?.access_token ?? null;
+            const refreshToken =
+              (refreshResult.data as { data?: { refresh_token?: string | null } })
+                ?.data?.refresh_token ?? null;
 
             if (!accessToken) {
               throw new Error("No access token in refresh response");
@@ -99,7 +100,6 @@ const baseQueryWithReauth: BaseQueryFn<
             throw new Error("Refresh failed");
           }
 
-          isRefreshing = false;
         } else {
           await refreshPromise;
         }
@@ -107,11 +107,13 @@ const baseQueryWithReauth: BaseQueryFn<
         // Retry original request with new token
         result = await baseQuery(args, api, extraOptions);
       } catch (error) {
-        isRefreshing = false;
         api.dispatch(logOut());
         toast.error("Session expired — please log in again.", {
           description: getErrorMessage(error),
         });
+      } finally {
+        isRefreshing = false;
+        refreshPromise = null;
       }
     }
   }
