@@ -1,6 +1,7 @@
 import { baseApi } from "@/redux/api/baseApi";
 import { ApiResponse } from "@/types/common/api";
 import {
+  IChangeFavoriteGameParams,
   IForgotPasswordParams,
   IForgotPasswordResponseData,
   IResetPasswordParams,
@@ -36,6 +37,17 @@ const authApi = baseApi.injectEndpoints({
         url: "/profile/update",
         method: "POST",
         body: formData,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    changeFavoriteGame: builder.mutation<
+      ApiResponse<unknown>,
+      IChangeFavoriteGameParams
+    >({
+      query: (body) => ({
+        url: "/profile/change-fav-game",
+        method: "POST",
+        body,
       }),
       invalidatesTags: ["User"],
     }),
@@ -141,6 +153,7 @@ export const {
   useFacebookLoginMutation,
   useGetMeDataQuery,
   useEditProfileMutation,
+  useChangeFavoriteGameMutation,
   useFollowArtistMutation,
   useUnFollowArtistMutation,
   useForgotPasswordMutation,

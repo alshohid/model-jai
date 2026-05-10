@@ -3,6 +3,11 @@ export interface IGameCreateResponse {
   message: string;
   data: IGame;
 }
+export interface IGameOption {
+  id: number;
+  name: string;
+  image: string | null;
+}
 export interface IGame {
   id: number;
   name: string;

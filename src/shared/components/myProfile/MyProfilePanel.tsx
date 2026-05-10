@@ -22,8 +22,9 @@ type ProfileInfo = {
     followers: string | number;
     following: string | number;
     favoriteGame?: {
+        id?: number;
         name?: string;
-        image?: string;
+        image?: string | null;
     } | null;
 };
 
@@ -47,6 +48,7 @@ type Props = {
     walletActionMethod?: PaymentMethodId | null;
     walletActionMode?: "connect" | "disconnect" | null;
     onEditProfile?: () => void;
+    onChangeFavoriteGame?: () => void;
     onSendMoney?: () => void;
     onReferralLink?: () => void;
     onWithdrawRequest?: () => void;
@@ -65,6 +67,7 @@ export default function MyProfilePanel({
     walletActionMethod,
     walletActionMode,
     onEditProfile,
+    onChangeFavoriteGame,
     onSendMoney,
     onReferralLink,
     onWithdrawRequest,
@@ -74,6 +77,7 @@ export default function MyProfilePanel({
     className,
 }: Props) {
     const game = profile.favoriteGame;
+    const canChangeFavoriteGame = Boolean(onChangeFavoriteGame);
     const connectedPaymentMethods = paymentMethods.filter((item) => item.connected);
     const hasConnectedPaymentMethod = connectedPaymentMethods.length > 0;
 
@@ -126,9 +130,9 @@ export default function MyProfilePanel({
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
                     {/* INFO + ACTIONS */}
                     <div>
-                        <div className="flex justify-between items-start gap-4">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                             {/* Info rows */}
-                            <div className="space-y-2 py-3 md:py-8">
+                            <div className="min-w-0 space-y-2 py-3 md:py-8">
                                 <div className="flex items-center gap-2">
                                     <InfoRow label="Name" value={profile.name} />
                                     <BigBossIndicator isBigBoss={isBigBoss} size="sm" />
@@ -138,33 +142,69 @@ export default function MyProfilePanel({
                                 {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />}
                             </div>
 
-
-                            {game?.name ? (
-                                <div className="flex-shrink-0 flex flex-col items-center gap-1.5 py-3 md:py-8">
-                                    <p className="text-[10px] font-semibold uppercase tracking-widest text-white/40">
+                            {game?.name || canChangeFavoriteGame ? (
+                                <div className="w-full py-1 sm:w-auto sm:flex-shrink-0 sm:py-3 md:py-8">
+                                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-white/40 sm:text-center">
                                         Fav Game
                                     </p>
-                                    <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#FF2EC8]/30 shadow-[0_0_12px_rgba(255,46,200,0.2)]">
-                                        {game.image ? (
-                                            <Image
-                                                src={game.image}
-                                                alt={game.name}
-                                                fill
-                                                className="object-cover"
-                                                unoptimized
-                                            />
-                                        ) : (
-                                            /* Fallback — first letter of game name */
-                                            <div className="w-full h-full bg-[#FF2EC8]/10 flex items-center justify-center">
-                                                <span className="text-[#FF2EC8] font-black text-xl">
-                                                    {game.name.charAt(0).toUpperCase()}
+                                    {canChangeFavoriteGame ? (
+                                        <button
+                                            type="button"
+                                            onClick={onChangeFavoriteGame}
+                                            className="group flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-left transition hover:bg-white/5 sm:w-auto sm:flex-col sm:items-center sm:gap-1.5 sm:border-transparent sm:bg-transparent sm:p-2 sm:text-center"
+                                        >
+                                            <div className="relative h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden border border-[#FF2EC8]/30 shadow-[0_0_12px_rgba(255,46,200,0.2)]">
+                                                {game?.image ? (
+                                                    <Image
+                                                        src={game.image}
+                                                        alt={game.name ?? "Favorite game"}
+                                                        fill
+                                                        className="object-cover transition-transform duration-200 group-hover:scale-105"
+                                                        unoptimized
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full bg-[#FF2EC8]/10 flex items-center justify-center">
+                                                        <span className="text-[#FF2EC8] font-black text-sm uppercase">
+                                                            {game?.name
+                                                                ? game.name.charAt(0).toUpperCase()
+                                                                : "Pick"}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0 flex-1 sm:flex-none">
+                                                <p className="max-w-full truncate text-[12px] font-medium text-white/70 sm:max-w-[88px] sm:text-center sm:text-[11px]">
+                                                    {game?.name ?? "Choose Game"}
+                                                </p>
+                                                <span className="mt-1 inline-flex rounded-full border border-[#FF2EC8]/30 bg-[#FF2EC8]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#FF9BE9] transition group-hover:border-[#FF2EC8]/60 group-hover:bg-[#FF2EC8]/15">
+                                                    {game?.name ? "Change" : "Set Now"}
                                                 </span>
                                             </div>
-                                        )}
-                                    </div>
-                                    <p className="text-[11px] text-white/70 font-medium text-center max-w-[72px] truncate">
-                                        {game.name}
-                                    </p>
+                                        </button>
+                                    ) : (
+                                        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:flex-col sm:items-center sm:gap-1.5 sm:border-transparent sm:bg-transparent sm:p-0">
+                                            <div className="relative h-14 w-14 flex-shrink-0 rounded-xl overflow-hidden border border-[#FF2EC8]/30 shadow-[0_0_12px_rgba(255,46,200,0.2)]">
+                                                {game?.image ? (
+                                                    <Image
+                                                        src={game.image}
+                                                        alt={game.name ?? "Favorite game"}
+                                                        fill
+                                                        className="object-cover"
+                                                        unoptimized
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full bg-[#FF2EC8]/10 flex items-center justify-center">
+                                                        <span className="text-[#FF2EC8] font-black text-xl">
+                                                            {game?.name?.charAt(0).toUpperCase()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <p className="min-w-0 flex-1 truncate text-[12px] font-medium text-white/70 sm:max-w-[72px] sm:flex-none sm:text-center sm:text-[11px]">
+                                                {game?.name}
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             ) : null}
                         </div>

@@ -68,7 +68,7 @@ export default function MatchCard(props: Props) {
                     className
                 )}
             >
-                <div className="relative overflow-hidden rounded-[18px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(61,69,77,0.95),rgba(35,40,47,0.98)_74%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:rounded-[20px]">
+                <div className="relative overflow-hidden rounded-[18px] border border-white/10 md:rounded-[20px]">
                     <div className="relative aspect-[1.48/1]">
                         {rules && (
                             <button
@@ -104,7 +104,14 @@ export default function MatchCard(props: Props) {
                         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,12,0.02),rgba(8,10,12,0.1)_45%,rgba(8,10,12,0.3)_100%)]" />
 
                         <div className="absolute inset-y-0 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
-                            <Image src={versusImg} alt="versus" className="w-6 h-6 md:w-8 md:h-8" width={40} height={40} />
+                            <Image
+                                src={versusImg}
+                                alt="versus"
+                                width={56}
+                                height={101}
+                                unoptimized
+                                className="h-7 w-auto object-contain md:h-9"
+                            />
                         </div>
                     </div>
                 </div>

@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/api/baseApi";
+import { ApiResponse } from "@/types/common/api";
 import {
   IGameCreateParams,
   IGameCreateResponse,
   IGameListResponse,
+  IGameOption,
   IGameSingleResponse,
 } from "@/types/game/gameList/gameListTypes";
 
@@ -29,7 +31,7 @@ const GameListManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["GameList"],
     }),
-    getAllUnAuthUserGamesList: builder.query<any, void>({
+    getAllUnAuthUserGamesList: builder.query<ApiResponse<IGameOption[]>, void>({
       query: () => ({
         url: `/get_all_games`,
         method: "GET",

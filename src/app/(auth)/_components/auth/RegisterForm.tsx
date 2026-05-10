@@ -13,15 +13,9 @@ import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
+import { IGameOption } from "@/types/game/gameList/gameListTypes";
 import { IAuthRegisterParams } from "@/types/user/auth";
 import { ClipboardTypeIcon, Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon } from "lucide-react";
-
-
-interface SelectedGame {
-    id: number;
-    name: string;
-    image: string;
-}
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     const [registerUser, { isLoading }] = useRegisterUserMutation();
@@ -46,7 +40,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     const [appleLogin] = useAppleLoginMutation();
 
     const [gamePickerOpen, setGamePickerOpen] = useState(false);
-    const [selectedGame, setSelectedGame] = useState<SelectedGame | null>(null);
+    const [selectedGame, setSelectedGame] = useState<IGameOption | null>(null);
     const isSocialVerificationEnabled = useWatch({
         control,
         name: "social_verification_status",
@@ -266,7 +260,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                                     {/* Thumbnail */}
                                     <div className="w-7 h-7 rounded-md overflow-hidden flex-shrink-0 border border-white/10">
                                         <img
-                                            src={selectedGame.image}
+                                            src={selectedGame.image ?? "/images/home/gameLogo.png"}
                                             alt={selectedGame.name}
                                             className="w-full h-full object-cover"
                                         />
@@ -345,8 +339,6 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         </>
     );
 }
-
-
 
 
 

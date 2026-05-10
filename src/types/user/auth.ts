@@ -141,8 +141,13 @@ export interface IUserStats {
   total_balance: number;
   total_bet: string;
 }
+export interface IUserFavoriteGame {
+  id: number;
+  name: string;
+  image: string | null;
+}
 export interface IUser {
-  game: any;
+  game: IUserFavoriteGame | null;
   id: number;
   name: string;
   first_name?: string | null;
@@ -186,4 +191,8 @@ export interface IUpdateUserParams {
   phone_number?: string | null;
   nationality?: string | null;
   image?: File | string | null | undefined;
+}
+
+export interface IChangeFavoriteGameParams {
+  game_id: number;
 }

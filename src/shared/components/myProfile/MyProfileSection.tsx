@@ -1,5 +1,6 @@
 "use client"
 import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
+import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import MyProfilePanel from "./MyProfilePanel"
 import { useEffect, useMemo, useState } from "react";
 import SendMoneyDialog from "@/app/(auth)/_components/myProfile/SendMoneyDialog";
@@ -10,9 +11,10 @@ import {
     useDisconnectPaymentMethodMutation,
     useWithdrawRequestMutation,
 } from "@/redux/features/pointstore/buypoint";
+import { useChangeFavoriteGameMutation, useEditProfileMutation, useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { toast } from "sonner";
-import { useEditProfileMutation, useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import ProfileSkeleton from "./ProfileSkeleton";
+import { IGameOption } from "@/types/game/gameList/gameListTypes";
 import { IUserStats } from "@/types/user/auth";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { getFullName } from "@/shared/lib/utils/name";
@@ -31,6 +33,8 @@ const MyProfileSection = () => {
     const [referralLinkOpen, setReferralLinkOpen] = useState(false);
     const [referralShareUrl, setReferralShareUrl] = useState("");
     const [connectWalletOpen, setConnectWalletOpen] = useState(false);
+    const [favoriteGamePickerOpen, setFavoriteGamePickerOpen] = useState(false);
+    const [pendingFavoriteGame, setPendingFavoriteGame] = useState<IGameOption | null>(null);
     const [connectWalletMethod, setConnectWalletMethod] = useState<PaymentMethodConfig | null>(null);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethodId | null>(null);
     const [walletActionMethod, setWalletActionMethod] = useState<PaymentMethodId | null>(null);
@@ -39,12 +43,24 @@ const MyProfileSection = () => {
     const [connectPaymentMethod, { isLoading: isConnectPaymentMethodLoading }] = useConnectPaymentMethodMutation()
     const [disconnectPaymentMethod] = useDisconnectPaymentMethodMutation()
     const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
+    const [changeFavoriteGame, { isLoading: isChangeFavoriteGameLoading }] = useChangeFavoriteGameMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
     const searchParams = useSearchParams();
     const user = meData?.data?.user;
     const userFullName = getFullName(user);
     const fallbackAvatar = "/images/home/pro_1.jpg";
     const paymentQueryWallet = searchParams.get("wallet");
+    const currentFavoriteGame = useMemo<IGameOption | null>(
+        () =>
+            user?.game
+                ? {
+                    id: user.game.id,
+                    name: user.game.name,
+                    image: user.game.image ?? null,
+                }
+                : null,
+        [user?.game]
+    );
 
     const {
         allMethods: paymentMethods,
@@ -211,6 +227,41 @@ const MyProfileSection = () => {
         [connectedMethods]
     );
 
+    const openFavoriteGamePicker = () => {
+        setPendingFavoriteGame(currentFavoriteGame);
+        setFavoriteGamePickerOpen(true);
+    };
+
+    const closeFavoriteGamePicker = () => {
+        setFavoriteGamePickerOpen(false);
+        setPendingFavoriteGame(currentFavoriteGame);
+    };
+
+    const handleFavoriteGameSave = async () => {
+        if (!pendingFavoriteGame?.id) {
+            toast.error("Please select a game first");
+            return;
+        }
+
+        try {
+            const response = await changeFavoriteGame({
+                game_id: pendingFavoriteGame.id,
+            }).unwrap();
+
+            if (response?.success) {
+                toast.success(
+                    response.message || `${pendingFavoriteGame.name} set as your favorite game`
+                );
+                closeFavoriteGamePicker();
+                return;
+            }
+
+            toast.error(response?.message || "Failed to update favorite game");
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Failed to update favorite game"));
+        }
+    };
+
     return (
         <div className="container py-5 md:py-10">
             {
@@ -229,6 +280,7 @@ const MyProfileSection = () => {
                             following: String(user?.following_count ?? 0),
                             favoriteGame: user?.game
                                 ? {
+                                    id: user.game.id,
                                     name: user.game.name,
                                     image: user.game.image ?? null,
                                 }
@@ -262,6 +314,7 @@ const MyProfileSection = () => {
                         walletActionMethod={walletActionMethod}
                         walletActionMode={walletActionMode}
                         onEditProfile={() => setOpenEdit(true)}
+                        onChangeFavoriteGame={openFavoriteGamePicker}
                         onSendMoney={() => setSendMoneyOpen(true)}
                         onReferralLink={openReferralSheet}
                         onWithdrawRequest={() => {
@@ -278,6 +331,40 @@ const MyProfileSection = () => {
                     />
                 )
             }
+
+            <GamePickerModal
+                open={favoriteGamePickerOpen}
+                onClose={closeFavoriteGamePicker}
+                onSelect={setPendingFavoriteGame}
+                selectedId={pendingFavoriteGame?.id ?? currentFavoriteGame?.id}
+                title={currentFavoriteGame ? "Change Favorite Game" : "Choose Your Favorite Game"}
+                helperText="Select a game and save it to update your profile."
+                closeOnSelect={false}
+                footer={
+                    <div className="mt-4 flex gap-3">
+                        <button
+                            type="button"
+                            onClick={closeFavoriteGamePicker}
+                            className="flex-1 rounded-[12px] border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => void handleFavoriteGameSave()}
+                            disabled={
+                                !pendingFavoriteGame?.id ||
+                                isChangeFavoriteGameLoading ||
+                                pendingFavoriteGame.id === currentFavoriteGame?.id
+                            }
+                            className="flex-1 rounded-[12px] bg-[#FF2EC8] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#ff4ad1] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {isChangeFavoriteGameLoading ? "Saving..." : "Save Favorite"}
+                        </button>
+                    </div>
+                }
+            />
+
             <EditProfileDialog
                 open={openEdit}
                 onOpenChange={setOpenEdit}

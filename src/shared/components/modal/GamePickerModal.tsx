@@ -1,22 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { useGetAllUnAuthUserGamesListQuery } from "@/redux/features/game/gameListManagement";
-
-
-interface Game {
-    id: number;
-    name: string;
-    image: string;
-}
+import { IGameOption } from "@/types/game/gameList/gameListTypes";
 
 interface GamePickerModalProps {
     open: boolean;
     onClose: () => void;
-    onSelect: (game: Game) => void;
+    onSelect: (game: IGameOption) => void;
     selectedId?: number | null;
+    title?: string;
+    helperText?: string;
+    closeOnSelect?: boolean;
+    footer?: ReactNode;
 }
 
 export default function GamePickerModal({
@@ -24,14 +22,26 @@ export default function GamePickerModal({
     onClose,
     onSelect,
     selectedId,
+    title = "Choose Your Favorite Game",
+    helperText = "Tap a game to select it as your favorite",
+    closeOnSelect = true,
+    footer,
 }: GamePickerModalProps) {
     const { data, isLoading } = useGetAllUnAuthUserGamesListQuery(undefined);
     const [hoveredId, setHoveredId] = useState<number | null>(null);
 
-    const games: Game[] = data?.data ?? [];
+    const games: IGameOption[] = data?.data ?? [];
 
     return (
-        <AppDialog open={open} onOpenChange={onClose} title="Choose Your Favorite Game">
+        <AppDialog
+            open={open}
+            onOpenChange={(nextOpen) => {
+                if (!nextOpen) {
+                    onClose();
+                }
+            }}
+            title={title}
+        >
             <div className="py-3">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-12">
@@ -59,7 +69,9 @@ export default function GamePickerModal({
                                     type="button"
                                     onClick={() => {
                                         onSelect(game);
-                                        onClose();
+                                        if (closeOnSelect) {
+                                            onClose();
+                                        }
                                     }}
                                     onMouseEnter={() => setHoveredId(game.id)}
                                     onMouseLeave={() => setHoveredId(null)}
@@ -75,7 +87,7 @@ export default function GamePickerModal({
                                     {/* Game Image */}
                                     <div className="relative w-full aspect-square overflow-hidden bg-white/5">
                                         <img
-                                            src={game.image}
+                                            src={game.image ?? "/images/home/gameLogo.png"}
                                             alt={game.name}
                                             className={`
                                                 w-full h-full object-contain transition-transform duration-300
@@ -124,9 +136,13 @@ export default function GamePickerModal({
                     </div>
                 )}
 
-                <p className="mt-4 text-center text-[11px] text-white/30">
-                    Tap a game to select it as your favorite
-                </p>
+                {helperText ? (
+                    <p className="mt-4 text-center text-[11px] text-white/30">
+                        {helperText}
+                    </p>
+                ) : null}
+
+                {footer}
             </div>
 
             <style jsx>{`
