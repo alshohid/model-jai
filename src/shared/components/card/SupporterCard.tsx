@@ -29,12 +29,17 @@ export default function SupporterCard({
                 )}
             >
                 <div className="rounded-[16px] bg-[#FFFFFF0D] p-3">
-                    <div className={cn("relative w-full aspect-square rounded-[12px] overflow-hidden", imageClassName)}>
+                    <div
+                        className={cn(
+                            "relative flex w-full aspect-square items-center justify-center overflow-hidden rounded-[12px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0.04)_45%,rgba(0,0,0,0.12)_100%)]",
+                            imageClassName
+                        )}
+                    >
                         <Image
                             src={imageSrc}
                             alt={imageAlt}
                             fill
-                            className="object-cover"
+                            className="object-contain object-center p-2"
                             sizes="(max-width: 768px) 100vw, 434px"
                             priority={false}
                         />
