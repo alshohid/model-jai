@@ -82,7 +82,7 @@ export default function VideoCarousel({
                         {items.map((item, idx) => (
                             <CarouselItem
                                 key={item.id}
-                                className="basis-[280px] p-0 sm:basis-[340px] md:basis-[400px] lg:basis-[440px] xl:basis-[480px]"
+                                className="basis-[315px] p-0 sm:basis-[315px] md:basis-[400px] lg:basis-[440px] xl:basis-[480px]"
                             >
                                 <button
                                     type="button"
