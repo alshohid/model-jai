@@ -18,8 +18,10 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
     const [firstName, setFirstName] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [artistName, setArtistName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [city, setCity] = useState("");
     const [state, setState] = useState("");
     const [zipCode, setZipCode] = useState("");
     const [address, setAddress] = useState("");
@@ -29,8 +31,10 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
         setFirstName("");
         setMiddleName("");
         setLastName("");
+        setArtistName("");
         setEmail("");
         setPassword("");
+        setCity("");
         setState("");
         setZipCode("");
         setAddress("");
@@ -58,9 +62,11 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
                 first_name: firstName.trim(),
                 middle_name: normalizeOptionalText(middleName),
                 last_name: lastName.trim(),
+                artist_name: normalizeOptionalText(artistName),
                 name: fullName,
                 email: email.trim(),
                 password,
+                city: normalizeOptionalText(city),
                 state: normalizeOptionalText(state),
                 zip_code: normalizeOptionalText(zipCode),
                 address: normalizeOptionalText(address),
@@ -132,6 +138,20 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
                     />
                 </div>
 
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Artist Name (optional)</label>
+                    <input
+                        value={artistName}
+                        onChange={(e) => setArtistName(e.target.value)}
+                        placeholder="Enter artist name"
+                        className={cn(
+                            "w-full rounded-lg bg-white/5 border border-white/10",
+                            "px-4 py-3 text-white",
+                            "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        )}
+                    />
+                </div>
+
                 {/* Email */}
                 <div className="space-y-2">
                     <label className="text-sm text-white/80">Email</label>
@@ -168,6 +188,16 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="space-y-2">
+                        <label className="text-sm text-white/80">City (optional)</label>
+                        <input
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            placeholder="Enter city"
+                            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
                         <label className="text-sm text-white/80">State (optional)</label>
                         <input
                             value={state}
@@ -176,16 +206,16 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
                             className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
                         />
                     </div>
+                </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm text-white/80">Zip Code (optional)</label>
-                        <input
-                            value={zipCode}
-                            onChange={(e) => setZipCode(e.target.value)}
-                            placeholder="Enter zip code"
-                            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                        />
-                    </div>
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Zip Code (optional)</label>
+                    <input
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        placeholder="Enter zip code"
+                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                    />
                 </div>
 
                 {/* Role */}

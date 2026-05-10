@@ -70,9 +70,11 @@ export interface IUserCreateParams {
   first_name: string;
   middle_name?: string | null;
   last_name: string;
+  artist_name?: string | null;
   name: string;
   email: string;
   password: string;
+  city?: string | null;
   state?: string | null;
   zip_code?: string | null;
   address?: string | null;
