@@ -62,7 +62,10 @@ const baseQueryWithReauth: BaseQueryFn<
             throw new Error("No token available for refresh");
           }
 
-          refreshPromise = requestTokenRefresh(refreshCredential)
+          refreshPromise = requestTokenRefresh(refreshCredential, {
+            source: "401-fallback",
+            reason: "api-401",
+          })
             .then((tokens) => ({
               data: {
                 data: {

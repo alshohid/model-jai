@@ -13,7 +13,11 @@ import {
 } from "./authSlice";
 import { IAuthUserRole } from "@/types/user/auth";
 import { RootState } from "@/redux/store";
-import { requestTokenRefresh, getTokenExpiryTime } from "@/shared/lib/auth/tokenRefresh";
+import {
+    getTokenExpiryTime,
+    logTokenRefreshDebug,
+    requestTokenRefresh,
+} from "@/shared/lib/auth/tokenRefresh";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import { baseApi } from "@/redux/api/baseApi";
@@ -123,15 +127,24 @@ function useSilentTokenRefresh() {
 
         const scheduleRetry = () => {
             clearRefreshTimer();
+            logTokenRefreshDebug("retry-scheduled", {
+                source: "proactive",
+                retryInMs: REFRESH_RETRY_MS,
+            });
             timeoutId = setTimeout(() => {
-                void refreshSession();
+                void refreshSession("retry");
             }, REFRESH_RETRY_MS);
         };
 
-        const refreshSession = async () => {
+        const refreshSession = async (
+            reason: "scheduled" | "retry" | "focus-visible" = "scheduled"
+        ) => {
             try {
                 const { accessToken, refreshToken: nextRefreshToken } =
-                    await requestTokenRefresh(refreshToken ?? token);
+                    await requestTokenRefresh(refreshToken ?? token, {
+                        source: "proactive",
+                        reason,
+                    });
 
                 if (isCancelled) {
                     return;
@@ -170,13 +183,19 @@ function useSilentTokenRefresh() {
             const refreshDelay = expiryTime - Date.now() - REFRESH_BUFFER_MS;
 
             if (refreshDelay <= 0) {
-                void refreshSession();
+                void refreshSession("scheduled");
                 return;
             }
 
             clearRefreshTimer();
+            logTokenRefreshDebug("scheduled", {
+                source: "proactive",
+                refreshInMs: refreshDelay,
+                expiresAt: expiryTime,
+                bufferMs: REFRESH_BUFFER_MS,
+            });
             timeoutId = setTimeout(() => {
-                void refreshSession();
+                void refreshSession("scheduled");
             }, refreshDelay);
         };
 
@@ -192,8 +211,15 @@ function useSilentTokenRefresh() {
             }
 
             if (expiryTime - Date.now() <= REFRESH_BUFFER_MS) {
-                void refreshSession();
+                void refreshSession("focus-visible");
+                return;
             }
+
+            logTokenRefreshDebug("skip", {
+                source: "proactive",
+                reason: "focus-visible",
+                remainingMs: expiryTime - Date.now(),
+            });
         };
 
         scheduleRefresh();
