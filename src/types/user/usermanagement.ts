@@ -17,7 +17,7 @@ export interface User {
   middle_name?: string | null;
   last_name?: string | null;
   email: string;
-  image?: string;
+  image?: string | null;
   provider?: string;
   verifiedAt: boolean;
   role: "user" | "artist" | "super_admin";
@@ -25,16 +25,18 @@ export interface User {
   createdAt: string;
   suspended_until: string | null;
   is_permanent_suspended: boolean;
-  phone_number?: string;
-  nationality?: string;
-  social_verification_status?: boolean | null;
+  phone_number?: string | null;
+  nationality?: string | null;
+  social_verification_status?: boolean | number | null;
   followers_count?: number;
   following_count?: number;
   total_post?: number;
-  state?: string;
-  zip_code?: string;
-  address?: string;
+  city?: string | null;
+  state?: string | null;
+  zip_code?: string | null;
+  address?: string | null;
   isVerified?: boolean;
+  artist_name?: string | null;
 }
 
 export interface PaginationMeta {

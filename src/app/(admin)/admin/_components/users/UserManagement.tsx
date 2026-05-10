@@ -23,6 +23,7 @@ import { useDebounce } from "../../hook/useDebounce";
 import { FiSearch } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import TotalUserCard from "./TotalUserCard";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 
 export type RankRowItem = {
@@ -39,13 +40,13 @@ export type RankRowItem = {
     suspended_until: string | null;
     is_permanent_suspended: boolean;
     status?: string;
-    image?: string;
-    favGameImg?: string;
+    image?: string | null;
+    favGameImg?: string | null;
     favGameName?: string;
     state?: string | null;
     zip_code?: string | null;
     address?: string | null;
-    isVerified?: boolean | null;
+    isVerified?: boolean | number | null;
     meta?: {
         page: number;
         limit: number;
@@ -178,7 +179,7 @@ export default function UserManagement() {
             return (
                 <div>
                     <img
-                        src={item.image || "/images/home/avatar_1.png"}
+                        src={getSafeImageSrc(item.image, "/images/home/avatar_1.png")}
                         alt="user"
                         width={100}
                         height={100}
@@ -395,7 +396,7 @@ export default function UserManagement() {
                 }}
                 userName={selectedUser?.user_name || ""}
                 userId={selectedUser?.id || 0}
-                userImage={(selectedUser?.image) || "/images/home/avatar_1.png"}
+                userImage={getSafeImageSrc(selectedUser?.image, "/images/home/avatar_1.png")}
                 status={selectedUser?.status || ""}
             />
 
@@ -408,7 +409,7 @@ export default function UserManagement() {
                 }}
                 userName={selectedUser?.user_name || ""}
                 userId={selectedUser?.id || 0}
-                userImage={(selectedUser?.image) || "/images/home/avatar_1.png"}
+                userImage={getSafeImageSrc(selectedUser?.image, "/images/home/avatar_1.png")}
                 status={selectedUser?.status || ""}
             />
             <ViewUserModal

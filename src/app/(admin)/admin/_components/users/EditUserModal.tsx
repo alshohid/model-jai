@@ -27,6 +27,7 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
     const { data } = useViewSingleUserQuery(userId!, { skip: !userId });
     const { data: gamesResponse } = useGetAllGamesQuery();
     const [updateUser, { isLoading }] = useUpdateUserMutation();
+    const avatarFallback = "/images/home/avatar_1.png";
 
     const user: User | undefined = data?.data;
     const games: IGame[] = gamesResponse?.data ?? [];
@@ -34,6 +35,11 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
     const [firstName, setFirstName] = useState("");
     const [middleName, setMiddleName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [artistName, setArtistName] = useState("");
+    const [address, setAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [state, setState] = useState("");
+    const [zipCode, setZipCode] = useState("");
     const [role, setRole] = useState<"user" | "artist">("user");
     const [gameId, setGameId] = useState("");
     const [socialVerificationStatus, setSocialVerificationStatus] = useState(false);
@@ -46,6 +52,11 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
             setFirstName(user.first_name ?? "");
             setMiddleName(user.middle_name ?? "");
             setLastName(user.last_name ?? "");
+            setArtistName(user.artist_name ?? "");
+            setAddress(user.address ?? "");
+            setCity(user.city ?? "");
+            setState(user.state ?? "");
+            setZipCode(user.zip_code ?? "");
             setRole(user.role === "artist" ? "artist" : "user");
             setGameId(
                 user.game_id != null
@@ -55,7 +66,7 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                         : ""
             );
             setSocialVerificationStatus(Boolean(user.social_verification_status));
-            setImagePreview(getSafeImageSrc(user.image));
+            setImagePreview(getSafeImageSrc(user.image, avatarFallback));
             setImageFile(null);
         }
     }, [user]);
@@ -77,6 +88,11 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
             formData.append("first_name", firstName);
             formData.append("middle_name", middleName);
             formData.append("last_name", lastName);
+            formData.append("artist_name", artistName);
+            formData.append("address", address.trim());
+            formData.append("city", city.trim());
+            formData.append("state", state.trim());
+            formData.append("zip_code", zipCode.trim());
             formData.append("role", role);
             formData.append("game_id", gameId);
             formData.append(
@@ -117,11 +133,11 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                 <div className="flex items-center gap-4">
                     <div className="relative">
                         <img
-                            src={imagePreview || (user?.image) || "/images/home/avatar_1.png"}
+                            src={imagePreview || getSafeImageSrc(user?.image, avatarFallback)}
                             alt="user"
                             className="rounded-full object-cover border border-white/20 w-16 h-16"
                             onError={(e) => {
-                                e.currentTarget.src = "/images/home/avatar_1.png";
+                                e.currentTarget.src = avatarFallback;
                             }}
                             crossOrigin="anonymous"
                         />
@@ -175,6 +191,77 @@ export default function EditUserModal({ open, onClose, userId }: Props) {
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Enter last name"
+                        className={cn(
+                            "w-full rounded-lg bg-white/5 border border-white/10",
+                            "px-4 py-3 text-white",
+                            "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        )}
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Artist Name</label>
+                    <input
+                        value={artistName}
+                        onChange={(e) => setArtistName(e.target.value)}
+                        placeholder="Enter artist name"
+                        className={cn(
+                            "w-full rounded-lg bg-white/5 border border-white/10",
+                            "px-4 py-3 text-white",
+                            "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        )}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Address</label>
+                    <input
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Enter address"
+                        className={cn(
+                            "w-full rounded-lg bg-white/5 border border-white/10",
+                            "px-4 py-3 text-white",
+                            "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        )}
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">City</label>
+                        <input
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            placeholder="Enter city"
+                            className={cn(
+                                "w-full rounded-lg bg-white/5 border border-white/10",
+                                "px-4 py-3 text-white",
+                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            )}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm text-white/80">State</label>
+                        <input
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
+                            placeholder="Enter state"
+                            className={cn(
+                                "w-full rounded-lg bg-white/5 border border-white/10",
+                                "px-4 py-3 text-white",
+                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            )}
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm text-white/80">Zip Code</label>
+                    <input
+                        value={zipCode}
+                        onChange={(e) => setZipCode(e.target.value)}
+                        placeholder="Enter zip code"
                         className={cn(
                             "w-full rounded-lg bg-white/5 border border-white/10",
                             "px-4 py-3 text-white",
