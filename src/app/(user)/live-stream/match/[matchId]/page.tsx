@@ -112,7 +112,7 @@ export default function MatchDetails({
         };
     }, []);
 
-
+    console.log("twitch channel name === ", twitchChannel);
     return (
         <div className="min-h-screen">
             <PublicNavbar />

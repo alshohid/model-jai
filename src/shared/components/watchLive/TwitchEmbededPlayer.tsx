@@ -4,26 +4,26 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
-declare global {
-    interface Window {
-        Twitch?: {
-            Player: new (
-                elementId: string,
-                options: {
-                    channel?: string;
-                    parent: string[];
-                    width?: string | number;
-                    height?: string | number;
-                    autoplay?: boolean;
-                    muted?: boolean;
-                }
-            ) => {
-                destroy?: () => void;
-                setMuted?: (muted: boolean) => void;
-            };
-        };
-    }
-}
+type TwitchPlayerOptions = {
+    channel?: string;
+    parent: string[];
+    width?: string | number;
+    height?: string | number;
+    autoplay?: boolean;
+    muted?: boolean;
+};
+
+type TwitchPlayerInstance = {
+    destroy?: () => void;
+    setMuted?: (muted: boolean) => void;
+};
+
+type TwitchPlayerApi = {
+    Player: new (
+        elementId: string,
+        options: TwitchPlayerOptions
+    ) => TwitchPlayerInstance;
+};
 
 type Props = {
     channel: string;
@@ -41,15 +41,14 @@ export default function TwitchEmbedPlayer({
     const containerIdRef = useRef(
         `twitch-embed-${Math.random().toString(36).slice(2)}`
     );
-    const playerRef = useRef<{
-        destroy?: () => void;
-        setMuted?: (muted: boolean) => void;
-    } | null>(null);
+    const playerRef = useRef<TwitchPlayerInstance | null>(null);
 
     const [scriptLoaded, setScriptLoaded] = useState(false);
 
     useEffect(() => {
-        if (!scriptLoaded || !window.Twitch?.Player || !channel) return;
+        const twitchApi = (window as Window & { Twitch?: TwitchPlayerApi }).Twitch;
+
+        if (!scriptLoaded || !twitchApi?.Player || !channel) return;
 
         const parentHost =
             typeof window !== "undefined" ? window.location.hostname : "localhost";
@@ -59,7 +58,7 @@ export default function TwitchEmbedPlayer({
             playerRef.current = null;
         }
 
-        playerRef.current = new window.Twitch.Player(containerIdRef.current, {
+        playerRef.current = new twitchApi.Player(containerIdRef.current, {
             channel,
             parent: [parentHost],
             width: "100%",
