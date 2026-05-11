@@ -1,22 +1,45 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import { useMemo } from "react";
 import { useGetBigBossSupporterRankingAllDataQuery } from "@/redux/features/support/supportManagement";
 import Skeleton from "@/shared/UI/Skeleton";
 import SupporterCard from "@/shared/components/card/SupporterCard";
 import RankPointReusableTable from "@/shared/components/rankPointTable/RankPointReusableTable";
-import { ITopSupporterItem } from "@/types/match/MatchManagementTypes";
+import {
+    FALLBACK_SUPPORTER_IMAGE,
+    FALLBACK_SUPPORTER_NAME,
+    normalizeSupporterRankingRows,
+    SupporterRankingInput,
+    SupporterRankingRow,
+} from "@/shared/lib/ranking/supporterRanking";
 import Image from "next/image";
+
 export type Props = {
-    data?: ITopSupporterItem[];
+    data?: SupporterRankingInput[] | null;
+    rows?: SupporterRankingRow[] | null;
     isLoading?: boolean;
-}
-const RankingSection = ({ data: propData, isLoading: propLoading }: Props) => {
-    const shouldUseApi = !propData;
+};
 
-    const { data: apiData, isLoading: apiLoading } = useGetBigBossSupporterRankingAllDataQuery(undefined, { skip: !shouldUseApi });
+const RankingSection = ({
+    data: propData,
+    rows: propRows,
+    isLoading: propLoading,
+}: Props) => {
+    const shouldUseApi = !propData && !propRows;
 
-    const finalData = propData ?? apiData?.data ?? [];
+    const { data: apiData, isLoading: apiLoading } =
+        useGetBigBossSupporterRankingAllDataQuery(undefined, {
+            skip: !shouldUseApi,
+        });
+
+    const rawData = propData ?? apiData?.data ?? [];
     const finalLoading = propLoading ?? apiLoading;
+    const rankingRows = useMemo(
+        () => propRows ?? normalizeSupporterRankingRows(rawData),
+        [propRows, rawData]
+    );
+    const topSupporter = rankingRows[0];
 
     return (
         <section className="relative w-full ">
@@ -53,15 +76,24 @@ const RankingSection = ({ data: propData, isLoading: propLoading }: Props) => {
                         </div>
                     ) : (
                         <SupporterCard
-                            imageSrc={finalData?.[0]?.supporter?.image || "/images/home/avatar_img.png"}
+                            imageSrc={
+                                topSupporter?.supporterImage ||
+                                FALLBACK_SUPPORTER_IMAGE
+                            }
                             title="Big Boss Supporter"
-                            name={finalData?.[0]?.supporter?.name || "Fatt Le Sage"}
+                            name={
+                                topSupporter?.supporterName ||
+                                FALLBACK_SUPPORTER_NAME
+                            }
                             className="mx-auto"
                         />
                     )}
 
                     <div className="w-full">
-                        <RankPointReusableTable data={finalData} isLoading={finalLoading} />
+                        <RankPointReusableTable
+                            rows={rankingRows}
+                            isLoading={finalLoading}
+                        />
                     </div>
                 </div>
             </div>

@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
+import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
 import MatchHistoryTabs, { TabKey } from "./MatchHistoryTabs";
 import MatchesGrid from "../grid/MatchesGrid";
 
@@ -21,6 +21,19 @@ const MatchesSection = () => {
     });
 
     const matches = data?.data || [];
+    const meta = {
+        page: data?.meta?.current_page ?? page,
+        limit: data?.meta?.per_page ?? limit,
+        total: data?.meta?.total ?? 0,
+        prev: data?.meta?.prev ?? false,
+        next: data?.meta?.next ?? false,
+    };
+
+    const handleTabChange = (nextTab: TabKey) => {
+        setTab(nextTab);
+        setPage(1);
+    };
+
     return (
         <section className="relative pt-2 md:pt-17.5">
             <div className="pointer-events-none absolute left-0 top-0 -z-10">
@@ -43,13 +56,23 @@ const MatchesSection = () => {
                     <MatchHistoryTabs
                         className="lg:shrink-0"
                         value={tab}
-                        onChange={setTab}
+                        onChange={handleTabChange}
                     />
                 </div>
 
                 <div className="mt-10">
                     <MatchesGrid matches={matches} isLoading={isLoading} />
                 </div>
+
+                {meta.total > meta.limit && (
+                    <div className="mt-8 flex justify-center">
+                        <AppPagination
+                            meta={meta}
+                            onPageChange={setPage}
+                            showSummary={false}
+                        />
+                    </div>
+                )}
             </div>
 
             <div className="pointer-events-none absolute right-0 bottom-0 -z-10 translate-y-1/2">
