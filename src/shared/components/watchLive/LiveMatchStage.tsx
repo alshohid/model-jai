@@ -61,8 +61,10 @@ export default function LiveMatchStage({
         return supportDialog.selectedSide === "left" ? left.name : right.name;
     };
 
+    const isPortraitStream = mode === "portrait";
+    const isLandscapeStream = mode === "landscape";
     const showTwitchPlayer =
-        (mode === "landscape" || mode === "portrait") && Boolean(twitchChannel);
+        (isLandscapeStream || isPortraitStream) && Boolean(twitchChannel);
 
     return (
         <section className="w-full bg-black text-white">
@@ -162,32 +164,44 @@ export default function LiveMatchStage({
                         <div
                             className={cn(
                                 "relative mx-auto overflow-hidden rounded-[24px] border border-white/12 bg-[radial-gradient(circle_at_top,_rgba(0,195,255,0.18),_transparent_35%),linear-gradient(180deg,_rgba(12,16,24,0.95)_0%,_rgba(2,6,23,0.98)_100%)] p-2 shadow-[0_24px_80px_rgba(0,0,0,0.45)]",
-                                mode === "portrait"
-                                    ? "max-w-[23rem] sm:max-w-[25rem]"
-                                    : "max-w-[78rem]"
+                                isPortraitStream
+                                    ? "w-fit max-w-full"
+                                    : "w-full max-w-[78rem]"
                             )}
                         >
                             <div className="pointer-events-none absolute inset-x-10 top-0 h-20 rounded-full bg-[#00C3FF]/10 blur-3xl" />
 
-                            <div className="relative flex items-center justify-between gap-3 px-2 pb-2 pt-1 sm:px-3">
+                            <div
+                                className={cn(
+                                    "relative px-2 pb-2 pt-1 sm:px-3",
+                                    isPortraitStream
+                                        ? "flex flex-wrap items-center justify-center gap-2 text-center"
+                                        : "flex items-center justify-between gap-3"
+                                )}
+                            >
                                 <div className="flex items-center gap-2">
                                     <span className="inline-flex items-center gap-2 rounded-full border border-[#FF2EC8]/25 bg-[#FF2EC8]/12 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white sm:text-xs">
                                         <span className="h-2.5 w-2.5 rounded-full bg-[#FF2EC8] shadow-[0_0_12px_rgba(255,46,200,0.95)] animate-pulse" />
                                         Live
                                     </span>
                                     <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-white/70 sm:text-xs">
-                                        {mode === "portrait" ? "Vertical Stream" : "HD Stream"}
+                                        {isPortraitStream ? "Vertical Stream" : "HD Stream"}
                                     </span>
                                 </div>
 
+                                {isPortraitStream && (
+                                    <span className="w-full text-[11px] text-white/45">
+                                        Portrait broadcast is optimized for phone viewing.
+                                    </span>
+                                )}
                             </div>
 
                             <div
                                 className={cn(
                                     "relative overflow-hidden rounded-[20px] border border-white/8 bg-black ring-1 ring-white/6",
-                                    mode === "portrait"
-                                        ? "aspect-9/16 max-h-[78vh]"
-                                        : "aspect-video max-h-[78vh]"
+                                    isPortraitStream
+                                        ? "mx-auto h-[min(76dvh,42rem)] w-auto max-w-full aspect-[9/16]"
+                                        : "aspect-video w-full max-h-[78vh]"
                                 )}
                             >
                                 {showTwitchPlayer ? (
