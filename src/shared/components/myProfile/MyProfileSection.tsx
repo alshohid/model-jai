@@ -381,31 +381,28 @@ const MyProfileSection = () => {
                 }}
                 isLoading={isEditProfileLoading}
                 onSave={async (data) => {
-                    try {
-                        const formData = new FormData();
+                    const formData = new FormData();
 
-                        formData.append("first_name", data.first_name);
-                        formData.append("middle_name", data.middle_name);
-                        formData.append("last_name", data.last_name);
-                        formData.append("artist_name", data.artist_name || "");
-                        formData.append("city", data.city || "");
-                        formData.append("phone_number", data.contact ?? "");
-                        formData.append("nationality", data.nationality ?? "");
+                    formData.append("first_name", data.first_name);
+                    formData.append("middle_name", data.middle_name);
+                    formData.append("last_name", data.last_name);
+                    formData.append("artist_name", data.artist_name || "");
+                    formData.append("city", data.city || "");
+                    formData.append("phone_number", data.contact ?? "");
+                    formData.append("nationality", data.nationality ?? "");
 
-                        if (data.image instanceof File) {
-                            formData.append("image", data.image);
-                        }
-
-                        const response = await editProfile(formData).unwrap();
-
-                        if (response?.success) {
-                            toast.success("Profile updated successfully");
-                            setOpenEdit(false);
-                        }
-                    } catch {
-                        toast.error("Profile update failed")
+                    if (data.image instanceof File) {
+                        formData.append("image", data.image);
                     }
 
+                    const response = await editProfile(formData).unwrap();
+
+                    if (!response?.success) {
+                        throw new Error(response?.message || "Profile update failed");
+                    }
+                    
+                    toast.success(response?.message || "Profile updated successfully");
+                    setOpenEdit(false);
                 }}
             />
             <SendMoneyDialog

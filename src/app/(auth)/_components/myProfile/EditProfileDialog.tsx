@@ -4,11 +4,13 @@
 import * as React from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { MailIcon } from "@/shared/UI/icon/icon";
 import AppDialog from "@/shared/components/modal/AppDialog";
+import { getErrorMessage } from "@/lib/utils";
 
 type EditProfileFormValues = {
     first_name: string;
@@ -27,7 +29,7 @@ type Props = {
     onOpenChange: (v: boolean) => void;
     defaultValues?: Partial<EditProfileFormValues>;
     avatarSrc: string;
-    onSave?: (data: EditProfileFormValues) => void;
+    onSave?: (data: EditProfileFormValues) => Promise<void> | void;
     isLoading?: boolean;
 };
 
@@ -79,12 +81,15 @@ export default function EditProfileDialog({
         setPreview(url);
     };
 
-    const submit = (data: EditProfileFormValues) => {
-
-        onSave?.({
-            ...data,
-            image: file,
-        });
+    const submit = async (data: EditProfileFormValues) => {
+        try {
+            await onSave?.({
+                ...data,
+                image: file,
+            });
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Profile update failed"));
+        }
     };
 
     return (
