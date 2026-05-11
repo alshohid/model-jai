@@ -1,6 +1,7 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useGetAllNotificationsQuery } from "@/redux/features/notification/notificationManagement";
 import { useAppDispatch } from "@/redux/store";
@@ -11,6 +12,7 @@ import {
 } from "@/redux/features/notification/notificationReducer";
 import {
     mapApiNotificationItem,
+    mapSocketMatchCompletedNotification,
     mapSocketMatchCreatedNotification,
     mapSocketPrivateNotification,
 } from "../lib/notificationMapper";
@@ -29,6 +31,12 @@ interface IMatchCreatedPayload {
     socket: null;
 }
 
+interface IMatchCompletedPayload {
+    match_id: number;
+    message: string;
+    socket?: null;
+}
+
 interface IRulesModalState {
     open: boolean;
     rules: string;
@@ -39,6 +47,7 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
     const dispatch = useAppDispatch();
     const { data: meData } = useGetMeDataQuery();
     const { data: notificationsData } = useGetAllNotificationsQuery();
+    const seenRealtimeEventsRef = useRef<Set<string>>(new Set());
 
     const user = meData?.data?.user;
     const userId = user?.id;
@@ -94,6 +103,19 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                     message: event.message,
                 });
             }
+        });
+
+        matchChannel.listen(".match.completed", (event: IMatchCompletedPayload) => {
+            const eventKey = `user:${userId}:match.completed:${event.match_id}`;
+
+            if (seenRealtimeEventsRef.current.has(eventKey)) {
+                return;
+            }
+
+            seenRealtimeEventsRef.current.add(eventKey);
+            dispatch(addNotification(mapSocketMatchCompletedNotification(event)));
+            console.log("match completed", event);
+            toast.success(event.message || "The match is over.");
         });
 
         cleanups.push(() => {

@@ -8,6 +8,8 @@ function getNotificationTitle(type?: string) {
   switch (type) {
     case "match.created":
       return "New Match Available";
+    case "match.completed":
+      return "Match Completed";
     case "admin.withdrawal.created":
       return "New Withdrawal Request";
     case "user.withdrawal.completed":
@@ -35,6 +37,23 @@ export function mapSocketMatchCreatedNotification(payload: {
     createdAt: new Date().toISOString(),
     rules: payload.rules ?? null,
     playerIds: payload.player_ids ?? [],
+    raw: payload,
+  };
+}
+
+export function mapSocketMatchCompletedNotification(payload: {
+  match_id: number;
+  message: string;
+}): IAppNotificationItem {
+  return {
+    id: `match-completed-${payload.match_id}`,
+    category: "match.completed",
+    title: "Match Completed",
+    message: payload.message || "The match is over.",
+    read: false,
+    createdAt: new Date().toISOString(),
+    rules: null,
+    playerIds: [],
     raw: payload,
   };
 }

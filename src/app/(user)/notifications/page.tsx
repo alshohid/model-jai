@@ -41,6 +41,19 @@ export default function NotificationsPage() {
                 };
             }
 
+            if (item.category === "match.completed") {
+                return {
+                    id: item.id,
+                    type: "match_end" as const,
+                    title: item.title,
+                    playerName: "Match",
+                    playerColor: "#FF2EC8",
+                    message: item.message,
+                    timestamp: formatNotificationTime(item.createdAt),
+                    read: item.read,
+                };
+            }
+
             if (item.category === "admin.withdrawal.created") {
                 return {
                     id: item.id,
@@ -138,32 +151,32 @@ export default function NotificationsPage() {
             <PublicNavbar />
 
             <div className="sticky top-0 bg-black/95 backdrop-blur-lg z-10 border-b border-white/10">
-                <div className="container px-4 py-3">
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-3">
+                <div className="container px-3 py-3 sm:px-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex min-w-0 items-start gap-3 sm:items-center">
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="text-white hover:text-white/80 transition"
+                                className="mt-0.5 shrink-0 rounded-full border border-white/10 bg-white/5 p-2 text-white transition hover:bg-white/10 hover:text-white/80 sm:mt-0"
                             >
-                                <ArrowLeft className="size-6" />
+                                <ArrowLeft className="size-5 sm:size-6" />
                             </button>
 
-                            <div>
-                                <h1 className="text-white font-bold text-xl">Notifications</h1>
-                                <p className="text-sm text-white/50">
+                            <div className="min-w-0">
+                                <h1 className="text-lg font-bold text-white sm:text-xl">Notifications</h1>
+                                <p className="text-xs text-white/50 sm:text-sm">
                                     {unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}
                                 </p>
                             </div>
                         </div>
 
                         {notifications.length > 0 && (
-                            <div className="flex items-center gap-2">
+                            <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap sm:justify-end">
                                 <button
                                     type="button"
                                     onClick={handleMarkAllRead}
                                     disabled={isMarkingRead}
-                                    className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/10 text-sm text-white flex items-center gap-2"
+                                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/10 px-3 py-2 text-sm text-white transition hover:bg-white/15 sm:w-auto"
                                 >
                                     <CheckCheck className="size-4" />
                                     Mark all read
@@ -173,7 +186,7 @@ export default function NotificationsPage() {
                                     type="button"
                                     onClick={handleClearAll}
                                     disabled={isClearingAll}
-                                    className="px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 border border-red-500/20 text-sm text-red-300 flex items-center gap-2"
+                                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/20 bg-red-600/20 px-3 py-2 text-sm text-red-300 transition hover:bg-red-600/30 sm:w-auto"
                                 >
                                     <Trash2 className="size-4" />
                                     Delete all
@@ -184,13 +197,13 @@ export default function NotificationsPage() {
                 </div>
             </div>
 
-            <div className="container px-4 py-4">
+            <div className="container px-3 py-4 sm:px-4 sm:py-5">
                 <div className="space-y-3">
                     {notifications.map((notification) => (
                         <div
                             key={notification.id}
                             className={cn(
-                                "rounded-xl border transition-all p-4",
+                                "rounded-xl border p-3 transition-all sm:p-4",
                                 notification.read
                                     ? "border-white/10 bg-white/5"
                                     : "border-[#FF2EC8]/30 bg-[#FF2EC8]/8"
@@ -198,12 +211,12 @@ export default function NotificationsPage() {
                         >
                             <NotificationItem {...notification} />
 
-                            <div className="mt-3 flex items-center gap-2">
+                            <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                                 {!notification.read ? (
                                     <button
                                         onClick={() => handleMarkOneRead(notification.id)}
                                         disabled={processingId === notification.id}
-                                        className="px-3 py-1.5 rounded-lg bg-blue-600/20 cursor-pointer hover:bg-blue-600/30 border border-blue-500/20 text-sm text-blue-300"
+                                        className="w-full rounded-lg border border-blue-500/20 bg-blue-600/20 px-3 py-2 text-sm text-blue-300 transition hover:bg-blue-600/30 sm:w-auto"
                                     >
                                         Mark as read
                                     </button>
@@ -211,17 +224,17 @@ export default function NotificationsPage() {
                                     <button
 
                                         disabled={processingId === notification.id}
-                                        className="px-3 py-1.5 rounded-lg flex gap-2 bg-green-300/20 hover:bg-green-300/30 border border-green-500/20 text-sm text-green-300"
+                                        className="flex w-full items-center justify-center gap-2 rounded-lg border border-green-500/20 bg-green-300/20 px-3 py-2 text-sm text-green-300 transition hover:bg-green-300/30 sm:w-auto"
                                     >
                                         <CheckCheck className="size-4" />
-                                        read
+                                        Read
                                     </button>
                                 )}
 
                                 <button
                                     onClick={() => handleDeleteOne(notification.id)}
                                     disabled={processingId === notification.id}
-                                    className="px-3 py-1.5 rounded-lg bg-red-600/20 cursor-pointer hover:bg-red-600/30 border border-red-500/20 text-sm text-red-300"
+                                    className="w-full rounded-lg border border-red-500/20 bg-red-600/20 px-3 py-2 text-sm text-red-300 transition hover:bg-red-600/30 sm:w-auto"
                                 >
                                     Delete
                                 </button>
@@ -231,8 +244,8 @@ export default function NotificationsPage() {
                 </div>
 
                 {notifications?.length === 0 && (
-                    <div className="text-center py-12 text-white/50">
-                        <p className="text-sm">No notifications yet</p>
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-12 text-center text-white/50">
+                        <p className="text-sm sm:text-base">No notifications yet</p>
                     </div>
                 )}
             </div>

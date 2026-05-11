@@ -1,5 +1,6 @@
 export type TNotificationDataType =
   | "match.created"
+  | "match.completed"
   | "admin.withdrawal.created"
   | "user.withdrawal.completed"
   | "user.withdrawal.declined"
@@ -8,6 +9,7 @@ export type TNotificationDataType =
 export interface IRawNotificationData {
   type?: TNotificationDataType | string;
   message?: string;
+  match_id?: number;
   withdraw_id?: number;
   withdraw_no?: string;
   user_id?: number;
