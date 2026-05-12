@@ -74,8 +74,12 @@ export default function MatchDetails({
     const playerOneLogo = currentMatch?.player_one_logo;
     const playerTwoLogo = currentMatch?.player_two_logo;
     const tiktokLink = currentMatch?.tiktok_link ?? null;
-    const leftBossSupporterCount = Number(currentMatch?.player_one_total_supporter ?? 0);
-    const rightBossSupporterCount = Number(currentMatch?.player_two_total_supporter ?? 0);
+    const leftBossSupporterCount = Number(
+        liveStore.leftBossSupporterCount ?? currentMatch?.player_one_total_supporter ?? 0
+    );
+    const rightBossSupporterCount = Number(
+        liveStore.rightBossSupporterCount ?? currentMatch?.player_two_total_supporter ?? 0
+    );
     const isVoteClosed = isLiveStatus && matchData?.data?.type === "live"
     const {
         showRegistrationPrompt,

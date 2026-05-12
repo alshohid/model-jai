@@ -64,6 +64,9 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     imageSrc: FALLBACK_AVATAR,
   });
 
+  const [leftBossSupporterCount, setLeftBossSupporterCount] = useState<number | null>(null);
+  const [rightBossSupporterCount, setRightBossSupporterCount] = useState<number | null>(null);
+
   const [left, setLeft] = useState({
     id: 0,
     name: match?.player_one?.name ?? "JACK",
@@ -114,6 +117,8 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     setRankingSupporters(match.top_supporters || []);
     setLeftBoss(bossFromUser(match.player_one_top_supporter));
     setRightBoss(bossFromUser(match.player_two_top_supporter));
+    setLeftBossSupporterCount(toNumber(match.player_one_total_supporter));
+    setRightBossSupporterCount(toNumber(match.player_two_total_supporter));
   }, [match]);
 
   const applySupportData = useCallback((payload: ISupportPlacedData) => {
@@ -130,6 +135,8 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     setRankingSupporters(payload.top_supporters || []);
     setLeftBoss(bossFromUser(payload.player_one_top_supporter));
     setRightBoss(bossFromUser(payload.player_two_top_supporter));
+    setLeftBossSupporterCount(toNumber(payload.player_one_total_supporter));
+    setRightBossSupporterCount(toNumber(payload.player_two_total_supporter));
 
     setViewerBalance(toNumber(payload.updated_balance));
   }, []);
@@ -205,6 +212,8 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     bossSide,
     leftBoss,
     rightBoss,
+    leftBossSupporterCount,
+    rightBossSupporterCount,
     rankingSupporters,
     viewerBalance,
     isSupporting,

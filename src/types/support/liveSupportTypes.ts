@@ -40,6 +40,8 @@ export interface ISupportPlacedData {
   top_supporters: ITopSupporterItem[];
   player_one_top_supporter?: ITopSupporterUser | null;
   player_two_top_supporter?: ITopSupporterUser | null;
+  player_one_total_supporter?: number | null;
+  player_two_total_supporter?: number | null;
 }
 
 export interface ISupportResponse {
