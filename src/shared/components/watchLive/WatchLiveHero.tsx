@@ -175,7 +175,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                         className={cn(
                                             "info-anim",
                                             dir === "next" ? "info-next" : "info-prev",
-                                            "flex h-[104px] w-[104px] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28)] sm:h-[128px] sm:w-[128px] md:h-[150px] md:w-[150px] lg:h-[178px] lg:w-[178px]"
+                                            "flex h-[104px] w-[104px] items-center justify-center overflow-hidden  sm:h-[128px] sm:w-[128px] md:h-[150px] md:w-[150px] lg:h-[178px] lg:w-[178px]"
                                         )}
                                     >
                                         <Image

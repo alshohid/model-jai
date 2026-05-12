@@ -100,8 +100,8 @@ export default function MatchCard(props: Props) {
                             />
                         </div>
 
-                        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[20%] -translate-x-1/2 bg-[linear-gradient(180deg,rgba(27,34,40,0.12),rgba(17,20,24,0.36),rgba(27,34,40,0.12))]" />
-                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,12,0.02),rgba(8,10,12,0.1)_45%,rgba(8,10,12,0.3)_100%)]" />
+                        {/* <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[20%] -translate-x-1/2 bg-[linear-gradient(180deg,rgba(27,34,40,0.12),rgba(17,20,24,0.36),rgba(27,34,40,0.12))]" /> */}
+                        {/* <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,12,0.02),rgba(8,10,12,0.1)_45%,rgba(8,10,12,0.3)_100%)]" /> */}
 
                         <div className="absolute inset-y-0 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
                             <Image
