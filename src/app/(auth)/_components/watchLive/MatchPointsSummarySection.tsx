@@ -322,7 +322,11 @@ export default function MatchPointsSummarySection({
         return null;
     };
 
-    const handleSendTip = async (side: "left" | "right" | "middle", amount: number) => {
+    const handleSendTip = async (
+        side: "left" | "right" | "middle",
+        amount: number,
+        options?: { closeOnSuccess?: boolean }
+    ) => {
         try {
             const receiverId = side === "middle" ? 1 : getReceiverId(side);
 
@@ -341,7 +345,9 @@ export default function MatchPointsSummarySection({
             }
 
             toast.success("Tip sent successfully.");
-            tipSystem.closeTip();
+            if (options?.closeOnSuccess ?? true) {
+                tipSystem.closeTip();
+            }
         } catch (error: any) {
             console.error("Tip send failed:", error);
             toast.error(error?.data?.message || "Failed to send tip.");
@@ -431,7 +437,9 @@ export default function MatchPointsSummarySection({
                                 align="left"
                                 defaultSenderName={left.playerName}
                                 onClose={tipSystem.closeTip}
-                                // onPesto={() => handleSendTip("left", 10)}
+                                onPesto={() =>
+                                    handleSendTip("left", 1, { closeOnSuccess: false })
+                                }
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
                                 onSendCustom={async (name, amount) => {
@@ -453,7 +461,9 @@ export default function MatchPointsSummarySection({
                                 align="center"
                                 defaultSenderName={middleTipName}
                                 onClose={tipSystem.closeTip}
-                                // onPesto={() => handleSendTip("middle", 10)}
+                                onPesto={() =>
+                                    handleSendTip("middle", 1, { closeOnSuccess: false })
+                                }
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
                                 onSendCustom={async (name, amount) => {
@@ -476,7 +486,9 @@ export default function MatchPointsSummarySection({
                                 align="right"
                                 defaultSenderName={right.playerName}
                                 onClose={tipSystem.closeTip}
-                                // onPesto={() => handleSendTip("right", 10)}
+                                onPesto={() =>
+                                    handleSendTip("right", 1, { closeOnSuccess: false })
+                                }
                                 onOpenCustom={tipSystem.switchToCustomView}
                                 onBackToMenu={tipSystem.switchToMenuView}
                                 onSendCustom={async (name, amount) => {
