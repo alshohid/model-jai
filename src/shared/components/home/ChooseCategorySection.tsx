@@ -21,7 +21,7 @@ export default function ChooseCategorySection() {
 
     return (
         <section className="w-full overflow-visible">
-            <div className="container py-16">
+            <div className="container py-10 md:py-16">
                 <SectionHead title="Choose Category" />
 
                 <div className="mt-12 sm:mt-16">
