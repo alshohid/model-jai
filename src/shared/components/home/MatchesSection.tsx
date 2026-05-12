@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useGetAllPublicMatchListQuery } from "@/redux/features/match/matchManagement";
 import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
 import MatchHistoryTabs, { TabKey } from "./MatchHistoryTabs";
@@ -12,6 +12,7 @@ import SectionHeading from "./SectionHeading";
 const MatchesSection = () => {
     const [tab, setTab] = useState<TabKey>("all");
     const [page, setPage] = useState(1);
+    const matchesViewportRef = useRef<HTMLDivElement | null>(null);
     const limit = 10;
 
     const { data, isLoading } = useGetAllPublicMatchListQuery({
@@ -33,6 +34,27 @@ const MatchesSection = () => {
         setTab(nextTab);
         setPage(1);
     };
+
+    const scrollToMatchesViewport = useCallback(() => {
+        const element = matchesViewportRef.current;
+        if (!element || typeof window === "undefined") return;
+
+        const elementTop = element.getBoundingClientRect().top + window.scrollY;
+        const viewportOffset = 110;
+
+        window.scrollTo({
+            top: Math.max(0, elementTop - viewportOffset),
+            behavior: "smooth",
+        });
+    }, []);
+
+    const handlePageChange = useCallback(
+        (nextPage: number) => {
+            setPage(nextPage);
+            scrollToMatchesViewport();
+        },
+        [scrollToMatchesViewport]
+    );
 
     return (
         <section className="relative pt-2 md:pt-17.5">
@@ -60,7 +82,7 @@ const MatchesSection = () => {
                     />
                 </div>
 
-                <div className="mt-10">
+                <div ref={matchesViewportRef} className="mt-10 scroll-mt-28">
                     <MatchesGrid matches={matches} isLoading={isLoading} />
                 </div>
 
@@ -68,7 +90,7 @@ const MatchesSection = () => {
                     <div className="mt-8 flex justify-center">
                         <AppPagination
                             meta={meta}
-                            onPageChange={setPage}
+                            onPageChange={handlePageChange}
                             showSummary={false}
                         />
                     </div>
