@@ -11,7 +11,7 @@ import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 export default function GamesSection() {
     const { data, isLoading } = useGetAllPublicGamesListQuery({
         page: 1,
-        limit: 100,
+        limit: 1000,
     });
 
     const items: CategoryItem[] =
@@ -23,10 +23,10 @@ export default function GamesSection() {
 
     return (
         <section className="w-full overflow-visible">
-            <div className="container py-16">
+            <div className="container py-10 md:py-16">
                 <SectionHead title="Choose Games" />
 
-                <div className="mt-12 sm:mt-16">
+                <div className="mt-6 md:mt-16">
                     {isLoading ? (
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                             {Array.from({ length: 4 }).map((_, index) => (

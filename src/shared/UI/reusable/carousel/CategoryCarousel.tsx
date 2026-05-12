@@ -72,11 +72,11 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                         dragFree: false,
                     }}
                 >
-                    <CarouselContent className="gap-8">
+                    <CarouselContent className="-ml-3 md:-ml-8">
                         {items.map((item) => (
                             <CarouselItem
                                 key={item.id}
-                                className="basis-[306px]"
+                                className="basis-1/2 pl-3 md:basis-[338px] md:pl-8"
                             >
                                 <CategoryCard
                                     title={item.title}
