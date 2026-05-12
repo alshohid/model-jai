@@ -42,7 +42,7 @@ export default function WatchLivePage() {
     const router = useRouter();
     const { isAuthenticated, role } = useAuth();
     const [page] = useState(1);
-    const limit = 10;
+    const limit = 100;
 
     const { data, isLoading } = useGetAllPublicMatchListQuery({
         page,
@@ -81,6 +81,7 @@ export default function WatchLivePage() {
         voteRequired: match?.confirmation_status === 0,
         platform: (match?.platform === "twitch" ? "twitch" : "tiktok"),
         thumbs: [match.game?.image || "/images/home/gameLogo.png"],
+        gameImage: match.game?.image || "/images/home/gameLogo.png"
     }));
 
     const onWatchHandler = (s: WatchLiveHeroSlide) => {

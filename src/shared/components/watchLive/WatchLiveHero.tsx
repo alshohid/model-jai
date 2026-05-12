@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
+import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
 import Slider from "react-slick";
 import { cn } from "@/shared/lib/utils/cn";
@@ -137,9 +138,9 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                 <div className="absolute bottom-20 inset-0 pointer-events-none">
                     <div className="container h-full pointer-events-auto ">
 
-                        <div className="h-full flex items-end pb-6 sm:pb-8">
+                        <div className="flex h-full flex-col justify-end pb-6 sm:pb-8">
 
-                            <div className="w-full grid grid-cols-1 lg:grid-cols-[6fr_6fr] items-end gap-6 lg:gap-10">
+                            <div className="grid w-full grid-cols-[minmax(0,1fr)_104px] items-end gap-4 sm:grid-cols-[minmax(0,1fr)_128px] sm:gap-5 md:grid-cols-[minmax(0,1fr)_150px] md:gap-6 lg:grid-cols-[minmax(0,1fr)_178px] lg:gap-10">
                                 <div className="w-full">
                                     <div
                                         key={activeSlide?.id}
@@ -168,20 +169,38 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                     </div>
                                 </div>
 
-                                {/* RIGHT: ThumbRail static */}
-                                <div className="flex items-center justify-start lg:justify-end gap-3 min-w-0">
-                                    <CircleNavButton dir="prev" onClick={() => sliderRef.current?.slickPrev()} />
-
-                                    <div className="min-w-0 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                                        <ThumbRail
-                                            thumbs={railThumbs}
-                                            activeIndex={active}
-                                            onThumbClick={(idx) => sliderRef.current?.slickGoTo(idx)}
+                                <div className="flex items-end justify-end">
+                                    <div
+                                        key={`${activeSlide?.id}-game-image`}
+                                        className={cn(
+                                            "info-anim",
+                                            dir === "next" ? "info-next" : "info-prev",
+                                            "flex h-[104px] w-[104px] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.28)] sm:h-[128px] sm:w-[128px] md:h-[150px] md:w-[150px] lg:h-[178px] lg:w-[178px]"
+                                        )}
+                                    >
+                                        <Image
+                                            src={activeSlide?.gameImage || activeSlide?.gameLogoSrc || "/images/home/gameLogo.png"}
+                                            alt={activeSlide?.game || "Game"}
+                                            width={160}
+                                            height={160}
+                                            className="h-[72%] w-[72%] object-contain"
                                         />
                                     </div>
-
-                                    <CircleNavButton dir="next" onClick={() => sliderRef.current?.slickNext()} />
                                 </div>
+                            </div>
+
+                            <div className="mt-6 flex w-full items-center justify-center gap-3 min-w-0 lg:mt-8">
+                                <CircleNavButton dir="prev" onClick={() => sliderRef.current?.slickPrev()} />
+
+                                <div className="min-w-0 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                                    <ThumbRail
+                                        thumbs={railThumbs}
+                                        activeIndex={active}
+                                        onThumbClick={(idx) => sliderRef.current?.slickGoTo(idx)}
+                                    />
+                                </div>
+
+                                <CircleNavButton dir="next" onClick={() => sliderRef.current?.slickNext()} />
                             </div>
                         </div>
                     </div>

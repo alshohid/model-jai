@@ -42,6 +42,7 @@ export type WatchLiveHeroSlide = {
   isLive: boolean;
   thumbs?: string[];
   avatars?: string[];
+  gameImage?: string;
 
   // ✅ new fields for MatchCard overlay
   dateText: string;
