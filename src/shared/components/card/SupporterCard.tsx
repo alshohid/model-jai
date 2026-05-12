@@ -21,40 +21,40 @@ export default function SupporterCard({
     imageClassName,
 }: SupporterCardProps) {
     return (
-        <div className="w-full justify-center gap-6 ">
+        <div className="flex w-full flex-col items-center justify-center gap-5">
             <div
                 className={cn(
                     "w-full max-w-[434px] rounded-[16px] flex flex-col gap-[10px]",
                     className
                 )}
             >
-                <div className="rounded-[16px] bg-[#FFFFFF0D] p-3">
+                <div className="rounded-[16px] bg-[#FFFFFF0D] p-3 md:p-4">
                     <div
                         className={cn(
-                            "relative flex w-full aspect-square items-center justify-center overflow-hidden rounded-[12px] bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0.04)_45%,rgba(0,0,0,0.12)_100%)]",
+                            "overflow-hidden rounded-[12px] bg-black",
                             imageClassName
                         )}
                     >
                         <Image
                             src={imageSrc}
                             alt={imageAlt}
-                            fill
-                            className="object-contain object-center p-2"
+                            width={434}
+                            height={540}
+                            className="block h-auto w-full object-contain"
                             sizes="(max-width: 768px) 100vw, 434px"
                             priority={false}
                         />
                     </div>
                 </div>
             </div>
-            <div className="w-full text-center p-4">
+            <div className="w-full max-w-[434px] px-4 text-center">
                 <h4
                     className={[
                         "text-white",
                         "font-bold",
-                        "text-[1rem] md:text-[3rem] ",
+                        "text-[1rem] md:text-[3rem]",
                         "leading-none",
                         "tracking-[0.3px]",
-
                     ].join(" ")}
                 >
                     {title}
