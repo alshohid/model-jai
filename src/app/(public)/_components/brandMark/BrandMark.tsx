@@ -11,7 +11,7 @@ export default function BrandMark({
             <div className="flex items-center justify-center">
                 <Image
                     src={'/images/home/brand-logo.png'}
-                    alt="logo"
+                    alt="Model Boss Offers logo"
                     width={width}
                     height={height}
                     className="object-contain"
