@@ -593,7 +593,7 @@ export default function MatchPointsSummarySection({
                                 </div>
                                 <div className="rounded-xl bg-black/40 border border-white/10 p-3">
                                     <div className="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-black">
-                                        <Image src={topVoters[0]?.user?.image ?? ""} alt={topVoters[0]?.user?.name ?? ""} fill className="object-cover" />
+                                        <Image src={topVoters[0]?.user?.image ?? "/images/home/avatar_img.png"} alt={topVoters[0]?.user?.name ?? ""} fill className="object-cover" />
                                     </div>
 
                                     <div className="mt-3 text-white/80 text-[0.5rem] md:text-[12px] font-semibold">

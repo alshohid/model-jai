@@ -1,14 +1,34 @@
+import Image from "next/image";
+import Link from "next/link";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+
 export function BossCard({
     name,
     img,
     supportPlayerName,
     total,
+    profileHref,
 }: {
     name: string;
     img: string;
     supportPlayerName: string;
     total: number;
+    profileHref?: string;
 }) {
+    const resolvedImageSrc = getSafeImageSrc(img, "/images/home/avatar_img.png");
+
+    const imageContent = (
+        <div className="w-full aspect-4/5 relative rounded-lg overflow-hidden bg-black">
+            <Image
+                src={resolvedImageSrc}
+                alt={name}
+                fill
+                sizes="(max-width: 768px) 50vw, 220px"
+                className="object-cover"
+            />
+        </div>
+    );
+
     return (
         <div className="relative z-10">
             <div className="text-center flex flex-col items-center justify-center mb-2 md:mb-4">
@@ -38,22 +58,32 @@ export function BossCard({
             </div>
 
             <div className="rounded-xl bg-black/40 border border-white/10 p-3">
-                <div className="w-full aspect-4/5 relative rounded-lg overflow-hidden bg-black">
-                    <img
-                        src={img || "/images/home/avatar_img.png"}
-                        alt={name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            e.currentTarget.src = "/images/home/avatar_img.png";
-                        }}
-                    />
-                </div>
+                {profileHref ? (
+                    <Link
+                        href={profileHref}
+                        className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                        aria-label={`View ${name} profile`}
+                    >
+                        {imageContent}
+                    </Link>
+                ) : (
+                    imageContent
+                )}
 
                 <div className="mt-3 text-white/80 text-[0.5rem] md:text-[12px] font-semibold">
                     Big Boss Supporter
                 </div>
                 <div className="text-white font-black text-[0.7rem] md:text-[1rem]">
-                    {name}
+                    {profileHref ? (
+                        <Link
+                            href={profileHref}
+                            className="inline-block transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                        >
+                            {name}
+                        </Link>
+                    ) : (
+                        name
+                    )}
                 </div>
             </div>
         </div>

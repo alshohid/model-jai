@@ -196,6 +196,16 @@ export default function MatchDetails({
                                         mode={(liveMode as "landscape" | "portrait") || "landscape"}
                                         leftBossName={liveStore.left.name}
                                         rightBossName={liveStore.right.name}
+                                        leftBossProfileHref={
+                                            currentMatch?.player_one_top_supporter?.id
+                                                ? `/artist/${currentMatch.player_one_top_supporter.id}`
+                                                : undefined
+                                        }
+                                        rightBossProfileHref={
+                                            currentMatch?.player_two_top_supporter?.id
+                                                ? `/artist/${currentMatch.player_two_top_supporter.id}`
+                                                : undefined
+                                        }
                                         leftBoss={{
                                             name: liveStore.leftBoss.name,
                                             total: leftBossSupporterCount,

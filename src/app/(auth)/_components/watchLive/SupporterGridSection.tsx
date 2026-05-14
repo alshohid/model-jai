@@ -18,6 +18,8 @@ export default function SupporterGridSection({
     onSupport,
     leftBossName,
     rightBossName,
+    leftBossProfileHref,
+    rightBossProfileHref,
 }: {
     mode: "landscape" | "portrait";
     // isLive: boolean;
@@ -28,6 +30,8 @@ export default function SupporterGridSection({
     onSupport: (side: SupportSide, amount: number) => void;
     leftBossName: string;
     rightBossName: string;
+    leftBossProfileHref?: string;
+    rightBossProfileHref?: string;
 }) {
     const [selectedSide, setSelectedSide] = useState<SupportSide>("left");
 
@@ -36,9 +40,21 @@ export default function SupporterGridSection({
 
             <div className=" mx-auto w-full px-1 md:px-4 py-2 md:py-6">
                 <div className="grid grid-cols-[1fr_auto_1fr] md:grid-cols-[1fr_100px_1fr] gap-4 items-center">
-                    <BossCard name={leftBoss.name} img={leftImg} supportPlayerName={leftBossName ?? "TEAM JACK"} total={leftBoss.total} />
+                    <BossCard
+                        name={leftBoss.name}
+                        img={leftImg}
+                        supportPlayerName={leftBossName ?? "TEAM JACK"}
+                        total={leftBoss.total}
+                        profileHref={leftBossProfileHref}
+                    />
                     <div className="text-[12px] sm:text-[22px] font-extrabold rotate-45 text-center">VS</div>
-                    <BossCard name={rightBoss.name} img={rightImg} supportPlayerName={rightBossName ?? "TEAM STEEVE"} total={rightBoss.total} />
+                    <BossCard
+                        name={rightBoss.name}
+                        img={rightImg}
+                        supportPlayerName={rightBossName ?? "TEAM STEEVE"}
+                        total={rightBoss.total}
+                        profileHref={rightBossProfileHref}
+                    />
                 </div>
 
                 <h2
@@ -83,5 +99,4 @@ export default function SupporterGridSection({
         </section>
     );
 }
-
 
