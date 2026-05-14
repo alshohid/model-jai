@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import clsx from "clsx";
 import { SocialLinks } from "../cardComponent/SocialLinks";
 import { useState } from "react";
@@ -18,6 +17,9 @@ type Props = {
     rightPlayerImg: string;
     leftPlayerName?: string;
     rightPlayerName?: string;
+    gameLogoFallbackSrc?: string;
+    leftPlayerFallbackSrc?: string;
+    rightPlayerFallbackSrc?: string;
     watchHref?: string;
     voteRequired?: boolean;
     className?: string;
@@ -30,6 +32,89 @@ type Props = {
     versusImg?: string;
 };
 
+const cardImageBlurDataUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#1b1f25"/></svg>`
+)}`;
+
+type MatchCardImageProps = {
+    src: string;
+    fallbackSrc: string;
+    alt: string;
+    wrapperClassName: string;
+    imageClassName: string;
+    sizes: string;
+    onClick?: () => void;
+};
+
+function MatchCardImage({
+    src,
+    fallbackSrc,
+    alt,
+    wrapperClassName,
+    imageClassName,
+    sizes,
+    onClick,
+}: MatchCardImageProps) {
+    const [currentSrc, setCurrentSrc] = useState(src);
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    const imageNode = (
+        <>
+            <div
+                aria-hidden="true"
+                className={clsx(
+                    "absolute inset-0 bg-[#1b1f25] transition-opacity duration-300",
+                    isLoaded ? "opacity-0" : "opacity-100"
+                )}
+            >
+                <div className="absolute inset-0 animate-pulse bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),rgba(255,255,255,0.04)_38%,rgba(255,255,255,0)_72%)]" />
+            </div>
+
+            <Image
+                src={currentSrc}
+                alt={alt}
+                fill
+                sizes={sizes}
+                placeholder="blur"
+                blurDataURL={cardImageBlurDataUrl}
+                className={clsx(
+                    imageClassName,
+                    "transition duration-500 ease-out",
+                    isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.03]"
+                )}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => {
+                    if (currentSrc !== fallbackSrc) {
+                        setCurrentSrc(fallbackSrc);
+                        setIsLoaded(false);
+                        return;
+                    }
+
+                    setIsLoaded(true);
+                }}
+            />
+        </>
+    );
+
+    if (onClick) {
+        return (
+            <button
+                type="button"
+                onClick={onClick}
+                className={clsx(
+                    wrapperClassName,
+                    "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                )}
+                aria-label={`View ${alt} profile`}
+            >
+                {imageNode}
+            </button>
+        );
+    }
+
+    return <div className={wrapperClassName}>{imageNode}</div>;
+}
+
 export default function MatchCard(props: Props) {
     const {
         status,
@@ -41,6 +126,9 @@ export default function MatchCard(props: Props) {
         rightPlayerImg,
         leftPlayerName,
         rightPlayerName,
+        gameLogoFallbackSrc = "/images/home/gameLogo.png",
+        leftPlayerFallbackSrc = "/images/home/leftPlayerImg.png",
+        rightPlayerFallbackSrc = "/images/home/rightPlayerImg.png",
         className = "",
         rules,
         tiktokLink,
@@ -72,11 +160,13 @@ export default function MatchCard(props: Props) {
 
     const renderPlayerImage = ({
         imageSrc,
+        fallbackSrc,
         alt,
         positionClassName,
         onClick,
     }: {
         imageSrc: string;
+        fallbackSrc: string;
         alt: string;
         positionClassName: string;
         onClick?: () => void;
@@ -86,34 +176,17 @@ export default function MatchCard(props: Props) {
             positionClassName
         );
 
-        if (onClick) {
-            return (
-                <button
-                    type="button"
-                    onClick={onClick}
-                    className={clsx(
-                        containerClassName,
-                        "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-                    )}
-                    aria-label={`View ${alt} profile`}
-                >
-                    <img
-                        src={imageSrc}
-                        alt={alt}
-                        className="h-full w-full object-cover object-top"
-                    />
-                </button>
-            );
-        }
-
         return (
-            <div className={containerClassName}>
-                <img
-                    src={imageSrc}
-                    alt={alt}
-                    className="h-full w-full object-cover object-top"
-                />
-            </div>
+            <MatchCardImage
+                key={`${positionClassName}-${imageSrc}`}
+                src={imageSrc}
+                fallbackSrc={fallbackSrc}
+                alt={alt}
+                wrapperClassName={containerClassName}
+                imageClassName="object-cover object-top"
+                sizes="(max-width: 768px) 42vw, 160px"
+                onClick={onClick}
+            />
         );
     };
 
@@ -144,6 +217,7 @@ export default function MatchCard(props: Props) {
 
                         {renderPlayerImage({
                             imageSrc: leftPlayerImg,
+                            fallbackSrc: leftPlayerFallbackSrc,
                             alt: leftPlayerAlt,
                             positionClassName: "left-0",
                             onClick: onLeftPlayerClick,
@@ -151,6 +225,7 @@ export default function MatchCard(props: Props) {
 
                         {renderPlayerImage({
                             imageSrc: rightPlayerImg,
+                            fallbackSrc: rightPlayerFallbackSrc,
                             alt: rightPlayerAlt,
                             positionClassName: "right-0",
                             onClick: onRightPlayerClick,
@@ -176,10 +251,14 @@ export default function MatchCard(props: Props) {
                     <div className="flex items-center justify-between gap-3">
                         <span className={statusStyle}>{statusLabel}</span>
                         <div className="flex size-14 md:size-20 shrink-0 items-center justify-center">
-                            <img
+                            <MatchCardImage
+                                key={gameLogoSrc}
                                 src={gameLogoSrc}
+                                fallbackSrc={gameLogoFallbackSrc}
                                 alt={`${title} logo`}
-                                className="h-full w-full object-contain"
+                                wrapperClassName="relative h-full w-full"
+                                imageClassName="object-contain"
+                                sizes="(max-width: 768px) 56px, 80px"
                             />
                         </div>
                     </div>

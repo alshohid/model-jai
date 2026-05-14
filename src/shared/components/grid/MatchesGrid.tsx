@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/redux/features/auth/hooks";
 import MatchCard from "../card/MatchCard";
 import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 export type MatchStatus = "upcoming" | "past" | "live";
 
@@ -80,9 +81,9 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
                     title={match.game.name}
                     dateText={formateDate(match.match_date)}
                     timeText={formateTime(match.match_time)}
-                    gameLogoSrc={match.game.image || "/images/home/gameLogo.png"}
-                    leftPlayerImg={match.player_one?.image_url || "/images/home/leftPlayerImg.png"}
-                    rightPlayerImg={match.player_two?.image_url || "/images/home/rightPlayerImg.png"}
+                    gameLogoSrc={getSafeImageSrc(match.game.image, "/images/home/gameLogo.png")}
+                    leftPlayerImg={getSafeImageSrc(match.player_one?.image_url || match.player_one?.image, "/images/home/leftPlayerImg.png")}
+                    rightPlayerImg={getSafeImageSrc(match.player_two?.image_url || match.player_two?.image, "/images/home/rightPlayerImg.png")}
                     leftPlayerName={match.player_one?.name}
                     rightPlayerName={match.player_two?.name}
                     voteRequired={match.confirmation_status === 0}

@@ -10,6 +10,7 @@ import Skeleton from "@/shared/UI/Skeleton";
 import { useShowArtistPostByIdQuery, useViewSingleArtistProfileQuery } from "@/redux/features/user/userManagement";
 import { toast } from "sonner";
 import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 
 export default function ArtistProfilePage() {
@@ -42,7 +43,7 @@ export default function ArtistProfilePage() {
         name: user.name,
         username: user.email.split('@')[0],
         email: user.email,
-        avatar: user.image || "/images/home/profile_img.png",
+        avatar: getSafeImageSrc(user.image_url || user.image, "/images/home/profile_img.png"),
         isBigBoss: user.role === "artist",
         isVerified: user.verified_at !== null,
         posts: user.total_post || 0,

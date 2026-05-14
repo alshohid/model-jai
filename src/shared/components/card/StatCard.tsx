@@ -1,5 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
+
+const statIconBlurDataUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="16" fill="#1a1f25"/></svg>`
+)}`;
+
+function StatIconImage({ src, alt }: { src: string; alt: string }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    return (
+        <div className="relative size-16 overflow-hidden rounded-full">
+            <div
+                aria-hidden="true"
+                className={`absolute inset-0 transition-opacity duration-300 ${isLoaded ? "opacity-0" : "opacity-100"}`}
+            >
+                <div className="absolute inset-0 animate-pulse bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),rgba(255,255,255,0.05)_42%,rgba(255,255,255,0)_72%)]" />
+            </div>
+
+            <Image
+                src={src}
+                alt={alt}
+                width={64}
+                height={64}
+                sizes="64px"
+                placeholder="blur"
+                blurDataURL={statIconBlurDataUrl}
+                className={`h-16 w-16 rounded-full object-cover transition duration-500 ease-out ${isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"}`}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
+            />
+        </div>
+    );
+}
 
 export function StatCard({
     label,
@@ -18,13 +53,7 @@ export function StatCard({
                     flex items-center justify-center text-white/80"
                 >
                     {icon ?
-                        <Image
-                            src={icon}
-                            alt="image"
-                            width={400}
-                            height={400}
-                            className="w-16 h-16 rounded-full object-cover"
-                        />
+                        <StatIconImage key={`${label}-${icon}`} src={icon} alt={label} />
 
                         : (
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">

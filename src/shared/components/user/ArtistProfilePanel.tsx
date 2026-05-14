@@ -2,13 +2,15 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/shared/lib/utils/cn";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import { StatCard } from "../card/StatCard";
 import { MiniStat } from "../card/MiniStat";
 import { InfoRow } from "../card/InfoRow";
 import BigBossIndicator from "./BigBossIndicator";
-import { UserPlus, UserCheck, CheckCircle2, Send } from "lucide-react";
+import { UserPlus, UserCheck, CheckCircle2 } from "lucide-react";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 type ArtistInfo = {
     id: string;
@@ -42,14 +44,62 @@ type Props = {
     isLoading?: boolean;
 };
 
+const avatarFallbackSrc = "/images/home/profile_img.png";
+const artistPanelBlurDataUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 50"><rect width="40" height="50" fill="#171b21"/></svg>`
+)}`;
+
+function ArtistAvatarImage({ src, alt }: { src: string; alt: string }) {
+    const [currentSrc, setCurrentSrc] = useState(src);
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    return (
+        <div className="relative h-full w-full overflow-hidden rounded-[24px] bg-[#171b21]">
+            <div
+                aria-hidden="true"
+                className={cn(
+                    "absolute inset-0 transition-opacity duration-300",
+                    isLoaded ? "opacity-0" : "opacity-100"
+                )}
+            >
+                <div className="absolute inset-0 animate-pulse bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),rgba(255,255,255,0.05)_42%,rgba(255,255,255,0)_72%)]" />
+            </div>
+
+            <Image
+                src={currentSrc}
+                alt={alt}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 360px"
+                placeholder="blur"
+                blurDataURL={artistPanelBlurDataUrl}
+                className={cn(
+                    "object-cover object-top transition duration-500 ease-out",
+                    isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.02]"
+                )}
+                onLoad={() => setIsLoaded(true)}
+                onError={() => {
+                    if (currentSrc !== avatarFallbackSrc) {
+                        setCurrentSrc(avatarFallbackSrc);
+                        return;
+                    }
+
+                    setIsLoaded(true);
+                }}
+            />
+        </div>
+    );
+}
+
 export default function ArtistProfilePanel({
     artist,
     stats,
     onFollow,
-    onSendTip,
     className,
     isLoading,
 }: Props) {
+    const avatarSrc = getSafeImageSrc(artist.avatar, avatarFallbackSrc);
+
     return (
         <section
             className={cn(
@@ -70,12 +120,10 @@ export default function ArtistProfilePanel({
 
                     <div className="overflow-hidden rounded-[24px]">
                         <div className="relative w-full aspect-4/5">
-                            <Image
-                                src={artist.avatar}
+                            <ArtistAvatarImage
+                                key={avatarSrc}
+                                src={avatarSrc}
                                 alt={artist.name}
-                                fill
-                                priority
-                                className="object-cover object-top"
                             />
 
                             {/* Big Boss Badge */}
@@ -111,13 +159,13 @@ export default function ArtistProfilePanel({
                                     )}
                                 </div>
                                 <InfoRow label="Username" value={`@${artist.username}`} />
-                                <InfoRow label="Email" value={artist.email} />
+                                {/* <InfoRow label="Email" value={artist.email} />
                                 {artist.contact && (
                                     <InfoRow label="Contact" value={artist.contact} />
                                 )}
                                 {artist.nationality && (
                                     <InfoRow label="Nationality" value={artist.nationality} />
-                                )}
+                                )} */}
                             </div>
                         </div>
 
@@ -141,6 +189,7 @@ export default function ArtistProfilePanel({
                         <div className="mt-6 space-y-3">
                             <StartStreamingButton
                                 onClick={onFollow}
+                                isLoading={isLoading}
                                 className={cn(
                                     "w-full",
                                     artist.isFollowing
