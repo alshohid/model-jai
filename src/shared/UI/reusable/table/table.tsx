@@ -7,6 +7,7 @@ import * as React from "react"
 
 type TableProps = React.ComponentProps<"table"> & {
     containerClassName?: string
+    dragScrollMode?: "none" | "x" | "both"
 }
 
 function isInteractiveTarget(target: EventTarget | null) {
@@ -19,24 +20,37 @@ function isInteractiveTarget(target: EventTarget | null) {
     )
 }
 
-function Table({ className, containerClassName, ...props }: TableProps) {
+function Table({
+    className,
+    containerClassName,
+    dragScrollMode = "x",
+    ...props
+}: TableProps) {
     const containerRef = React.useRef<HTMLDivElement | null>(null)
     const dragStateRef = React.useRef({
         pointerId: null as number | null,
         startX: 0,
+        startY: 0,
         scrollLeft: 0,
+        scrollTop: 0,
         moved: false,
         active: false,
     })
     const suppressClickRef = React.useRef(false)
-    const [isOverflowing, setIsOverflowing] = React.useState(false)
+    const [overflowState, setOverflowState] = React.useState({
+        x: false,
+        y: false,
+    })
     const [isDragging, setIsDragging] = React.useState(false)
 
     const updateOverflowState = React.useCallback(() => {
         const container = containerRef.current
         if (!container) return
 
-        setIsOverflowing(container.scrollWidth > container.clientWidth + 1)
+        setOverflowState({
+            x: container.scrollWidth > container.clientWidth + 1,
+            y: container.scrollHeight > container.clientHeight + 1,
+        })
     }, [])
 
     const stopDragging = React.useCallback(() => {
@@ -74,24 +88,39 @@ function Table({ className, containerClassName, ...props }: TableProps) {
 
     const handlePointerDown = React.useCallback(
         (event: React.PointerEvent<HTMLDivElement>) => {
-            if (event.pointerType !== "mouse" || event.button !== 0) return
-            if (!isOverflowing || isInteractiveTarget(event.target)) return
+            if (event.pointerType === "mouse" && event.button !== 0) return
+
+            const canDragX =
+                dragScrollMode !== "none" &&
+                (dragScrollMode === "x" || dragScrollMode === "both") &&
+                overflowState.x
+            const canDragY =
+                dragScrollMode === "both" &&
+                overflowState.y
+
+            if (!canDragX && !canDragY) return
+            if (event.pointerType === "mouse" && isInteractiveTarget(event.target)) return
 
             const container = containerRef.current
             if (!container) return
 
             dragStateRef.current.pointerId = event.pointerId
             dragStateRef.current.startX = event.clientX
+            dragStateRef.current.startY = event.clientY
             dragStateRef.current.scrollLeft = container.scrollLeft
+            dragStateRef.current.scrollTop = container.scrollTop
             dragStateRef.current.moved = false
             dragStateRef.current.active = true
 
             container.setPointerCapture(event.pointerId)
             document.body.style.userSelect = "none"
             setIsDragging(true)
-            event.preventDefault()
+
+            if (event.pointerType === "mouse") {
+                event.preventDefault()
+            }
         },
-        [isOverflowing]
+        [dragScrollMode, overflowState.x, overflowState.y]
     )
 
     const handlePointerMove = React.useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -103,8 +132,9 @@ function Table({ className, containerClassName, ...props }: TableProps) {
         }
 
         const deltaX = event.clientX - dragState.startX
+        const deltaY = event.clientY - dragState.startY
 
-        if (!dragState.moved && Math.abs(deltaX) > 4) {
+        if (!dragState.moved && (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4)) {
             dragState.moved = true
         }
 
@@ -112,9 +142,16 @@ function Table({ className, containerClassName, ...props }: TableProps) {
             return
         }
 
-        container.scrollLeft = dragState.scrollLeft - deltaX
+        if (dragScrollMode === "x" || dragScrollMode === "both") {
+            container.scrollLeft = dragState.scrollLeft - deltaX
+        }
+
+        if (dragScrollMode === "both") {
+            container.scrollTop = dragState.scrollTop - deltaY
+        }
+
         event.preventDefault()
-    }, [])
+    }, [dragScrollMode])
 
     const handlePointerUp = React.useCallback(
         (event: React.PointerEvent<HTMLDivElement>) => {
@@ -148,10 +185,18 @@ function Table({ className, containerClassName, ...props }: TableProps) {
             data-slot="table-container"
             className={cn(
                 "relative w-full overflow-x-auto overflow-y-hidden overscroll-x-contain [-webkit-overflow-scrolling:touch]",
-                isOverflowing && "cursor-grab",
+                (overflowState.x || overflowState.y) && "cursor-grab",
                 isDragging && "cursor-grabbing select-none",
                 containerClassName
             )}
+            style={{
+                touchAction:
+                    dragScrollMode === "both"
+                        ? "none"
+                        : dragScrollMode === "x"
+                            ? "pan-y"
+                            : "auto",
+            }}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}

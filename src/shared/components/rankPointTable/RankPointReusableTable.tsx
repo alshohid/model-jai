@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { SupporterRankingRow } from "@/shared/lib/ranking/supporterRanking";
 import {
     Table,
@@ -44,6 +45,8 @@ const RankPointReusableTable = ({
                     </div>
                 ) : (
                     <Table
+                        dragScrollMode="both"
+                        containerClassName="max-h-[270px] overflow-y-auto overscroll-y-contain md:max-h-none md:overflow-y-visible"
                         className="w-full table-fixed"
                         style={{ minWidth: `${minTableWidthPx}px` }}
                     >
@@ -58,16 +61,16 @@ const RankPointReusableTable = ({
 
                         <TableHeader>
                             <TableRow className="border-b border-white/25 bg-[#B02383]">
-                                <TableHead className="h-auto border-r border-white/25 bg-[#B02383] px-3 py-4 text-center text-[14px] font-light leading-[1.24] text-white sm:px-5 sm:text-[18px] md:text-[20px]">
+                                <TableHead className="sticky top-0 z-10 h-auto border-r border-white/25 bg-[#B02383] px-3 py-4 text-center text-[14px] font-light leading-[1.24] text-white sm:px-5 sm:text-[18px] md:text-[20px]">
                                     Rank Boss No
                                 </TableHead>
-                                <TableHead className="h-auto border-r border-white/25 bg-[#B02383] px-3 py-4 text-center text-[14px] font-light leading-[1.24] text-white sm:px-5 sm:text-[18px] md:text-[20px]">
+                                <TableHead className="sticky top-0 z-10 h-auto border-r border-white/25 bg-[#B02383] px-3 py-4 text-center text-[14px] font-light leading-[1.24] text-white sm:px-5 sm:text-[18px] md:text-[20px]">
                                     Boss Name
                                 </TableHead>
-                                <TableHead className="h-auto border-r border-white/25 px-3 py-4 text-center text-[14px] font-light leading-[1.24] text-white sm:px-5 sm:text-[18px] md:text-[20px]">
+                                <TableHead className="sticky top-0 z-10 h-auto border-r border-white/25 bg-[#B02383] px-3 py-4 text-center text-[14px] font-light leading-[1.24] text-white sm:px-5 sm:text-[18px] md:text-[20px]">
                                     User ID
                                 </TableHead>
-                                <TableHead className="h-auto px-3 py-4 text-left text-[14px] font-light leading-[1.24] text-white whitespace-normal sm:px-5 sm:text-[18px] md:text-[20px]">
+                                <TableHead className="sticky top-0 z-10 h-auto bg-[#B02383] px-3 py-4 text-left text-[14px] font-light leading-[1.24] text-white whitespace-normal sm:px-5 sm:text-[18px] md:text-[20px]">
                                     Range Point Match Support From Highest to Lowest
                                 </TableHead>
                             </TableRow>
@@ -75,7 +78,13 @@ const RankPointReusableTable = ({
 
                         <TableBody>
                             {currentItems.length ? (
-                                currentItems.map((item, rowIndex) => (
+                                currentItems.map((item, rowIndex) => {
+                                    const supporterProfileHref =
+                                        item.userId && item.userId !== "N/A"
+                                            ? `/artist/${item.userId}`
+                                            : undefined;
+
+                                    return (
                                         <TableRow
                                             key={item.id ?? rowIndex}
                                             className="border-b border-white/20 hover:bg-white/10"
@@ -91,7 +100,16 @@ const RankPointReusableTable = ({
                                             <TableCell
                                                 className="border-r border-white/20 px-3 py-4 text-center text-[13px] text-white/90 whitespace-nowrap sm:px-5 sm:text-[14px]"
                                             >
-                                                {item.supporterName}
+                                                {supporterProfileHref ? (
+                                                    <Link
+                                                        href={supporterProfileHref}
+                                                        className="inline-block transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                                    >
+                                                        {item.supporterName}
+                                                    </Link>
+                                                ) : (
+                                                    item.supporterName
+                                                )}
                                             </TableCell>
 
                                             <TableCell className="border-r border-white/20 px-3 py-4 text-center text-[13px] text-white/90 whitespace-nowrap sm:px-5 sm:text-[14px]">
@@ -102,7 +120,8 @@ const RankPointReusableTable = ({
                                                 {item.supportedAmounts}
                                             </TableCell>
                                         </TableRow>
-                                    ))
+                                    );
+                                })
                             ) : (
                                 <TableRow>
                                     <TableCell
