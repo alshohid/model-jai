@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import Link from "next/link";
 import { ReactNode } from "react";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import { ITopVoterItem } from "@/types/match/MatchManagementTypes";
@@ -48,7 +49,16 @@ export default function VotingRankTable({
                             className="h-full w-full object-cover"
                         />
                     </div>
-                    <span className="text-white">{item.user?.name ?? "N/A"}</span>
+                    {item.user?.id || item.user_id ? (
+                        <Link
+                            href={`/artist/${item.user?.id ?? item.user_id}`}
+                            className="text-white transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                        >
+                            {item.user?.name ?? "N/A"}
+                        </Link>
+                    ) : (
+                        <span className="text-white">{item.user?.name ?? "N/A"}</span>
+                    )}
                 </div>
             ),
             (item) => <span className="text-white">{item.user_id}</span>,

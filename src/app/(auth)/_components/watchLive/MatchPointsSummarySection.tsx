@@ -5,6 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/shared/lib/utils/cn";
 import MatchPointsCard from "@/shared/components/card/MatchPointsCard";
@@ -238,6 +239,10 @@ export default function MatchPointsSummarySection({
         ? leftPlayerVotes + rightPlayerVotes
         : Number(votingSession?.totalVotes ?? 0);
     const topVoters = votingSession?.topVoters ?? matchData?.top_voters ?? [];
+    const topVoterProfileHref =
+        topVoters[0]?.user?.id || topVoters[0]?.user_id
+            ? `/artist/${topVoters[0]?.user?.id ?? topVoters[0]?.user_id}`
+            : undefined;
     const votingWindowMinutes = Number(effectiveVotingTime ?? 0);
     const votingWindowLabel =
         votingWindowMinutes > 0 ? `${votingWindowMinutes} Min Window` : "Voting Session";
@@ -592,15 +597,46 @@ export default function MatchPointsSummarySection({
                                     </p>
                                 </div>
                                 <div className="rounded-xl bg-black/40 border border-white/10 p-3">
-                                    <div className="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-black">
-                                        <Image src={topVoters[0]?.user?.image ?? "/images/home/avatar_img.png"} alt={topVoters[0]?.user?.name ?? ""} fill className="object-cover" />
-                                    </div>
+                                    {topVoterProfileHref ? (
+                                        <Link
+                                            href={topVoterProfileHref}
+                                            className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                            aria-label={`View ${topVoters[0]?.user?.name ?? "top voter"} profile`}
+                                        >
+                                            <div className="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-black">
+                                                <Image
+                                                    src={topVoters[0]?.user?.image ?? "/images/home/avatar_img.png"}
+                                                    alt={topVoters[0]?.user?.name ?? ""}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </div>
+                                        </Link>
+                                    ) : (
+                                        <div className="w-full aspect-[4/5] relative rounded-lg overflow-hidden bg-black">
+                                            <Image
+                                                src={topVoters[0]?.user?.image ?? "/images/home/avatar_img.png"}
+                                                alt={topVoters[0]?.user?.name ?? ""}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    )}
 
                                     <div className="mt-3 text-white/80 text-[0.5rem] md:text-[12px] font-semibold">
                                         Big Boss Voter
                                     </div>
                                     <div className="text-white font-black text-[0.7rem] md:text-[1rem]">
-                                        {topVoters[0]?.user?.name}
+                                        {topVoterProfileHref ? (
+                                            <Link
+                                                href={topVoterProfileHref}
+                                                className="inline-block transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                            >
+                                                {topVoters[0]?.user?.name}
+                                            </Link>
+                                        ) : (
+                                            topVoters[0]?.user?.name
+                                        )}
                                     </div>
 
                                 </div>
