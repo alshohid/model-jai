@@ -158,7 +158,7 @@ export default function ArtistProfilePanel({
                                         <CheckCircle2 className="size-4 text-[#00C3FF]" />
                                     )}
                                 </div>
-                                <InfoRow label="Username" value={`@${artist.username}`} />
+                                <InfoRow label="Artist Name" value={`@${artist.username}`} />
                                 {/* <InfoRow label="Email" value={artist.email} />
                                 {artist.contact && (
                                     <InfoRow label="Contact" value={artist.contact} />

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiResponse } from "../common/api";
 
 export type IRefreshTokenPayload = {
@@ -89,6 +88,7 @@ export interface IAuthRegisterParams {
   zip_code?: string | null;
   state?: string | null;
   social_verification_status?: boolean;
+  social_verification_number?: string | null;
   game_id?: number | null;
   referral_id?: string | null;
 }

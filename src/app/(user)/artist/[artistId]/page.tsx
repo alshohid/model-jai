@@ -41,7 +41,7 @@ export default function ArtistProfilePage() {
     const mappedArtist = {
         id: String(user.id),
         name: user.name,
-        username: user.email.split('@')[0],
+        username: user.artist_name,
         email: user.email,
         avatar: getSafeImageSrc(user.image_url || user.image, "/images/home/avatar_img.png"),
         isBigBoss: user.role === "artist",

@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import { IGameOption } from "@/types/game/gameList/gameListTypes";
 import { IAuthRegisterParams } from "@/types/user/auth";
-import { ClipboardTypeIcon, Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon } from "lucide-react";
+import { Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon } from "lucide-react";
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     const [registerUser, { isLoading }] = useRegisterUserMutation();
@@ -33,6 +33,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             zip_code: "",
             state: "",
             social_verification_status: false,
+            social_verification_number: "",
         },
     });
     const [googleLogin] = useGoogleLoginMutation();
@@ -95,6 +96,9 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             zip_code: normalizeOptionalText(data.zip_code),
             state: normalizeOptionalText(data.state),
             social_verification_status: Boolean(data.social_verification_status),
+            social_verification_number: data.social_verification_status
+                ? normalizeOptionalText(data.social_verification_number)
+                : null,
             game_id: selectedGame?.id ?? null,
             referral_id: getReferralId(),
         };
@@ -212,13 +216,21 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
 
                         <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                                const nextValue = !isSocialVerificationEnabled;
+
                                 setValue(
                                     "social_verification_status",
-                                    !isSocialVerificationEnabled,
+                                    nextValue,
                                     { shouldDirty: true }
-                                )
-                            }
+                                );
+
+                                if (!nextValue) {
+                                    setValue("social_verification_number", "", {
+                                        shouldDirty: true,
+                                    });
+                                }
+                            }}
                             className={[
                                 "relative h-6 w-12 rounded-full transition-all duration-300 cursor-pointer",
                                 isSocialVerificationEnabled
@@ -236,6 +248,16 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                             />
                         </button>
                     </div>
+
+                    {isSocialVerificationEnabled && (
+                        <AuthInput
+                            label="Social Verification Number"
+                            name="social_verification_number"
+                            type="number"
+                            register={register as any}
+                            icon={<MicIcon className="size-4 text-white" />}
+                        />
+                    )}
 
                     {/* ── Favorite Game Picker Field ── */}
                     <div className="space-y-1.5">
@@ -339,6 +361,4 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         </>
     );
 }
-
-
 
