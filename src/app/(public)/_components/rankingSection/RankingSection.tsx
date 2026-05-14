@@ -80,6 +80,11 @@ const RankingSection = ({
                                 topSupporter?.supporterImage ||
                                 FALLBACK_SUPPORTER_IMAGE
                             }
+                            profileHref={
+                                topSupporter?.userId
+                                    ? `/artist/${topSupporter.userId}`
+                                    : undefined
+                            }
                             title="Big Boss Supporter"
                             name={
                                 topSupporter?.supporterName ||

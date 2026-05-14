@@ -43,7 +43,7 @@ export default function ArtistProfilePage() {
         name: user.name,
         username: user.email.split('@')[0],
         email: user.email,
-        avatar: getSafeImageSrc(user.image_url || user.image, "/images/home/profile_img.png"),
+        avatar: getSafeImageSrc(user.image_url || user.image, "/images/home/avatar_img.png"),
         isBigBoss: user.role === "artist",
         isVerified: user.verified_at !== null,
         posts: user.total_post || 0,

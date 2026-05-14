@@ -44,7 +44,7 @@ type Props = {
     isLoading?: boolean;
 };
 
-const avatarFallbackSrc = "/images/home/profile_img.png";
+const avatarFallbackSrc = "/images/home/avatar_img.png";
 const artistPanelBlurDataUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 50"><rect width="40" height="50" fill="#171b21"/></svg>`
 )}`;
