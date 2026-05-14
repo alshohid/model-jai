@@ -32,6 +32,12 @@ export function proxy(request: NextRequest) {
 
   const isPublicHomePage = pathname === "/";
 
+  const buildUserLoginRedirect = () => {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", `${pathname}${request.nextUrl.search}`);
+    return loginUrl;
+  };
+
   // 1) user/artist logged in থাকলে admin route block
   if ((isAdminLoginPage || isAdminProtectedRoute) && isUserAuthenticated) {
     return NextResponse.redirect(new URL("/", request.url));
@@ -56,7 +62,7 @@ export function proxy(request: NextRequest) {
   // 4) user protected route
   if (isUserProtectedRoute) {
     if (!isUserAuthenticated) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(buildUserLoginRedirect());
     }
 
     if (isAdminAuthenticated) {

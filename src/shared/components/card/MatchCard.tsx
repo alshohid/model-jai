@@ -16,11 +16,15 @@ type Props = {
     gameLogoSrc: string;
     leftPlayerImg: string;
     rightPlayerImg: string;
+    leftPlayerName?: string;
+    rightPlayerName?: string;
     watchHref?: string;
     voteRequired?: boolean;
     className?: string;
     rules?: string | null;
     onWatch?: () => void;
+    onLeftPlayerClick?: () => void;
+    onRightPlayerClick?: () => void;
     tiktokLink: string;
     twitchLink: string;
     versusImg?: string;
@@ -35,12 +39,16 @@ export default function MatchCard(props: Props) {
         gameLogoSrc,
         leftPlayerImg,
         rightPlayerImg,
+        leftPlayerName,
+        rightPlayerName,
         className = "",
         rules,
         tiktokLink,
         twitchLink,
         versusImg = "/images/home/versus.png",
         onWatch,
+        onLeftPlayerClick,
+        onRightPlayerClick,
     } = props;
     const [rulesOpen, setRulesOpen] = useState(false);
 
@@ -50,6 +58,9 @@ export default function MatchCard(props: Props) {
     const statusLabel =
         normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1);
 
+    const leftPlayerAlt = leftPlayerName || `${title} player one`;
+    const rightPlayerAlt = rightPlayerName || `${title} player two`;
+
     const statusStyle = clsx(
         "inline-flex items-center rounded-[9px] border px-1 md:px-2.5 py-0.5 md:py-1 text-[9px] md:text-[11px] font-medium leading-none",
         normalizedStatus === "live"
@@ -58,6 +69,53 @@ export default function MatchCard(props: Props) {
                 ? "border-white/10 bg-white/[0.05] text-white/55"
                 : "border-white/10 bg-white/[0.06] text-white/78"
     );
+
+    const renderPlayerImage = ({
+        imageSrc,
+        alt,
+        positionClassName,
+        onClick,
+    }: {
+        imageSrc: string;
+        alt: string;
+        positionClassName: string;
+        onClick?: () => void;
+    }) => {
+        const containerClassName = clsx(
+            "absolute inset-y-0 w-[48%] overflow-hidden",
+            positionClassName
+        );
+
+        if (onClick) {
+            return (
+                <button
+                    type="button"
+                    onClick={onClick}
+                    className={clsx(
+                        containerClassName,
+                        "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    )}
+                    aria-label={`View ${alt} profile`}
+                >
+                    <img
+                        src={imageSrc}
+                        alt={alt}
+                        className="h-full w-full object-cover object-top"
+                    />
+                </button>
+            );
+        }
+
+        return (
+            <div className={containerClassName}>
+                <img
+                    src={imageSrc}
+                    alt={alt}
+                    className="h-full w-full object-cover object-top"
+                />
+            </div>
+        );
+    };
 
     return (
         <>
@@ -84,21 +142,19 @@ export default function MatchCard(props: Props) {
                             </button>
                         )}
 
-                        <div className="absolute inset-y-0 left-0 w-[48%] overflow-hidden">
-                            <img
-                                src={leftPlayerImg}
-                                alt={`${title} player one`}
-                                className="h-full w-full object-cover object-top"
-                            />
-                        </div>
+                        {renderPlayerImage({
+                            imageSrc: leftPlayerImg,
+                            alt: leftPlayerAlt,
+                            positionClassName: "left-0",
+                            onClick: onLeftPlayerClick,
+                        })}
 
-                        <div className="absolute inset-y-0 right-0 w-[48%] overflow-hidden">
-                            <img
-                                src={rightPlayerImg}
-                                alt={`${title} player two`}
-                                className="h-full w-full object-cover object-top"
-                            />
-                        </div>
+                        {renderPlayerImage({
+                            imageSrc: rightPlayerImg,
+                            alt: rightPlayerAlt,
+                            positionClassName: "right-0",
+                            onClick: onRightPlayerClick,
+                        })}
 
                         {/* <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[20%] -translate-x-1/2 bg-[linear-gradient(180deg,rgba(27,34,40,0.12),rgba(17,20,24,0.36),rgba(27,34,40,0.12))]" /> */}
                         {/* <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,10,12,0.02),rgba(8,10,12,0.1)_45%,rgba(8,10,12,0.3)_100%)]" /> */}

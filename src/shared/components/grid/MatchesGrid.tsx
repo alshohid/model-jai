@@ -47,6 +47,26 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
         router.push(`/admin/dashboard`);
     };
 
+    const handleArtistRedirect = (artistId?: number | string | null) => {
+        if (!artistId) {
+            return;
+        }
+
+        const artistPath = `/artist/${artistId}`;
+
+        if (!isAuthenticated) {
+            router.push(`/login?redirect=${encodeURIComponent(artistPath)}`);
+            return;
+        }
+
+        if (role === "user" || role === "artist") {
+            router.push(artistPath);
+            return;
+        }
+
+        router.push(`/admin/dashboard`);
+    };
+
     if (isLoading) {
         return <LoadingSkeleton />;
     }
@@ -63,11 +83,23 @@ export default function MatchesGrid({ matches, isLoading }: Props) {
                     gameLogoSrc={match.game.image || "/images/home/gameLogo.png"}
                     leftPlayerImg={match.player_one?.image_url || "/images/home/leftPlayerImg.png"}
                     rightPlayerImg={match.player_two?.image_url || "/images/home/rightPlayerImg.png"}
+                    leftPlayerName={match.player_one?.name}
+                    rightPlayerName={match.player_two?.name}
                     voteRequired={match.confirmation_status === 0}
                     rules={match.rules ?? null}
                     versusImg="/images/home/versus.png"
                     tiktokLink={match.tiktok_link ?? "#"}
                     twitchLink={match.twitch_link ?? "#"}
+                    onLeftPlayerClick={
+                        match.player_one?.id
+                            ? () => handleArtistRedirect(match.player_one.id)
+                            : undefined
+                    }
+                    onRightPlayerClick={
+                        match.player_two?.id
+                            ? () => handleArtistRedirect(match.player_two.id)
+                            : undefined
+                    }
                     onWatch={() => handleWatch(match.id!, match.platform || "tiktok")}
                 />
             ))}

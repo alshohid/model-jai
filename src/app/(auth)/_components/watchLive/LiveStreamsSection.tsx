@@ -59,6 +59,26 @@ export default function LiveStreamsSection() {
 
         router.push(`/live-stream/match/${matchId}?platform=${platform}`);
     };
+
+    const handleArtistRedirect = (artistId?: number | string | null) => {
+        if (!artistId) {
+            return;
+        }
+
+        const artistPath = `/artist/${artistId}`;
+
+        if (!isAuthenticated) {
+            router.push(`/login?redirect=${encodeURIComponent(artistPath)}`);
+            return;
+        }
+
+        if (role === "user" || role === "artist") {
+            router.push(artistPath);
+            return;
+        }
+
+        router.push(`/admin/dashboard`);
+    };
     if (isLoading) {
         return <LoadingSkeleton />;
     }
@@ -94,10 +114,25 @@ export default function LiveStreamsSection() {
                             gameLogoSrc={getSafeImageSrc(match.game.image, "/images/home/gameLogo.png")}
                             leftPlayerImg={getSafeImageSrc(match.player_one?.image_url || match.player_one?.image, "/images/home/leftPlayerImg.png")}
                             rightPlayerImg={getSafeImageSrc(match.player_two?.image_url || match.player_two?.image, "/images/home/rightPlayerImg.png")}
+                            leftPlayerName={match.player_one?.name}
+                            rightPlayerName={match.player_two?.name}
                             voteRequired={match.confirmation_status === 0} // If confirmation is 0, vote is required
                             watchHref={match.tiktok_link || "#"} // Assuming you are passing TikTok link
                             versusImg="/images/home/versus.png" // Static or dynamic image
-                            onWatch={() => handleWatch(match.id, match.platform || "tiktok")} tiktokLink={""} twitchLink={""} />
+                            onLeftPlayerClick={
+                                match.player_one?.id
+                                    ? () => handleArtistRedirect(match.player_one.id)
+                                    : undefined
+                            }
+                            onRightPlayerClick={
+                                match.player_two?.id
+                                    ? () => handleArtistRedirect(match.player_two.id)
+                                    : undefined
+                            }
+                            onWatch={() => handleWatch(match.id, match.platform || "tiktok")}
+                            tiktokLink=""
+                            twitchLink=""
+                        />
                     ))}
                 </div>
 
