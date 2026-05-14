@@ -21,10 +21,10 @@ export default function ChooseCategorySection() {
 
     return (
         <section className="w-full overflow-visible">
-            <div className="container py-10 md:py-16">
+            <div className="container py-6 md:py-16">
                 <SectionHead title="Choose Category" />
 
-                <div className="mt-12 sm:mt-16">
+                <div className="mt-6 md:mt-12">
                     {isLoading ? (
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                             {Array.from({ length: 4 }).map((_, index) => (

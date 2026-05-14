@@ -23,7 +23,7 @@ export default function GamesSection() {
 
     return (
         <section className="w-full overflow-visible">
-            <div className="container py-10 md:py-16">
+            <div className="container py-6 md:py-16">
                 <SectionHead title="Choose Games" />
 
                 <div className="mt-6 md:mt-16">

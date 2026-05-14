@@ -52,7 +52,7 @@ export default function LatestNewsSection() {
                 <div className="grid grid-cols-1 lg:grid-cols-[4fr_8fr] gap-10 lg:gap-16 items-start">
                     {/* Left */}
                     <div className="flex flex-col items-start gap-6">
-                        <h2 className="text-[#FFFFFF] text-[48px] sm:text-[52px] leading-[1.05] font-light pb-4 ">
+                        <h2 className="text-[#FFFFFF] md:text-[3rem] text-[2rem]  leading-[1.05] font-light pb-4 ">
                             Latest news &<br /> updates
                         </h2>
 
