@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGetFeaturedGalleryListQuery } from "@/redux/features/settings/gallery/galleryManagement";
 import VideoCarousel, {
     VideoCarouselItem,
@@ -11,7 +11,8 @@ import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 export default function VideosSection() {
     const limit = 20;
     const [page] = useState(1);
-    const [selectedVideo, setSelectedVideo] = useState<VideoCarouselItem | null>(null);
+    const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null);
+    const preloadCacheRef = useRef<Map<string, HTMLVideoElement>>(new Map());
 
     const { data, isLoading } = useGetFeaturedGalleryListQuery({
         page,
@@ -25,6 +26,56 @@ export default function VideosSection() {
             videoSrc: video.short_video,
             posterSrc: getSafeImageSrc(video.short_video_thumb, "/images/home/cat_1.png"),
         })) ?? [];
+
+    const isPreviewOpen =
+        selectedVideoIndex !== null &&
+        selectedVideoIndex >= 0 &&
+        selectedVideoIndex < videos.length;
+
+    const warmVideoByIndex = (index: number, preload: "metadata" | "auto" = "metadata") => {
+        const item = videos[index];
+
+        if (!item?.videoSrc || typeof document === "undefined") {
+            return;
+        }
+
+        const existingVideo = preloadCacheRef.current.get(item.videoSrc);
+
+        if (existingVideo) {
+            if (preload === "auto" && existingVideo.preload !== "auto") {
+                existingVideo.preload = "auto";
+                existingVideo.load();
+            }
+
+            return;
+        }
+
+        const preloadVideo = document.createElement("video");
+        preloadVideo.src = item.videoSrc;
+        preloadVideo.preload = preload;
+        preloadVideo.muted = true;
+        preloadVideo.defaultMuted = true;
+        preloadVideo.playsInline = true;
+        preloadVideo.load();
+
+        preloadCacheRef.current.set(item.videoSrc, preloadVideo);
+    };
+
+    useEffect(() => {
+        videos.slice(0, 4).forEach((_, index) => {
+            warmVideoByIndex(index, "metadata");
+        });
+    }, [videos]);
+
+    useEffect(() => {
+        if (!isPreviewOpen || selectedVideoIndex === null) {
+            return;
+        }
+
+        warmVideoByIndex(selectedVideoIndex, "auto");
+        warmVideoByIndex(selectedVideoIndex - 1, "metadata");
+        warmVideoByIndex(selectedVideoIndex + 1, "metadata");
+    }, [isPreviewOpen, selectedVideoIndex, videos]);
 
     if (isLoading) {
         return (
@@ -45,16 +96,23 @@ export default function VideosSection() {
         <section className="w-full pt-5 md:pt-15 container">
             <VideoCarousel
                 items={videos}
-                onCardClick={(item) => setSelectedVideo(item)}
+                onCardIntent={(_, index) => {
+                    warmVideoByIndex(index, "auto");
+                    warmVideoByIndex(index - 1, "metadata");
+                    warmVideoByIndex(index + 1, "metadata");
+                }}
+                onCardClick={(_, index) => setSelectedVideoIndex(index)}
             />
             <VideoPreviewDialog
-                open={Boolean(selectedVideo)}
+                open={isPreviewOpen}
                 onOpenChange={(open) => {
                     if (!open) {
-                        setSelectedVideo(null);
+                        setSelectedVideoIndex(null);
                     }
                 }}
-                item={selectedVideo}
+                items={videos}
+                currentIndex={selectedVideoIndex ?? 0}
+                onIndexChange={setSelectedVideoIndex}
             />
         </section>
     );

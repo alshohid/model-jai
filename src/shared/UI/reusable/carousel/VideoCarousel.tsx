@@ -23,6 +23,7 @@ type Props = {
     className?: string;
     cardClassName?: string;
     onCardClick?: (item: VideoCarouselItem, index: number) => void;
+    onCardIntent?: (item: VideoCarouselItem, index: number) => void;
 };
 
 export default function VideoCarousel({
@@ -30,6 +31,7 @@ export default function VideoCarousel({
     className,
     cardClassName,
     onCardClick,
+    onCardIntent,
 }: Props) {
     const [api, setApi] = React.useState<CarouselApi | null>(null);
     const [current, setCurrent] = React.useState(0);
@@ -57,7 +59,7 @@ export default function VideoCarousel({
                     type="button"
                     onClick={() => api?.scrollPrev()}
                     disabled={!api?.canScrollPrev()}
-                    className="absolute left-0 top-1/2 z-20 hidden -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#120B14]/90 p-3 text-white/80 shadow-[0_14px_35px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 md:flex"
+                    className="absolute left-2 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#120B14]/90 p-2.5 text-white/80 shadow-[0_14px_35px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:left-3 sm:p-3"
                     aria-label="Previous video"
                 >
                     <ChevronLeft className="size-5" />
@@ -67,14 +69,14 @@ export default function VideoCarousel({
                     type="button"
                     onClick={() => api?.scrollNext()}
                     disabled={!api?.canScrollNext()}
-                    className="absolute right-0 top-1/2 z-20 hidden translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#120B14]/90 p-3 text-white/80 shadow-[0_14px_35px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 md:flex"
+                    className="absolute right-2 top-1/2 z-20 flex -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-[#120B14]/90 p-2.5 text-white/80 shadow-[0_14px_35px_rgba(0,0,0,0.28)] backdrop-blur-xl transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:right-3 sm:p-3"
                     aria-label="Next video"
                 >
                     <ChevronRight className="size-5" />
                 </button>
 
                 <Carousel
-                    opts={{ align: "start", containScroll: false }}
+                    opts={{ align: "start", containScroll: "trimSnaps", loop: items.length > 1 }}
                     setApi={setApi}
                     className="w-full"
                 >
@@ -82,10 +84,13 @@ export default function VideoCarousel({
                         {items.map((item, idx) => (
                             <CarouselItem
                                 key={item.id}
-                                className="basis-[315px] p-0 sm:basis-[315px] md:basis-[400px] lg:basis-[440px] xl:basis-[480px]"
+                                className="basis-[320px] p-0 sm:basis-[360px] md:basis-[430px] lg:basis-[480px] xl:basis-[520px]"
                             >
                                 <button
                                     type="button"
+                                    onMouseEnter={() => onCardIntent?.(item, idx)}
+                                    onFocus={() => onCardIntent?.(item, idx)}
+                                    onTouchStart={() => onCardIntent?.(item, idx)}
                                     onClick={() => onCardClick?.(item, idx)}
                                     className={cn(
                                         "cursor-pointer select-none",
@@ -101,7 +106,7 @@ export default function VideoCarousel({
                                         src={item.posterSrc || "/images/home/cat_1.png"}
                                         alt={item.title || "Video thumbnail"}
                                         fill
-                                        sizes="(max-width: 640px) 280px, (max-width: 768px) 340px, (max-width: 1024px) 400px, 480px"
+                                        sizes="(max-width: 640px) 320px, (max-width: 768px) 360px, (max-width: 1024px) 430px, (max-width: 1280px) 480px, 520px"
                                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                                         priority={idx === 0}
                                     />
