@@ -43,6 +43,10 @@ export type WatchLiveHeroSlide = {
   thumbs?: string[];
   avatars?: string[];
   gameImage?: string;
+  leftPlayerId?: string;
+  rightPlayerId?: string;
+  leftPlayerName?: string;
+  rightPlayerName?: string;
 
   // ✅ new fields for MatchCard overlay
   dateText: string;

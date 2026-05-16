@@ -59,6 +59,10 @@ export default function WatchLivePage() {
         title: `${match.player_one?.name || "Player One"} vs ${match.player_two?.name || "Player Two"}`,
         meta: `${formateDate(match?.match_date)} • ${formateTime(match?.match_time)}`,
         isLive: match.type === "live",
+        leftPlayerId: match.player_one?.id ? String(match.player_one.id) : undefined,
+        rightPlayerId: match.player_two?.id ? String(match.player_two.id) : undefined,
+        leftPlayerName: match.player_one?.name || "Player One",
+        rightPlayerName: match.player_two?.name || "Player Two",
         status:
             match.type === "live"
                 ? "Live"
@@ -93,6 +97,26 @@ export default function WatchLivePage() {
         router.push(`/live-stream/match/${s.id}?platform=${s.platform || "tiktok"}`);
     };
 
+    const handleArtistRedirect = (artistId?: string) => {
+        if (!artistId) {
+            return;
+        }
+
+        const artistPath = `/artist/${artistId}`;
+
+        if (!isAuthenticated) {
+            router.push(`/login?redirect=${encodeURIComponent(artistPath)}`);
+            return;
+        }
+
+        if (role === "user" || role === "artist") {
+            router.push(artistPath);
+            return;
+        }
+
+        router.push("/admin/dashboard");
+    };
+
     return (
         <div className={`w-full ${isAuthenticated ? "py-0" : "py-20"}`}>
             {isLoading ? (
@@ -101,6 +125,7 @@ export default function WatchLivePage() {
                 <WatchLiveHeroCarousel
                     slides={slides}
                     onWatch={(s) => onWatchHandler(s)}
+                    onArtistClick={handleArtistRedirect}
                 />
             )}
         </div>

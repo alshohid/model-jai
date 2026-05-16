@@ -24,9 +24,10 @@ type Props = {
     slides: WatchLiveHeroSlide[];
     className?: string;
     onWatch?: (slide: WatchLiveHeroSlide) => void;
+    onArtistClick?: (artistId?: string) => void;
 };
 
-export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Props) {
+export default function WatchLiveHeroCarousel({ slides, className, onWatch, onArtistClick }: Props) {
     const sliderRef = useRef<any>(null);
     const [active, setActive] = useState(0);
     const [dir, setDir] = useState<"next" | "prev">("next");
@@ -121,12 +122,22 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                     dateText={s.dateText}
                                     timeText={s.timeText}
                                     gameLogoSrc={s.gameLogoSrc}
-                                    leftPlayerName="JACK"
-                                    rightPlayerName="STEEVE"
+                                    leftPlayerName={s.leftPlayerName}
+                                    rightPlayerName={s.rightPlayerName}
                                     leftPlayerImg={s.leftPlayerImg}
                                     rightPlayerImg={s.rightPlayerImg}
                                     versusImg={s.versusImg}
                                     voteRequired={s.voteRequired}
+                                    onLeftPlayerClick={
+                                        s.leftPlayerId
+                                            ? () => onArtistClick?.(s.leftPlayerId)
+                                            : undefined
+                                    }
+                                    onRightPlayerClick={
+                                        s.rightPlayerId
+                                            ? () => onArtistClick?.(s.rightPlayerId)
+                                            : undefined
+                                    }
                                     className="w-full h-full max-w-none rounded-none"
                                 />
                             </div>
@@ -136,11 +147,11 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                 </Slider>
 
                 <div className="absolute bottom-20 inset-0 pointer-events-none">
-                    <div className="container h-full pointer-events-auto ">
+                    <div className="container h-full">
 
                         <div className="flex h-full flex-col justify-end pb-6 sm:pb-8">
 
-                            <div className="grid w-full grid-cols-[minmax(0,1fr)_104px] items-end gap-4 sm:grid-cols-[minmax(0,1fr)_128px] sm:gap-5 md:grid-cols-[minmax(0,1fr)_150px] md:gap-6 lg:grid-cols-[minmax(0,1fr)_178px] lg:gap-10">
+                            <div className="pointer-events-auto grid w-full grid-cols-[minmax(0,1fr)_104px] items-end gap-4 sm:grid-cols-[minmax(0,1fr)_128px] sm:gap-5 md:grid-cols-[minmax(0,1fr)_150px] md:gap-6 lg:grid-cols-[minmax(0,1fr)_178px] lg:gap-10">
                                 <div className="w-full">
                                     <div
                                         key={activeSlide?.id}
@@ -189,7 +200,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch }: Pr
                                 </div>
                             </div>
 
-                            <div className="mt-6 flex w-full items-center justify-center gap-3 min-w-0 lg:mt-8">
+                            <div className="pointer-events-auto mt-6 flex w-full items-center justify-center gap-3 min-w-0 lg:mt-8">
                                 <CircleNavButton dir="prev" onClick={() => sliderRef.current?.slickPrev()} />
 
                                 <div className="min-w-0 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
