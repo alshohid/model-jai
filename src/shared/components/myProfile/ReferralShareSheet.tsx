@@ -5,14 +5,18 @@ import {
     Sheet,
     SheetContent,
 } from "@/components/ui/sheet";
-import { Copy, Check, Share2, Link as LinkIcon } from "lucide-react";
+import { Copy, Check, Share2 } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
+import Image from "next/image";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 interface ReferralShareSheetProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     title: string;
     shareUrl: string;
+    imageSrc?: string;
+    imageAlt?: string;
     onCopy?: (link: string) => void;
     onShare?: (link: string) => void;
 }
@@ -22,10 +26,14 @@ export default function ReferralShareSheet({
     onOpenChange,
     title,
     shareUrl,
+    imageSrc,
+    imageAlt,
     onCopy,
     onShare,
 }: ReferralShareSheetProps) {
     const [copied, setCopied] = useState(false);
+    const shareImageSrc = getSafeImageSrc(imageSrc, "/assets/images/logo-new.svg");
+    const isFallbackLogo = shareImageSrc === "/assets/images/logo-new.svg";
 
     let displayUrl = shareUrl || "";
     if (typeof window !== "undefined" && shareUrl) {
@@ -84,8 +92,17 @@ export default function ReferralShareSheet({
 
                 {/* Share target: icon + title + url */}
                 <div className="flex items-center gap-4 px-5 pb-4 shrink-0">
-                    <div className="flex items-center justify-center size-12 rounded-xl bg-white/10 shrink-0">
-                        <LinkIcon className="size-6 text-white/80" />
+                    <div className="flex items-center justify-center size-12 overflow-hidden rounded-xl bg-white/10 shrink-0">
+                        <Image
+                            src={shareImageSrc}
+                            alt={imageAlt || title || "Share target"}
+                            width={48}
+                            height={48}
+                            className={cn(
+                                "h-full w-full",
+                                isFallbackLogo ? "object-contain p-3" : "object-cover"
+                            )}
+                        />
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="font-semibold text-white truncate">

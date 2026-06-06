@@ -16,6 +16,8 @@ type Props = {
     shareTitle?: string;
     matchId?: string;
     playerRef?: string;
+    shareImageSrc?: string;
+    shareImageAlt?: string;
     compact?: boolean;
     className?: string;
     positive: boolean;
@@ -32,6 +34,8 @@ export default function MatchPointsCard({
     shareTitle,
     matchId,
     playerRef,
+    shareImageSrc,
+    shareImageAlt,
     compact = true,
     className,
     positive,
@@ -181,6 +185,8 @@ export default function MatchPointsCard({
                     onOpenChange={setShareSheetOpen}
                     title={shareTitle ?? ""}
                     shareUrl={shareUrl}
+                    imageSrc={shareImageSrc}
+                    imageAlt={shareImageAlt || playerName}
                 />
             )}
         </div>

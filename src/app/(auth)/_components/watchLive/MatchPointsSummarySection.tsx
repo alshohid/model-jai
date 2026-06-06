@@ -178,6 +178,8 @@ export default function MatchPointsSummarySection({
     const [shareSheetOpen, setShareSheetOpen] = useState(false);
     const [shareSheetTitle, setShareSheetTitle] = useState("");
     const [shareUrl, setShareUrl] = useState("");
+    const [shareSheetImageSrc, setShareSheetImageSrc] = useState("");
+    const [shareSheetImageAlt, setShareSheetImageAlt] = useState("");
     const [selectedVoteSide, setSelectedVoteSide] = useState<VoteSide>("left");
     const [voteCount, setVoteCount] = useState("1");
     const { votingSession } = useMatchVoting(matchId);
@@ -254,10 +256,14 @@ export default function MatchPointsSummarySection({
         votingSession?.playerTwoImage || defaultVoteRightImage,
         "/images/home/avatar_img.png",
     );
+    const leftReferralImage = getSafeImageSrc(leftPlayerImageSrc, leftVoteImage);
+    const rightReferralImage = getSafeImageSrc(rightPlayerImageSrc, rightVoteImage);
     const middleTipName = "Model";
     const currentPlatform = searchParams.get("platform") || "tiktok";
 
-    const handleVoteShare = (playerName: string) => {
+    const handleVoteShare = (side: VoteSide) => {
+        const playerName = side === "left" ? left.playerName : right.playerName;
+        const playerImageSrc = side === "left" ? leftReferralImage : rightReferralImage;
         if (typeof window === "undefined" || !routeMatchId) {
             toast.error("Match link is not available right now.");
             return;
@@ -267,6 +273,8 @@ export default function MatchPointsSummarySection({
             `${window.location.origin}/live-stream/match/${routeMatchId}?platform=${encodeURIComponent(currentPlatform)}`;
 
         setShareSheetTitle(`Vote for ${playerName}`);
+        setShareSheetImageSrc(playerImageSrc);
+        setShareSheetImageAlt(playerName);
         setShareUrl(nextShareUrl);
         setShareSheetOpen(true);
     };
@@ -515,7 +523,7 @@ export default function MatchPointsSummarySection({
                                     imageSrc={leftVoteImage}
                                     accentClassName="text-[#F472FF]"
                                     onClick={() => handleVoteCardClick("left")}
-                                    onShareClick={() => handleVoteShare(left.playerName)}
+                                    onShareClick={() => handleVoteShare("left")}
                                     disabled={!isVotingOpen}
                                     voteCount={leftPlayerVotes}
                                 />
@@ -552,7 +560,7 @@ export default function MatchPointsSummarySection({
                                     imageSrc={rightVoteImage}
                                     accentClassName="text-[#F472FF]"
                                     onClick={() => handleVoteCardClick("right")}
-                                    onShareClick={() => handleVoteShare(right.playerName)}
+                                    onShareClick={() => handleVoteShare("right")}
                                     disabled={!isVotingOpen}
                                     voteCount={rightPlayerVotes}
                                 />
@@ -657,6 +665,8 @@ export default function MatchPointsSummarySection({
                                 matchId={matchId}
                                 matchSide="left"
                                 playerRef={userReferralNo}
+                                shareImageSrc={leftReferralImage}
+                                shareImageAlt={left.playerName}
                                 onClick={() => handleCardClick("left")}
                             />
 
@@ -681,6 +691,8 @@ export default function MatchPointsSummarySection({
                                 matchId={matchId}
                                 matchSide="right"
                                 playerRef={userReferralNo}
+                                shareImageSrc={rightReferralImage}
+                                shareImageAlt={right.playerName}
                                 onClick={() => handleCardClick("right")}
                             />
                         </div>
@@ -797,6 +809,8 @@ export default function MatchPointsSummarySection({
                 onOpenChange={setShareSheetOpen}
                 title={shareSheetTitle}
                 shareUrl={shareUrl}
+                imageSrc={shareSheetImageSrc}
+                imageAlt={shareSheetImageAlt}
                 onCopy={() => toast.success("Match share link copied")}
                 onShare={() => toast.success("Match share link shared")}
             />

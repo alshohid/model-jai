@@ -116,7 +116,6 @@ export default function MatchDetails({
         };
     }, []);
 
-
     return (
         <div className="min-h-screen">
             <PublicNavbar />
