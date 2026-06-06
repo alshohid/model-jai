@@ -11,6 +11,8 @@ import {
 import { cn } from "@/shared/lib/utils/cn";
 import CategoryCard from "@/shared/components/card/CategoryCard";
 
+const AUTO_SLIDE_INTERVAL_MS = 3200;
+
 export type CategoryItem = {
     id: string;
     title: string;
@@ -27,41 +29,62 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
     const [api, setApi] = React.useState<CarouselApi | null>(null);
     const [current, setCurrent] = React.useState(0);
     const [count, setCount] = React.useState(items.length);
+    const shouldAutoSlide = items.length > 1;
 
     React.useEffect(() => {
         if (!api) return;
-        setCount(api.scrollSnapList().length)
 
         const onSelect = () => {
-            const curr = api.selectedScrollSnap();
-            setCurrent(curr);
+            setCount(api.scrollSnapList().length);
+            setCurrent(api.selectedScrollSnap());
         };
+
         onSelect();
         api.on("select", onSelect);
+        api.on("reInit", onSelect);
 
         return () => {
             api.off("select", onSelect);
+            api.off("reInit", onSelect);
         };
-    }, [api]);
+    }, [api, items.length]);
+
+    React.useEffect(() => {
+        if (!api || !shouldAutoSlide) return;
+
+        const scrollNext = () => {
+            if (document.visibilityState === "hidden") return;
+            api.scrollNext();
+        };
+
+        const intervalId = window.setInterval(scrollNext, AUTO_SLIDE_INTERVAL_MS);
+
+        return () => {
+            window.clearInterval(intervalId);
+        };
+    }, [api, shouldAutoSlide]);
 
     return (
         <div className={cn("w-full", className)}>
             <div className="relative w-full">
-                {/* LEFT */}
                 <button
+                    type="button"
                     onClick={() => api?.scrollPrev()}
                     disabled={!api?.canScrollPrev()}
                     className="absolute left-0 top-1/2 -translate-x-15 -translate-y-1/2 z-20 cursor-pointer disabled:opacity-50 hidden sm:block"
+                    aria-label="Previous category"
                 >
-                    <Image src="/images/home/larrow.png" alt="Prev" width={24} height={24} />
+                    <Image src="/images/home/larrow.png" alt="" width={24} height={24} />
                 </button>
 
                 <button
+                    type="button"
                     onClick={() => api?.scrollNext()}
                     disabled={!api?.canScrollNext()}
                     className="absolute right-0 top-1/2 translate-x-15 cursor-pointer -translate-y-1/2 z-20 disabled:opacity-50 hidden sm:block"
+                    aria-label="Next category"
                 >
-                    <Image src="/images/home/rarrow.png" alt="Next" width={24} height={24} />
+                    <Image src="/images/home/rarrow.png" alt="" width={24} height={24} />
                 </button>
 
                 <Carousel
@@ -70,6 +93,7 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                         align: "start",
                         containScroll: false,
                         dragFree: false,
+                        loop: shouldAutoSlide,
                     }}
                 >
                     <CarouselContent className="-ml-3 md:-ml-8">
@@ -89,11 +113,12 @@ export default function CategoryCarousel({ items, className, onItemClick }: Prop
                 </Carousel>
             </div>
 
-            {/* Pagination */}
             <div className="mt-8 flex justify-center gap-3">
                 {Array.from({ length: count }).map((_, i) => (
                     <button
                         key={`page-${i}`}
+                        type="button"
+                        aria-label={`Go to slide ${i + 1}`}
                         onClick={() => {
                             api?.scrollTo(i);
                         }}

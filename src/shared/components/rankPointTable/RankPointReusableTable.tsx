@@ -46,7 +46,7 @@ const RankPointReusableTable = ({
                 ) : (
                     <Table
                         dragScrollMode="both"
-                        containerClassName="max-h-[270px] overflow-y-auto overscroll-y-contain md:max-h-none md:overflow-y-visible"
+                        containerClassName="max-h-[260px] overflow-y-auto overscroll-y-contain"
                         className="w-full table-fixed"
                         style={{ minWidth: `${minTableWidthPx}px` }}
                     >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useGetFeaturedGalleryListQuery } from "@/redux/features/settings/gallery/galleryManagement";
 import VideoCarousel, {
     VideoCarouselItem,
@@ -19,53 +19,53 @@ export default function VideosSection() {
         limit,
     });
 
-    const videos: VideoCarouselItem[] =
-        data?.data?.map((video) => ({
-            id: String(video.id),
-            title: video.description || "",
-            videoSrc: video.short_video,
-            posterSrc: getSafeImageSrc(video.short_video_thumb, "/images/home/cat_1.png"),
-        })) ?? [];
+    const videos = useMemo<VideoCarouselItem[]>(
+        () =>
+            data?.data?.map((video) => ({
+                id: String(video.id),
+                title: video.description || "",
+                videoSrc: video.short_video,
+                posterSrc: getSafeImageSrc(video.short_video_thumb, "/images/home/cat_1.png"),
+            })) ?? [],
+        [data?.data]
+    );
 
     const isPreviewOpen =
         selectedVideoIndex !== null &&
         selectedVideoIndex >= 0 &&
         selectedVideoIndex < videos.length;
 
-    const warmVideoByIndex = (index: number, preload: "metadata" | "auto" = "metadata") => {
-        const item = videos[index];
+    const warmVideoByIndex = useCallback(
+        (index: number, preload: "metadata" | "auto" = "metadata") => {
+            const item = videos[index];
 
-        if (!item?.videoSrc || typeof document === "undefined") {
-            return;
-        }
-
-        const existingVideo = preloadCacheRef.current.get(item.videoSrc);
-
-        if (existingVideo) {
-            if (preload === "auto" && existingVideo.preload !== "auto") {
-                existingVideo.preload = "auto";
-                existingVideo.load();
+            if (!item?.videoSrc || typeof document === "undefined") {
+                return;
             }
 
-            return;
-        }
+            const existingVideo = preloadCacheRef.current.get(item.videoSrc);
 
-        const preloadVideo = document.createElement("video");
-        preloadVideo.src = item.videoSrc;
-        preloadVideo.preload = preload;
-        preloadVideo.muted = true;
-        preloadVideo.defaultMuted = true;
-        preloadVideo.playsInline = true;
-        preloadVideo.load();
+            if (existingVideo) {
+                if (preload === "auto" && existingVideo.preload !== "auto") {
+                    existingVideo.preload = "auto";
+                    existingVideo.load();
+                }
 
-        preloadCacheRef.current.set(item.videoSrc, preloadVideo);
-    };
+                return;
+            }
 
-    useEffect(() => {
-        videos.slice(0, 4).forEach((_, index) => {
-            warmVideoByIndex(index, "metadata");
-        });
-    }, [videos]);
+            const preloadVideo = document.createElement("video");
+            preloadVideo.src = item.videoSrc;
+            preloadVideo.preload = preload;
+            preloadVideo.muted = true;
+            preloadVideo.defaultMuted = true;
+            preloadVideo.playsInline = true;
+            preloadVideo.load();
+
+            preloadCacheRef.current.set(item.videoSrc, preloadVideo);
+        },
+        [videos]
+    );
 
     useEffect(() => {
         if (!isPreviewOpen || selectedVideoIndex === null) {
@@ -75,7 +75,7 @@ export default function VideosSection() {
         warmVideoByIndex(selectedVideoIndex, "auto");
         warmVideoByIndex(selectedVideoIndex - 1, "metadata");
         warmVideoByIndex(selectedVideoIndex + 1, "metadata");
-    }, [isPreviewOpen, selectedVideoIndex, videos]);
+    }, [isPreviewOpen, selectedVideoIndex, warmVideoByIndex]);
 
     if (isLoading) {
         return (

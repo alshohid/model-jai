@@ -11,6 +11,8 @@ import {
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/shared/lib/utils/cn";
 
+const AUTO_SCROLL_INTERVAL_MS = 4200;
+
 export type VideoCarouselItem = {
     id: string;
     title: string;
@@ -36,6 +38,7 @@ export default function VideoCarousel({
     const [api, setApi] = React.useState<CarouselApi | null>(null);
     const [current, setCurrent] = React.useState(0);
     const count = api ? api.scrollSnapList().length : items.length;
+    const shouldAutoScroll = items.length > 1;
 
     React.useEffect(() => {
         if (!api) return;
@@ -51,6 +54,21 @@ export default function VideoCarousel({
             api.off("select", onSelect);
         };
     }, [api]);
+
+    React.useEffect(() => {
+        if (!api || !shouldAutoScroll) return;
+
+        const scrollNext = () => {
+            if (document.visibilityState === "hidden") return;
+            api.scrollNext();
+        };
+
+        const intervalId = window.setInterval(scrollNext, AUTO_SCROLL_INTERVAL_MS);
+
+        return () => {
+            window.clearInterval(intervalId);
+        };
+    }, [api, shouldAutoScroll]);
 
     return (
         <div className={cn("w-full", className)}>
@@ -76,7 +94,7 @@ export default function VideoCarousel({
                 </button>
 
                 <Carousel
-                    opts={{ align: "start", containScroll: "trimSnaps", loop: items.length > 1 }}
+                    opts={{ align: "start", containScroll: false, loop: shouldAutoScroll }}
                     setApi={setApi}
                     className="w-full"
                 >
@@ -86,37 +104,13 @@ export default function VideoCarousel({
                                 key={item.id}
                                 className="basis-[320px] p-0 sm:basis-[360px] md:basis-[430px] lg:basis-[480px] xl:basis-[520px]"
                             >
-                                <button
-                                    type="button"
-                                    onMouseEnter={() => onCardIntent?.(item, idx)}
-                                    onFocus={() => onCardIntent?.(item, idx)}
-                                    onTouchStart={() => onCardIntent?.(item, idx)}
-                                    onClick={() => onCardClick?.(item, idx)}
-                                    className={cn(
-                                        "cursor-pointer select-none",
-                                        "group relative aspect-video w-full overflow-hidden rounded-[24px]",
-                                        "border border-white/10 bg-[#09070D]",
-                                        "shadow-[0_22px_60px_rgba(0,0,0,0.3)]",
-                                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60",
-                                        cardClassName
-                                    )}
-                                    aria-label={item.title || "Open video"}
-                                >
-                                    <Image
-                                        src={item.posterSrc || "/images/home/cat_1.png"}
-                                        alt={item.title || "Video thumbnail"}
-                                        fill
-                                        sizes="(max-width: 640px) 320px, (max-width: 768px) 360px, (max-width: 1024px) 430px, (max-width: 1280px) 480px, 520px"
-                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                        priority={idx === 0}
-                                    />
-
-                                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,4,8,0.06),rgba(4,4,8,0.18)_48%,rgba(4,4,8,0.5)_100%)]" />
-
-                                    <div className="pointer-events-none absolute bottom-4 right-4 flex size-12 items-center justify-center rounded-full bg-black/45 text-white shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md sm:size-14">
-                                        <ArrowUpRight className="size-5 sm:size-6" />
-                                    </div>
-                                </button>
+                                <AutoPlayingVideoCard
+                                    item={item}
+                                    index={idx}
+                                    cardClassName={cardClassName}
+                                    onCardClick={onCardClick}
+                                    onCardIntent={onCardIntent}
+                                />
                             </CarouselItem>
                         ))}
                     </CarouselContent>
@@ -142,5 +136,145 @@ export default function VideoCarousel({
                 ))}
             </div>
         </div>
+    );
+}
+
+type AutoPlayingVideoCardProps = {
+    item: VideoCarouselItem;
+    index: number;
+    cardClassName?: string;
+    onCardClick?: (item: VideoCarouselItem, index: number) => void;
+    onCardIntent?: (item: VideoCarouselItem, index: number) => void;
+};
+
+function AutoPlayingVideoCard({
+    item,
+    index,
+    cardClassName,
+    onCardClick,
+    onCardIntent,
+}: AutoPlayingVideoCardProps) {
+    const cardRef = React.useRef<HTMLButtonElement | null>(null);
+    const videoRef = React.useRef<HTMLVideoElement | null>(null);
+    const [hasVideoError, setHasVideoError] = React.useState(false);
+    const [isVisible, setIsVisible] = React.useState(false);
+    const canRenderVideo = Boolean(item.videoSrc) && !hasVideoError;
+    const shouldRenderVideo = canRenderVideo && isVisible;
+
+    React.useEffect(() => {
+        setHasVideoError(false);
+    }, [item.videoSrc]);
+
+    React.useEffect(() => {
+        const card = cardRef.current;
+
+        if (!card) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsVisible(entry.isIntersecting && entry.intersectionRatio >= 0.35);
+            },
+            {
+                threshold: [0, 0.35, 0.7],
+            }
+        );
+
+        observer.observe(card);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    React.useEffect(() => {
+        const video = videoRef.current;
+
+        if (!video || !shouldRenderVideo) return;
+
+        const playVideo = () => {
+            if (document.visibilityState === "hidden") return;
+
+            video.muted = true;
+            video.defaultMuted = true;
+            video.playsInline = true;
+            void video.play().catch(() => { });
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                playVideo();
+                return;
+            }
+
+            video.pause();
+        };
+
+        const frameId = window.requestAnimationFrame(playVideo);
+
+        video.addEventListener("canplay", playVideo);
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        return () => {
+            window.cancelAnimationFrame(frameId);
+            video.removeEventListener("canplay", playVideo);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            video.pause();
+        };
+    }, [shouldRenderVideo, item.videoSrc]);
+
+    return (
+        <button
+            ref={cardRef}
+            type="button"
+            onMouseEnter={() => onCardIntent?.(item, index)}
+            onFocus={() => onCardIntent?.(item, index)}
+            onTouchStart={() => onCardIntent?.(item, index)}
+            onClick={() => onCardClick?.(item, index)}
+            className={cn(
+                "cursor-pointer select-none",
+                "group relative aspect-video w-full overflow-hidden rounded-[24px]",
+                "border border-white/10 bg-[#09070D]",
+                "shadow-[0_22px_60px_rgba(0,0,0,0.3)]",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60",
+                cardClassName
+            )}
+            aria-label={item.title || "Open video"}
+        >
+            {shouldRenderVideo ? (
+                <video
+                    ref={videoRef}
+                    src={item.videoSrc}
+                    poster={item.posterSrc || "/images/home/cat_1.png"}
+                    className="pointer-events-none size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    onLoadedMetadata={(event) => {
+                        const video = event.currentTarget;
+                        video.muted = true;
+                        video.defaultMuted = true;
+                        void video.play().catch(() => { });
+                    }}
+                    onError={() => setHasVideoError(true)}
+                />
+            ) : (
+                <Image
+                    src={item.posterSrc || "/images/home/cat_1.png"}
+                    alt={item.title || "Video thumbnail"}
+                    fill
+                    sizes="(max-width: 640px) 320px, (max-width: 768px) 360px, (max-width: 1024px) 430px, (max-width: 1280px) 480px, 520px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    priority={index === 0}
+                />
+            )}
+
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,4,8,0.06),rgba(4,4,8,0.18)_48%,rgba(4,4,8,0.5)_100%)]" />
+
+            <div className="pointer-events-none absolute bottom-4 right-4 flex size-12 items-center justify-center rounded-full bg-black/45 text-white shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md sm:size-14">
+                <ArrowUpRight className="size-5 sm:size-6" />
+            </div>
+        </button>
     );
 }
