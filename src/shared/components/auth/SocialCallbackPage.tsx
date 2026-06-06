@@ -4,6 +4,9 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/redux/store";
 import { handleSocialAuth } from "@/shared/lib/auth/handleSocialCallback";
+import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
+
+const PENDING_AUTH_REDIRECT_KEY = "pending_auth_redirect";
 
 type SocialCallbackPageProps = {
     provider?: string;
@@ -25,7 +28,17 @@ export default function SocialCallbackPage({
 
         try {
             handleSocialAuth(encodedData, dispatch);
-            router.replace("/");
+            const redirect = safeRedirect(
+                typeof window !== "undefined"
+                    ? sessionStorage.getItem(PENDING_AUTH_REDIRECT_KEY)
+                    : null
+            );
+
+            if (typeof window !== "undefined") {
+                sessionStorage.removeItem(PENDING_AUTH_REDIRECT_KEY);
+            }
+
+            router.replace(redirect);
         } catch {
             router.replace("/login");
         }

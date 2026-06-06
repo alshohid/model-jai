@@ -7,7 +7,12 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import { handleAfterLogin } from "@/lib/helper/loginHelper";
 import { useAuth } from "@/redux/features/auth/hooks";
-import { resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
+import { useAppDispatch } from "@/redux/store";
+import {
+    extractLoginAuthData,
+    handleAuthSuccess,
+    resolveLoginFlowResult,
+} from "@/redux/features/auth/authHelpers";
 import { useVerifyLoginOtpMutation } from "@/redux/features/auth/authapi";
 import {
     clearLoginOtpSession,
@@ -19,11 +24,13 @@ import OtpCodeFieldGroup from "./OtpCodeFieldGroup";
 import { useOtpInput } from "./useOtpInput";
 import AuthPageShell from "./AuthPageShell";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
+import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
 
 const OTP_LENGTH = 6;
 
 export default function LoginOtpForm() {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const { logIn, isLoading: isResending } = useAuth();
     const [verifyLoginOtp, { isLoading: isVerifying }] =
         useVerifyLoginOtpMutation();
@@ -32,7 +39,7 @@ export default function LoginOtpForm() {
     const isCompletingLogin = useRef(false);
     const email = session?.email ?? "";
     const password = session?.password ?? "";
-    const redirect = session?.redirect;
+    const redirect = safeRedirect(session?.redirect ?? null);
     const loginPath = session?.loginPath || "/login";
     const {
         otpDigits,
@@ -60,11 +67,20 @@ export default function LoginOtpForm() {
         try {
             setErrorMessage("");
             const response = await verifyLoginOtp({ email, otp }).unwrap();
+            const authSaved = handleAuthSuccess(response, dispatch);
+            const { role } = extractLoginAuthData(response);
+
+            if (!authSaved || !role) {
+                throw new Error(
+                    "OTP verified, but login token was missing. Please try again.",
+                );
+            }
+
             isCompletingLogin.current = true;
             clearLoginOtpSession();
             setSession(null);
             toast.success(response.message || "OTP verified successfully");
-            handleAfterLogin(response?.data?.user?.role, redirect, router);
+            handleAfterLogin(role, redirect, router);
         } catch (error) {
             const message = getErrorMessage(error, "OTP verification failed");
             setErrorMessage(message);
@@ -87,6 +103,14 @@ export default function LoginOtpForm() {
             const flowResult = resolveLoginFlowResult(response);
 
             if (flowResult.kind === "authenticated") {
+                const authSaved = handleAuthSuccess(response, dispatch);
+
+                if (!authSaved || !flowResult.role) {
+                    throw new Error(
+                        "Login succeeded, but login token was missing. Please try again.",
+                    );
+                }
+
                 isCompletingLogin.current = true;
                 clearLoginOtpSession();
                 setSession(null);

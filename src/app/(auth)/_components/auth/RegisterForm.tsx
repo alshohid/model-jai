@@ -16,8 +16,23 @@ import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import { IGameOption } from "@/types/game/gameList/gameListTypes";
 import { IAuthRegisterParams } from "@/types/user/auth";
 import { Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
+
+const PENDING_REFERRAL_KEY = "pending_referral";
+const PENDING_AUTH_REDIRECT_KEY = "pending_auth_redirect";
+
+const getReferralFromRedirect = (rawRedirect: string | null) => {
+    const redirect = safeRedirect(rawRedirect);
+    const queryIndex = redirect.indexOf("?");
+
+    if (queryIndex === -1) return null;
+
+    return new URLSearchParams(redirect.slice(queryIndex + 1)).get("ref");
+};
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
+    const router = useRouter();
     const [registerUser, { isLoading }] = useRegisterUserMutation();
     const { register, handleSubmit, control, setValue } = useForm<IAuthRegisterParams>({
         defaultValues: {
@@ -50,9 +65,18 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     useEffect(() => {
         if (typeof window === "undefined") return;
 
-        const referralFromUrl = new URLSearchParams(window.location.search).get("ref");
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectParam = searchParams.get("redirect");
+        const redirectFromUrl = safeRedirect(redirectParam);
+        const referralFromUrl =
+            searchParams.get("ref") || getReferralFromRedirect(redirectParam);
+
         if (referralFromUrl) {
-            sessionStorage.setItem("pending_referral", referralFromUrl);
+            sessionStorage.setItem(PENDING_REFERRAL_KEY, referralFromUrl);
+        }
+
+        if (redirectFromUrl !== "/") {
+            sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, redirectFromUrl);
         }
     }, []);
 
@@ -63,19 +87,48 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     const getReferralId = () => {
         if (typeof window === "undefined") return null;
 
-        const referralFromUrl = new URLSearchParams(window.location.search).get("ref");
-        return referralFromUrl || sessionStorage.getItem("pending_referral");
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectFromUrl = searchParams.get("redirect");
+        const redirectFromStorage = sessionStorage.getItem(PENDING_AUTH_REDIRECT_KEY);
+
+        return (
+            searchParams.get("ref") ||
+            getReferralFromRedirect(redirectFromUrl) ||
+            sessionStorage.getItem(PENDING_REFERRAL_KEY) ||
+            getReferralFromRedirect(redirectFromStorage)
+        );
+    };
+
+    const getAuthRedirect = () => {
+        if (typeof window === "undefined") return "/";
+
+        const redirectFromUrl = new URLSearchParams(window.location.search).get("redirect");
+        const redirectFromStorage = sessionStorage.getItem(PENDING_AUTH_REDIRECT_KEY);
+
+        return safeRedirect(redirectFromUrl || redirectFromStorage);
+    };
+
+    const rememberRedirectForSocialLogin = () => {
+        if (typeof window === "undefined") return;
+
+        const redirect = getAuthRedirect();
+        if (redirect !== "/") {
+            sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, redirect);
+        }
     };
 
     const handleGoogleLogin = async () => {
+        rememberRedirectForSocialLogin();
         await executeSocialLogin(() => googleLogin().unwrap());
     };
 
     const handleFacebookLogin = async () => {
+        rememberRedirectForSocialLogin();
         await executeSocialLogin(() => facebookLogin().unwrap());
     };
 
     const handleAppleLogin = async () => {
+        rememberRedirectForSocialLogin();
         await executeSocialLogin(() => appleLogin().unwrap());
     };
 
@@ -106,11 +159,20 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
         const result = await registerUser(payload);
 
         if ("data" in result) {
-            if (typeof window !== "undefined") {
-                sessionStorage.removeItem("pending_referral");
+            const redirect = getAuthRedirect();
+            const loginParams = new URLSearchParams();
+
+            if (redirect !== "/") {
+                loginParams.set("redirect", redirect);
             }
+
+            if (typeof window !== "undefined") {
+                sessionStorage.removeItem(PENDING_REFERRAL_KEY);
+            }
+
             toast.success(result.data?.message ?? "User registered successfully");
             onGoLogin();
+            router.push("/login" + (loginParams.toString() ? "?" + loginParams.toString() : ""));
         } else if ("error" in result) {
             const error = result.error as any;
             toast.error(error?.data?.message ?? "Something went wrong");

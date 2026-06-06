@@ -67,9 +67,16 @@ export default function MatchPointsCard({
     const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
         e?.stopPropagation();
         if (showShareSheet && typeof window !== "undefined" && matchId && playerRef) {
-            setShareUrl(
-                `${window.location.origin}/register?ref=${encodeURIComponent(playerRef)}`
+            const nextShareUrl = new URL(
+                `/live-stream/match/${matchId}`,
+                window.location.origin
             );
+            const currentPlatform =
+                new URLSearchParams(window.location.search).get("platform") || "tiktok";
+
+            nextShareUrl.searchParams.set("platform", currentPlatform);
+            nextShareUrl.searchParams.set("ref", playerRef);
+            setShareUrl(nextShareUrl.toString());
             setShareSheetOpen(true);
         } else {
             onShare?.();

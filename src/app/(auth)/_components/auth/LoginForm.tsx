@@ -17,31 +17,53 @@ import { useForm } from "react-hook-form";
 import { useAppleLoginMutation, useFacebookLoginMutation, useGoogleLoginMutation } from "@/redux/features/auth/authapi";
 import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
 import { handleAfterLogin } from "@/lib/helper/loginHelper";
-import { resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
+import { handleAuthSuccess, resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
+import { useAppDispatch } from "@/redux/store";
 import { clearLoginOtpSession, writeLoginOtpSession } from "@/shared/lib/auth/loginOtpFlow";
 import { toast } from "sonner";
+
+const PENDING_AUTH_REDIRECT_KEY = "pending_auth_redirect";
+
+const getStoredAuthRedirect = () => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem(PENDING_AUTH_REDIRECT_KEY);
+};
+
+const clearStoredAuthRedirect = () => {
+    if (typeof window === "undefined") return;
+    sessionStorage.removeItem(PENDING_AUTH_REDIRECT_KEY);
+};
 
 export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const { logIn, isLoading: isLoginLoading } = useAuth();
-    const redirect = safeRedirect(searchParams.get("redirect"));
+    const redirect = safeRedirect(searchParams.get("redirect") || getStoredAuthRedirect());
     const [errorLogin, setErrorLogin] = useState("")
     const { register, handleSubmit } = useForm<ILoginParams>();
     const [googleLogin] = useGoogleLoginMutation();
     const [facebookLogin] = useFacebookLoginMutation();
     const [appleLogin] = useAppleLoginMutation();
 
+    const rememberRedirectForSocialLogin = () => {
+        if (typeof window === "undefined" || redirect === "/") return;
+        sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, redirect);
+    };
+
     const handleGoogleLogin = async () => {
+        rememberRedirectForSocialLogin();
         await executeSocialLogin(() => googleLogin().unwrap());
     };
 
     const handleAppleLogin = async () => {
+        rememberRedirectForSocialLogin();
         await executeSocialLogin(() => appleLogin().unwrap());
     };
 
     const handleFacebookLogin = async () => {
+        rememberRedirectForSocialLogin();
         await executeSocialLogin(() => facebookLogin().unwrap());
     };
 
@@ -58,7 +80,16 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                 const flowResult = resolveLoginFlowResult(loginResult);
 
                 if (flowResult.kind === "authenticated") {
+                    const authSaved = handleAuthSuccess(loginResult, dispatch);
+
+                    if (!authSaved || !flowResult.role) {
+                        throw new Error(
+                            "Login succeeded, but login token was missing. Please try again.",
+                        );
+                    }
+
                     clearLoginOtpSession();
+                    clearStoredAuthRedirect();
                     handleAfterLogin(flowResult.role, redirect, router);
                     return;
                 }
@@ -70,6 +101,7 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
                         redirect,
                         loginPath: "/login",
                     });
+                    clearStoredAuthRedirect();
                     toast.success(loginResult.message || "OTP sent successfully");
                     router.push("/login/verify");
                     return;

@@ -11,7 +11,8 @@ import { getErrorMessage } from "@/lib/utils";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { handleAfterLogin } from "@/lib/helper/loginHelper";
 import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
-import { resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
+import { handleAuthSuccess, resolveLoginFlowResult } from "@/redux/features/auth/authHelpers";
+import { useAppDispatch } from "@/redux/store";
 import { clearLoginOtpSession, writeLoginOtpSession } from "@/shared/lib/auth/loginOtpFlow";
 import { toast } from "sonner";
 
@@ -24,6 +25,7 @@ type AdminLoginValues = {
 export default function AdminLoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const dispatch = useAppDispatch();
     const { logIn, isLoading: isLoginLoading, } = useAuth();
     const [errorLogin, setErrorLogin] = useState("")
 
@@ -45,6 +47,14 @@ export default function AdminLoginForm() {
                 const flowResult = resolveLoginFlowResult(loginResult);
 
                 if (flowResult.kind === "authenticated") {
+                    const authSaved = handleAuthSuccess(loginResult, dispatch);
+
+                    if (!authSaved || !flowResult.role) {
+                        throw new Error(
+                            "Login succeeded, but login token was missing. Please try again.",
+                        );
+                    }
+
                     clearLoginOtpSession();
                     handleAfterLogin(flowResult.role, redirect, router);
                     return;

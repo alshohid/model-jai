@@ -269,13 +269,20 @@ export default function MatchPointsSummarySection({
             return;
         }
 
-        const nextShareUrl =
-            `${window.location.origin}/live-stream/match/${routeMatchId}?platform=${encodeURIComponent(currentPlatform)}`;
+        const nextShareUrl = new URL(
+            `/live-stream/match/${routeMatchId}`,
+            window.location.origin
+        );
+        nextShareUrl.searchParams.set("platform", currentPlatform);
+
+        if (userReferralNo) {
+            nextShareUrl.searchParams.set("ref", userReferralNo);
+        }
 
         setShareSheetTitle(`Vote for ${playerName}`);
         setShareSheetImageSrc(playerImageSrc);
         setShareSheetImageAlt(playerName);
-        setShareUrl(nextShareUrl);
+        setShareUrl(nextShareUrl.toString());
         setShareSheetOpen(true);
     };
 

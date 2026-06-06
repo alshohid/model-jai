@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
     Dialog,
     DialogContent,
@@ -9,47 +9,74 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
+
+const PENDING_REFERRAL_KEY = "pending_referral";
+const PENDING_AUTH_REDIRECT_KEY = "pending_auth_redirect";
 
 export function useReferralRedirect() {
     const searchParams = useSearchParams();
+    const pathname = usePathname();
     const router = useRouter();
-    const [showRegistrationPrompt, setShowRegistrationPrompt] = useState(false);
-    const [referralCode, setReferralCode] = useState<string | null>(null);
+    const { isAuthenticated } = useAuth();
+    const referralCode = searchParams.get("ref");
+    const [dismissedReferralCode, setDismissedReferralCode] = useState<string | null>(null);
+
+    const currentRedirect = useMemo(() => {
+        const query = searchParams.toString();
+        return pathname + (query ? "?" + query : "");
+    }, [pathname, searchParams]);
 
     useEffect(() => {
-        const ref = searchParams.get("ref");
-        if (ref) {
-            setReferralCode(ref);
-            // Check if user is logged in (you'll need to implement this check)
-            const isLoggedIn = localStorage.getItem("auth_token") !== null;
-            
-            if (!isLoggedIn) {
-                setShowRegistrationPrompt(true);
-            }
+        if (!referralCode || typeof window === "undefined") return;
+
+        sessionStorage.setItem(PENDING_REFERRAL_KEY, referralCode);
+        sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, currentRedirect);
+    }, [currentRedirect, referralCode]);
+
+    const showRegistrationPrompt = Boolean(
+        referralCode && !isAuthenticated && dismissedReferralCode !== referralCode
+    );
+
+    const getAuthUrl = (path: "/login" | "/register") => {
+        const params = new URLSearchParams();
+
+        if (referralCode) {
+            params.set("ref", referralCode);
         }
-    }, [searchParams]);
+
+        params.set("redirect", currentRedirect);
+
+        return path + "?" + params.toString();
+    };
 
     const handleRegister = () => {
-        // Store referral code in sessionStorage to use after registration
-        if (referralCode) {
-            sessionStorage.setItem("pending_referral", referralCode);
+        if (typeof window !== "undefined") {
+            if (referralCode) {
+                sessionStorage.setItem(PENDING_REFERRAL_KEY, referralCode);
+            }
+            sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, currentRedirect);
         }
-        router.push("/register");
-        setShowRegistrationPrompt(false);
+
+        router.push(getAuthUrl("/register"));
+        setDismissedReferralCode(referralCode);
     };
 
     const handleLogin = () => {
-        // Store referral code in sessionStorage to use after login
-        if (referralCode) {
-            sessionStorage.setItem("pending_referral", referralCode);
+        if (typeof window !== "undefined") {
+            if (referralCode) {
+                sessionStorage.setItem(PENDING_REFERRAL_KEY, referralCode);
+            }
+            sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, currentRedirect);
         }
-        router.push("/login");
-        setShowRegistrationPrompt(false);
+
+        router.push(getAuthUrl("/login"));
+        setDismissedReferralCode(referralCode);
     };
 
     const handleSkip = () => {
-        setShowRegistrationPrompt(false);
+        setDismissedReferralCode(referralCode);
     };
 
     return {
@@ -90,7 +117,7 @@ export function ReferralRegistrationPrompt({
                         Create Account to Support {artistName}
                     </DialogTitle>
                     <DialogDescription className="text-white/70 text-sm">
-                        You've been invited to support {artistName}. Create an account and deposit
+                        You have been invited to support {artistName}. Create an account and deposit
                         funds to participate in matches and show your support.
                     </DialogDescription>
                 </DialogHeader>
