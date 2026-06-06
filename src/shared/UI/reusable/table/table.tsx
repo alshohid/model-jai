@@ -89,6 +89,8 @@ function Table({
     const handlePointerDown = React.useCallback(
         (event: React.PointerEvent<HTMLDivElement>) => {
             if (event.pointerType === "mouse" && event.button !== 0) return
+            // Keep native touch scrolling so mobile swipes retain momentum/inertia.
+            if (event.pointerType !== "mouse") return
 
             const canDragX =
                 dragScrollMode !== "none" &&
@@ -185,18 +187,11 @@ function Table({
             data-slot="table-container"
             className={cn(
                 "relative w-full overflow-x-auto overflow-y-hidden overscroll-x-contain [-webkit-overflow-scrolling:touch]",
-                (overflowState.x || overflowState.y) && "cursor-grab",
+                dragScrollMode !== "none" && (overflowState.x || overflowState.y) && "cursor-grab",
                 isDragging && "cursor-grabbing select-none",
                 containerClassName
             )}
-            style={{
-                touchAction:
-                    dragScrollMode === "both"
-                        ? "none"
-                        : dragScrollMode === "x"
-                            ? "pan-y"
-                            : "auto",
-            }}
+            style={{ touchAction: "auto" }}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
