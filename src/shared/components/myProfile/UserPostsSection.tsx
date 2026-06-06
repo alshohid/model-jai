@@ -684,9 +684,9 @@ export default function UserPostsSection() {
                                                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
                                                         <div className="absolute left-4 right-4 top-4 flex items-center justify-between gap-2">
-                                                            <span className="rounded-full border border-white/12 bg-black/45 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.18em] text-white/80 backdrop-blur-md">
-                                                                {formatPostDate(post.created_at)}
-                                                            </span>
+                                                          <span className="inline-block max-w-full rounded-full border border-white/12 bg-black/45 px-2 sm:px-3 py-1 text-xs sm:text-[11px] font-medium uppercase tracking-[0.15em] text-white/80 backdrop-blur-md truncate">
+    {formatPostDate(post.created_at)}
+</span>
 
                                                             <div className="flex items-center gap-2">
                                                                 <ActionButton

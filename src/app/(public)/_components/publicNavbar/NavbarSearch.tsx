@@ -188,19 +188,20 @@ function SearchResultsContent({
                     >
                         <Image
                             src={user.image || "/images/home/profile_img.png"}
-                            alt={user.name}
+                            alt={user.artist_name}
                             width={40}
                             height={40}
                             className="rounded-full size-10 object-cover border border-black/5"
                         />
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1">
-                                <p className="font-semibold text-sm truncate">{user.name}</p>
+                                <p className="font-semibold text-sm truncate">{user?.artist_name}</p>
                                 {user.verified_at && (
                                     <CheckCircle2 className="size-3.5 text-blue-500 fill-blue-500/10" />
                                 )}
                             </div>
-                            <p className="text-xs opacity-60">@{user.role || 'artist'}</p>
+                            <p className="text-xs opacity-60"> @{user.role || user?.artist_name} </p>
+                            
                         </div>
                     </div>
                 ))
