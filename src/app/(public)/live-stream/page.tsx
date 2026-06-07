@@ -1,5 +1,4 @@
-
-"use client"
+import type { Metadata } from "next";
 
 import GameBrowseSection from "@/app/(auth)/_components/watchLive/GameBrowseSection";
 import LiveStreamsSection from "@/app/(auth)/_components/watchLive/LiveStreamsSection";
@@ -7,6 +6,19 @@ import WatchLivePage from "@/app/(auth)/_components/watchLive/WatchLiveContainer
 import ChooseCategorySection from "@/shared/components/home/ChooseCategorySection";
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
+import { createMetadata } from "@/shared/seo/metadata";
+
+export const metadata: Metadata = createMetadata({
+    title: "Watch Live Gaming Tournaments and Support Matches",
+    description:
+        "Watch live gaming tournaments, browse featured match streams, and follow supporter-driven competition on Model Boss Offers.",
+    path: "/live-stream",
+    keywords: [
+        "live gaming stream",
+        "watch live tournaments",
+        "gaming match livestream",
+    ],
+});
 
 const LiveStreamMatch = () => {
 

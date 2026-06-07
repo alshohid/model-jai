@@ -1,5 +1,5 @@
 
-
+import type { Metadata } from "next";
 import HeroSection from "./_components/heroSection/HeroSection";
 import MatchesSection from "@/shared/components/home/MatchesSection";
 import RankingSection from "./_components/rankingSection/RankingSection";
@@ -9,11 +9,33 @@ import ChooseCategorySection from "@/shared/components/home/ChooseCategorySectio
 import LatestNewsSection from "@/shared/components/home/LatestNewsSection";
 import TakeGameSection from "@/shared/components/home/TakeGameSection";
 import VideosSection from "@/shared/components/home/VideosSection";
+import HomeStructuredData from "./_components/homeSeo/HomeStructuredData";
+import { createMetadata } from "@/shared/seo/metadata";
+import { getHomeSeoContent } from "@/shared/seo/public-content";
 
+export const metadata: Metadata = createMetadata({
+    title: "Live 1v1 Tournaments, Match Streaming and Supporter Battles",
+    description:
+        "Watch live 1v1 gaming tournaments, follow supporter battles, explore featured matchups, and discover fresh updates on Model Boss Offers.",
+    path: "/",
+    keywords: [
+        "home page gaming platform",
+        "watch live tournaments",
+        "support your player live",
+        "featured gaming matches",
+    ],
+});
 
-const Public = () => {
+const Public = async () => {
+    const seoContent = await getHomeSeoContent();
+
     return (
         <main>
+            <HomeStructuredData
+                matches={seoContent.matches}
+                newsItems={seoContent.newsItems}
+                categories={seoContent.categories}
+            />
             <HeroSection />
             <MatchesSection />
             <RankingSection />
