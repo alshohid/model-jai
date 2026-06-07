@@ -19,8 +19,8 @@ export default function HeroSection() {
 
             <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-0 min-h-screen">
 
-                <div className="min-h-screen grid place-items-center">
-                    <div className="text-center w-full max-w-3xl px-2">
+                <div className="min-h-screen grid ">
+                    <div className="text-center w-full max-w-4xl mx-auto px-2">
                         <ChallengeHomePreview />
                         <h1 className="font-heading font-extrabold text-white tracking-[1px] leading-[132%] text-[32px] sm:text-[44px] lg:text-[56px]">
                             Where Supporters <br className="hidden sm:block" />

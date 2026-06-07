@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trophy } from "lucide-react";
 import { challengeMatchOffers } from "../data/challengeMatchMockData";
 import ChallengeOfferCard from "./ChallengeOfferCard";
 import Image from "next/image";
@@ -12,10 +11,10 @@ export default function ChallengeHomePreview() {
   const topOffers = challengeMatchOffers.slice(0, 3);
 
   return (
-    <div className="mx-auto w-full max-w-[520px] rounded-[24px] md:p-3 text-left ">
+    <div className="mx-auto w-full  rounded-[24px]  text-left ">
 
       <Link href="/challenge-dashboard">
-        <div className="relative">
+        <div className="relative mx-auto w-full max-w-[520px]">
           <Image
             src="/images/challenge.png"
             alt="Big Boss Challenge"
@@ -25,7 +24,7 @@ export default function ChallengeHomePreview() {
           />
         </div>
       </Link>
-      <div className="">
+      <div className="w-full">
         {topOffers.map((offer) => (
           <ChallengeOfferCard
             key={offer.id}

@@ -19,51 +19,58 @@ export default function ChallengeOfferCard({
   compact = false,
   onAccept,
 }: ChallengeOfferCardProps) {
+  const challengerName = offer.showRealName
+    ? offer.challenger.name
+    : offer.challenger.handle.replace("@", "");
+
   return (
-    <article className="relative flex items-center gap-3 border-b border-white/18 py-2.5 pr-1 text-white last:border-b-0 sm:gap-4">
-      <div className="w-[62px] flex-shrink-0 text-center sm:w-[76px]">
-        <p className="mb-0.5 rounded-sm bg-[#6b35a8]/80 px-1 text-[11px] font-black text-white sm:text-xs">
+    <article className="grid w-full min-w-0 grid-cols-[54px_minmax(0,1fr)_48px] items-center gap-1.5 overflow-hidden border-b border-white/18 px-1 py-1.5 text-white last:border-b-0 sm:grid-cols-[76px_minmax(0,1fr)_68px] sm:gap-3 sm:px-2 sm:py-2">
+      <Link
+        href={`/artist/${offer.challenger.id}`}
+        className="relative h-[54px] w-[54px] min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff43ff]/60 sm:h-[68px] sm:w-[76px]"
+        aria-label={`View ${offer.challenger.name} profile`}
+      >
+        <span className="absolute left-0 top-[-5px] z-10 rounded-r-sm bg-[#6b35a8]/95 px-1 py-0.5 text-[9px] font-black leading-none text-white shadow-[0_1px_5px_rgba(0,0,0,0.45)] sm:px-1.5 sm:text-xs">
           Rank #{offer.rank}
-        </p>
-        <Link
-          href={`/artist/${offer.challenger.id}`}
-          className="relative mx-auto block h-14 w-14 overflow-hidden rounded-full border-2 border-white shadow-[0_0_12px_rgba(255,255,255,0.45)] sm:h-16 sm:w-16"
-        >
+        </span>
+        <span className="absolute bottom-0 left-0 block h-[47px] w-[47px] overflow-hidden rounded-full border-2 border-white bg-black shadow-[0_0_12px_rgba(255,255,255,0.5)] sm:left-1 sm:h-[62px] sm:w-[62px]">
           <Image
             src={getSafeImageSrc(offer.challenger.avatar)}
             alt={offer.challenger.name}
             fill
-            sizes="64px"
+            sizes="(max-width: 640px) 47px, 62px"
             className="object-cover"
             unoptimized
           />
-        </Link>
-      </div>
+        </span>
+      </Link>
 
-      <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5">
+      <div className="min-w-0 overflow-hidden pr-1">
+        <div className="flex min-w-0 items-baseline gap-1 overflow-hidden leading-none">
           <Link
             href={`/artist/${offer.challenger.id}`}
-            className="w-full truncate text-md font-black text-[#ffd237] [text-shadow:0_1px_0_#5a1c00] hover:text-white"
+            className="min-w-0 max-w-[48%] truncate text-[15px] font-black leading-none text-[#ffd237] [text-shadow:0_1px_0_#6c2b00,0_0_8px_rgba(255,210,55,0.28)] hover:text-white sm:max-w-[55%] sm:text-[21px]"
           >
-            {offer.showRealName ? offer.challenger.name : offer.challenger.handle.replace("@", "")}
+            {challengerName}
           </Link>
-          <span className="text-sm font-bold text-white/85">vs</span>
+          <span className="shrink-0 text-[10px] font-black text-white/90 sm:text-sm">vs</span>
           <Link
             href={`/artist/${offer.target.id}`}
-            className="truncate text-sm font-bold text-[#ff4e59] hover:text-white sm:text-base"
+            className="min-w-0 flex-1 truncate text-[11px] font-black text-[#ff3348] hover:text-white sm:text-sm"
           >
             {offer.target.handle}
           </Link>
         </div>
 
-        <p className="mt-[-2px] text-md md:text-lg font-black leading-none text-[#9c2f9c] ">
+        <p className="mt-0.5 w-full truncate text-[13px] font-black leading-none text-[#ff57ff] [text-shadow:0_1px_0_#55006b,0_0_10px_rgba(255,87,255,0.65)] sm:text-[19px]">
           {formatChallengePoints(offer.amount)} offers in {offer.game}
         </p>
 
-        <div className="mt-1 flex min-w-0 items-start gap-2">
-          {!compact ? <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#ffb13b]" /> : null}
-          <p className="line-clamp-2 text-xs leading-4 text-white/86 sm:text-sm">
+        <div className="mt-1 flex min-w-0 items-start gap-1.5 overflow-hidden">
+          {!compact ? (
+            <FileText className="mt-0.5 hidden h-3.5 w-3.5 flex-shrink-0 text-[#ffb13b] sm:block" />
+          ) : null}
+          <p className="min-w-0 truncate text-[11px] leading-4 text-white/82 sm:text-sm">
             {offer.memo}
           </p>
         </div>
@@ -71,7 +78,7 @@ export default function ChallengeOfferCard({
 
       <ChallengeAcceptButton
         onClick={() => onAccept?.(offer)}
-        className="h-[58px] w-[58px] flex-shrink-0 text-xs sm:h-[70px] sm:w-[70px] sm:text-sm"
+        className="h-12 w-12 flex-shrink-0 border-[3px] text-[10px] sm:h-[68px] sm:w-[68px] sm:border-[5px] sm:text-sm"
       />
     </article>
   );
