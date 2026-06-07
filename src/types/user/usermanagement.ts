@@ -145,3 +145,82 @@ export interface UpdateUserPostParams {
   id: number;
   body: FormData;
 }
+
+export type SocialConnectionRole = "user" | "artist" | "super_admin" | string;
+
+export interface SocialConnectionGame {
+  id: number;
+  name: string;
+  image?: string | null;
+}
+
+export interface SocialConnectionUser {
+  id: number;
+  name: string;
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
+  artist_name?: string | null;
+  email?: string | null;
+  show_email?: boolean;
+  phone_number?: string | null;
+  nationality?: string | null;
+  is_player?: boolean;
+  image?: string | null;
+  provider?: string | null;
+  verified_at?: boolean | string | null;
+  suspended_until?: string | null;
+  is_permanent_suspended?: boolean;
+  suspension_reason?: string | null;
+  note?: string | null;
+  total_post?: number | string | null;
+  role: SocialConnectionRole;
+  referral_no?: string | null;
+  game?: SocialConnectionGame | null;
+  followers_count?: number | string | null;
+  following_count?: number | string | null;
+  created_at?: string | null;
+  is_following?: boolean;
+  is_followed_by?: boolean;
+}
+
+export interface SocialConnectionPagination {
+  current_page: number;
+  data: SocialConnectionUser[];
+  first_page_url?: string | null;
+  from?: number | null;
+  last_page: number;
+  last_page_url?: string | null;
+  links?: Array<{
+    url: string | null;
+    label: string;
+    active: boolean;
+  }>;
+  next_page_url?: string | null;
+  path?: string;
+  per_page: number;
+  prev_page_url?: string | null;
+  to?: number | null;
+  total: number;
+}
+
+export type SocialConnectionListParams = {
+  page?: number;
+  limit?: number;
+};
+
+export interface FollowersListResponse {
+  success: boolean;
+  message: string;
+  data: {
+    followers: SocialConnectionPagination;
+  };
+}
+
+export interface FollowingListResponse {
+  success: boolean;
+  message: string;
+  data: {
+    following: SocialConnectionPagination;
+  };
+}

@@ -5,10 +5,13 @@ import { IMatch } from "@/types/match/MatchManagementTypes";
 import {
   ArtistPostsResponse,
   DeleteUserPostResponse,
+  FollowersListResponse,
+  FollowingListResponse,
   ISuspendUserParams,
   IUserCreateParams,
   ReferralUsersResponse,
   SingleUserResponse,
+  SocialConnectionListParams,
   UpdateUserPostParams,
   User,
   UserManagementResponse,
@@ -39,6 +42,34 @@ const UserManagementApi = baseApi.injectEndpoints({
         method: "GET",
         params: {
           search: search,
+        },
+      }),
+      providesTags: ["ManageUser"],
+    }),
+    getFollowersList: builder.query<
+      FollowersListResponse,
+      SocialConnectionListParams | void
+    >({
+      query: (params) => ({
+        url: "/followers/list",
+        method: "GET",
+        params: {
+          page: params?.page ?? 1,
+          per_page: params?.limit ?? 10,
+        },
+      }),
+      providesTags: ["ManageUser"],
+    }),
+    getFollowingList: builder.query<
+      FollowingListResponse,
+      SocialConnectionListParams | void
+    >({
+      query: (params) => ({
+        url: "/following/list",
+        method: "GET",
+        params: {
+          page: params?.page ?? 1,
+          per_page: params?.limit ?? 10,
         },
       }),
       providesTags: ["ManageUser"],
@@ -255,6 +286,8 @@ export const {
   useViewSingleArtistProfileQuery,
   useGetReferralLinkUsedUserQuery,
   useGetAllListUserForSendMoneyQuery,
+  useGetFollowersListQuery,
+  useGetFollowingListQuery,
   useGetAllUserPostsQuery,
   useCreateUserPostMutation,
   useUpdateUserPostMutation,

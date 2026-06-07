@@ -213,8 +213,16 @@ export default function MyProfilePanel({
                         <div className="mt-6 rounded-[14px] border border-white/10 bg-white/5 p-3">
                             <div className="grid grid-cols-3 gap-2 text-center">
                                 <MiniStat label="Posts" value={profile.posts} />
-                                <MiniStat label="Followers" value={profile.followers} />
-                                <MiniStat label="Following" value={profile.following} />
+                                <MiniStat
+                                    label="Followers"
+                                    value={profile.followers}
+                                    href="/user-profile/my-followers"
+                                />
+                                <MiniStat
+                                    label="Following"
+                                    value={profile.following}
+                                    href="/user-profile/following"
+                                />
                             </div>
                         </div>
 
