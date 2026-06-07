@@ -1,18 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Crown, Plus } from "lucide-react";
 import {
   challengeMatchOffers,
   currentChallengeBalance,
 } from "../data/challengeMatchMockData";
+import { useAuth } from "@/redux/features/auth/hooks";
+import { cn } from "@/shared/lib/utils/cn";
 import type { ChallengeMatchOffer } from "../types";
 import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import ChallengeOfferCard from "./ChallengeOfferCard";
 import Image from "next/image";
 
 export default function ChallengeDashboard() {
+  const { isAuthenticated } = useAuth();
   const [selectedOffer, setSelectedOffer] = useState<ChallengeMatchOffer | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -50,7 +51,12 @@ export default function ChallengeDashboard() {
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.85)),radial-gradient(circle_at_top,rgba(255,0,247,0.25),transparent_38%)]" />
 
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
+      <section
+        className={cn(
+          "relative z-10 mx-auto w-full max-w-7xl px-4 pb-6 sm:pb-10",
+          isAuthenticated ? "pt-6 sm:pt-10" : "pt-[120px] sm:pt-[124px]",
+        )}
+      >
         {/* <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-[#ffd44d]/35 bg-black/35 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-[#ffe27a]">
