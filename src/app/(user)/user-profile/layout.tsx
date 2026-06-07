@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createNoIndexMetadata } from "@/shared/seo/metadata";
+import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 
 export const metadata: Metadata = createNoIndexMetadata(
   "User Profile",
@@ -11,5 +12,10 @@ export default function UserProfileLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <div>
+      <PublicNavbar />
+      {children}
+    </div>
+  );
 }
