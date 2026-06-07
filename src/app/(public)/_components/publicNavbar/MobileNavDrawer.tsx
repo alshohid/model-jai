@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet";
 
 import { LuAlignRight } from "react-icons/lu";
+import { Crown } from "lucide-react";
 import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
 import NavbarSearch from "./NavbarSearch";
 import { useAuth } from "@/redux/features/auth/hooks";
@@ -142,6 +143,32 @@ export default function MobileNavSheet({
                                     Support History
                                 </Link>
                             </SheetClose>
+                        )}
+                        {isAuthenticated && (role === "user" || role === "artist") && (
+                            <div className="mt-4 overflow-hidden rounded-[12px] border border-[#d43cff]/45 bg-[#2a1030]/70 shadow-[0_0_20px_rgba(212,60,255,0.28)]">
+                                <div className="flex items-center gap-2 border-b border-[#d43cff]/35 px-4 py-3 text-[#ff8cff]">
+                                    <Crown className="h-5 w-5" />
+                                    <span className="text-lg font-black">Big boss challenge offers</span>
+                                </div>
+                                <div className="grid">
+                                    <SheetClose asChild>
+                                        <Link
+                                            href="/challenge-dashboard"
+                                            className="px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white"
+                                        >
+                                            View challenge dashboard
+                                        </Link>
+                                    </SheetClose>
+                                    <SheetClose asChild>
+                                        <Link
+                                            href="/challenge-dashboard/create"
+                                            className="border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white"
+                                        >
+                                            Create a challenge
+                                        </Link>
+                                    </SheetClose>
+                                </div>
+                            </div>
                         )}
                         {isAuthenticated && (role === "user" || role === "artist") && (
                             <SheetClose asChild>

@@ -1,4 +1,5 @@
 
+import ChallengeHomePreview from "@/features/challenge-match/components/ChallengeHomePreview";
 import StartStreamingRedirect from "./LiveStreamRedirectButton";
 
 export default function HeroSection() {
@@ -20,6 +21,7 @@ export default function HeroSection() {
 
                 <div className="min-h-screen grid place-items-center">
                     <div className="text-center w-full max-w-3xl px-2">
+                        <ChallengeHomePreview />
                         <h1 className="font-heading font-extrabold text-white tracking-[1px] leading-[132%] text-[32px] sm:text-[44px] lg:text-[56px]">
                             Where Supporters <br className="hidden sm:block" />
                             Become Legends
