@@ -19,19 +19,19 @@ const mergeKeywords = (keywords?: string[]) =>
 const resolveFullTitle = (title?: string) =>
   title ? `${title} | ${siteConfig.name}` : siteConfig.defaultTitle;
 
-const defaultRobots = {
+const defaultRobots: Metadata["robots"] = {
   index: true,
   follow: true,
   googleBot: {
     index: true,
     follow: true,
     "max-snippet": -1,
-    "max-image-preview": "large" as const,
+    "max-image-preview": "large",
     "max-video-preview": -1,
   },
 };
 
-const noIndexRobots = {
+const noIndexRobots: Metadata["robots"] = {
   index: false,
   follow: false,
   nocache: true,
@@ -40,7 +40,7 @@ const noIndexRobots = {
     follow: false,
     noimageindex: true,
     "max-snippet": -1,
-    "max-image-preview": "large" as const,
+    "max-image-preview": "large",
     "max-video-preview": -1,
   },
 };
@@ -59,7 +59,7 @@ export const rootMetadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: siteConfig.locale,
     url: siteConfig.url,
     siteName: siteConfig.name,
     title: siteConfig.defaultTitle,
@@ -67,8 +67,8 @@ export const rootMetadata: Metadata = {
     images: [
       {
         url: absoluteUrl(siteConfig.ogImage),
-        width: 1200,
-        height: 630,
+        width: siteConfig.ogImageWidth,
+        height: siteConfig.ogImageHeight,
         alt: `${siteConfig.name} hero banner`,
       },
     ],
@@ -86,6 +86,7 @@ export const rootMetadata: Metadata = {
   },
   creator: siteConfig.name,
   publisher: siteConfig.name,
+  referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,
     address: false,
@@ -116,7 +117,7 @@ export const createMetadata = ({
     },
     openGraph: {
       type,
-      locale: "en_US",
+      locale: siteConfig.locale,
       url: canonical,
       siteName: siteConfig.name,
       title: fullTitle,
@@ -124,8 +125,8 @@ export const createMetadata = ({
       images: [
         {
           url: imageUrl,
-          width: 1200,
-          height: 630,
+          width: siteConfig.ogImageWidth,
+          height: siteConfig.ogImageHeight,
           alt: fullTitle,
         },
       ],

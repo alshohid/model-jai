@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
-import { getPublicMatches } from "@/shared/seo/public-content";
 import { absoluteUrl } from "@/shared/seo/site";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes: MetadataRoute.Sitemap = [
+export default function sitemap(): MetadataRoute.Sitemap {
+  return [
     {
       url: absoluteUrl("/"),
       lastModified: new Date(),
@@ -23,16 +22,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
   ];
-
-  const matches = await getPublicMatches(50);
-
-  const matchRoutes: MetadataRoute.Sitemap = matches.map((match) => ({
-    url: absoluteUrl(`/live-stream/match/${match.id}`),
-    lastModified: new Date(match.updated_at || match.created_at),
-    changeFrequency: match.type === "live" ? "hourly" : "daily",
-    priority: match.type === "live" ? 0.85 : 0.75,
-  }));
-
-  return [...staticRoutes, ...matchRoutes];
 }
-

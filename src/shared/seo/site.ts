@@ -8,8 +8,12 @@ export const siteConfig = {
   url: normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL),
   defaultTitle: "Model Boss Offers",
   description:
-    "Model Boss Offers is a live competitive gaming platform for 1v1 tournaments, supporter battles, featured matches, and real-time streaming updates.",
+    "Model Boss Offers is a live gaming platform for 1v1 tournaments, real-time supporter battles, featured gaming matches, and point-based player support.",
+  locale: "en_US",
+  language: "en",
   ogImage: "/images/home/modaljai_hero.jpg",
+  ogImageWidth: 1280,
+  ogImageHeight: 720,
   logo: "/images/home/brand-logo.png",
   keywords: [
     "Model Boss Offers",
@@ -25,4 +29,3 @@ export const siteConfig = {
 
 export const absoluteUrl = (path = "/") =>
   new URL(path, `${siteConfig.url}/`).toString();
-
