@@ -27,6 +27,7 @@ export const siteConfig = {
     "model boss tournament",
     "model tournament",
     "model games",
+    "model boss game",
     "modelboss offers",
     "modelboss tournament",
     "modelboss games",
