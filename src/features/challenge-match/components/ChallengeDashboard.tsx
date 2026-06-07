@@ -10,6 +10,7 @@ import {
 import type { ChallengeMatchOffer } from "../types";
 import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import ChallengeOfferCard from "./ChallengeOfferCard";
+import Image from "next/image";
 
 export default function ChallengeDashboard() {
   const [selectedOffer, setSelectedOffer] = useState<ChallengeMatchOffer | null>(null);
@@ -49,8 +50,8 @@ export default function ChallengeDashboard() {
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.85)),radial-gradient(circle_at_top,rgba(255,0,247,0.25),transparent_38%)]" />
 
-      <section className="relative z-10 mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <section className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:py-10">
+        {/* <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-[#ffd44d]/35 bg-black/35 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-[#ffe27a]">
               <Crown className="h-4 w-4" />
@@ -71,13 +72,17 @@ export default function ChallengeDashboard() {
             <Plus className="h-4 w-4" />
             Create Challenge
           </Link>
-        </div>
+        </div> */}
 
-        <div className="mt-6 rounded-[22px] border border-[#ff43ff]/35 bg-black/42 p-3 shadow-[0_0_40px_rgba(255,67,255,0.25)] backdrop-blur-sm sm:p-5">
-          <div className="mb-4 rounded-[18px] border border-[#f0c13b]/50 bg-[linear-gradient(90deg,rgba(72,31,5,0.78),rgba(104,22,103,0.72),rgba(72,31,5,0.78))] px-4 py-3 text-center shadow-[0_0_28px_rgba(255,199,56,0.35)]">
-            <p className="text-2xl font-black italic text-[#fff061] [text-shadow:0_2px_0_#7b2d00,0_0_16px_rgba(255,255,0,0.65)] sm:text-4xl">
-              Big boss challenge offers
-            </p>
+        <div className="mt-3 md:mt-6 rounded-[22px] p-3 sm:p-5">
+          <div className="relative mx-auto w-full max-w-[520px]">
+            <Image
+              src="/images/challenge.png"
+              alt="Big Boss Challenge"
+              width={500}
+              height={500}
+              className="object-contain"
+            />
           </div>
 
           <div>
