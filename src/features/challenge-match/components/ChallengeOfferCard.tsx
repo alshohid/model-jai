@@ -63,7 +63,7 @@ export default function ChallengeOfferCard({
         </div>
 
         <p className="mt-0.5 w-full truncate text-[13px] font-black leading-none text-[#ff57ff] [text-shadow:0_1px_0_#55006b,0_0_10px_rgba(255,87,255,0.65)] sm:text-[19px]">
-          {formatChallengePoints(offer.amount)} offers in {offer.game}
+          <span className="text-green-400">{formatChallengePoints(offer.amount)}</span> offers in {offer.game}
         </p>
 
         <div className="mt-1 flex min-w-0 items-start gap-1.5 overflow-hidden">

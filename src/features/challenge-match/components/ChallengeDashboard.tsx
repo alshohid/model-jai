@@ -53,8 +53,8 @@ export default function ChallengeDashboard() {
 
       <section
         className={cn(
-          "relative z-10 mx-auto w-full max-w-7xl px-4 pb-6 sm:pb-10",
-          isAuthenticated ? "pt-6 sm:pt-10" : "pt-[120px] sm:pt-[124px]",
+          "relative z-10 mx-auto w-full max-w-7xl px-4 pb-3",
+          isAuthenticated ? "" : "pt-[120px] sm:pt-[124px]",
         )}
       >
         {/* <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -80,7 +80,7 @@ export default function ChallengeDashboard() {
           </Link>
         </div> */}
 
-        <div className="mt-3 md:mt-6 rounded-[22px] p-3 sm:p-5">
+        <div className="md:mt-6 rounded-[22px] md:px-3 md:py-3">
           <div className="relative mx-auto w-full max-w-[520px]">
             <Image
               src="/images/challenge.png"

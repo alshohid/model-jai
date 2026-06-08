@@ -45,7 +45,14 @@ export const challengeGames = [
   { id: "street-fighter-6", name: "Street Fighter 6" },
 ];
 
-export const challengeAmounts = ["1000", "3000", "5000", "6000", "8000", "10000"];
+export const challengeAmounts = [
+  "1000",
+  "3000",
+  "5000",
+  "6000",
+  "8000",
+  "10000",
+];
 
 export const challengeMatchOffers: ChallengeMatchOffer[] = [
   {
@@ -189,4 +196,4 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
   },
 ];
 
-export const currentChallengeBalance = 483;
+export const currentChallengeBalance = 48300;
