@@ -13,6 +13,7 @@ import {
   Sparkles,
   Trophy,
 } from "lucide-react";
+import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
@@ -42,6 +43,13 @@ const challengeRules = [
   "Players must follow the match rules before the challenge can continue.",
 ];
 
+const anonymousChallengePlayer: ChallengePlayer = {
+  id: 0,
+  name: "Waiting Challenger",
+  handle: "??????",
+  avatar: "/images/home/avatar_img.png",
+};
+
 function getDisplayName(offer: ChallengeMatchOffer) {
   return offer.showRealName
     ? offer.challenger.name
@@ -58,12 +66,14 @@ function ChallengePortraitCard({
   points,
   tone,
   imageOverride,
+  accepted = false,
 }: {
   player: ChallengePlayer;
   label: string;
   points?: number;
   tone: ChallengeTone;
   imageOverride?: string;
+  accepted?: boolean;
 }) {
   const toneClass = {
     gold: "text-[#ffd237] [text-shadow:0_0_12px_rgba(255,210,55,0.45)]",
@@ -72,7 +82,14 @@ function ChallengePortraitCard({
   }[tone];
 
   return (
-    <div className="relative aspect-[3/4] min-w-0 overflow-hidden rounded-t-[10px] border border-white/10 bg-[#08090d]">
+    <div
+      className={cn(
+        "relative aspect-[3/4] min-w-0 overflow-hidden rounded-t-[10px] border bg-[#08090d]",
+        accepted
+          ? "border-[#62ff52]/70 shadow-[0_0_18px_rgba(98,255,82,0.35)] ring-1 ring-[#62ff52]/35"
+          : "border-white/10",
+      )}
+    >
       <Image
         src={getSafeImageSrc(imageOverride ?? player.avatar)}
         alt={player.name}
@@ -82,6 +99,12 @@ function ChallengePortraitCard({
         unoptimized
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/16 to-transparent" />
+      {/* {accepted ? (
+        <div className="absolute right-1 top-1 inline-flex items-center gap-1 rounded-full border border-[#62ff52]/40 bg-black/70 px-1.5 py-0.5 text-[8px] font-black uppercase text-[#62ff52] shadow-[0_0_12px_rgba(98,255,82,0.45)]">
+          <ShieldCheck className="h-3 w-3" />
+          Accepted
+        </div>
+      ) : null} */}
       <div className="absolute inset-x-1 bottom-1 text-center">
         <p className={cn("truncate text-[11px] font-black sm:text-base", toneClass)}>
           {label}
@@ -97,7 +120,13 @@ function ChallengePortraitCard({
   );
 }
 
-function ChallengeTitleStrip({ offer }: { offer: ChallengeMatchOffer }) {
+function ChallengeTitleStrip({
+  offer,
+  rightLabel,
+}: {
+  offer: ChallengeMatchOffer;
+  rightLabel: string;
+}) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_44px_minmax(0,1fr)] items-center border-y border-[#2f233b] bg-black/55 px-1 py-1.5">
       <p className="truncate text-[12px] font-semibold uppercase text-[#dbb851] sm:text-base">
@@ -107,7 +136,7 @@ function ChallengeTitleStrip({ offer }: { offer: ChallengeMatchOffer }) {
         VS
       </p>
       <p className="truncate text-right text-[12px] font-semibold uppercase text-[#d6a854] sm:text-base">
-        {offer.target.handle}
+        {rightLabel}
       </p>
     </div>
   );
@@ -262,10 +291,16 @@ export default function ChallengeMatchDetails({
   offer,
 }: ChallengeMatchDetailsProps) {
   const { isAuthenticated } = useAuth();
+  const { data: meData } = useGetMeDataQuery(undefined, {
+    skip: !isAuthenticated,
+  });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [outcome, setOutcome] = useState<ChallengeDialogOutcome>("confirm");
+  const [acceptedPlayer, setAcceptedPlayer] = useState<ChallengePlayer | null>(null);
   const gameLogo = getGameLogo(offer.game);
+  const rightPlayer = acceptedPlayer ?? anonymousChallengePlayer;
+  const rightLabel = acceptedPlayer?.handle ?? anonymousChallengePlayer.handle;
 
   const openAcceptDialog = () => {
     setAgreed(false);
@@ -274,9 +309,23 @@ export default function ChallengeMatchDetails({
   };
 
   const handleConfirm = () => {
-    setOutcome(
-      currentChallengeBalance >= offer.amount ? "success" : "insufficient",
-    );
+    const canAccept = currentChallengeBalance >= offer.amount;
+
+    if (canAccept) {
+      const user = meData?.data?.user;
+      const artistName = user?.artist_name?.trim();
+      const displayName = artistName || user?.name || "Accepted Player";
+
+      setAcceptedPlayer({
+        id: user?.id ?? 0,
+        name: displayName,
+        handle: artistName ? `@${artistName}` : `@${displayName.replace(/\s+/g, "")}`,
+        avatar: getSafeImageSrc(user?.image, "/images/home/avatar_img.png"),
+        game: user?.game?.name ?? offer.game,
+      });
+    }
+
+    setOutcome(canAccept ? "success" : "insufficient");
   };
 
   const handleClose = () => {
@@ -333,13 +382,16 @@ export default function ChallengeMatchDetails({
               imageOverride="/images/home/middle.png"
             />
             <ChallengePortraitCard
-              player={offer.target}
-              label={offer.target.handle}
-              tone="pink"
+              player={rightPlayer}
+              label={rightLabel}
+              tone={acceptedPlayer ? "green" : "pink"}
+              points={acceptedPlayer ? offer.amount : undefined}
+              accepted={Boolean(acceptedPlayer)}
+              imageOverride={acceptedPlayer ? undefined : "/images/home/avatar_img.png"}
             />
           </div>
 
-          <ChallengeTitleStrip offer={offer} />
+          <ChallengeTitleStrip offer={offer} rightLabel={rightLabel} />
 
           <div className="relative grid grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] gap-1 px-2 pt-3 sm:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] sm:px-4">
             <ChallengeSideOfferPanel offer={offer} gameLogo={gameLogo} />
