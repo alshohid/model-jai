@@ -1,46 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import {
-  challengeMatchOffers,
-  currentChallengeBalance,
-} from "../data/challengeMatchMockData";
+import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { getSortedChallengeMatchOffers } from "../data/challengeMatchMockData";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
 import type { ChallengeMatchOffer } from "../types";
-import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import ChallengeOfferCard from "./ChallengeOfferCard";
 import Image from "next/image";
 
 export default function ChallengeDashboard() {
   const { isAuthenticated } = useAuth();
-  const [selectedOffer, setSelectedOffer] = useState<ChallengeMatchOffer | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [agreed, setAgreed] = useState(false);
-  const [outcome, setOutcome] = useState<"confirm" | "success" | "insufficient">("confirm");
+  const router = useRouter();
 
   const sortedOffers = useMemo(
-    () => [...challengeMatchOffers].sort((a, b) => b.amount - a.amount),
+    () => getSortedChallengeMatchOffers(),
     [],
   );
 
   const handleAccept = (offer: ChallengeMatchOffer) => {
-    setSelectedOffer(offer);
-    setAgreed(false);
-    setOutcome("confirm");
-    setDialogOpen(true);
-  };
-
-  const handleConfirm = () => {
-    if (!selectedOffer) return;
-    setOutcome(currentChallengeBalance >= selectedOffer.amount ? "success" : "insufficient");
-  };
-
-  const handleClose = () => {
-    setDialogOpen(false);
-    setSelectedOffer(null);
-    setAgreed(false);
-    setOutcome("confirm");
+    router.push(`/challenge-dashboard/${offer.id}`);
   };
 
   return (
@@ -98,17 +77,6 @@ export default function ChallengeDashboard() {
           </div>
         </div>
       </section>
-
-      <ChallengeAcceptDialog
-        offer={selectedOffer}
-        open={dialogOpen}
-        balance={currentChallengeBalance}
-        outcome={outcome}
-        agreed={agreed}
-        onAgreeChange={setAgreed}
-        onConfirm={handleConfirm}
-        onClose={handleClose}
-      />
     </main>
   );
 }

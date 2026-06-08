@@ -30,7 +30,7 @@ export default function ChallengeHomePreview() {
             key={offer.id}
             offer={offer}
             compact
-            onAccept={() => router.push("/challenge-dashboard")}
+            onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
           />
         ))}
       </div>

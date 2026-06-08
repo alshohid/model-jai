@@ -196,4 +196,10 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
   },
 ];
 
+export const getSortedChallengeMatchOffers = () =>
+  [...challengeMatchOffers].sort((a, b) => b.amount - a.amount);
+
+export const getChallengeMatchOfferById = (offerId: string) =>
+  challengeMatchOffers.find((offer) => offer.id === offerId) ?? null;
+
 export const currentChallengeBalance = 48300;
