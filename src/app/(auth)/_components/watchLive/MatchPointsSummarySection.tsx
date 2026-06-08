@@ -342,6 +342,12 @@ export default function MatchPointsSummarySection({
         return null;
     };
 
+    const triggerTipAnimation = (side: "left" | "right" | "middle") => {
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => tipSystem.triggerFlyingCoin(side as SupportSide), i * 100);
+        }
+    };
+
     const handleSendTip = async (
         side: "left" | "right" | "middle",
         amount: number,
@@ -355,14 +361,12 @@ export default function MatchPointsSummarySection({
                 return;
             }
 
+            triggerTipAnimation(side);
+
             await sendTip({
                 receiver_id: String(receiverId),
                 tip_amount: amount,
             }).unwrap();
-
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => tipSystem.triggerFlyingCoin(side as SupportSide), i * 100);
-            }
 
             toast.success("Tip sent successfully.");
             if (options?.closeOnSuccess ?? true) {
