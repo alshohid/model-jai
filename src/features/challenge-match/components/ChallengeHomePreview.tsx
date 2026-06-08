@@ -16,7 +16,7 @@ export default function ChallengeHomePreview() {
       <Link href="/challenge-dashboard">
         <div className="relative mx-auto w-full max-w-[520px]">
           <Image
-            src="/images/challenge.png"
+            src="/images/home-challenge.png"
             alt="Big Boss Challenge"
             width={500}
             height={500}

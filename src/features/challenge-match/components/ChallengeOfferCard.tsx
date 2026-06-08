@@ -16,7 +16,6 @@ type ChallengeOfferCardProps = {
 
 export default function ChallengeOfferCard({
   offer,
-  compact = false,
   onAccept,
 }: ChallengeOfferCardProps) {
   const challengerName = offer.showRealName
@@ -66,13 +65,13 @@ export default function ChallengeOfferCard({
           <span className="text-green-400">{formatChallengePoints(offer.amount)}</span> offers in {offer.game}
         </p>
 
-        <div className="mt-1 flex min-w-0 items-start gap-1.5 overflow-hidden">
-          {!compact ? (
-            <FileText className="mt-0.5 hidden h-3.5 w-3.5 flex-shrink-0 text-[#ffb13b] sm:block" />
-          ) : null}
-          <p className="min-w-0 truncate text-[11px] leading-4 text-white/82 sm:text-sm">
+        <div className="mt-1 flex min-w-0 items-center gap-1.5 overflow-hidden">
+          <p className="min-w-0 truncate text-[11px] font-semibold leading-4 text-[#d936ff] [text-shadow:0_0_9px_rgba(217,54,255,0.58)] sm:text-sm">
             {offer.memo}
           </p>
+          <span className="grid h-5 w-5 flex-shrink-0 place-items-center rounded-[3px] border border-[#ffc878] bg-[linear-gradient(180deg,#4d9bff_0%,#5578d8_34%,#ff9b35_35%,#ff9b35_100%)] text-white shadow-[0_0_8px_rgba(255,150,55,0.55)] sm:h-6 sm:w-6">
+            <FileText className="h-3.5 w-3.5 text-[#ffe6a6] sm:h-4 sm:w-4" />
+          </span>
         </div>
       </div>
 

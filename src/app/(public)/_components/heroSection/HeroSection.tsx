@@ -1,5 +1,6 @@
 import AuthAwareChallengeHomePreview from "@/features/challenge-match/components/AuthAwareChallengeHomePreview";
 import StartStreamingRedirect from "./LiveStreamRedirectButton";
+import PromotionalPriceOffer from "./PromotionalPriceOffer";
 
 export default function HeroSection() {
     return (
@@ -31,6 +32,10 @@ export default function HeroSection() {
 
                         <div className="mt-5 flex justify-center">
                             <StartStreamingRedirect />
+                        </div>
+
+                        <div className="mt-10 flex justify-center pt-1">
+                            <PromotionalPriceOffer />
                         </div>
                     </div>
                 </div>
