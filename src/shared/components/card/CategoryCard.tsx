@@ -51,7 +51,7 @@ export default function CategoryCard({ title, imageSrc, className, onClick }: Pr
                         "shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
                     )}
                 >
-                    <p className="text-white text-xs sm:text-sm font-semibold tracking-widest text-center uppercase">
+                    <p className="text-center text-[10px] md:text-xs font-semibold tracking-widest uppercase text-white line-clamp-1">
                         {title}
                     </p>
                 </div>
