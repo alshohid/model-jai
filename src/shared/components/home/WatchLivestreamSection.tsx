@@ -34,6 +34,16 @@ export default function WatchLivestreamSection() {
         }
     }, [api])
 
+    useEffect(() => {
+        if (!api || slides.length <= 1) return
+
+        const autoSlideTimer = window.setInterval(() => {
+            api.scrollNext()
+        }, 3500)
+
+        return () => window.clearInterval(autoSlideTimer)
+    }, [api])
+
     return (
         <section className="w-full bg-transparent relative">
 
@@ -82,7 +92,7 @@ export default function WatchLivestreamSection() {
                     </div>
 
                     <div className="relative w-full lg:flex-1 lg:max-w-[850px]">
-                        <Carousel opts={{ align: "start" }} setApi={setApi} className="w-full">
+                        <Carousel opts={{ align: "start", loop: true }} setApi={setApi} className="w-full">
                             <CarouselContent className="w-full">
                                 {slides.map((src, i) => (
                                     <CarouselItem
