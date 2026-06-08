@@ -2,22 +2,36 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Crown, ImagePlus, X } from "lucide-react";
-import {
-  challengeAmounts,
-  challengeGames,
-  challengePlayers,
-} from "../data/challengeMatchMockData";
-import type { ChallengeCreateFormValues } from "../types";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight, ImagePlus, X } from "lucide-react";
+import { challengeGames, challengePlayers } from "../data/challengeMatchMockData";
+import type { ChallengeCreateFormValues, ChallengeCreateScope } from "../types";
+import { cn } from "@/shared/lib/utils/cn";
 
 const initialFormValues: ChallengeCreateFormValues = {
   gameId: "",
-  launchAmount: "",
+  price: "",
+  matchDateTime: "",
+  scope: "unique",
   targetPlayerId: "",
-  targetAmount: "",
   showRealName: true,
   memo: "",
+  rules: "",
 };
+
+function FieldLabel({
+  children,
+  required = false,
+}: {
+  children: React.ReactNode;
+  required?: boolean;
+}) {
+  return (
+    <label className="text-xs font-black uppercase tracking-[0.12em] text-white/75">
+      {children} {required ? <span className="text-[#ff43ff]">*</span> : null}
+    </label>
+  );
+}
 
 export default function ChallengeCreateForm() {
   const [values, setValues] = useState<ChallengeCreateFormValues>(initialFormValues);
@@ -30,15 +44,26 @@ export default function ChallengeCreateForm() {
     setValues((current) => ({ ...current, [key]: value }));
   };
 
+  const updateScope = (scope: ChallengeCreateScope) => {
+    setValues((current) => ({
+      ...current,
+      scope,
+      targetPlayerId: scope === "global" ? "" : current.targetPlayerId,
+    }));
+  };
+
+  const sharedFieldClass =
+    "mt-2 w-full rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm text-white outline-none transition focus:border-[#ff43ff]/60";
+
   return (
-    <main className="relative min-h-screen overflow-hidden bg-black text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-black text-white">
       <div
         className="absolute inset-0 bg-cover bg-center opacity-45"
         style={{ backgroundImage: "url('/images/home/modaljai_hero.jpg')" }}
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,0,247,0.34),transparent_35%),linear-gradient(180deg,rgba(0,0,0,0.4),#030104)]" />
 
-      <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-[420px] items-center px-4 py-8">
+      <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-[420px] items-start px-4 py-8 sm:items-center">
         <form className="relative w-full rounded-[24px] border border-[#ff43ff]/35 bg-[#111017]/92 p-4 shadow-[0_0_40px_rgba(255,67,255,0.32)] backdrop-blur-xl sm:p-5">
           <Link
             href="/challenge-dashboard"
@@ -49,26 +74,22 @@ export default function ChallengeCreateForm() {
           </Link>
 
           <div className="mb-6 text-center">
-            <div className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-full border border-[#ff43ff]/45 bg-[#ff43ff]/15 text-[#ff9dff]">
-              <Crown className="h-5 w-5" />
-            </div>
-            <p className="text-sm font-black uppercase italic tracking-[0.16em] text-white">
-              Create a
-            </p>
-            <h1 className="text-4xl font-black uppercase italic leading-none text-white [text-shadow:0_0_18px_#ff43ff]">
-              Challenge Match
-            </h1>
+            <Image
+              src="/images/created.png"
+              alt="Create a challenge"
+              width={500}
+              height={500}
+              className="mx-auto mb-2 h-full w-full object-contain"
+            />
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-black uppercase tracking-[0.12em] text-white/75">
-                Game <span className="text-[#ff43ff]">*</span>
-              </label>
+              <FieldLabel required>Game</FieldLabel>
               <select
                 value={values.gameId}
                 onChange={(event) => updateValue("gameId", event.target.value)}
-                className="mt-2 h-11 w-full rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm text-white outline-none focus:border-[#ff43ff]/60"
+                className={cn(sharedFieldClass, "h-11")}
               >
                 <option className="bg-[#111017]" value="">Select a game</option>
                 {challengeGames.map((game) => (
@@ -80,34 +101,65 @@ export default function ChallengeCreateForm() {
             </div>
 
             <div>
-              <p className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#c858ff]">
-                <span className="h-3 w-3 rounded-full bg-[#b348ff]" />
-                Launch a challenge <span className="text-[#ff43ff]">*</span>
-              </p>
-              <select
-                value={values.launchAmount}
-                onChange={(event) => updateValue("launchAmount", event.target.value)}
-                className="h-11 w-full rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm text-white outline-none focus:border-[#ff43ff]/60"
-              >
-                <option className="bg-[#111017]" value="">Set the price</option>
-                {challengeAmounts.map((amount) => (
-                  <option className="bg-[#111017]" key={amount} value={amount}>
-                    {amount} points
-                  </option>
-                ))}
-              </select>
+              <FieldLabel required>Price</FieldLabel>
+              <input
+                type="number"
+                min="1"
+                inputMode="numeric"
+                value={values.price}
+                onChange={(event) => updateValue("price", event.target.value)}
+                placeholder="Enter challenge price"
+                className={cn(sharedFieldClass, "h-11 placeholder:text-white/35")}
+              />
             </div>
 
             <div>
-              <p className="mb-2 flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#c858ff]">
-                <span className="h-3 w-3 rounded-full bg-[#b348ff]" />
-                Challenge a unique player <span className="text-[#ff43ff]">*</span>
-              </p>
-              <div className="grid gap-3">
+              <FieldLabel required>Match date & time</FieldLabel>
+              <input
+                type="datetime-local"
+                value={values.matchDateTime}
+                onChange={(event) => updateValue("matchDateTime", event.target.value)}
+                className={cn(sharedFieldClass, "h-11 [color-scheme:dark]")}
+              />
+            </div>
+
+            <fieldset className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+              <legend className="px-1 text-xs font-black uppercase tracking-[0.12em] text-[#c858ff]">
+                Challenge type
+              </legend>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-black/18 px-3 py-3 text-sm font-semibold text-white/80 transition hover:border-[#ff43ff]/45">
+                  <input
+                    type="radio"
+                    name="challengeScope"
+                    value="unique"
+                    checked={values.scope === "unique"}
+                    onChange={() => updateScope("unique")}
+                    className="h-4 w-4 accent-[#ff19d7]"
+                  />
+                  Unique player
+                </label>
+                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-black/18 px-3 py-3 text-sm font-semibold text-white/80 transition hover:border-[#ff43ff]/45">
+                  <input
+                    type="radio"
+                    name="challengeScope"
+                    value="global"
+                    checked={values.scope === "global"}
+                    onChange={() => updateScope("global")}
+                    className="h-4 w-4 accent-[#ff19d7]"
+                  />
+                  Global
+                </label>
+              </div>
+            </fieldset>
+
+            {values.scope === "unique" ? (
+              <div>
+                <FieldLabel required>Challenge a unique player</FieldLabel>
                 <select
                   value={values.targetPlayerId}
                   onChange={(event) => updateValue("targetPlayerId", event.target.value)}
-                  className="h-11 w-full rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm text-white outline-none focus:border-[#ff43ff]/60"
+                  className={cn(sharedFieldClass, "h-11")}
                 >
                   <option className="bg-[#111017]" value="">Select player</option>
                   {challengePlayers.map((player) => (
@@ -116,25 +168,11 @@ export default function ChallengeCreateForm() {
                     </option>
                   ))}
                 </select>
-                <select
-                  value={values.targetAmount}
-                  onChange={(event) => updateValue("targetAmount", event.target.value)}
-                  className="h-11 w-full rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm text-white outline-none focus:border-[#ff43ff]/60"
-                >
-                  <option className="bg-[#111017]" value="">Set the price</option>
-                  {challengeAmounts.map((amount) => (
-                    <option className="bg-[#111017]" key={amount} value={amount}>
-                      {amount} points
-                    </option>
-                  ))}
-                </select>
               </div>
-            </div>
+            ) : null}
 
             <div>
-              <label className="text-xs font-black uppercase tracking-[0.12em] text-white/75">
-                Master J@Y Logo <span className="text-[#ff43ff]">*</span>
-              </label>
+              <FieldLabel required>Master J@Y Logo</FieldLabel>
               <label className="mt-2 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-[#6d2c7a] bg-black/20 px-5 py-7 text-center transition hover:border-[#ff43ff]/70 hover:bg-[#ff43ff]/5">
                 <input
                   type="file"
@@ -170,15 +208,24 @@ export default function ChallengeCreateForm() {
             </label>
 
             <div>
-              <label className="text-xs font-black uppercase tracking-[0.12em] text-white/75">
-                Memo
-              </label>
+              <FieldLabel>Memo</FieldLabel>
               <textarea
                 value={values.memo}
                 onChange={(event) => updateValue("memo", event.target.value)}
                 rows={3}
                 placeholder="Write a short challenge memo..."
-                className="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#ff43ff]/60"
+                className={cn(sharedFieldClass, "min-h-24 py-3 placeholder:text-white/35")}
+              />
+            </div>
+
+            <div>
+              <FieldLabel required>Rules</FieldLabel>
+              <textarea
+                value={values.rules}
+                onChange={(event) => updateValue("rules", event.target.value)}
+                rows={4}
+                placeholder="Write the rules for this challenge..."
+                className={cn(sharedFieldClass, "min-h-28 py-3 placeholder:text-white/35")}
               />
             </div>
           </div>

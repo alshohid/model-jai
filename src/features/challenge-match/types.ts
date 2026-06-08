@@ -1,5 +1,6 @@
 export type ChallengeMatchStatus = "open" | "accepted" | "official" | "delayed";
 export type ChallengeMatchKind = "voting" | "supporting";
+export type ChallengeCreateScope = "unique" | "global";
 
 export type ChallengePlayer = {
   id: number;
@@ -26,9 +27,11 @@ export type ChallengeMatchOffer = {
 
 export type ChallengeCreateFormValues = {
   gameId: string;
-  launchAmount: string;
+  price: string;
+  matchDateTime: string;
+  scope: ChallengeCreateScope;
   targetPlayerId: string;
-  targetAmount: string;
   showRealName: boolean;
   memo: string;
+  rules: string;
 };
