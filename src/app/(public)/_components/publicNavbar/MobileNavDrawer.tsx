@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 
 import { LuAlignRight } from "react-icons/lu";
-import { Crown } from "lucide-react";
+import { ChevronDown, Crown } from "lucide-react";
 import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
 import NavbarSearch from "./NavbarSearch";
 import { useAuth } from "@/redux/features/auth/hooks";
@@ -42,6 +42,7 @@ export default function MobileNavSheet({
 }) {
     const pathname = usePathname();
     const { isAuthenticated, role } = useAuth();
+    const [challengeMenuOpen, setChallengeMenuOpen] = React.useState(false);
 
 
     const triggerStyles =
@@ -79,10 +80,11 @@ export default function MobileNavSheet({
                     "w-[86vw] max-w-[360px]",
                     "bg-[#160F16]/92 backdrop-blur-xl",
                     "text-white z-[70]",
+                    "max-h-dvh overflow-hidden",
                     "shadow-[0_22px_70px_rgba(0,0,0,0.55)]"
                 )}
             >
-                <div className="h-full flex flex-col">
+                <div className="flex h-full min-h-0 flex-col">
                     <SheetHeader className="px-5 pt-5 pb-4 border-b border-white/10">
                         <div className="flex items-center justify-between gap-3">
                             <SheetTitle className="text-white text-[18px] font-semibold">
@@ -106,7 +108,7 @@ export default function MobileNavSheet({
                         </div>
                     </SheetHeader>
 
-                    <div className="flex-1 overflow-y-auto px-5 py-5">
+                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
 
                         <nav className="flex flex-col gap-2">
                             {navItems.map((item) => {
@@ -146,28 +148,54 @@ export default function MobileNavSheet({
                         )}
                         {isAuthenticated && (role === "user" || role === "artist") && (
                             <div className="mt-4 overflow-hidden rounded-[12px] border border-[#d43cff]/45 bg-[#2a1030]/70 shadow-[0_0_20px_rgba(212,60,255,0.28)]">
-                                <div className="flex items-center gap-2 border-b border-[#d43cff]/35 px-4 py-3 text-[#ff8cff]">
-                                    <Crown className="h-5 w-5" />
-                                    <span className="text-lg font-black">Big boss challenge offers</span>
-                                </div>
-                                <div className="grid">
-                                    <SheetClose asChild>
-                                        <Link
-                                            href="/challenge-dashboard"
-                                            className="px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white"
-                                        >
-                                            View challenge dashboard
-                                        </Link>
-                                    </SheetClose>
-                                    <SheetClose asChild>
-                                        <Link
-                                            href="/challenge-dashboard/create"
-                                            className="border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white"
-                                        >
-                                            Create a challenge
-                                        </Link>
-                                    </SheetClose>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setChallengeMenuOpen((open) => !open)}
+                                    aria-expanded={challengeMenuOpen}
+                                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-[#ff8cff] transition hover:bg-white/8 hover:text-white"
+                                >
+                                    <span className="flex min-w-0 items-center gap-2">
+                                        <Crown className="h-5 w-5 flex-shrink-0" />
+                                        <span className="truncate text-sm font-black uppercase tracking-[0.04em]">
+                                            Big boss challenge offers
+                                        </span>
+                                    </span>
+                                    <ChevronDown
+                                        className={cn(
+                                            "h-4 w-4 flex-shrink-0 transition-transform",
+                                            challengeMenuOpen && "rotate-180"
+                                        )}
+                                    />
+                                </button>
+                                {challengeMenuOpen ? (
+                                    <div className="grid border-t border-[#d43cff]/35 bg-black/12">
+                                        <SheetClose asChild>
+                                            <Link
+                                                href="/challenge-dashboard"
+                                                className={cn(
+                                                    "px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                                    pathname.startsWith("/challenge-dashboard") &&
+                                                    pathname !== "/challenge-dashboard/create" &&
+                                                    "bg-white/10 text-white"
+                                                )}
+                                            >
+                                                View challenge dashboard
+                                            </Link>
+                                        </SheetClose>
+                                        <SheetClose asChild>
+                                            <Link
+                                                href="/challenge-dashboard/create"
+                                                className={cn(
+                                                    "border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                                    pathname === "/challenge-dashboard/create" &&
+                                                    "bg-white/10 text-white"
+                                                )}
+                                            >
+                                                Create a challenge
+                                            </Link>
+                                        </SheetClose>
+                                    </div>
+                                ) : null}
                             </div>
                         )}
                         {isAuthenticated && (role === "user" || role === "artist") && (
