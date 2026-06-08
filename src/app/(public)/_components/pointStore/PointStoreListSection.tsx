@@ -255,7 +255,7 @@ export default function PointStoreListSection() {
     };
 
     return (
-        <div className="relative py-8 md:py-10 lg:py-12">
+        <div className={`relative  md:py-10 lg:py-12 ${isAuthenticated ? "" : "pt-10 pb-4"}`}>
             <div className="pointer-events-none absolute -left-[400px] -top-[400px] -z-10">
                 <Image
                     src="/images/home/live_left_ellipse.png"
@@ -275,7 +275,7 @@ export default function PointStoreListSection() {
                 />
             </div>
 
-            <div className="container py-17 md:py-15 lg:py-20">
+            <div className={`container ${isAuthenticated ? "" : "pt-17 pb-8"} md:py-15 lg:py-20`}>
                 <LiveSectionHeader title="Point Store" className="mb-8 tracking-wide text-[38px] md:text-[40px] lg:text-[48px]" />
 
                 <div className="relative mb-10 overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(145deg,rgba(18,11,20,0.96),rgba(26,18,30,0.86))] p-4 shadow-[0_24px_90px_rgba(0,0,0,0.32)] sm:p-6 lg:p-8">
