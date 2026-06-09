@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FileText } from "lucide-react";
@@ -18,12 +19,13 @@ export default function ChallengeOfferCard({
   offer,
   onAccept,
 }: ChallengeOfferCardProps) {
+  const memoTooltipId = useId();
   const challengerName = offer.showRealName
     ? offer.challenger.name
     : offer.challenger.handle.replace("@", "");
 
   return (
-    <article className="grid w-full min-w-0 grid-cols-[54px_minmax(0,1fr)_48px] items-center gap-1.5 overflow-hidden border-b border-white/18 px-1 py-1.5 text-white last:border-b-0 sm:grid-cols-[76px_minmax(0,1fr)_68px] sm:gap-3 sm:px-2 sm:py-2">
+    <article className="grid w-full min-w-0 grid-cols-[54px_minmax(0,1fr)_48px] items-center gap-1.5 border-b border-white/18 px-1 py-1.5 text-white last:border-b-0 sm:grid-cols-[76px_minmax(0,1fr)_68px] sm:gap-3 sm:px-2 sm:py-2">
       <Link
         href={`/artist/${offer.challenger.id}`}
         className="relative h-[54px] w-[54px] min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff43ff]/60 sm:h-[68px] sm:w-[76px]"
@@ -44,7 +46,7 @@ export default function ChallengeOfferCard({
         </span>
       </Link>
 
-      <div className="min-w-0 overflow-hidden pr-1">
+      <div className="min-w-0 pr-1">
         <div className="flex min-w-0 items-baseline gap-1 overflow-hidden leading-none">
           <Link
             href={`/artist/${offer.challenger.id}`}
@@ -65,12 +67,24 @@ export default function ChallengeOfferCard({
           <span className="text-green-400">{formatChallengePoints(offer.amount)}</span> offers in {offer.game}
         </p>
 
-        <div className="mt-1 flex min-w-0 items-center gap-1.5 overflow-hidden">
-          <p className="min-w-0 truncate text-[11px] font-semibold leading-4 text-[#d936ff] [text-shadow:0_0_9px_rgba(217,54,255,0.58)] sm:text-sm">
+        <div className="mt-1 flex min-w-0 items-center gap-1.5">
+          <p className="min-w-0 truncate text-[11px] font-light leading-4 text-white sm:text-sm">
             {offer.memo}
           </p>
-          <span className="grid h-5 w-5 flex-shrink-0 place-items-center rounded-[3px] border border-[#ffc878] bg-[linear-gradient(180deg,#4d9bff_0%,#5578d8_34%,#ff9b35_35%,#ff9b35_100%)] text-white shadow-[0_0_8px_rgba(255,150,55,0.55)] sm:h-6 sm:w-6">
+          <span
+            aria-describedby={memoTooltipId}
+            aria-label={`Memo: ${offer.memo}`}
+            className="group/memo relative grid h-5 w-5 flex-shrink-0 place-items-center rounded-[3px] border border-[#ffc878] bg-[linear-gradient(180deg,#4d9bff_0%,#5578d8_34%,#ff9b35_35%,#ff9b35_100%)] text-white shadow-[0_0_8px_rgba(255,150,55,0.55)] outline-none focus-visible:ring-2 focus-visible:ring-[#ffe6a6]/80 sm:h-6 sm:w-6"
+            tabIndex={0}
+          >
             <FileText className="h-3.5 w-3.5 text-[#ffe6a6] sm:h-4 sm:w-4" />
+            <span
+              id={memoTooltipId}
+              role="tooltip"
+              className="pointer-events-none absolute bottom-full right-0 z-30 mb-1 w-max max-w-[min(220px,calc(100vw-2rem))] rounded-[4px] border border-[#ffc878]/80 bg-[#1a0f2d] px-2 py-1 text-left text-[10px] font-medium leading-3 text-white opacity-0 shadow-[0_0_12px_rgba(255,150,55,0.45)] transition-opacity duration-150 group-hover/memo:opacity-100 group-focus-visible/memo:opacity-100 sm:text-xs sm:leading-4"
+            >
+              {offer.memo}
+            </span>
           </span>
         </div>
       </div>

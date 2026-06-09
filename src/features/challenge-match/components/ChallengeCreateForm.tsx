@@ -16,7 +16,7 @@ const initialFormValues: ChallengeCreateFormValues = {
   targetPlayerId: "",
   showRealName: true,
   memo: "",
-  rules: "",
+
 };
 
 function FieldLabel({
@@ -218,16 +218,7 @@ export default function ChallengeCreateForm() {
               />
             </div>
 
-            <div>
-              <FieldLabel required>Rules</FieldLabel>
-              <textarea
-                value={values.rules}
-                onChange={(event) => updateValue("rules", event.target.value)}
-                rows={4}
-                placeholder="Write the rules for this challenge..."
-                className={cn(sharedFieldClass, "min-h-28 py-3 placeholder:text-white/35")}
-              />
-            </div>
+
           </div>
 
           <button

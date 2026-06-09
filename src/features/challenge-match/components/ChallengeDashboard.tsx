@@ -7,7 +7,8 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
 import type { ChallengeMatchOffer } from "../types";
 import ChallengeOfferCard from "./ChallengeOfferCard";
-import Image from "next/image";
+import Link from "next/link";
+import BigBossChallengeOffers from "./BigBossChallengeOffers";
 
 export default function ChallengeDashboard() {
   const { isAuthenticated } = useAuth();
@@ -60,15 +61,12 @@ export default function ChallengeDashboard() {
         </div> */}
 
         <div className="md:mt-6 rounded-[22px] md:px-3 md:py-3">
-          <div className="relative mx-auto w-full max-w-[520px]">
-            <Image
-              src="/images/challenge.png"
-              alt="Big Boss Challenge"
-              width={500}
-              height={500}
-              className="object-contain"
-            />
-          </div>
+
+          <Link href="/challenge-dashboard">
+            <div className="relative mx-auto w-full max-w-[520px]">
+              <BigBossChallengeOffers />
+            </div>
+          </Link>
 
           <div>
             {sortedOffers.map((offer) => (

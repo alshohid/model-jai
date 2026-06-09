@@ -33,5 +33,5 @@ export type ChallengeCreateFormValues = {
   targetPlayerId: string;
   showRealName: boolean;
   memo: string;
-  rules: string;
+ 
 };

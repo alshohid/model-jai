@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { challengeMatchOffers } from "../data/challengeMatchMockData";
 import ChallengeOfferCard from "./ChallengeOfferCard";
-import Image from "next/image";
+import BigBossChallengeOffers from "./BigBossChallengeOffers";
 
 export default function ChallengeHomePreview() {
   const router = useRouter();
@@ -15,13 +15,7 @@ export default function ChallengeHomePreview() {
 
       <Link href="/challenge-dashboard">
         <div className="relative mx-auto w-full max-w-[520px]">
-          <Image
-            src="/images/home-challenge.png"
-            alt="Big Boss Challenge"
-            width={500}
-            height={500}
-            className="object-contain"
-          />
+          <BigBossChallengeOffers />
         </div>
       </Link>
       <div className="w-full">

@@ -1,7 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { SupporterRankingRow } from "@/shared/lib/ranking/supporterRanking";
+import {
+    FALLBACK_SUPPORTER_IMAGE,
+    type SupporterRankingRow,
+} from "@/shared/lib/ranking/supporterRanking";
+import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import {
     Table,
     TableBody,
@@ -12,6 +18,49 @@ import {
     TableRow,
 } from "@/shared/UI/reusable/table/table";
 
+const SupporterIdentity = ({
+    supporterImage,
+    supporterName,
+}: {
+    supporterImage: string;
+    supporterName: string;
+}) => {
+    const [imageSrc, setImageSrc] = useState(() =>
+        getSafeImageSrc(supporterImage, FALLBACK_SUPPORTER_IMAGE)
+    );
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+    return (
+        <>
+            <span className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-full border border-white/35 bg-white/10">
+                {!isImageLoaded ? (
+                    <span className="absolute inset-0 animate-pulse rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0.08),rgba(255,255,255,0.28),rgba(255,255,255,0.08))]" />
+                ) : null}
+                <Image
+                    src={imageSrc}
+                    alt={supporterName}
+                    width={64}
+                    height={64}
+                    className={`h-full w-full object-cover transition-opacity duration-200 ${
+                        isImageLoaded ? "opacity-100" : "opacity-0"
+                    }`}
+                    unoptimized
+                    onLoad={() => setIsImageLoaded(true)}
+                    onError={() => {
+                        if (imageSrc !== FALLBACK_SUPPORTER_IMAGE) {
+                            setImageSrc(FALLBACK_SUPPORTER_IMAGE);
+                            setIsImageLoaded(false);
+                            return;
+                        }
+
+                        setIsImageLoaded(true);
+                    }}
+                />
+            </span>
+            <span className="min-w-0 truncate">{supporterName}</span>
+        </>
+    );
+};
+
 const RankPointReusableTable = ({
     rows,
     isLoading,
@@ -21,7 +70,7 @@ const RankPointReusableTable = ({
 }) => {
     const currentItems = rows ?? [];
     const firstColumnWidth = 120;
-    const secondColumnWidth = 168;
+    const secondColumnWidth = 240;
     const thirdColumnWidth = 140;
     const fourthColumnWidth = 360;
     const minTableWidthPx =
@@ -83,6 +132,13 @@ const RankPointReusableTable = ({
                                         item.userId && item.userId !== "N/A"
                                             ? `/artist/${item.userId}`
                                             : undefined;
+                                    const supporterIdentity = (
+                                        <SupporterIdentity
+                                            key={item.supporterImage}
+                                            supporterImage={item.supporterImage}
+                                            supporterName={item.supporterName}
+                                        />
+                                    );
 
                                     return (
                                         <TableRow
@@ -98,17 +154,19 @@ const RankPointReusableTable = ({
                                             </TableCell>
 
                                             <TableCell
-                                                className="border-r border-white/20 px-3 py-4 text-center text-[13px] text-white/90 whitespace-nowrap sm:px-5 sm:text-[14px]"
+                                                className="border-r border-white/20 px-3 py-4 text-left text-[13px] text-white/90 whitespace-nowrap sm:px-5 sm:text-[14px]"
                                             >
                                                 {supporterProfileHref ? (
                                                     <Link
                                                         href={supporterProfileHref}
-                                                        className="inline-block transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                                        className="inline-flex max-w-full items-center gap-2 transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                                                     >
-                                                        {item.supporterName}
+                                                        {supporterIdentity}
                                                     </Link>
                                                 ) : (
-                                                    item.supporterName
+                                                    <span className="inline-flex max-w-full items-center gap-2">
+                                                        {supporterIdentity}
+                                                    </span>
                                                 )}
                                             </TableCell>
 
