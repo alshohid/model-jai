@@ -54,13 +54,13 @@ export function PlayerCard({
                         alt="images"
                         width={100}
                         height={100}
-                        className="w-7.5 h-7.5 md:w-50 md:h-50"
+                        className="w-7.5 h-7.5 md:w-20 md:h-20 lg:w-50 lg:h-50"
                     /> : <Image
                         src={statusLogoSrc}
                         alt="images"
                         width={100}
                         height={100}
-                        className="w-7.5 h-7.5 md:w-50 md:h-50"
+                        className="w-7.5 h-7.5 md:w-20 md:h-20 lg:w-50 lg:h-50"
                     />}
                 </div>
 

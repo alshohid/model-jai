@@ -40,11 +40,11 @@ export default function CategoryCard({ title, imageSrc, className, onClick }: Pr
                 className="object-cover opacity-35 pointer-events-none select-none"
                 sizes="(max-width: 767px) 50vw, 306px"
             />
-            <div className="absolute inset-x-0 bottom-6 flex justify-center px-4">
+            <div className="absolute inset-x-0 bottom-1 md:bottom-4 flex justify-center px-4">
                 <div
                     className={cn(
                         "min-w-[170px] max-w-[240px]",
-                        "px-6 py-3",
+                        "px-2 py-1 md:px-6 md:py-3",
                         "rounded-[6px]",
                         "bg-white/15 backdrop-blur-xs",
                         "border border-white/25",
