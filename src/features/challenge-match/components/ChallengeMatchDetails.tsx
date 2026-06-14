@@ -241,10 +241,7 @@ function ChallengeAcceptPanel({
       </div>
 
       <div className="mt-4 flex justify-center">
-        <ChallengeAcceptButton
-          onClick={onAccept}
-          className="h-20 w-20 border-[6px] text-base sm:h-24 sm:w-24 sm:text-lg"
-        />
+        <ChallengeAcceptButton onClick={onAccept} />
       </div>
     </div>
   );
@@ -253,8 +250,8 @@ function ChallengeAcceptPanel({
 function ChallengeMemoPanel({ memo }: { memo: string }) {
   return (
     <section className="mt-5 flex items-start gap-3">
-      <div className="grid h-14 w-14 flex-shrink-0 place-items-center rounded-lg border-2 border-[#ffe29a] bg-[linear-gradient(180deg,#5fa0ff,#ff8a33)] text-white shadow-[0_0_14px_rgba(255,136,51,0.38)]">
-        <FileText className="h-8 w-8" />
+      <div className="flex-shrink-0">
+        <Image src="/images/memo.PNG" alt="memo" width={45} height={45} className="rounded-none" />
       </div>
       <p className="min-w-0 text-[17px] font-bold leading-6 text-[#d329ff] [text-shadow:0_0_14px_rgba(211,41,255,0.38)] sm:text-xl">
         {memo}
