@@ -61,7 +61,7 @@ export default function ChallengeCreateForm() {
         className="absolute inset-0 bg-cover bg-center opacity-45"
         style={{ backgroundImage: "url('/images/home/modaljai_hero.jpg')" }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,0,247,0.34),transparent_35%),linear-gradient(180deg,rgba(0,0,0,0.4),#030104)]" />
+      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,0,247,0.34),transparent_35%),linear-gradient(180deg,rgba(0,0,0,0.4),#030104)]" /> */}
 
       <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-[420px] items-start px-4 py-8 sm:items-center">
         <form className="relative w-full rounded-[24px] border border-[#ff43ff]/35 bg-[#111017]/92 p-4 shadow-[0_0_40px_rgba(255,67,255,0.32)] backdrop-blur-xl sm:p-5">
@@ -73,9 +73,9 @@ export default function ChallengeCreateForm() {
             <X className="h-4 w-4" />
           </Link>
 
-          <div className="mb-6 text-center">
+          <div className=" text-center">
             <Image
-              src="/images/created.png"
+              src="/images/challenge-match.png"
               alt="Create a challenge"
               width={500}
               height={500}
@@ -137,7 +137,7 @@ export default function ChallengeCreateForm() {
                     onChange={() => updateScope("unique")}
                     className="h-4 w-4 accent-[#ff19d7]"
                   />
-                  Unique player
+                  Unique player  <span className="font-medium text-[#ff19d7]">or user </span>
                 </label>
                 <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-black/18 px-3 py-3 text-sm font-semibold text-white/80 transition hover:border-[#ff43ff]/45">
                   <input
@@ -155,13 +155,13 @@ export default function ChallengeCreateForm() {
 
             {values.scope === "unique" ? (
               <div>
-                <FieldLabel required>Challenge a unique player</FieldLabel>
+                <FieldLabel required>Challenge a unique player or user</FieldLabel>
                 <select
                   value={values.targetPlayerId}
                   onChange={(event) => updateValue("targetPlayerId", event.target.value)}
                   className={cn(sharedFieldClass, "h-11")}
                 >
-                  <option className="bg-[#111017]" value="">Select player</option>
+                  <option className="bg-[#111017]" value="">Select player or user</option>
                   {challengePlayers.map((player) => (
                     <option className="bg-[#111017]" key={player.id} value={player.id}>
                       {player.name}

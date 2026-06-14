@@ -74,10 +74,10 @@ export default function ChallengeOfferCard({
           <span
             aria-describedby={memoTooltipId}
             aria-label={`Memo: ${offer.memo}`}
-            className="group/memo relative grid h-5 w-5 flex-shrink-0 place-items-center rounded-[3px] border border-[#ffc878] bg-[linear-gradient(180deg,#4d9bff_0%,#5578d8_34%,#ff9b35_35%,#ff9b35_100%)] text-white shadow-[0_0_8px_rgba(255,150,55,0.55)] outline-none focus-visible:ring-2 focus-visible:ring-[#ffe6a6]/80 sm:h-6 sm:w-6"
+            className="group/memo relative grid h-10 w-10 flex-shrink-0 place-items-center rounded-[3px]  outline-none focus-visible:ring-2 focus-visible:ring-[#ffe6a6]/80 sm:h-10 sm:w-10"
             tabIndex={0}
           >
-            <FileText className="h-3.5 w-3.5 text-[#ffe6a6] sm:h-4 sm:w-4" />
+            <Image src="/images/memo.PNG" alt="offer" width={400} height={400} className="w-full h-full" />
             <span
               id={memoTooltipId}
               role="tooltip"
@@ -91,7 +91,6 @@ export default function ChallengeOfferCard({
 
       <ChallengeAcceptButton
         onClick={() => onAccept?.(offer)}
-        className="h-12 w-12 flex-shrink-0 border-[3px] text-[10px] sm:h-[68px] sm:w-[68px] sm:border-[5px] sm:text-sm"
       />
     </article>
   );
