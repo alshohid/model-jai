@@ -13,7 +13,8 @@ const QUICK_LINKS: FooterLink[] = [
     { label: "Home", href: "/" },
     { label: "Live Stream Match", href: "/live-stream" },
     { label: "Store", href: "/point-store" },
-    { label: "Contact", href: "#" },
+    { label: "Contact Support", href: "#" },
+    { label: "+1 (609) 851-0377", href: "#" },
 ];
 
 const LEGAL_LINKS: FooterLink[] = [
