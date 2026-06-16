@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { PhilippinePesoIcon } from "lucide-react";
 
 type SupporterCardProps = {
     imageSrc: string;
@@ -13,6 +14,7 @@ type SupporterCardProps = {
     profileHref?: string;
     className?: string;
     imageClassName?: string;
+    totalSupportedAmount?: number;
 };
 
 export default function SupporterCard({
@@ -23,6 +25,7 @@ export default function SupporterCard({
     profileHref,
     className,
     imageClassName,
+    totalSupportedAmount,
 }: SupporterCardProps) {
     const resolvedImageSrc = getSafeImageSrc(
         imageSrc,
@@ -51,10 +54,10 @@ export default function SupporterCard({
     return (
         <div className="flex w-full flex-col items-center justify-center gap-5">
             <div
-                    className={cn(
-                        "w-full max-w-[434px] rounded-[16px] flex flex-col gap-[10px]",
-                        className
-                    )}
+                className={cn(
+                    "w-full max-w-[434px] rounded-[16px] flex flex-col gap-[10px]",
+                    className
+                )}
             >
                 <div className="rounded-[16px] bg-[#FFFFFF0D] p-3 md:p-4">
                     {profileHref ? (
@@ -70,7 +73,8 @@ export default function SupporterCard({
                     )}
                 </div>
             </div>
-            <div className="w-full max-w-[434px] px-4 text-center">
+            <div className="w-full  px-4 text-center">
+                <p className="text-white text-[1.5rem] md:text-[2rem] font-bold flex gap-1 items-center justify-center">{totalSupportedAmount}<PhilippinePesoIcon className="w-5 h-5 md:w-8 md:h-8" /></p>
                 <h4
                     className={[
                         "text-white",

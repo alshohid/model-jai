@@ -14,6 +14,7 @@ import {
     SupporterRankingRow,
 } from "@/shared/lib/ranking/supporterRanking";
 import Image from "next/image";
+import { calculateTotalSupportedAmount } from "@/shared/lib/utils/calculateTotalSupportedAmount";
 
 export type Props = {
     data?: SupporterRankingInput[] | null;
@@ -40,6 +41,8 @@ const RankingSection = ({
         [propRows, rawData]
     );
     const topSupporter = rankingRows[0];
+    const totalSupportedAmount = calculateTotalSupportedAmount(topSupporter?.supportedAmounts || "");
+    console.log(totalSupportedAmount);
 
     return (
         <section className="relative w-full ">
@@ -90,6 +93,7 @@ const RankingSection = ({
                                 topSupporter?.supporterName ||
                                 FALLBACK_SUPPORTER_NAME
                             }
+                            totalSupportedAmount={totalSupportedAmount}
                             className="mx-auto"
                         />
                     )}
