@@ -181,8 +181,8 @@ export default function MyProfilePanel({
                                     isVisible={visibility?.show_email}
                                     onToggleVisibility={visibilityToggles?.onToggleEmailVisibility}
                                 />
-                                {profile?.contact && <InfoRow label="Contact" value={profile.contact} />}
-                                {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />}
+                                {/* {profile?.contact && <InfoRow label="Contact" value={profile.contact} />}
+                                {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />} */}
                             </div>
 
                             {game?.name || canChangeFavoriteGame ? (
