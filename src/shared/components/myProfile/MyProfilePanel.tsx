@@ -34,6 +34,24 @@ type StatItem = {
     icon?: any;
 };
 
+type VisibilityState = {
+    show_email: boolean;
+    show_name: boolean;
+    show_total_earning: boolean;
+    show_total_referral_earning: boolean;
+    show_total_tip_received: boolean;
+    show_total_withdraw: boolean;
+};
+
+type VisibilityToggles = {
+    onToggleEmailVisibility: () => void;
+    onToggleNameVisibility: () => void;
+    onToggleTotalEarningVisibility: () => void;
+    onToggleTotalReferralEarningVisibility: () => void;
+    onToggleTotalTipReceivedVisibility: () => void;
+    onToggleTotalWithdrawVisibility: () => void;
+};
+
 type Props = {
     profile: ProfileInfo;
     stats: StatItem[];
@@ -47,6 +65,8 @@ type Props = {
     selectedPaymentMethod?: PaymentMethodId | null;
     walletActionMethod?: PaymentMethodId | null;
     walletActionMode?: "connect" | "disconnect" | null;
+    visibility?: VisibilityState;
+    visibilityToggles?: VisibilityToggles;
     onEditProfile?: () => void;
     onChangeFavoriteGame?: () => void;
     onSendMoney?: () => void;
@@ -58,6 +78,17 @@ type Props = {
     className?: string;
 };
 
+const statToggleKeyMap: Array<{
+    label: string;
+    toggleKey: keyof VisibilityToggles;
+    visibleKey: keyof VisibilityState;
+}> = [
+        { label: "Total Earnings", toggleKey: "onToggleTotalEarningVisibility", visibleKey: "show_total_earning" },
+        { label: "Total Referral Earnings", toggleKey: "onToggleTotalReferralEarningVisibility", visibleKey: "show_total_referral_earning" },
+        { label: "Total Tip Received", toggleKey: "onToggleTotalTipReceivedVisibility", visibleKey: "show_total_tip_received" },
+        { label: "Total Withdraw", toggleKey: "onToggleTotalWithdrawVisibility", visibleKey: "show_total_withdraw" },
+    ];
+
 export default function MyProfilePanel({
     profile,
     stats,
@@ -66,6 +97,8 @@ export default function MyProfilePanel({
     selectedPaymentMethod,
     walletActionMethod,
     walletActionMode,
+    visibility,
+    visibilityToggles,
     onEditProfile,
     onChangeFavoriteGame,
     onSendMoney,
@@ -134,10 +167,20 @@ export default function MyProfilePanel({
                             {/* Info rows */}
                             <div className="min-w-0 space-y-2 py-3 md:py-8">
                                 <div className="flex items-center gap-2">
-                                    <InfoRow label="Name" value={profile.name} />
+                                    <InfoRow
+                                        label="Name"
+                                        value={profile.name}
+                                        isVisible={visibility?.show_name}
+                                        onToggleVisibility={visibilityToggles?.onToggleNameVisibility}
+                                    />
                                     <BigBossIndicator isBigBoss={isBigBoss} size="sm" />
                                 </div>
-                                <InfoRow label="Email" value={profile.email} />
+                                <InfoRow
+                                    label="Email"
+                                    value={profile.email}
+                                    isVisible={visibility?.show_email}
+                                    onToggleVisibility={visibilityToggles?.onToggleEmailVisibility}
+                                />
                                 {profile?.contact && <InfoRow label="Contact" value={profile.contact} />}
                                 {profile?.nationality && <InfoRow label="Nationality" value={profile.nationality} />}
                             </div>
@@ -376,14 +419,23 @@ export default function MyProfilePanel({
 
                     {/* STAT CARDS */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                        {stats.map((s, idx) => (
-                            <StatCard
-                                key={idx}
-                                label={s.label}
-                                value={s.value}
-                                icon={s.icon}
-                            />
-                        ))}
+                        {stats.map((s, idx) => {
+                            const statToggle = statToggleKeyMap.find((st) => st.label === s.label);
+                            return (
+                                <StatCard
+                                    key={idx}
+                                    label={s.label}
+                                    value={s.value}
+                                    icon={s.icon}
+                                    isVisible={statToggle && visibility ? visibility[statToggle.visibleKey] : undefined}
+                                    onToggleVisibility={
+                                        statToggle && visibilityToggles
+                                            ? visibilityToggles[statToggle.toggleKey]
+                                            : undefined
+                                    }
+                                />
+                            );
+                        })}
                     </div>
                 </div>
             </div>

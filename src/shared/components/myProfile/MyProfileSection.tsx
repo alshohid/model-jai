@@ -45,7 +45,7 @@ const MyProfileSection = () => {
     const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
     const [changeFavoriteGame, { isLoading: isChangeFavoriteGameLoading }] = useChangeFavoriteGameMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
-    const [changeProfileVisibility, { isLoading: isProfileVisibilityLoading }] = useProfileVisibilityMutation();
+    const [changeProfileVisibility] = useProfileVisibilityMutation();
     const searchParams = useSearchParams();
     const user = meData?.data?.user;
     const userFullName = getFullName(user);
@@ -359,6 +359,15 @@ const MyProfileSection = () => {
                         selectedPaymentMethod={selectedPaymentMethod}
                         walletActionMethod={walletActionMethod}
                         walletActionMode={walletActionMode}
+                        visibility={visibility}
+                        visibilityToggles={{
+                            onToggleNameVisibility: () => handleVisibilityToggle("show_name"),
+                            onToggleEmailVisibility: () => handleVisibilityToggle("show_email"),
+                            onToggleTotalEarningVisibility: () => handleVisibilityToggle("show_total_earning"),
+                            onToggleTotalReferralEarningVisibility: () => handleVisibilityToggle("show_total_referral_earning"),
+                            onToggleTotalTipReceivedVisibility: () => handleVisibilityToggle("show_total_tip_received"),
+                            onToggleTotalWithdrawVisibility: () => handleVisibilityToggle("show_total_withdraw"),
+                        }}
                         onEditProfile={() => setOpenEdit(true)}
                         onChangeFavoriteGame={openFavoriteGamePicker}
                         onSendMoney={() => setSendMoneyOpen(true)}
