@@ -172,6 +172,12 @@ export interface IUser {
   total_balance: number;
   artist_name?: string | null;
   city?: string | null;
+  show_email: boolean;
+  show_name: boolean;
+  show_total_earning: boolean;
+  show_total_referral_earning: boolean;
+  show_total_tip_received: boolean;
+  show_total_withdraw: boolean;
 }
 export interface IUserInfoResponse {
   user: IUser;
@@ -195,4 +201,66 @@ export interface IUpdateUserParams {
 
 export interface IChangeFavoriteGameParams {
   game_id: number;
+}
+export interface IProfileVisibilityParams {
+  show_email: boolean;
+  show_name: boolean;
+  show_total_earning: boolean;
+  show_total_referral_earning: boolean;
+  show_total_tip_received: boolean;
+  show_total_withdraw: boolean;
+}
+
+export interface IProfileVisibilityResponse {
+  id: number;
+  name: string;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  artist_name: string;
+  email: string;
+
+  show_email: boolean;
+  show_name: boolean;
+  show_total_earning: boolean;
+  show_total_referral_earning: boolean;
+  show_total_tip_received: boolean;
+  show_total_withdraw: boolean;
+
+  show_total_balance: boolean;
+  show_total_bet: boolean;
+
+  phone_number: string | null;
+  nationality: string | null;
+  address: string | null;
+  city: string | null;
+  zip_code: string | null;
+  state: string | null;
+
+  social_verification_status: boolean;
+  social_verification_number: string | null;
+
+  is_player: boolean;
+  image: string;
+  provider: string;
+  verified_at: boolean;
+
+  suspended_until: string | null;
+  is_permanent_suspended: boolean;
+  suspension_reason: string | null;
+  note: string | null;
+
+  total_post: number;
+  role: string;
+  referral_no: string;
+
+  game: {
+    id: number;
+    name: string;
+    image: string;
+  };
+
+  followers_count: number;
+  following_count: number;
+  created_at: string;
 }

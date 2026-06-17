@@ -11,11 +11,11 @@ import {
     useDisconnectPaymentMethodMutation,
     useWithdrawRequestMutation,
 } from "@/redux/features/pointstore/buypoint";
-import { useChangeFavoriteGameMutation, useEditProfileMutation, useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import { useChangeFavoriteGameMutation, useEditProfileMutation, useGetMeDataQuery, useProfileVisibilityMutation } from "@/redux/features/auth/authapi";
 import { toast } from "sonner";
 import ProfileSkeleton from "./ProfileSkeleton";
 import { IGameOption } from "@/types/game/gameList/gameListTypes";
-import { IUserStats } from "@/types/user/auth";
+import { IProfileVisibilityParams, IUserStats } from "@/types/user/auth";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { getFullName } from "@/shared/lib/utils/name";
 import { getPaymentMethodConfig } from "@/shared/constants/paymentMethods";
@@ -45,6 +45,7 @@ const MyProfileSection = () => {
     const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
     const [changeFavoriteGame, { isLoading: isChangeFavoriteGameLoading }] = useChangeFavoriteGameMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
+    const [changeProfileVisibility, { isLoading: isProfileVisibilityLoading }] = useProfileVisibilityMutation();
     const searchParams = useSearchParams();
     const user = meData?.data?.user;
     const userFullName = getFullName(user);
@@ -69,6 +70,16 @@ const MyProfileSection = () => {
     } = usePaymentConnectionStatuses({
         enabled: Boolean(user),
     });
+
+
+    const visibility = {
+        show_email: user?.show_email ?? false,
+        show_name: user?.show_name ?? false,
+        show_total_earning: user?.show_total_earning ?? false,
+        show_total_referral_earning: user?.show_total_referral_earning ?? false,
+        show_total_tip_received: user?.show_total_tip_received ?? false,
+        show_total_withdraw: user?.show_total_withdraw ?? false,
+    };
 
     const stats: IUserStats | undefined = meData?.data
         ? {
@@ -261,6 +272,41 @@ const MyProfileSection = () => {
             toast.error(getErrorMessage(error, "Failed to update favorite game"));
         }
     };
+    const handleVisibilityToggle = async (
+        key: keyof IProfileVisibilityParams
+    ) => {
+        if (!user) return;
+
+        await changeProfileVisibility({
+            show_email: key === "show_email"
+                ? !user.show_email
+                : user.show_email,
+
+            show_name: key === "show_name"
+                ? !user.show_name
+                : user.show_name,
+
+            show_total_earning:
+                key === "show_total_earning"
+                    ? !user.show_total_earning
+                    : user.show_total_earning,
+
+            show_total_referral_earning:
+                key === "show_total_referral_earning"
+                    ? !user.show_total_referral_earning
+                    : user.show_total_referral_earning,
+
+            show_total_tip_received:
+                key === "show_total_tip_received"
+                    ? !user.show_total_tip_received
+                    : user.show_total_tip_received,
+
+            show_total_withdraw:
+                key === "show_total_withdraw"
+                    ? !user.show_total_withdraw
+                    : user.show_total_withdraw,
+        }).unwrap();
+    };
 
     return (
         <div className="container py-5 md:py-10">
@@ -400,7 +446,7 @@ const MyProfileSection = () => {
                     if (!response?.success) {
                         throw new Error(response?.message || "Profile update failed");
                     }
-                    
+
                     toast.success(response?.message || "Profile updated successfully");
                     setOpenEdit(false);
                 }}

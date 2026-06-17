@@ -13,6 +13,8 @@ import {
   IVerifyLoginOtpPayload,
   IVerifyForgotPasswordParams,
   IUserInfoResponse,
+  IProfileVisibilityResponse,
+  IProfileVisibilityParams,
 } from "@/types/user/auth";
 
 const authApi = baseApi.injectEndpoints({
@@ -80,6 +82,17 @@ const authApi = baseApi.injectEndpoints({
         method: "DELETE",
       }),
       invalidatesTags: ["ManageUser"],
+    }),
+    profileVisibility: builder.mutation<
+      ApiResponse<IProfileVisibilityResponse>,
+      IProfileVisibilityParams
+    >({
+      query: (body) => ({
+        url: "/profile/visibility",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["User"],
     }),
 
     facebookLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
@@ -161,5 +174,6 @@ export const {
   useVerifyLoginOtpMutation,
   useResetPasswordMutation,
   useAppleLoginMutation,
+  useProfileVisibilityMutation,
 } = authApi;
 export default authApi;
