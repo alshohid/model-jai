@@ -27,12 +27,20 @@ type ArtistInfo = {
     bio?: string;
     contact?: string;
     nationality?: string;
+    show_name: boolean;
+    show_email: boolean;
+    show_total_earning: boolean;
+    show_total_referral_earning: boolean;
+    show_total_tip_received: boolean;
+    show_total_withdraw: boolean;
+
 };
 
 type StatItem = {
     label: string;
     value: string;
     icon?: any;
+    isVisible: boolean;
 };
 
 type Props = {
@@ -149,7 +157,7 @@ export default function ArtistProfilePanel({
                     <div>
                         <div className="flex justify-between items-start gap-4 mb-4">
                             <div className="space-y-2 py-3 md:py-8">
-                                <div className="flex items-center gap-2">
+                                {artist.show_name && <div className="flex items-center gap-2">
                                     <InfoRow label="Name" value={artist.name} />
                                     {artist.isBigBoss && (
                                         <BigBossIndicator isBigBoss={true} size="sm" />
@@ -157,15 +165,10 @@ export default function ArtistProfilePanel({
                                     {artist.isVerified && (
                                         <CheckCircle2 className="size-4 text-[#00C3FF]" />
                                     )}
-                                </div>
+                                </div>}
+
                                 <InfoRow label="Artist Name" value={`@${artist.username}`} />
-                                {/* <InfoRow label="Email" value={artist.email} />
-                                {artist.contact && (
-                                    <InfoRow label="Contact" value={artist.contact} />
-                                )}
-                                {artist.nationality && (
-                                    <InfoRow label="Nationality" value={artist.nationality} />
-                                )} */}
+                                {artist.show_email && <InfoRow label="Email" value={artist.email} />}
                             </div>
                         </div>
 
@@ -211,16 +214,6 @@ export default function ArtistProfilePanel({
                                     )}
                                 </div>
                             </StartStreamingButton>
-
-                            {/* <StartStreamingButton
-                                onClick={onSendTip}
-                                className="w-full bg-[#00C3FF] hover:bg-[#00C3FF]/90"
-                            >
-                                <div className="flex items-center justify-center gap-2">
-                                    <Send className="size-5" />
-                                    <span>Send Tip Points</span>
-                                </div>
-                            </StartStreamingButton> */}
                         </div>
                     </div>
 
@@ -232,6 +225,8 @@ export default function ArtistProfilePanel({
                                 label={s.label}
                                 value={s.value}
                                 icon={s.icon}
+                                isVisible={s.isVisible}
+
                             />
                         ))}
                     </div>

@@ -75,7 +75,7 @@ export function StatCard({
                     <p className="text-white text-[18px] text-wrap font-semibold leading-tight">
                         {label}
                     </p>
-                    <p className="text-white/85 text-[18px] font-medium mt-1">{value}</p>
+                    <p className={`text-white/85 text-[18px] font-medium mt-1 ${isVisible ? "" : "blur-xs opacity-50"}`}>{value}</p>
                 </div>
             </div>
 

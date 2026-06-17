@@ -33,44 +33,60 @@ export default function ArtistProfilePage() {
     if (isError || !profileResponse?.data) {
         return <div className="py-20 text-center text-red-500">Artist not found or something went wrong!</div>;
     }
-    const artistData = profileResponse.data;
+    const artistData = profileResponse?.data;
     const user = artistData.user;
     const artistPosts = postsResponse?.data?.posts ?? [];
 
 
     const mappedArtist = {
-        id: String(user.id),
-        name: user.name,
-        username: user.artist_name,
-        email: user.email,
-        avatar: getSafeImageSrc(user.image_url || user.image, "/images/home/avatar_img.png"),
-        isBigBoss: user.role === "artist",
-        isVerified: user.verified_at !== null,
-        posts: user.total_post || 0,
-        followers: String(user.followers_count || 0),
-        following: String(user.following_count || 0),
-        isFollowing: artistData.is_followed,
-        bio: user.note || "No bio available",
-        contact: user.phone_number || "N/A",
-        nationality: user.nationality || "N/A",
+        id: String(user?.id),
+        name: user?.name,
+        username: user?.artist_name,
+        email: user?.email,
+        avatar: getSafeImageSrc(user?.image_url || user?.image, "/images/home/avatar_img.png"),
+        isBigBoss: user?.role === "artist",
+        isVerified: user?.verified_at !== null,
+        posts: user?.total_post || 0,
+        followers: String(user?.followers_count || 0),
+        following: String(user?.following_count || 0),
+        isFollowing: artistData?.is_followed,
+        bio: user?.note || "No bio available",
+        contact: user?.phone_number || "N/A",
+        nationality: user?.nationality || "N/A",
+        show_name: user?.show_name,
+        show_email: user?.show_email,
+        show_total_earning: user?.show_total_earning,
+        show_total_referral_earning: user?.show_total_referral_earning,
+        show_total_tip_received: user?.show_total_tip_received,
+        show_total_withdraw: user?.show_total_withdraw,
     };
 
     const stats = [
         {
             label: "Total Earnings",
-            value: `₱ ${artistData.total_earning}`,
-            icon: "/images/home/stat_button.png"
+            value: `₱ ${artistData?.total_earning}`,
+            icon: "/images/home/stat_button.png",
+            isVisible: user?.show_total_earning,
         },
         {
             label: "Total Referral Earnings",
-            value: `₱ ${artistData.total_referral_earning}`,
-            icon: "/images/home/stat_button_2.png"
+            value: `₱ ${artistData?.total_referral_earning}`,
+            icon: "/images/home/stat_button_2.png",
+            isVisible: user?.show_total_referral_earning,
         },
         {
             label: "Total Tip Received",
-            value: `₱ ${artistData.total_tip_received}`,
-            icon: "/images/home/stat_button_3.png"
+            value: `₱ ${artistData?.total_tip_received}`,
+            icon: "/images/home/stat_button_3.png",
+            isVisible: user?.show_total_tip_received,
         },
+        {
+            label: "Total Withdraw",
+            value: `₱ ${artistData?.total_withdraw}`,
+            icon: "/images/home/stat_button.png",
+            isVisible: user?.show_total_withdraw,
+        },
+
     ];
 
     const handleFollowToggle = async () => {
