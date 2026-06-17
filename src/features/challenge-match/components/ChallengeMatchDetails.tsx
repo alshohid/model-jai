@@ -22,6 +22,7 @@ import { currentChallengeBalance } from "../data/challengeMatchMockData";
 import { formatChallengeCurrency, formatChallengePoints } from "../utils";
 import ChallengeAcceptButton from "./ChallengeAcceptButton";
 import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
+import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 
 type ChallengeDialogOutcome = "confirm" | "success" | "insufficient";
 type ChallengeTone = "gold" | "green" | "pink";
@@ -145,9 +146,11 @@ function ChallengeTitleStrip({
 function ChallengeSideOfferPanel({
   offer,
   gameLogo,
+  handleShareClick,
 }: {
   offer: ChallengeMatchOffer;
   gameLogo: string;
+  handleShareClick: () => void;
 }) {
   return (
     <div className="relative min-h-[150px] rounded-[16px] border border-white/16 bg-[#101116]/95 px-2.5 pb-3 pt-4 shadow-[inset_0_0_24px_rgba(255,255,255,0.04)] sm:min-h-[190px] sm:px-4">
@@ -174,13 +177,15 @@ function ChallengeSideOfferPanel({
       <p className="mt-1 text-[16px] font-black text-white sm:text-2xl">
         +{formatChallengeCurrency(offer.amount)}
       </p>
+      <StartStreamingButton
+        onClick={handleShareClick}
+        className={cn(
+          "h-[23px] md:h-[30px] text-[8px] md:text-[14px] px-3 rounded-md"
 
-      <button
-        type="button"
-        className="mt-4 h-8 w-full rounded-lg border border-[#ff7eea]/55 bg-[linear-gradient(180deg,#ff7bec,#ff4abd)] text-[10px] font-black text-white shadow-[0_0_18px_rgba(255,74,189,0.35)] transition hover:brightness-110"
+        )}
       >
         Share Referral
-      </button>
+      </StartStreamingButton>
     </div>
   );
 }
@@ -330,6 +335,24 @@ export default function ChallengeMatchDetails({
     setAgreed(false);
     setOutcome("confirm");
   };
+  const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.stopPropagation();
+    // if (showShareSheet && typeof window !== "undefined" && matchId && playerRef) {
+    //     const nextShareUrl = new URL(
+    //         `/live-stream/match/${matchId}`,
+    //         window.location.origin
+    //     );
+    //     const currentPlatform =
+    //         new URLSearchParams(window.location.search).get("platform") || "tiktok";
+
+    //     nextShareUrl.searchParams.set("platform", currentPlatform);
+    //     nextShareUrl.searchParams.set("ref", playerRef);
+    //     setShareUrl(nextShareUrl.toString());
+    //     setShareSheetOpen(true);
+    // } else {
+    //     onShare?.();
+    // }
+  };
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#090a0f] text-white">
@@ -391,7 +414,7 @@ export default function ChallengeMatchDetails({
           <ChallengeTitleStrip offer={offer} rightLabel={rightLabel} />
 
           <div className="relative grid grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] gap-1 px-2 pt-3 sm:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] sm:px-4">
-            <ChallengeSideOfferPanel offer={offer} gameLogo={gameLogo} />
+            <ChallengeSideOfferPanel offer={offer} gameLogo={gameLogo} handleShareClick={handleShareClick} />
             <ChallengeCenterBadge offer={offer} />
             <ChallengeAcceptPanel
               offer={offer}
