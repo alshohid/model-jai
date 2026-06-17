@@ -11,7 +11,7 @@ import Link from "next/link";
 import BigBossChallengeOffers from "./BigBossChallengeOffers";
 
 export default function ChallengeDashboard() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, role } = useAuth();
   const router = useRouter();
 
   const sortedOffers = useMemo(
@@ -20,7 +20,17 @@ export default function ChallengeDashboard() {
   );
 
   const handleAccept = (offer: ChallengeMatchOffer) => {
-    router.push(`/challenge-dashboard/${offer.id}`);
+    if (!isAuthenticated) {
+      router.push(`/login?redirect=/challenge-dashboard/${offer.id}`);
+      return;
+    }
+
+    if (role === "user" || role === "artist") {
+      router.push(`/challenge-dashboard/${offer.id}`);
+      return;
+    }
+
+    router.push(`/admin/dashboard`);
   };
 
   return (

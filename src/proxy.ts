@@ -28,13 +28,17 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/support-history") ||
     pathname.startsWith("/transactions") ||
     pathname.startsWith("/notifications") ||
-    pathname.startsWith("/artist");
+    pathname.startsWith("/artist") ||
+    pathname.startsWith("/challenge-dashboard");
 
   const isPublicHomePage = pathname === "/";
 
   const buildUserLoginRedirect = () => {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", `${pathname}${request.nextUrl.search}`);
+    loginUrl.searchParams.set(
+      "redirect",
+      `${pathname}${request.nextUrl.search}`,
+    );
     return loginUrl;
   };
 
@@ -112,5 +116,6 @@ export const config = {
     "/forgot-password",
     "/forgot-password/verify",
     "/forgot-password/reset",
+    "/challenge-dashboard/:path*",
   ],
 };

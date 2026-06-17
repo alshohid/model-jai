@@ -7,7 +7,6 @@ import {
   AlertCircle,
   ArrowLeft,
   Clock3,
-  FileText,
   PhilippinePeso,
   ShieldCheck,
   Sparkles,
@@ -23,6 +22,9 @@ import { formatChallengeCurrency, formatChallengePoints } from "../utils";
 import ChallengeAcceptButton from "./ChallengeAcceptButton";
 import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
+import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type ChallengeDialogOutcome = "confirm" | "success" | "insufficient";
 type ChallengeTone = "gold" | "green" | "pink";
@@ -292,7 +294,7 @@ function ChallengeRulesPanel() {
 export default function ChallengeMatchDetails({
   offer,
 }: ChallengeMatchDetailsProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, } = useAuth();
   const { data: meData } = useGetMeDataQuery(undefined, {
     skip: !isAuthenticated,
   });
@@ -300,11 +302,17 @@ export default function ChallengeMatchDetails({
   const [agreed, setAgreed] = useState(false);
   const [outcome, setOutcome] = useState<ChallengeDialogOutcome>("confirm");
   const [acceptedPlayer, setAcceptedPlayer] = useState<ChallengePlayer | null>(null);
+  const [shareSheetOpen, setShareSheetOpen] = useState(false);
+  const [shareSheetTitle, setShareSheetTitle] = useState("");
+  const [shareUrl, setShareUrl] = useState("");
+  const [shareSheetImageSrc, setShareSheetImageSrc] = useState("");
+  const [shareSheetImageAlt, setShareSheetImageAlt] = useState("");
   const gameLogo = getGameLogo(offer.game);
   const rightPlayer = acceptedPlayer ?? anonymousChallengePlayer;
   const rightLabel = acceptedPlayer?.handle ?? anonymousChallengePlayer.handle;
 
   const openAcceptDialog = () => {
+
     setAgreed(false);
     setOutcome("confirm");
     setDialogOpen(true);
@@ -337,21 +345,39 @@ export default function ChallengeMatchDetails({
   };
   const handleShareClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.stopPropagation();
-    // if (showShareSheet && typeof window !== "undefined" && matchId && playerRef) {
-    //     const nextShareUrl = new URL(
-    //         `/live-stream/match/${matchId}`,
-    //         window.location.origin
-    //     );
-    //     const currentPlatform =
-    //         new URLSearchParams(window.location.search).get("platform") || "tiktok";
 
-    //     nextShareUrl.searchParams.set("platform", currentPlatform);
-    //     nextShareUrl.searchParams.set("ref", playerRef);
-    //     setShareUrl(nextShareUrl.toString());
-    //     setShareSheetOpen(true);
-    // } else {
-    //     onShare?.();
-    // }
+    if (typeof window === "undefined") {
+      toast.error("Share link is not available right now.");
+      return;
+    }
+
+    const user = meData?.data?.user;
+    const userReferralNo = user?.referral_no;
+
+    const nextShareUrl = new URL(
+      `/challenge-dashboard/${offer.id}`,
+      window.location.origin
+    );
+    const currentPlatform =
+      new URLSearchParams(window.location.search).get("platform") || "tiktok";
+
+    nextShareUrl.searchParams.set("platform", currentPlatform);
+
+    if (userReferralNo) {
+      nextShareUrl.searchParams.set("ref", userReferralNo);
+    }
+
+    const shareTitle = `Challenge ${getDisplayName(offer)} on ${offer.game}`;
+    const shareImage = getSafeImageSrc(
+      offer.challenger.avatar,
+      "/images/home/avatar_img.png"
+    );
+
+    setShareSheetTitle(shareTitle);
+    setShareSheetImageSrc(shareImage);
+    setShareSheetImageAlt(getDisplayName(offer));
+    setShareUrl(nextShareUrl.toString());
+    setShareSheetOpen(true);
   };
 
   return (
@@ -450,6 +476,17 @@ export default function ChallengeMatchDetails({
           </div>
         </div>
       </section>
+
+      <ReferralShareSheet
+        open={shareSheetOpen}
+        onOpenChange={setShareSheetOpen}
+        title={shareSheetTitle}
+        shareUrl={shareUrl}
+        imageSrc={shareSheetImageSrc}
+        imageAlt={shareSheetImageAlt}
+        onCopy={() => toast.success("Challenge share link copied")}
+        onShare={() => toast.success("Challenge share link shared")}
+      />
 
       <ChallengeAcceptDialog
         offer={offer}
