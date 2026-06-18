@@ -11,6 +11,10 @@ import BigBossIndicator from "@/shared/components/user/BigBossIndicator";
 import PaymentMethodLogo from "@/shared/components/payment/PaymentMethodLogo";
 import { PaymentMethodConfig } from "@/shared/constants/paymentMethods";
 import { PaymentMethodId } from "@/types/user/point";
+import ChallengeOfferCard from "@/features/challenge-match/components/ChallengeOfferCard";
+import { useRouter } from "next/navigation";
+import { ChallengeMatchOffer } from "@/features/challenge-match/types";
+import { FaCircleChevronDown } from "react-icons/fa6";
 
 type ProfileInfo = {
     name: string;
@@ -76,6 +80,7 @@ type Props = {
     onConnectPaymentMethod?: (paymentMethod: PaymentMethodId) => void;
     onDisconnectPaymentMethod?: (paymentMethod: PaymentMethodId) => void;
     className?: string;
+    topOneOffer?: ChallengeMatchOffer[];
 };
 
 const statToggleKeyMap: Array<{
@@ -108,11 +113,13 @@ export default function MyProfilePanel({
     onConnectPaymentMethod,
     onDisconnectPaymentMethod,
     className,
+    topOneOffer,
 }: Props) {
     const game = profile.favoriteGame;
     const canChangeFavoriteGame = Boolean(onChangeFavoriteGame);
     const connectedPaymentMethods = paymentMethods.filter((item) => item.connected);
     const hasConnectedPaymentMethod = connectedPaymentMethods.length > 0;
+    const router = useRouter();
 
     return (
         <section
@@ -155,6 +162,20 @@ export default function MyProfilePanel({
                                     Edit Profile
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                    <div className="w-full">
+                        {topOneOffer?.map((offer) => (
+                            <ChallengeOfferCard
+                                key={offer.id}
+                                offer={offer}
+                                compact
+                                onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
+                            />
+                        ))}
+                        <div className="w-full flex items-center justify-center mt-2">
+                            <FaCircleChevronDown className="text-[30px] text-[#743040] " />
+
                         </div>
                     </div>
                 </div>

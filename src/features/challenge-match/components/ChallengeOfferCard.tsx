@@ -3,7 +3,6 @@
 import { useId } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FileText } from "lucide-react";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import type { ChallengeMatchOffer } from "../types";
 import { formatChallengePoints } from "../utils";
