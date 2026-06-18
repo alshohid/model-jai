@@ -50,7 +50,7 @@ const MyProfileSection = () => {
     const [changeProfileVisibility] = useProfileVisibilityMutation();
     const searchParams = useSearchParams();
     const hash = typeof window !== "undefined" ? window.location.hash : "";
-    const topOneOffer = challengeMatchOffers.slice(0, 1);
+    const allOffers = challengeMatchOffers;
 
     useEffect(() => {
         if (hash) {
@@ -402,7 +402,7 @@ const MyProfileSection = () => {
                         onSelectPaymentMethod={setSelectedPaymentMethod}
                         onConnectPaymentMethod={openConnectWalletDialog}
                         onDisconnectPaymentMethod={handleDisconnectWallet}
-                        topOneOffer={topOneOffer}
+                        topOneOffer={allOffers}
                     />
                 )
             }

@@ -11,6 +11,7 @@ import { useShowArtistPostByIdQuery, useViewSingleArtistProfileQuery } from "@/r
 import { toast } from "sonner";
 import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { challengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
 
 
 export default function ArtistProfilePage() {
@@ -21,6 +22,7 @@ export default function ArtistProfilePage() {
     const { data: postsResponse, isLoading: postsLoading, isError: postsError } = useShowArtistPostByIdQuery(artistId);
     const [followArtist, { isLoading: isFollowing }] = useFollowArtistMutation();
     const [unFollowArtist, { isLoading: isUnfollowing }] = useUnFollowArtistMutation();
+    const allOffers = challengeMatchOffers;
 
     if (isLoading) {
         return (
@@ -116,6 +118,7 @@ export default function ArtistProfilePage() {
                         onFollow={handleFollowToggle}
                         onSendTip={handleSendTip}
                         isLoading={isFollowing || isUnfollowing}
+                        offers={allOffers}
                     />
                     <MissionarySection
                         posts={artistPosts}

@@ -15,6 +15,15 @@ import ChallengeOfferCard from "@/features/challenge-match/components/ChallengeO
 import { useRouter } from "next/navigation";
 import { ChallengeMatchOffer } from "@/features/challenge-match/types";
 import { FaCircleChevronDown } from "react-icons/fa6";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetClose,
+} from "@/components/ui/sheet";
+import { X } from "lucide-react";
+import { useState } from "react";
 
 type ProfileInfo = {
     name: string;
@@ -115,6 +124,7 @@ export default function MyProfilePanel({
     className,
     topOneOffer,
 }: Props) {
+    const [sheetOpen, setSheetOpen] = useState(false);
     const game = profile.favoriteGame;
     const canChangeFavoriteGame = Boolean(onChangeFavoriteGame);
     const connectedPaymentMethods = paymentMethods.filter((item) => item.connected);
@@ -165,7 +175,7 @@ export default function MyProfilePanel({
                         </div>
                     </div>
                     <div className="w-full">
-                        {topOneOffer?.map((offer) => (
+                        {topOneOffer?.slice(0, 1).map((offer) => (
                             <ChallengeOfferCard
                                 key={offer.id}
                                 offer={offer}
@@ -173,14 +183,57 @@ export default function MyProfilePanel({
                                 onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
                             />
                         ))}
-                        <div className="w-full flex items-center justify-center mt-2">
-                            <FaCircleChevronDown className="text-[30px] text-[#743040] " />
-
-                        </div>
+                        {topOneOffer && topOneOffer.length > 1 && (
+                            <div className="w-full flex items-center justify-center mt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setSheetOpen(true)}
+                                    className="cursor-pointer"
+                                    aria-label="Show all challenges"
+                                >
+                                    <FaCircleChevronDown className="text-[30px] text-[#743040] transition hover:text-[#a0455a]" />
+                                </button>
+                            </div>
+                        )}
                     </div>
+
+                    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <SheetContent
+                            side="bottom"
+                            className="z-[110] border-t rounded-t-4xl border-white/10 bg-[#0f0a0f]/95 text-white backdrop-blur-2xl p-0 max-h-[80vh] flex flex-col [&>button.absolute]:hidden"
+                        >
+                            <SheetHeader className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/10 ">
+                                <div className="flex items-center justify-between">
+                                    <SheetTitle className="text-white text-[17px] font-semibold">
+                                        All Challenges
+                                    </SheetTitle>
+                                    <SheetClose asChild>
+                                        <button
+                                            type="button"
+                                            className="rounded-full border border-white/15 bg-white/8 p-1.5 text-white/60 hover:text-white transition"
+                                        >
+                                            <X className="size-4" />
+                                        </button>
+                                    </SheetClose>
+                                </div>
+                            </SheetHeader>
+                            <div className="flex-1 overflow-y-auto px-2 py-2">
+                                {topOneOffer?.map((offer) => (
+                                    <ChallengeOfferCard
+                                        key={offer.id}
+                                        offer={offer}
+                                        compact
+                                        onAccept={() => {
+                                            router.push(`/challenge-dashboard/${offer.id}`);
+                                            setSheetOpen(false);
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
                 </div>
 
-                {/* RIGHT CONTENT */}
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
                     {/* INFO + ACTIONS */}
                     <div>

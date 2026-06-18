@@ -9,8 +9,13 @@ import { StatCard } from "../card/StatCard";
 import { MiniStat } from "../card/MiniStat";
 import { InfoRow } from "../card/InfoRow";
 import BigBossIndicator from "./BigBossIndicator";
-import { UserPlus, UserCheck, CheckCircle2 } from "lucide-react";
+import { UserPlus, UserCheck, CheckCircle2, X } from "lucide-react";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { FaCircleChevronDown } from "react-icons/fa6";
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import ChallengeOfferCard from "@/features/challenge-match/components/ChallengeOfferCard";
+import { ChallengeMatchOffer } from "@/features/challenge-match/types";
+import { useRouter } from "next/navigation";
 
 type ArtistInfo = {
     id: string;
@@ -50,6 +55,7 @@ type Props = {
     onSendTip?: () => void;
     className?: string;
     isLoading?: boolean;
+    offers: ChallengeMatchOffer[];
 };
 
 const avatarFallbackSrc = "/images/home/avatar_img.png";
@@ -105,8 +111,12 @@ export default function ArtistProfilePanel({
     onFollow,
     className,
     isLoading,
+    offers,
 }: Props) {
     const avatarSrc = getSafeImageSrc(artist.avatar, avatarFallbackSrc);
+    const [sheetOpen, setSheetOpen] = useState(false);
+    const router = useRouter();
+
 
     return (
         <section
@@ -149,6 +159,63 @@ export default function ArtistProfilePanel({
                             )}
                         </div>
                     </div>
+                    <div className="w-full">
+                        {offers?.slice(0, 1).map((offer) => (
+                            <ChallengeOfferCard
+                                key={offer.id}
+                                offer={offer}
+                                compact
+                                onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
+                            />
+                        ))}
+                        {offers && offers.length > 3 && (
+                            <div className="w-full flex items-center justify-center mt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setSheetOpen(true)}
+                                    className="cursor-pointer"
+                                    aria-label="Show all challenges"
+                                >
+                                    <FaCircleChevronDown className="text-[30px] text-[#743040] transition hover:text-[#a0455a]" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <SheetContent
+                            side="bottom"
+                            className="z-[110] border-t rounded-t-4xl border-white/10 bg-[#0f0a0f]/95 text-white backdrop-blur-2xl p-0 max-h-[80vh] flex flex-col [&>button.absolute]:hidden"
+                        >
+                            <SheetHeader className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/10 ">
+                                <div className="flex items-center justify-between">
+                                    <SheetTitle className="text-white text-[17px] font-semibold">
+                                        All Challenges
+                                    </SheetTitle>
+                                    <SheetClose asChild>
+                                        <button
+                                            type="button"
+                                            className="rounded-full border border-white/15 bg-white/8 p-1.5 text-white/60 hover:text-white transition"
+                                        >
+                                            <X className="size-4" />
+                                        </button>
+                                    </SheetClose>
+                                </div>
+                            </SheetHeader>
+                            <div className="flex-1 overflow-y-auto px-2 py-2">
+                                {offers?.map((offer) => (
+                                    <ChallengeOfferCard
+                                        key={offer.id}
+                                        offer={offer}
+                                        compact
+                                        onAccept={() => {
+                                            router.push(`/challenge-dashboard/${offer.id}`);
+                                            setSheetOpen(false);
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </SheetContent>
+                    </Sheet>
                 </div>
 
                 {/* RIGHT CONTENT */}
