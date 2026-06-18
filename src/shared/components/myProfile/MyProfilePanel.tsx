@@ -270,7 +270,7 @@ export default function MyProfilePanel({
                         </div>
 
                         {/* BUTTONS */}
-                        <div className="mt-6 space-y-3">
+                        <div className="mt-6 space-y-3" id="my-profile-section">
                             <StartStreamingButton
                                 onClick={onSendMoney}
                                 className="w-full bg-[#00C3FF]"

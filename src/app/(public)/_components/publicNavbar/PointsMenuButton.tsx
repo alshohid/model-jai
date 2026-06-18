@@ -21,7 +21,7 @@ const menuItems: AppDropdownItem[] = [
     },
     {
         label: "Withdraw",
-        href: "/user-profile",
+        href: "/user-profile#my-profile-section",
         icon: <ArrowUpRight className="h-4 w-4" />,
     },
 ];

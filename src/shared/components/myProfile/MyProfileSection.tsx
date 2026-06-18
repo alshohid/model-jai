@@ -25,6 +25,7 @@ import { PaymentMethodConfig } from "@/shared/constants/paymentMethods";
 import { PaymentMethodId } from "@/types/user/point";
 import { getErrorMessage } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
+import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
 
 const MyProfileSection = () => {
     const [openEdit, setOpenEdit] = useState(false);
@@ -47,6 +48,22 @@ const MyProfileSection = () => {
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
     const [changeProfileVisibility] = useProfileVisibilityMutation();
     const searchParams = useSearchParams();
+    const hash = typeof window !== "undefined" ? window.location.hash : "";
+
+    useEffect(() => {
+        if (hash) {
+            const id = hash.replace("#", "");
+            const timer = setTimeout(() => {
+                scrollToSection(id, {
+                    behavior: "smooth",
+                    block: "start",
+                    inline: "nearest",
+                });
+            }, 300);
+
+            return () => clearTimeout(timer);
+        }
+    }, [hash]);
     const user = meData?.data?.user;
     const userFullName = getFullName(user);
     const fallbackAvatar = "/images/home/pro_1.jpg";
