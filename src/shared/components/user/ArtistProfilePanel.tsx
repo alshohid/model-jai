@@ -16,6 +16,7 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "@/comp
 import ChallengeOfferCard from "@/features/challenge-match/components/ChallengeOfferCard";
 import { ChallengeMatchOffer } from "@/features/challenge-match/types";
 import { useRouter } from "next/navigation";
+import { MatchScoreCard } from "./components/match-score/MatchScoreCard";
 
 type ArtistInfo = {
     id: string;
@@ -189,7 +190,7 @@ export default function ArtistProfilePanel({
                             <SheetHeader className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/10 ">
                                 <div className="flex items-center justify-between">
                                     <SheetTitle className="text-white text-[17px] font-semibold">
-                                        All Challenges
+                                        <h4 className="text-center ">Ariana&apos;s <span className="text-pink-500"> Offers</span></h4>
                                     </SheetTitle>
                                     <SheetClose asChild>
                                         <button
@@ -245,7 +246,20 @@ export default function ArtistProfilePanel({
                                 <p className="text-white/80 text-sm leading-relaxed">{artist.bio}</p>
                             </div>
                         )}
+                        <div className="w-full flex items-center justify-center">
+                            <MatchScoreCard
+                                title="On 21 Match"
+                                left={{
+                                    score: 10,
+                                    color: "green",
+                                }}
+                                right={{
+                                    score: 11,
+                                    color: "red",
+                                }}
+                            />
 
+                        </div>
                         {/* MINI STATS */}
                         <div className="mt-6 rounded-[14px] border border-white/10 bg-white/5 p-3">
                             <div className="grid grid-cols-3 gap-2 text-center">

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { MatchScoreCard } from "../user/components/match-score/MatchScoreCard";
 
 type ProfileInfo = {
     name: string;
@@ -326,22 +327,39 @@ export default function MyProfilePanel({
                             ) : null}
                         </div>
 
-                        {/* MINI STATS */}
-                        <div className="mt-6 rounded-[14px] border border-white/10 bg-white/5 p-3">
-                            <div className="grid grid-cols-3 gap-2 text-center">
-                                <MiniStat label="Posts" value={profile.posts} />
-                                <MiniStat
-                                    label="Followers"
-                                    value={profile.followers}
-                                    href="/user-profile/my-followers"
+                        <div>
+                            <div className="md:mt-2 mt-3 w-full flex items-center justify-center">
+                                <MatchScoreCard
+                                    title="On 21 Match"
+                                    left={{
+                                        score: 10,
+                                        color: "green",
+                                    }}
+                                    right={{
+                                        score: 11,
+                                        color: "red",
+                                    }}
                                 />
-                                <MiniStat
-                                    label="Following"
-                                    value={profile.following}
-                                    href="/user-profile/following"
-                                />
+
+                            </div>
+                            <div className="md:mt-6 mt-3 rounded-[14px] border border-white/10 bg-white/5 p-3">
+
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                    <MiniStat label="Posts" value={profile.posts} />
+                                    <MiniStat
+                                        label="Followers"
+                                        value={profile.followers}
+                                        href="/user-profile/my-followers"
+                                    />
+                                    <MiniStat
+                                        label="Following"
+                                        value={profile.following}
+                                        href="/user-profile/following"
+                                    />
+                                </div>
                             </div>
                         </div>
+
 
                         {/* BUTTONS */}
                         <div className="mt-6 space-y-3" id="my-profile-section">
