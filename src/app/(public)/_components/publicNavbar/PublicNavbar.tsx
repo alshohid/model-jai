@@ -16,6 +16,7 @@ import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import Skeleton from "@/shared/UI/Skeleton";
 import { useNotifications } from "@/shared/providers/hook/useNotificaton";
 
+
 const navItems = [
     { label: "Home", href: "/" },
     { label: "Live Stream Match", href: "/live-stream" },
@@ -27,7 +28,9 @@ export default function PublicNavbar() {
     const pathname = usePathname();
     const { unreadCount } = useNotifications();
     const { isAuthenticated, role } = useAuth();
+
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
+
 
     const userProfileData = meData?.data;
     const wrapperClass = (isAuthenticated && (role === "user" || role === "artist"))
