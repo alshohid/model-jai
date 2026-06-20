@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { PhilippinePeso } from "lucide-react";
 
 export function BossCard({
     name,
@@ -8,12 +9,14 @@ export function BossCard({
     supportPlayerName,
     total,
     profileHref,
+    totalAmount = 0,
 }: {
     name: string;
     img: string;
     supportPlayerName: string;
     total: number;
     profileHref?: string;
+    totalAmount?: number | null;
 }) {
     const resolvedImageSrc = getSafeImageSrc(img, "/images/home/avatar_img.png");
 
@@ -70,20 +73,30 @@ export function BossCard({
                     imageContent
                 )}
 
-                <div className="mt-3 text-white/80 text-[0.5rem] md:text-[12px] font-semibold">
-                    Big Boss Supporter
-                </div>
-                <div className="text-white font-black text-[0.7rem] md:text-[1rem]">
-                    {profileHref ? (
-                        <Link
-                            href={profileHref}
-                            className="inline-block transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-                        >
-                            {name}
-                        </Link>
-                    ) : (
-                        name
+                <div className="mt-2 ">
+                    {totalAmount && (
+                        <div className="flex items-center justify-center gap-1 text-white/90 text-[0.7rem] md:text-[1rem] font-semibold">
+                            {totalAmount} <PhilippinePeso className="w-3 h-3" />
+                        </div>
                     )}
+                    <div className="w-full flex flex-col">
+                        <div className="text-white/80 text-[0.5rem] md:text-[1rem] font-semibold">
+                            Big Boss Supporter
+                        </div>
+                        <div className="text-white font-black text-[0.7rem] md:text-[1rem]">
+                            {profileHref ? (
+                                <Link
+                                    href={profileHref}
+                                    className="inline-block transition hover:text-[#24C3FF] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                >
+                                    {name}
+                                </Link>
+                            ) : (
+                                name
+                            )}
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

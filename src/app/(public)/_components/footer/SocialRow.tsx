@@ -9,7 +9,7 @@ import {
     Send,
     MessageCircle,
 } from "lucide-react";
-import { FaTiktok } from "react-icons/fa6";
+import { FaTiktok, FaWhatsapp } from "react-icons/fa6";
 import { cn } from "@/shared/lib/utils/cn";
 
 const socials = [
@@ -46,7 +46,7 @@ const socials = [
     {
         label: "WhatsApp",
         href: "https://whatsapp.com",
-        Icon: MessageCircle,
+        Icon: FaWhatsapp,
     },
 ];
 

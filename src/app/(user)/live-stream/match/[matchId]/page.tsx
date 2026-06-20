@@ -64,6 +64,9 @@ export default function MatchDetails({
     }, [matchData]);
     const userReferralNo = meData?.data?.user?.referral_no || "";
     const liveStore = useMatchDemoStore(matchId, currentMatch);
+
+    console.log("liveStore", liveStore?.leftBossTotalAmount, liveStore?.rightBossTotalAmount)
+
     const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus && matchData?.data?.type === "live";
     const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const supportClosed = isLiveContinue;
@@ -216,6 +219,8 @@ export default function MatchDetails({
                                         leftImg={liveStore.leftBoss.imageSrc || "/images/home/supported_cardimg.png"}
                                         rightImg={liveStore.rightBoss.imageSrc || "/images/home/rightSupport.jpg"}
                                         onSupport={liveStore.support}
+                                        leftBossTotalAmount={liveStore.leftBossTotalAmount}
+                                        rightBossTotalAmount={liveStore.rightBossTotalAmount}
                                     />
 
                                     <RankingSection

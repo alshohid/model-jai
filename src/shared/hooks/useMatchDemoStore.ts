@@ -64,8 +64,18 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     imageSrc: FALLBACK_AVATAR,
   });
 
-  const [leftBossSupporterCount, setLeftBossSupporterCount] = useState<number | null>(null);
-  const [rightBossSupporterCount, setRightBossSupporterCount] = useState<number | null>(null);
+  const [leftBossSupporterCount, setLeftBossSupporterCount] = useState<
+    number | null
+  >(null);
+  const [rightBossSupporterCount, setRightBossSupporterCount] = useState<
+    number | null
+  >(null);
+  const [leftBossTotalAmount, setLeftBossTotalAmount] = useState<number | null>(
+    0,
+  );
+  const [rightBossTotalAmount, setRightBossTotalAmount] = useState<
+    number | null
+  >(0);
 
   const [left, setLeft] = useState({
     id: 0,
@@ -119,9 +129,16 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     setRightBoss(bossFromUser(match.player_two_top_supporter));
     setLeftBossSupporterCount(toNumber(match.player_one_total_supporter));
     setRightBossSupporterCount(toNumber(match.player_two_total_supporter));
+    setLeftBossTotalAmount(
+      toNumber(match.player_one_top_supporter?.total_amount),
+    );
+    setRightBossTotalAmount(
+      toNumber(match.player_two_top_supporter?.total_amount),
+    );
   }, [match]);
 
   const applySupportData = useCallback((payload: ISupportPlacedData) => {
+    console.log("payload", payload);
     setLeft((prev) => ({
       ...prev,
       points: toNumber(payload.match_player_one_total),
@@ -137,7 +154,12 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     setRightBoss(bossFromUser(payload.player_two_top_supporter));
     setLeftBossSupporterCount(toNumber(payload.player_one_total_supporter));
     setRightBossSupporterCount(toNumber(payload.player_two_total_supporter));
-
+    setLeftBossTotalAmount(
+      toNumber(payload.player_one_top_supporter?.total_amount),
+    );
+    setRightBossTotalAmount(
+      toNumber(payload.player_two_top_supporter?.total_amount),
+    );
     setViewerBalance(toNumber(payload.updated_balance));
   }, []);
 
@@ -218,5 +240,7 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     viewerBalance,
     isSupporting,
     support,
+    leftBossTotalAmount,
+    rightBossTotalAmount,
   };
 }

@@ -20,6 +20,8 @@ export default function SupporterGridSection({
     rightBossName,
     leftBossProfileHref,
     rightBossProfileHref,
+    leftBossTotalAmount,
+    rightBossTotalAmount,
 }: {
     mode: "landscape" | "portrait";
     // isLive: boolean;
@@ -32,6 +34,8 @@ export default function SupporterGridSection({
     rightBossName: string;
     leftBossProfileHref?: string;
     rightBossProfileHref?: string;
+    leftBossTotalAmount: number | null;
+    rightBossTotalAmount: number | null;
 }) {
     const [selectedSide, setSelectedSide] = useState<SupportSide>("left");
 
@@ -46,6 +50,7 @@ export default function SupporterGridSection({
                         supportPlayerName={leftBossName ?? "TEAM JACK"}
                         total={leftBoss.total}
                         profileHref={leftBossProfileHref}
+                        totalAmount={leftBossTotalAmount}
                     />
                     <div className="text-[12px] sm:text-[22px] font-extrabold rotate-45 text-center">VS</div>
                     <BossCard
@@ -54,6 +59,7 @@ export default function SupporterGridSection({
                         supportPlayerName={rightBossName ?? "TEAM STEEVE"}
                         total={rightBoss.total}
                         profileHref={rightBossProfileHref}
+                        totalAmount={rightBossTotalAmount}
                     />
                 </div>
 
