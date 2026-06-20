@@ -3,7 +3,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, UserCheck, Users } from "lucide-react";
+import { Search, UserCheck, Users, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
 import Skeleton from "@/shared/UI/Skeleton";
 import BigBossIndicator from "@/shared/components/user/BigBossIndicator";
@@ -285,6 +286,7 @@ export default function SocialConnectionsView({
   onToggleConnection,
   tabs
 }: SocialConnectionsViewProps) {
+  const router = useRouter();
   const copy = pageCopy[mode];
   const Icon = copy.icon as typeof Users;
   const filteredUsers = users.filter((user) => matchesSearch(user, searchTerm));
@@ -300,6 +302,14 @@ export default function SocialConnectionsView({
               {copy.eyebrow as string}
             </p>
             <div className="flex items-center gap-3 sm:mt-3">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition text-white cursor-pointer"
+                aria-label="Go back"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
               <span className="hidden h-11 w-11 place-items-center rounded-full border border-[#FF2EC8]/25 bg-[#FF2EC8]/10 text-[#FF9BE9] sm:grid">
                 <Icon className="h-5 w-5" />
               </span>
