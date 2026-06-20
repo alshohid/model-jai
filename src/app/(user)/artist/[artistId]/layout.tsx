@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createMetadata } from "@/shared/seo/metadata";
+import PublicNavbar from "@/app/(public)/_components/publicNavbar/PublicNavbar";
 
 type ArtistLayoutProps = Readonly<{
   children: React.ReactNode;
@@ -21,5 +22,8 @@ export async function generateMetadata({
 }
 
 export default function ArtistLayout({ children }: ArtistLayoutProps) {
-  return children;
+  return <div>
+    <PublicNavbar />
+    {children}
+  </div>;
 }

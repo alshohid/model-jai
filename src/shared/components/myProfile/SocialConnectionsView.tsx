@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Image from "next/image";
@@ -13,8 +14,10 @@ import type {
   SocialConnectionPagination,
   SocialConnectionUser,
 } from "@/types/user/usermanagement";
+import { SocialConnectionMode } from "@/types/user/auth";
+import { ConnectionTabs } from "./ConnectionTabs";
 
-type SocialConnectionMode = "followers" | "following";
+
 
 type SocialConnectionsViewProps = {
   mode: SocialConnectionMode;
@@ -27,6 +30,7 @@ type SocialConnectionsViewProps = {
   onSearchTermChange: (value: string) => void;
   onPageChange: (page: number) => void;
   onToggleConnection: (user: SocialConnectionUser) => void;
+  tabs: any;
 };
 
 const avatarFallback = "/images/home/avatar_img.png";
@@ -112,35 +116,7 @@ const mapPaginationMeta = (pagination: SocialConnectionPagination) => ({
     pagination.current_page < pagination.last_page,
 });
 
-function ConnectionTabs({ mode }: { mode: SocialConnectionMode }) {
-  const tabs = [
-    { label: "Followers", href: "/user-profile/my-followers", value: "followers" },
-    { label: "Following", href: "/user-profile/following", value: "following" },
-  ] as const;
 
-  return (
-    <div className="grid w-full grid-cols-2 border-b border-white/10 sm:inline-flex sm:w-auto sm:rounded-[14px] sm:border sm:bg-white/[0.04] sm:p-1">
-      {tabs.map((tab) => {
-        const active = tab.value === mode;
-
-        return (
-          <Link
-            key={tab.value}
-            href={tab.href}
-            className={cn(
-              "border-b-2 px-4 py-3 text-center text-sm font-semibold transition sm:rounded-[11px] sm:border-b-0 sm:py-2",
-              active
-                ? "border-[#FF2EC8] text-white sm:bg-[#FF2EC8] sm:shadow-[0_10px_30px_rgba(255,46,200,0.28)]"
-                : "border-transparent text-white/55 hover:text-white sm:text-white/65 sm:hover:bg-white/8",
-            )}
-          >
-            {tab.label}
-          </Link>
-        );
-      })}
-    </div>
-  );
-}
 
 function ConnectionSkeleton() {
   return (
@@ -307,6 +283,7 @@ export default function SocialConnectionsView({
   onSearchTermChange,
   onPageChange,
   onToggleConnection,
+  tabs
 }: SocialConnectionsViewProps) {
   const copy = pageCopy[mode];
   const Icon = copy.icon as typeof Users;
@@ -340,7 +317,7 @@ export default function SocialConnectionsView({
             </p>
           </div>
 
-          <ConnectionTabs mode={mode} />
+          <ConnectionTabs mode={mode} tabs={tabs} />
         </div>
 
         <div className="sticky top-0 z-10 mt-4 flex flex-col gap-3 border-y border-white/10 bg-black/80 px-4 py-3 backdrop-blur sm:static sm:mt-6 sm:bg-transparent sm:px-0 sm:py-4 sm:flex-row sm:items-center sm:justify-between">

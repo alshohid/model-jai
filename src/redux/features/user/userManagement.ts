@@ -74,6 +74,34 @@ const UserManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ManageUser"],
     }),
+    getArtistFollowersList: builder.query<
+      FollowersListResponse,
+      { id: number } & SocialConnectionListParams
+    >({
+      query: (params) => ({
+        url: `/users/${params.id}/followers`,
+        method: "GET",
+        params: {
+          page: params?.page ?? 1,
+          per_page: params?.limit ?? 10,
+        },
+      }),
+      providesTags: ["ManageUser"],
+    }),
+    getArtistFollowingList: builder.query<
+      FollowingListResponse,
+      { id: number } & SocialConnectionListParams
+    >({
+      query: (params) => ({
+        url: `/users/${params.id}/following`,
+        method: "GET",
+        params: {
+          page: params?.page ?? 1,
+          per_page: params?.limit ?? 10,
+        },
+      }),
+      providesTags: ["ManageUser"],
+    }),
     createUser: builder.mutation<UserManagementResponse, IUserCreateParams>({
       query: (body) => ({
         url: "/admin/users",
@@ -296,5 +324,7 @@ export const {
   useGetTotalUserCountQuery,
   useStartAdminVotingMutation,
   useDeleteUserMutation,
+  useGetArtistFollowersListQuery,
+  useGetArtistFollowingListQuery,
 } = UserManagementApi;
 export default UserManagementApi;

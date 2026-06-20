@@ -12,7 +12,7 @@ import FooterSection from "@/shared/components/home/FooterSection";
 import SocialConnectionsView from "@/shared/components/myProfile/SocialConnectionsView";
 import type { SocialConnectionUser } from "@/types/user/usermanagement";
 
-const PAGE_LIMIT = 10;
+const PAGE_LIMIT = 20;
 
 export default function MyFollowers() {
   const [page, setPage] = useState(1);
@@ -53,6 +53,11 @@ export default function MyFollowers() {
     }
   };
 
+  const tabs = [
+    { label: "Followers", href: "/user-profile/my-followers", value: "followers" },
+    { label: "Following", href: "/user-profile/following", value: "following" },
+  ] as const
+
   return (
     <>
       <SocialConnectionsView
@@ -66,6 +71,7 @@ export default function MyFollowers() {
         onSearchTermChange={handleSearchTermChange}
         onPageChange={setPage}
         onToggleConnection={handleToggleConnection}
+        tabs={tabs}
       />
       <FooterSection />
     </>

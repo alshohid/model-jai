@@ -264,3 +264,4 @@ export interface IProfileVisibilityResponse {
   following_count: number;
   created_at: string;
 }
+export type SocialConnectionMode = "followers" | "following";

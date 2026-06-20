@@ -243,11 +243,11 @@ export default function ArtistProfilePanel({
                         </div>
 
                         {/* Bio */}
-                        {artist.bio && (
+                        {/* {artist.bio && (
                             <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
                                 <p className="text-white/80 text-sm leading-relaxed">{artist.bio}</p>
                             </div>
-                        )}
+                        )} */}
                         <div className="w-full flex items-center justify-center">
                             <MatchScoreCard
                                 title="On 21 Match"
