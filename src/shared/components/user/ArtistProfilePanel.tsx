@@ -264,8 +264,8 @@ export default function ArtistProfilePanel({
                         <div className="mt-6 rounded-[14px] border border-white/10 bg-white/5 p-3">
                             <div className="grid grid-cols-3 gap-2 text-center">
                                 <MiniStat label="Posts" value={artist.posts} />
-                                <MiniStat label="Followers" value={artist.followers} />
-                                <MiniStat label="Following" value={artist.following} />
+                                <MiniStat label="Followers" value={artist.followers} href={`/artist/${artist.id}/followers`} />
+                                <MiniStat label="Following" value={artist.following} href={`/artist/${artist.id}/following`} />
                             </div>
                         </div>
 
