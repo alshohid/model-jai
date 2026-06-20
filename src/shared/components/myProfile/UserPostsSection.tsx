@@ -270,7 +270,7 @@ const ActionButton = ({
     </button>
 );
 
-export default function UserPostsSection() {
+export default function UserPostsSection({ id }: { id?: string }) {
     const createImageInputRef = useRef<HTMLInputElement | null>(null);
     const editImageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -462,7 +462,7 @@ export default function UserPostsSection() {
 
     return (
         <>
-            <section className="container pb-6 md:pb-10">
+            <section id={id} className="container pb-6 md:pb-10">
                 <div className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#110B14] px-4 py-5 shadow-[0_28px_80px_rgba(0,0,0,0.45)] md:px-7 md:py-8">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,0,200,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(17,181,255,0.16),transparent_30%)]" />
 
@@ -684,9 +684,9 @@ export default function UserPostsSection() {
                                                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
                                                         <div className="absolute left-4 right-4 top-4 flex items-center justify-between gap-2">
-                                                          <span className="inline-block max-w-full rounded-full border border-white/12 bg-black/45 px-2 sm:px-3 py-1 text-xs sm:text-[11px] font-medium uppercase tracking-[0.15em] text-white/80 backdrop-blur-md truncate">
-    {formatPostDate(post.created_at)}
-</span>
+                                                            <span className="inline-block max-w-full rounded-full border border-white/12 bg-black/45 px-2 sm:px-3 py-1 text-xs sm:text-[11px] font-medium uppercase tracking-[0.15em] text-white/80 backdrop-blur-md truncate">
+                                                                {formatPostDate(post.created_at)}
+                                                            </span>
 
                                                             <div className="flex items-center gap-2">
                                                                 <ActionButton

@@ -91,6 +91,7 @@ type Props = {
     onDisconnectPaymentMethod?: (paymentMethod: PaymentMethodId) => void;
     className?: string;
     topOneOffer?: ChallengeMatchOffer[];
+    onPostsClick?: () => void;
 };
 
 const statToggleKeyMap: Array<{
@@ -124,6 +125,7 @@ export default function MyProfilePanel({
     onDisconnectPaymentMethod,
     className,
     topOneOffer,
+    onPostsClick
 }: Props) {
     const [sheetOpen, setSheetOpen] = useState(false);
     const game = profile.favoriteGame;
@@ -345,7 +347,7 @@ export default function MyProfilePanel({
                             <div className="md:mt-6 mt-3 rounded-[14px] border border-white/10 bg-white/5 p-3">
 
                                 <div className="grid grid-cols-3 gap-2 text-center">
-                                    <MiniStat label="Posts" value={profile.posts} />
+                                    <MiniStat label="Posts" value={profile.posts} onClick={onPostsClick} />
                                     <MiniStat
                                         label="Followers"
                                         value={profile.followers}

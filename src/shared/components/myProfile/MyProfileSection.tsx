@@ -403,6 +403,7 @@ const MyProfileSection = () => {
                         onConnectPaymentMethod={openConnectWalletDialog}
                         onDisconnectPaymentMethod={handleDisconnectWallet}
                         topOneOffer={allOffers}
+                        onPostsClick={() => scrollToSection("my-posts")}
                     />
                 )
             }

@@ -4,6 +4,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import { UserPost } from "@/types/user/usermanagement";
 
 type MissionarySectionProps = {
+    id?: string;
     posts?: UserPost[];
     isLoading?: boolean;
     isError?: boolean;
@@ -108,6 +109,7 @@ function MissionaryGridSkeleton() {
 }
 
 export default function MissionarySection({
+    id,
     posts,
     isLoading = false,
     isError = false,
@@ -132,7 +134,7 @@ export default function MissionarySection({
         }));
 
     const content = (
-        <section className="py-10 md:py-14">
+        <section id={id} className="py-10 md:py-14">
             <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div className="max-w-2xl">
                     <span className="inline-flex rounded-full border border-[#11B5FF]/20 bg-[#11B5FF]/10 px-3 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#95DEFF]">

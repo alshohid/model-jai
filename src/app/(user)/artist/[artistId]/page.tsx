@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { challengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
+import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
 
 
 export default function ArtistProfilePage() {
@@ -119,8 +120,10 @@ export default function ArtistProfilePage() {
                         onSendTip={handleSendTip}
                         isLoading={isFollowing || isUnfollowing}
                         offers={allOffers}
+                        onPostsClick={() => scrollToSection("artist-posts")}
                     />
                     <MissionarySection
+                        id="artist-posts"
                         posts={artistPosts}
                         isLoading={postsLoading}
                         isError={postsError}

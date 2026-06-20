@@ -11,11 +11,12 @@ import ReferrelLinkTable from "@/shared/components/rankPointTable/ReferrelLinkTa
 
 
 const UserProfile = () => {
+
     return (
         <div>
 
             <MyProfileSection />
-            <UserPostsSection />
+            <UserPostsSection id="my-posts" />
             <PastMatchSupportedTable />
             <ReferrelLinkTable />
             {/* <MissionarySection /> */}
