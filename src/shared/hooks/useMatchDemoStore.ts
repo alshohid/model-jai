@@ -20,6 +20,9 @@ import {
 } from "@/types/support/liveSupportTypes";
 import { toast } from "sonner";
 
+import { useAppDispatch } from "@/redux/store";
+import authApi, { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+
 export type Side = "left" | "right";
 
 type BossSummary = {
@@ -47,6 +50,8 @@ function bossFromUser(user?: ITopSupporterUser | null): BossSummary {
 }
 
 export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
+  const dispatch = useAppDispatch();
+  const { data: meData } = useGetMeDataQuery();
   const [placeSupport, { isLoading: isSupporting }] = usePlaceSupportMutation();
 
   const [viewerBalance, setViewerBalance] = useState<number>(0);
@@ -100,6 +105,12 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     }),
     [],
   );
+
+  useEffect(() => {
+    if (meData?.data) {
+      setViewerBalance(toNumber(meData.data.total_balance));
+    }
+  }, [meData]);
 
   useEffect(() => {
     if (!match) return;
@@ -160,8 +171,20 @@ export function useMatchDemoStore(matchId: string, match?: IMatch | null) {
     setRightBossTotalAmount(
       toNumber(payload.player_two_top_supporter?.total_amount),
     );
-    setViewerBalance(toNumber(payload.updated_balance));
-  }, []);
+    const balance = toNumber(payload.updated_balance);
+    setViewerBalance(balance);
+
+    dispatch(
+      authApi.util.updateQueryData("getMeData", undefined, (draft) => {
+        if (draft?.data) {
+          draft.data.total_balance = balance;
+          if (draft.data.user) {
+            draft.data.user.total_balance = balance;
+          }
+        }
+      })
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     const channelName = `match.${matchId}`;
