@@ -9,6 +9,7 @@ import { createMetadata } from "@/shared/seo/metadata";
 
 type ChallengeOfferDetailsPageProps = {
   params: Promise<{ offerId: string }>;
+  searchParams?: Promise<{ ref?: string }>;
 };
 
 export function generateStaticParams() {
@@ -32,18 +33,21 @@ export async function generateMetadata({
       : "View Big Boss challenge match offer details on Model Boss Offers.",
     path: `/challenge-dashboard/${offerId}`,
     noIndex: true,
+    image: `/api/og/challenge/${offerId}`,
   });
 }
 
 export default async function ChallengeOfferDetailsPage({
   params,
+  searchParams,
 }: ChallengeOfferDetailsPageProps) {
   const { offerId } = await params;
+  const refParam = (await searchParams)?.ref;
   const offer = getChallengeMatchOfferById(offerId);
 
   if (!offer) {
     notFound();
   }
 
-  return <ChallengeMatchDetails offer={offer} />;
+  return <ChallengeMatchDetails offer={offer} refCode={refParam} />;
 }

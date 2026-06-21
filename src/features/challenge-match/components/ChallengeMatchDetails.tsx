@@ -31,6 +31,7 @@ type ChallengeTone = "gold" | "green" | "pink";
 
 type ChallengeMatchDetailsProps = {
   offer: ChallengeMatchOffer;
+  refCode?: string;
 };
 
 const gameLogoByName: Record<string, string> = {
