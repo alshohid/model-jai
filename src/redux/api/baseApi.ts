@@ -9,7 +9,6 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/utils";
 import constants from "@/constant";
 import { logOut, setCredentials } from "../features/auth/authSlice";
 import { ILoginParams, ILoginPayload } from "@/types/user/auth";
