@@ -42,7 +42,6 @@ const RankingSection = ({
     );
     const topSupporter = rankingRows[0];
     const totalSupportedAmount = calculateTotalSupportedAmount(topSupporter?.supportedAmounts || "");
-    console.log(totalSupportedAmount);
 
     return (
         <section className="relative w-full ">

@@ -20,6 +20,39 @@ function isInteractiveTarget(target: EventTarget | null) {
     )
 }
 
+/**
+ * Determines the dominant direction of a pointer gesture.
+ * Returns "x" if horizontal movement is dominant, "y" if vertical, null if not enough movement.
+ */
+function getDominantAxis(deltaX: number, deltaY: number, threshold = 8): "x" | "y" | null {
+    const absX = Math.abs(deltaX)
+    const absY = Math.abs(deltaY)
+
+    if (absX < threshold && absY < threshold) return null
+
+    return absX >= absY ? "x" : "y"
+}
+
+function getTouchAction(dragScrollMode: "none" | "x" | "both", overflowX: boolean, overflowY: boolean): string {
+    if (dragScrollMode === "none") return "auto"
+
+    if (dragScrollMode === "x") {
+        return overflowX ? "pan-x" : "auto"
+    }
+
+    // dragScrollMode === "both"
+    const allowX = overflowX
+    const allowY = overflowY
+
+    if (allowX && allowY) return "pan-x pan-y"
+    if (allowX) return "pan-x"
+    if (allowY) return "pan-y"
+    return "auto"
+}
+
+/** Damping factor for mouse drag scroll (0–1). Lower = slower/smoother scroll. */
+const SCROLL_DAMPING = 0.5
+
 function Table({
     className,
     containerClassName,
@@ -36,12 +69,19 @@ function Table({
         moved: false,
         active: false,
     })
+    /** Locked axis for the current gesture (mouse only). null = not yet locked. */
+    const lockedAxisRef = React.useRef<"x" | "y" | null>(null)
     const suppressClickRef = React.useRef(false)
     const [overflowState, setOverflowState] = React.useState({
         x: false,
         y: false,
     })
     const [isDragging, setIsDragging] = React.useState(false)
+
+    const touchAction = React.useMemo(
+        () => getTouchAction(dragScrollMode, overflowState.x, overflowState.y),
+        [dragScrollMode, overflowState.x, overflowState.y]
+    )
 
     const updateOverflowState = React.useCallback(() => {
         const container = containerRef.current
@@ -58,6 +98,7 @@ function Table({
         dragStateRef.current.pointerId = null
         suppressClickRef.current = dragStateRef.current.moved
         dragStateRef.current.moved = false
+        lockedAxisRef.current = null
         setIsDragging(false)
 
         document.body.style.userSelect = ""
@@ -113,6 +154,7 @@ function Table({
             dragStateRef.current.scrollTop = container.scrollTop
             dragStateRef.current.moved = false
             dragStateRef.current.active = true
+            lockedAxisRef.current = null
 
             container.setPointerCapture(event.pointerId)
             document.body.style.userSelect = "none"
@@ -144,12 +186,32 @@ function Table({
             return
         }
 
+        // --- Direction locking for mouse drag ---
+        // For mouse with "both" mode, lock to the dominant axis so diagonal dragging is prevented.
+        if (event.pointerType === "mouse" && dragScrollMode === "both") {
+            if (lockedAxisRef.current === null) {
+                lockedAxisRef.current = getDominantAxis(deltaX, deltaY, 10)
+            }
+
+            const lockedAxis = lockedAxisRef.current
+
+            if (lockedAxis === "x") {
+                container.scrollLeft = dragState.scrollLeft - deltaX * SCROLL_DAMPING
+            } else if (lockedAxis === "y") {
+                container.scrollTop = dragState.scrollTop - deltaY * SCROLL_DAMPING
+            }
+
+            event.preventDefault()
+            return
+        }
+        // --- End direction locking ---
+
         if (dragScrollMode === "x" || dragScrollMode === "both") {
-            container.scrollLeft = dragState.scrollLeft - deltaX
+            container.scrollLeft = dragState.scrollLeft - deltaX * SCROLL_DAMPING
         }
 
         if (dragScrollMode === "both") {
-            container.scrollTop = dragState.scrollTop - deltaY
+            container.scrollTop = dragState.scrollTop - deltaY * SCROLL_DAMPING
         }
 
         event.preventDefault()
@@ -191,7 +253,7 @@ function Table({
                 isDragging && "cursor-grabbing select-none",
                 containerClassName
             )}
-            style={{ touchAction: "auto" }}
+            style={{ touchAction }}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
