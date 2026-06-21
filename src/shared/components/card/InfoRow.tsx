@@ -5,7 +5,7 @@ export function InfoRow({
     onToggleVisibility,
 }: {
     label: string;
-    value: string;
+    value: string | null;
     isVisible?: boolean;
     onToggleVisibility?: () => void;
 }) {

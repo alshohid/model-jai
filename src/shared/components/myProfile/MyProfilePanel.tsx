@@ -28,7 +28,7 @@ import { MatchScoreCard } from "../user/components/match-score/MatchScoreCard";
 
 type ProfileInfo = {
     name: string;
-    email: string;
+    email: string | null;
     contact: string;
     nationality: string;
     avatar: string;
@@ -68,6 +68,7 @@ type VisibilityToggles = {
 
 type Props = {
     profile: ProfileInfo;
+    artistName: string | null;
     stats: StatItem[];
     isBigBoss?: boolean;
     paymentMethods: Array<{
@@ -107,6 +108,7 @@ const statToggleKeyMap: Array<{
 
 export default function MyProfilePanel({
     profile,
+    artistName,
     stats,
     isBigBoss = false,
     paymentMethods,
@@ -252,6 +254,16 @@ export default function MyProfilePanel({
                                     />
                                     <BigBossIndicator isBigBoss={isBigBoss} size="sm" />
                                 </div>
+                                {
+                                    artistName && (
+                                        <InfoRow
+                                            label="Artist Name"
+                                            value={artistName}
+                                        // isVisible={visibility?.show_name}
+                                        // onToggleVisibility={visibilityToggles?.onToggleNameVisibility}
+                                        />
+                                    )
+                                }
                                 <InfoRow
                                     label="Email"
                                     value={profile.email}

@@ -4,13 +4,14 @@ import FooterAbout from "@/app/(public)/_components/footer/FooterAbout";
 import FooterColumn from "@/app/(public)/_components/footer/FooterColumn";
 import FooterLinkList from "@/app/(public)/_components/footer/FooterLinkList";
 import SocialRow from "@/app/(public)/_components/footer/SocialRow";
+import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
 import Link from "next/link";
 
 
-type FooterLink = { label: string; href: string };
+type FooterLink = { label: string; href: string, onClick?: () => void };
 
 const QUICK_LINKS: FooterLink[] = [
-    { label: "Home", href: "/" },
+    { label: "Home", href: "/", onClick: () => scrollToSection("top") },
     { label: "Live Stream Match", href: "/live-stream" },
     { label: "Store", href: "/point-store" },
     { label: "Contact Support", href: "#" },

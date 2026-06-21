@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
@@ -68,6 +69,7 @@ const MyProfileSection = () => {
     }, [hash]);
     const user = meData?.data?.user;
     const userFullName = getFullName(user);
+    const artistName = meData?.data?.user?.artist_name;
     const fallbackAvatar = "/images/home/pro_1.jpg";
     const paymentQueryWallet = searchParams.get("wallet");
     const currentFavoriteGame = useMemo<IGameOption | null>(
@@ -334,9 +336,10 @@ const MyProfileSection = () => {
                     <ProfileSkeleton />
                 ) : (
                     <MyProfilePanel
+                        artistName={artistName as any}
                         profile={{
                             name: userFullName,
-                            email: user?.email ?? "",
+                            email: user?.email || "",
                             contact: user?.phone_number ?? "",
                             nationality: user?.nationality ?? "",
                             avatar: getSafeImageSrc(user?.image, "/images/home/pro_1.jpg"),

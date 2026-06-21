@@ -4,7 +4,7 @@ import PromotionalPriceOffer from "./PromotionalPriceOffer";
 
 export default function HeroSection() {
     return (
-        <section className="relative min-h-screen w-full overflow-hidden">
+        <section id="heroSection" className="relative min-h-screen w-full overflow-hidden">
             <div className="absolute inset-0">
                 <div
                     className="h-full w-full bg-cover bg-center"

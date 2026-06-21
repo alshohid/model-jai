@@ -31,7 +31,7 @@ const Public = async () => {
   const seoContent = await getHomeSeoContent();
 
   return (
-    <main>
+    <main id="top" >
       <HomeStructuredData
         matches={seoContent.matches}
         newsItems={seoContent.newsItems}

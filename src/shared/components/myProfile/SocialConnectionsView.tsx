@@ -39,7 +39,7 @@ const avatarFallback = "/images/home/avatar_img.png";
 const pageCopy = {
   followers: {
     eyebrow: "Community",
-    title: "My Followers",
+    title: "Followers",
     subtitle: "People who follow your profile and keep up with your activity.",
     emptyTitle: "No followers yet",
     emptyText: "When people follow you, they will appear here.",
