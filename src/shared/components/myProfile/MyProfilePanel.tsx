@@ -259,8 +259,6 @@ export default function MyProfilePanel({
                                         <InfoRow
                                             label="Artist Name"
                                             value={artistName}
-                                        // isVisible={visibility?.show_name}
-                                        // onToggleVisibility={visibilityToggles?.onToggleNameVisibility}
                                         />
                                     )
                                 }

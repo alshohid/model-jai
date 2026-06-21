@@ -522,7 +522,7 @@ const MyProfileSection = () => {
             <ReferralShareSheet
                 open={referralLinkOpen}
                 onOpenChange={setReferralLinkOpen}
-                title={user?.name ? `Support ${user.name}` : "Share Referral Link"}
+                title={user?.artist_name ? `Support ${user?.artist_name || user?.name}` : "Share Referral Link"}
                 shareUrl={referralShareUrl}
                 onCopy={() => toast.success("Referral link copied")}
                 onShare={() => toast.success("Referral link shared")}

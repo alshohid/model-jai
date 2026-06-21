@@ -32,7 +32,9 @@ export default function AppDialog({
             <DialogContent
                 data-lenis-prevent
                 data-lenis-prevent-wheel
+                overlayClassName="z-[200]"
                 className={cn(
+                    "z-[200]",
                     "p-0 border-0 bg-transparent shadow-none",
                     "w-[calc(100vw-16px)] sm:w-[92vw] max-w-[460px]",
                     "max-h-[calc(100dvh-16px)] sm:max-h-[calc(100dvh-24px)]",

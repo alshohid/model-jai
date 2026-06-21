@@ -50,7 +50,11 @@ export default function SelectUserAsPlayerDialog({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
+                data-lenis-prevent
+                data-lenis-prevent-wheel
+                overlayClassName="z-[200]"
                 className={cn(
+                    "z-[200",
                     "max-w-[90vw] sm:max-w-2xl",
                     "bg-[#0F0F0F] border-white/10",
                     "text-white max-h-[80vh] flex flex-col"
