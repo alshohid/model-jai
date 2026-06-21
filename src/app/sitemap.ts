@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, siteConfig } from "@/shared/seo/site";
+import { absoluteUrl } from "@/shared/seo/site";
 import { getSortedChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

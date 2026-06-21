@@ -11,7 +11,7 @@ export const siteConfig = {
     "Model Boss Offers is a live gaming platform for 1v1 tournaments, real-time supporter battles, featured gaming matches, and point-based player support. Model Boss Offers is a competitive, skill-based tournament platform where users support players using virtual points not real-money betting or wagering. All competitions are determined purely by player skill, and rewards are distributed through supporter contributions. The platform is built for entertainment and community engagement within a structured, secure, and transparent ecosystem. Play fair, support smarter, and climb like a Boss",
   locale: "en_US",
   language: "en",
-  ogImage: "/images/home/modaljai_hero.jpg",
+  ogImage: "/images/content.png",
   ogImageWidth: 1280,
   ogImageHeight: 720,
   logo: "/images/home/brand-logo.png",
