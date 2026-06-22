@@ -7,6 +7,10 @@ export interface UserManagementResponse {
   meta: PaginationMeta;
   links: PaginationLinks;
 }
+export interface IChallengeAccessResponse {
+  success: boolean;
+  message: string;
+}
 
 export interface User {
   game: any;
@@ -36,6 +40,7 @@ export interface User {
   zip_code?: string | null;
   address?: string | null;
   isVerified?: boolean;
+  is_challenger?: boolean | number;
   artist_name?: string | null;
 }
 

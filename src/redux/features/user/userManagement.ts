@@ -7,6 +7,7 @@ import {
   DeleteUserPostResponse,
   FollowersListResponse,
   FollowingListResponse,
+  IChallengeAccessResponse,
   ISuspendUserParams,
   IUserCreateParams,
   ReferralUsersResponse,
@@ -32,6 +33,22 @@ const UserManagementApi = baseApi.injectEndpoints({
         params: params,
       }),
       providesTags: ["ManageUser"],
+    }),
+    isAbleToCreateChallenge: builder.mutation<IChallengeAccessResponse, number>(
+      {
+        query: (id) => ({
+          url: `/admin/users/${id}/challenge-access`,
+          method: "POST",
+        }),
+        invalidatesTags: ["ManageUser"],
+      },
+    ),
+    disabledChallenger: builder.mutation<ApiResponse<User>, { id: number }>({
+      query: ({ id }) => ({
+        url: `/admin/users/${id}/challenge-access`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ManageUser"],
     }),
     getAllListUserForSendMoney: builder.query<
       UsersResponseForSendMoney,
@@ -300,6 +317,8 @@ const UserManagementApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllUsersQuery,
+  useIsAbleToCreateChallengeMutation,
+  useDisabledChallengerMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
   useViewSingleUserQuery,

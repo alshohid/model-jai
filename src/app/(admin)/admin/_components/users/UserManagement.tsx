@@ -7,12 +7,12 @@ import MatchListToolbar from "../reusable/MatchListToolbar";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
 import ActionIconButton from "../reusable/ActionIconButton";
-import { Eye, Pencil, MoreVertical, PlusIcon, Trash2 } from "lucide-react";
+import { Eye, Pencil, MoreVertical, PlusIcon, Trash2, CheckCircle2, ShieldAlert } from "lucide-react";
 import SelectUserAsPlayerDialog from "./SelectUserAsPlayerDialog";
 import AppDropdownMenu from "@/shared/components/dropdown/AppDropdownMenu";
 import SuspendUserModal from "./SuspendUserModal";
 import DisableUserModal from "./DisableUserModal";
-import { useChangeUserRoleMutation, useDeleteUserMutation, useGetAllUsersQuery, useGetTotalUserCountQuery, useSearchUsersQuery } from "@/redux/features/user/userManagement";
+import { useChangeUserRoleMutation, useDeleteUserMutation, useDisabledChallengerMutation, useGetAllUsersQuery, useGetTotalUserCountQuery, useIsAbleToCreateChallengeMutation, useSearchUsersQuery } from "@/redux/features/user/userManagement";
 import { getSuspendStatus } from "@/shared/lib/utils/getSuspendStatus";
 import ViewUserModal from "./ViewUserModal";
 import EditUserModal from "./EditUserModal";
@@ -46,6 +46,7 @@ export type RankRowItem = {
     state?: string | null;
     zip_code?: string | null;
     address?: string | null;
+    is_challenger?: boolean | number;
     isVerified?: boolean | number | null;
     meta?: {
         page: number;
@@ -91,6 +92,8 @@ export default function UserManagement() {
     const [changeUserRole] = useChangeUserRoleMutation();
     const { data: totalUserCount, isLoading: isTotalUserCountLoading } = useGetTotalUserCountQuery();
     const [deleteUser] = useDeleteUserMutation();
+    const [isAbleToCreateChallenge] = useIsAbleToCreateChallengeMutation();
+    const [disabledChallenger] = useDisabledChallengerMutation();
 
     const searchUserList =
         searchListData?.data?.map((user) => ({
@@ -116,7 +119,8 @@ export default function UserManagement() {
             state: user?.state,
             zip_code: user?.zip_code,
             address: user?.address,
-            isVerified: user?.social_verification_status
+            isVerified: user?.social_verification_status,
+            is_challenger: user?.is_challenger
         })) ?? [];
 
     const meta = {
@@ -126,7 +130,7 @@ export default function UserManagement() {
         prev: Boolean(usersData?.links?.prev),
         next: Boolean(usersData?.links?.next),
     };
-    const tableHeader = ["User Name", "Image", "Verified", "State", "Zip Code", "Address", "Favorite Game", "Role", "Email", "Status", "Actions"];
+    const tableHeader = ["User Name", "Image", "Verified", "State", "Zip Code", "Address", "Favorite Game", "Role", "Email", "Status", "Challenge Status", "Actions"];
 
 
     const handleSuspendClick = (item: RankRowItem) => {
@@ -161,7 +165,22 @@ export default function UserManagement() {
             setDeletingUserId(null);
         }
     };
-
+    const handleIsAbleToCreateChallenge = async (id: number) => {
+        try {
+            const response = await isAbleToCreateChallenge(id).unwrap();
+            toast.success(response?.message || "User able to create challenge.");
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Failed to make user able to create challenge.");
+        }
+    };
+    const handleDisabledChallenger = async (id: number) => {
+        try {
+            const response = await disabledChallenger({ id }).unwrap();
+            toast.success(response?.message || "User disabled challenge.");
+        } catch (err: any) {
+            toast.error(err?.data?.message || "Failed to disable user challenge.");
+        }
+    };
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
         (item) => {
             const status = getSuspendStatus(item);
@@ -230,6 +249,38 @@ export default function UserManagement() {
                         <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">
                             Suspended
                         </span>
+                    )}
+                </div>
+            );
+        },
+        (item) => {
+            const isAbleToCreateChallenge = Boolean(item.is_challenger);
+
+            return (
+                <div className="flex items-center gap-3">
+                    {isAbleToCreateChallenge ? (
+                        <>
+                            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+                                <CheckCircle2 className="h-4 w-4" />
+                                Challenge Enabled
+                            </span>
+                            <button onClick={() => handleDisabledChallenger(Number(item.id))} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/50">
+                                <ShieldAlert className="h-4 w-4" />
+                                Make Disable
+                            </button>
+                        </>
+                    ) : (
+                        <>
+
+
+                            <Button
+                                size="sm"
+                                onClick={() => handleIsAbleToCreateChallenge(Number(item.id))}
+                                className="h-8 rounded-full bg-[#ff43ff] px-4 text-xs font-bold text-white shadow-[0_0_18px_rgba(255,67,255,0.35)] transition hover:brightness-110"
+                            >
+                                Make Enable
+                            </Button>
+                        </>
                     )}
                 </div>
             );
