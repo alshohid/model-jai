@@ -128,6 +128,7 @@ export default function WatchLiveHeroCarousel({ slides, className, onWatch, onAr
                                     rightPlayerImg={s.rightPlayerImg}
                                     versusImg={s.versusImg}
                                     voteRequired={s.voteRequired}
+                                    rules={s?.rules}
                                     onLeftPlayerClick={
                                         s.leftPlayerId
                                             ? () => onArtistClick?.(s.leftPlayerId)

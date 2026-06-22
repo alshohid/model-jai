@@ -3,6 +3,9 @@
 import clsx from "clsx";
 import { PlayerImage } from "../cardComponent/PlayerImage";
 import { Versus } from "../cardComponent/Versus";
+import { Info } from "lucide-react";
+import { useState } from "react";
+import MatchRulesModal from "../modal/MatchRulesModal";
 
 type MatchStatus = "Upcoming" | "Past" | "Live";
 
@@ -11,6 +14,7 @@ type Props = {
     title: string;
     dateText: string;
     timeText: string;
+    rules?: string | null;
 
     gameLogoSrc: string;
 
@@ -36,54 +40,81 @@ export default function MatchHeroCard({
     leftPlayerImg,
     rightPlayerImg,
     versusImg,
+    rules,
     className,
     onWatch,
     onLeftPlayerClick,
     onRightPlayerClick,
 }: Props) {
+    const [rulesOpen, setRulesOpen] = useState(false);
     const leftPlayerLabel = leftPlayerName || "player one";
     const rightPlayerLabel = rightPlayerName || "player two";
 
+
     return (
-        <article
-            className={clsx(
-                "w-full flex flex-col rounded-[16px]",
-                "bg-matchCardBg border border-matchCardBorder backdrop-blur-[16px]",
-                className
-            )}
-        >
-            <div className="overflow-hidden px-3 py-2 md:p-6">
-                <div className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr]
+        <>
+            <article
+                className={clsx(
+                    "w-full flex flex-col rounded-[16px]",
+                    "bg-matchCardBg border border-matchCardBorder backdrop-blur-[16px]",
+                    className
+                )}
+            >
+                <div className="overflow-hidden px-3 py-2 md:p-6">
+                    <div className="grid grid-cols-[1fr_12px_1fr] sm:grid-cols-[1fr_20px_1fr] md:grid-cols-[1fr_30px_1fr]
                     aspect-[2.8/2] gap-1 rounded-[16px] bg-[#FFFFFF0D] border border-white/10 p-2 md:p-5">
-                    {onLeftPlayerClick ? (
-                        <button
-                            type="button"
-                            onClick={onLeftPlayerClick}
-                            className="h-full w-full rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-                            aria-label={`View ${leftPlayerLabel} profile`}
-                        >
+                        {rules && (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setRulesOpen(true);
+                                }}
+                                className="absolute left-6 top-4 z-20 inline-flex size-4 items-center justify-center rounded-full bg-[#8a4673] text-white shadow-[0_0_18px_rgba(255,55,186,0.45)] transition hover:scale-105 md:size-6"
+                                aria-label="View rules"
+                            >
+                                <Info className="size-2.5 md:size-3" />
+                            </button>
+                        )}
+                        {onLeftPlayerClick ? (
+                            <button
+                                type="button"
+                                onClick={onLeftPlayerClick}
+                                className="h-full w-full rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                aria-label={`View ${leftPlayerLabel} profile`}
+                            >
+                                <PlayerImage src={leftPlayerImg} />
+                            </button>
+                        ) : (
                             <PlayerImage src={leftPlayerImg} />
-                        </button>
-                    ) : (
-                        <PlayerImage src={leftPlayerImg} />
-                    )}
-                    <Versus src={versusImg} />
-                    {onRightPlayerClick ? (
-                        <button
-                            type="button"
-                            onClick={onRightPlayerClick}
-                            className="h-full w-full rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-                            aria-label={`View ${rightPlayerLabel} profile`}
-                        >
+                        )}
+                        <Versus src={versusImg} />
+                        {onRightPlayerClick ? (
+                            <button
+                                type="button"
+                                onClick={onRightPlayerClick}
+                                className="h-full w-full rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                                aria-label={`View ${rightPlayerLabel} profile`}
+                            >
+                                <PlayerImage src={rightPlayerImg} />
+                            </button>
+                        ) : (
                             <PlayerImage src={rightPlayerImg} />
-                        </button>
-                    ) : (
-                        <PlayerImage src={rightPlayerImg} />
-                    )}
+                        )}
+                    </div>
+
+
                 </div>
-
-
-            </div>
-        </article>
+            </article>
+            {
+                rules && (
+                    <MatchRulesModal
+                        open={rulesOpen}
+                        onClose={() => setRulesOpen(false)}
+                        rules={rules}
+                    />
+                )
+            }
+        </>
     );
 }

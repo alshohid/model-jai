@@ -59,4 +59,5 @@ export type WatchLiveHeroSlide = {
   watchHref: string;
   voteRequired?: boolean;
   platform?: "tiktok" | "twitch";
+  rules?: string | null;
 };

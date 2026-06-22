@@ -85,7 +85,8 @@ export default function WatchLivePage() {
         voteRequired: match?.confirmation_status === 0,
         platform: (match?.platform === "twitch" ? "twitch" : "tiktok"),
         thumbs: [match.game?.image || "/images/home/gameLogo.png"],
-        gameImage: match.game?.image || "/images/home/gameLogo.png"
+        gameImage: match.game?.image || "/images/home/gameLogo.png",
+        rules: match?.rules,
     }));
 
     const onWatchHandler = (s: WatchLiveHeroSlide) => {
