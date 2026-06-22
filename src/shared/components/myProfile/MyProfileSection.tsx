@@ -524,6 +524,7 @@ const MyProfileSection = () => {
                 onOpenChange={setReferralLinkOpen}
                 title={user?.artist_name ? `Support ${user?.artist_name || user?.name}` : "Share Referral Link"}
                 shareUrl={referralShareUrl}
+                imageSrc={user?.image}
                 onCopy={() => toast.success("Referral link copied")}
                 onShare={() => toast.success("Referral link shared")}
             />

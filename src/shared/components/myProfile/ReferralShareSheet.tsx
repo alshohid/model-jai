@@ -15,7 +15,7 @@ interface ReferralShareSheetProps {
     onOpenChange: (open: boolean) => void;
     title: string;
     shareUrl: string;
-    imageSrc?: string;
+    imageSrc?: string | null;
     imageAlt?: string;
     onCopy?: (link: string) => void;
     onShare?: (link: string) => void;
@@ -102,6 +102,7 @@ export default function ReferralShareSheet({
                                 "h-full w-full",
                                 isFallbackLogo ? "object-contain p-3" : "object-cover"
                             )}
+                            unoptimized
                         />
                     </div>
                     <div className="flex-1 min-w-0">
