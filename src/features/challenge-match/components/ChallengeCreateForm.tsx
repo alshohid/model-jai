@@ -132,17 +132,6 @@ export default function ChallengeCreateForm() {
                   <input
                     type="radio"
                     name="challengeScope"
-                    value="unique"
-                    checked={values.scope === "unique"}
-                    onChange={() => updateScope("unique")}
-                    className="h-4 w-4 accent-[#ff19d7]"
-                  />
-                  Unique player  <span className="font-medium text-[#ff19d7]">or user </span>
-                </label>
-                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-black/18 px-3 py-3 text-sm font-semibold text-white/80 transition hover:border-[#ff43ff]/45">
-                  <input
-                    type="radio"
-                    name="challengeScope"
                     value="global"
                     checked={values.scope === "global"}
                     onChange={() => updateScope("global")}
@@ -150,6 +139,18 @@ export default function ChallengeCreateForm() {
                   />
                   Global
                 </label>
+                <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-black/18 px-3 py-3 text-sm font-semibold text-white/80 transition hover:border-[#ff43ff]/45">
+                  <input
+                    type="radio"
+                    name="challengeScope"
+                    value="unique"
+                    checked={values.scope === "unique"}
+                    onChange={() => updateScope("unique")}
+                    className="h-4 w-4 accent-[#ff19d7]"
+                  />
+                  Unique player  <span className="font-medium text-[#ff19d7]">or user </span>
+                </label>
+
               </div>
             </fieldset>
 
