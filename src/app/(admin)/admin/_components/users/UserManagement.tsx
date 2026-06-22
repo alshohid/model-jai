@@ -24,6 +24,7 @@ import { FiSearch } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 import TotalUserCard from "./TotalUserCard";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import { FaSpinner } from "react-icons/fa6";
 
 
 export type RankRowItem = {
@@ -70,6 +71,7 @@ export default function UserManagement() {
     const [page, setPage] = useState(1);
     const [keyword, setKeyword] = useState("");
     const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+    const [processingChallengeId, setProcessingChallengeId] = useState<number | null>(null);
     const debouncedKeyword = useDebounce(keyword, 400);
     const [filterType, setFilterType] = useState<"all" | "players" | "non-players">("all");
     const limit = 10;
@@ -92,8 +94,8 @@ export default function UserManagement() {
     const [changeUserRole] = useChangeUserRoleMutation();
     const { data: totalUserCount, isLoading: isTotalUserCountLoading } = useGetTotalUserCountQuery();
     const [deleteUser] = useDeleteUserMutation();
-    const [isAbleToCreateChallenge] = useIsAbleToCreateChallengeMutation();
-    const [disabledChallenger] = useDisabledChallengerMutation();
+    const [isAbleToCreateChallenge, { isLoading: isAbleToCreateChallengeLoading }] = useIsAbleToCreateChallengeMutation();
+    const [disabledChallenger, { isLoading: disabledChallengerLoading }] = useDisabledChallengerMutation();
 
     const searchUserList =
         searchListData?.data?.map((user) => ({
@@ -167,18 +169,25 @@ export default function UserManagement() {
     };
     const handleIsAbleToCreateChallenge = async (id: number) => {
         try {
+            setProcessingChallengeId(id);
             const response = await isAbleToCreateChallenge(id).unwrap();
             toast.success(response?.message || "User able to create challenge.");
         } catch (err: any) {
             toast.error(err?.data?.message || "Failed to make user able to create challenge.");
+        } finally {
+            setProcessingChallengeId(null);
         }
     };
+
     const handleDisabledChallenger = async (id: number) => {
         try {
+            setProcessingChallengeId(id);
             const response = await disabledChallenger({ id }).unwrap();
             toast.success(response?.message || "User disabled challenge.");
         } catch (err: any) {
             toast.error(err?.data?.message || "Failed to disable user challenge.");
+        } finally {
+            setProcessingChallengeId(null);
         }
     };
     const tableRowDataRenderers: ((item: RankRowItem, index: number) => ReactNode)[] = [
@@ -255,7 +264,7 @@ export default function UserManagement() {
         },
         (item) => {
             const isAbleToCreateChallenge = Boolean(item.is_challenger);
-
+            const isRowProcessing = processingChallengeId === Number(item.id);
             return (
                 <div className="flex items-center gap-3">
                     {isAbleToCreateChallenge ? (
@@ -264,21 +273,24 @@ export default function UserManagement() {
                                 <CheckCircle2 className="h-4 w-4" />
                                 Challenge Enabled
                             </span>
-                            <button onClick={() => handleDisabledChallenger(Number(item.id))} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/50">
-                                <ShieldAlert className="h-4 w-4" />
+                            <button
+                                disabled={isRowProcessing}
+                                onClick={() => handleDisabledChallenger(Number(item.id))}
+                                className={`inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/50 ${isRowProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
+                            >
+                                {isRowProcessing ? <FaSpinner className="h-4 w-4 animate-spin" /> : <ShieldAlert className="h-4 w-4" />}
                                 Make Disable
                             </button>
                         </>
                     ) : (
                         <>
-
-
                             <Button
                                 size="sm"
+                                disabled={isRowProcessing}
                                 onClick={() => handleIsAbleToCreateChallenge(Number(item.id))}
-                                className="h-8 rounded-full bg-[#ff43ff] px-4 text-xs font-bold text-white shadow-[0_0_18px_rgba(255,67,255,0.35)] transition hover:brightness-110"
+                                className={`h-8 rounded-full bg-[#ff43ff] px-4 text-xs font-bold text-white shadow-[0_0_18px_rgba(255,67,255,0.35)] transition hover:brightness-110 ${isRowProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
                             >
-                                Make Enable
+                                {isRowProcessing ? <FaSpinner className="h-4 w-4 animate-spin" /> : "Make Enable"}
                             </Button>
                         </>
                     )}
