@@ -146,6 +146,7 @@ export default function PublicNavbar() {
                                 points={Number(userProfileData?.total_balance) ?? 0}
                                 avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"}
                                 tone={isAuthenticated ? "light" : "dark"}
+                                isChallenger={userProfileData?.user?.is_challenger}
                             />
                         </div>
                     </NavbarSearchProvider>

@@ -150,6 +150,7 @@ export interface IUser {
   game: IUserFavoriteGame | null;
   id: number;
   name: string;
+  is_challenger?: boolean;
   first_name?: string | null;
   middle_name?: string | null;
   last_name?: string | null;
@@ -181,6 +182,7 @@ export interface IUser {
 }
 export interface IUserInfoResponse {
   user: IUser;
+  // is_challenger: boolean;
   total_earning: string;
   total_referral_earning: string;
   total_tip_received: string;

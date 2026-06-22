@@ -33,12 +33,14 @@ export default function MobileNavSheet({
     avatarSrc,
     tone = "dark",
     isMeDataLoading,
+    isChallenger,
 }: {
     navItems: NavItem[];
     points?: number;
     avatarSrc?: string;
     tone?: "dark" | "light";
     isMeDataLoading?: boolean;
+    isChallenger?: boolean;
 }) {
     const pathname = usePathname();
     const { isAuthenticated, role } = useAuth();
@@ -182,7 +184,7 @@ export default function MobileNavSheet({
                                                 View challenge dashboard
                                             </Link>
                                         </SheetClose>
-                                        <SheetClose asChild>
+                                        {isChallenger && <SheetClose asChild>
                                             <Link
                                                 href="/challenge-dashboard/create"
                                                 className={cn(
@@ -193,7 +195,7 @@ export default function MobileNavSheet({
                                             >
                                                 Create a challenge
                                             </Link>
-                                        </SheetClose>
+                                        </SheetClose>}
                                     </div>
                                 ) : null}
                             </div>
