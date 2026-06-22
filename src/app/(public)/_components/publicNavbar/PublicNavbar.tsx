@@ -10,6 +10,7 @@ import MobileNavSheet from "./MobileNavDrawer";
 import PointsMenuButton from "./PointsMenuButton";
 import NavbarSearch, { NavbarSearchProvider } from "./NavbarSearch";
 import { Bell } from "lucide-react";
+import ChallengeDropdownDesktop from "./ChallengeDropdownDesktop";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
@@ -69,6 +70,13 @@ export default function PublicNavbar() {
                                         </Link>
                                     );
                                 })}
+
+                                {isAuthenticated && (role === "user" || role === "artist") && (
+                                    <ChallengeDropdownDesktop
+                                        pathname={pathname}
+                                        isChallenger={userProfileData?.user?.is_challenger}
+                                    />
+                                )}
                             </nav>
 
 
