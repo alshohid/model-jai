@@ -94,8 +94,8 @@ export default function UserManagement() {
     const [changeUserRole] = useChangeUserRoleMutation();
     const { data: totalUserCount, isLoading: isTotalUserCountLoading } = useGetTotalUserCountQuery();
     const [deleteUser] = useDeleteUserMutation();
-    const [isAbleToCreateChallenge, { isLoading: isAbleToCreateChallengeLoading }] = useIsAbleToCreateChallengeMutation();
-    const [disabledChallenger, { isLoading: disabledChallengerLoading }] = useDisabledChallengerMutation();
+    const [isAbleToCreateChallenge] = useIsAbleToCreateChallengeMutation();
+    const [disabledChallenger] = useDisabledChallengerMutation();
 
     const searchUserList =
         searchListData?.data?.map((user) => ({
