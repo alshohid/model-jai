@@ -80,6 +80,20 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["ChallengeManagement"],
     }),
+    getAllPublicChallengesList: builder.query<
+      ChallengeListResponse,
+      ChallengeRequest
+    >({
+      query: ({ page = 1, limit = 100 }) => {
+        const params: Record<string, unknown> = { page, per_page: limit };
+        return {
+          url: `/challenges`,
+          method: "GET",
+          params,
+        };
+      },
+      providesTags: ["ChallengeManagement"],
+    }),
     adminAcceptChallenge: builder.mutation<
       ChallengeAcceptResponse,
       { id: number }
@@ -110,6 +124,7 @@ export const {
   useGetUsersForSelectQuery,
   useCreateChallengeMutation,
   useGetAllChallengesListQuery,
+  useGetAllPublicChallengesListQuery,
   useAdminAcceptChallengeMutation,
   useAdminDeclineChallengeMutation,
 } = ChallengeManagementApi;
