@@ -23,6 +23,7 @@ export async function generateMetadata({
 }: ChallengeOfferDetailsPageProps): Promise<Metadata> {
   const { offerId } = await params;
   const offer = getChallengeMatchOfferById(offerId);
+  console.log("🚀 ~ generateMetadata ~ offer:", offerId)
 
   return createMetadata({
     title: offer

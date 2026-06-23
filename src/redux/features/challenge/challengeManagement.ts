@@ -9,6 +9,7 @@ import type {
   ChallengeListResponse,
   ChallengeRequest,
   ChallengeAcceptResponse,
+  ChallengeDetailsResponse,
 } from "@/types/challenge/challengeTypes";
 
 const ChallengeManagementApi = baseApi.injectEndpoints({
@@ -94,6 +95,13 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["ChallengeManagement"],
     }),
+    getChallengeById: builder.query<ChallengeDetailsResponse, { id: number }>({
+      query: ({ id }) => ({
+        url: `/challenges/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["ChallengeManagement"],
+    }),
     adminAcceptChallenge: builder.mutation<
       ChallengeAcceptResponse,
       { id: number }
@@ -125,6 +133,7 @@ export const {
   useCreateChallengeMutation,
   useGetAllChallengesListQuery,
   useGetAllPublicChallengesListQuery,
+  useGetChallengeByIdQuery,
   useAdminAcceptChallengeMutation,
   useAdminDeclineChallengeMutation,
 } = ChallengeManagementApi;
