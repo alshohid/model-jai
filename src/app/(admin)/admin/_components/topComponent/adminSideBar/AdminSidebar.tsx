@@ -8,7 +8,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
 import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIcon";
-import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon, User, Key } from "lucide-react";
+import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon, User, Key, TrophyIcon } from "lucide-react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
 import { adminLogOut } from "@/redux/features/auth/authSlice";
@@ -28,6 +28,7 @@ const menuItems = [
 
     { label: "Match Management", href: "/admin/dashboard/matches", icon: MatchManagementMenuIcon },
     { label: "User Management", href: "/admin/dashboard/users", icon: UserManagementMenuIcon },
+    { label: "Challenge Management", href: "/admin/dashboard/challenge", icon: TrophyIcon },
     { label: "Withdraw Management", href: "/admin/dashboard/withdrawals", icon: WalletIcon },
     { label: "Match Voting Management", href: "/admin/dashboard/popular-artist", icon: User },
 

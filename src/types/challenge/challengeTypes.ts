@@ -64,3 +64,66 @@ export interface ChallengeCreatePayload {
 export interface UserSearchParams {
   search: string;
 }
+
+// Challenge list response
+export interface ChallengeListResponse {
+  status: boolean;
+  message: string;
+  data: ChallengeItem[];
+  meta: PaginationMeta;
+}
+
+export interface ChallengeItem {
+  id: number;
+  challenge_no: string | number;
+  rank: unknown;
+  mode: string;
+  status: string;
+  amount: string;
+  matchedPoints: string;
+  logo?: string;
+  memo: string;
+  showRealName: boolean;
+  durationHours: number;
+  durationLabel: string;
+  matchDate: string;
+  matchTime: string;
+  offerExpiresAt: string;
+  game: GameInfo;
+  challenger: PlayerInfo;
+  target_player?: PlayerInfo | null;
+  acceptor: unknown;
+  winnerId: unknown;
+  createdAt: string;
+}
+
+export interface GameInfo {
+  id: number;
+  name: string;
+  image: string;
+}
+
+export interface PlayerInfo {
+  id: number;
+  name: string;
+  image: string;
+}
+
+export interface PaginationMeta {
+  currentPage: number;
+  lastPage: number;
+  perPage: number;
+  total: number;
+  prev: boolean;
+  next: boolean;
+}
+
+export interface ChallengeRequest {
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+export interface ChallengeAcceptResponse {
+  status: boolean;
+  message: string;
+}

@@ -6,6 +6,9 @@ import type {
   ChallengeCreateResponse,
   ChallengeCreatePayload,
   UserSearchParams,
+  ChallengeListResponse,
+  ChallengeRequest,
+  ChallengeAcceptResponse,
 } from "@/types/challenge/challengeTypes";
 
 const ChallengeManagementApi = baseApi.injectEndpoints({
@@ -60,6 +63,44 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["Match"],
     }),
+
+    getAllChallengesList: builder.query<
+      ChallengeListResponse,
+      ChallengeRequest
+    >({
+      query: ({ search, page = 1, limit = 10 }) => {
+        const params: Record<string, unknown> = { page, per_page: limit };
+
+        if (search) params.search = search;
+        return {
+          url: `/admin/challenges`,
+          method: "GET",
+          params,
+        };
+      },
+      providesTags: ["ChallengeManagement"],
+    }),
+    adminAcceptChallenge: builder.mutation<
+      ChallengeAcceptResponse,
+      { id: number }
+    >({
+      query: ({ id }) => ({
+        url: `/admin/challenges/${id}/approve`,
+        method: "POST",
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
+
+    adminDeclineChallenge: builder.mutation<
+      ChallengeAcceptResponse,
+      { id: number }
+    >({
+      query: ({ id }) => ({
+        url: `/admin/challenges/${id}/reject`,
+        method: "POST",
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -68,5 +109,8 @@ export const {
   useGetAllPublicGamesListQuery,
   useGetUsersForSelectQuery,
   useCreateChallengeMutation,
+  useGetAllChallengesListQuery,
+  useAdminAcceptChallengeMutation,
+  useAdminDeclineChallengeMutation,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;
