@@ -23,6 +23,10 @@ export type ChallengeMatchOffer = {
   status: ChallengeMatchStatus;
   showRealName: boolean;
   createdAt: string;
+  /** "unique" or "global" — from the API */
+  mode?: "unique" | "global";
+  /** The target_player's id for "unique" mode challenges (null for "global") */
+  targetPlayerId?: number | null;
 };
 
 export type ChallengeCreateFormValues = {
@@ -33,5 +37,4 @@ export type ChallengeCreateFormValues = {
   targetPlayerId: string;
   showRealName: boolean;
   memo: string;
- 
 };

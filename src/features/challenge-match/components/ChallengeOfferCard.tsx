@@ -14,11 +14,13 @@ type ChallengeOfferCardProps = {
   offer: ChallengeMatchOffer;
   compact?: boolean;
   onAccept?: (offer: ChallengeMatchOffer) => void;
+  acceptVisible?: boolean;
 };
 
 export default function ChallengeOfferCard({
   offer,
   onAccept,
+  acceptVisible = true,
 }: ChallengeOfferCardProps) {
   const [isMemoOpen, setIsMemoOpen] = useState(false);
   const challengerName = offer.showRealName
@@ -56,15 +58,21 @@ export default function ChallengeOfferCard({
             {challengerName}
           </Link>
           <span className="shrink-0 text-[10px] font-black text-white/90 sm:text-sm">vs</span>
-          <Link
-            href={`/artist/${offer.target.id}`}
-            className="min-w-0 flex-1 truncate text-[11px] font-black text-[#ff3348] hover:text-white sm:text-sm"
-          >
-            {offer.target.handle}
-          </Link>
+          {offer.target.id !== 0 ? (
+            <Link
+              href={`/artist/${offer.target.id!}`}
+              className="min-w-0 flex-1 truncate text-[11px] font-black text-[#ff3348] hover:text-white sm:text-sm"
+            >
+              {offer.target.handle}
+            </Link>
+          ) : (
+            <p className="min-w-0 flex-1 truncate text-[11px] font-black text-[#ff3348] hover:text-white sm:text-sm">
+              {offer.target.handle}
+            </p>
+          )}
         </div>
 
-        <p className="mt-0.5 w-full truncate text-[13px] font-black leading-none text-[#ff57ff] [text-shadow:0_1px_0_#55006b,0_0_10px_rgba(255,87,255,0.65)] sm:text-[19px]">
+        <p className="mt-0.5 w-full truncate text-[13px] font-black leading-none text-[#c50dc5] sm:text-[19px]">
           <span className="text-green-400">{formatChallengePoints(offer.amount)}</span> offers in {offer.game}
         </p>
 
@@ -85,6 +93,7 @@ export default function ChallengeOfferCard({
 
       <ChallengeAcceptButton
         onClick={() => onAccept?.(offer)}
+        visible={acceptVisible}
       />
 
       <AppDialog
