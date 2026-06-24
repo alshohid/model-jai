@@ -23,6 +23,7 @@ import {
     attachRealtimeChannelDebug,
     logRealtimeLifecycle,
 } from "@/shared/lib/realtimeDebug";
+import ChallengeWonToast from "../components/ChallengeWonToast";
 
 
 interface IMatchCreatedPayload {
@@ -168,7 +169,30 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                     },
                 );
             }
-        });
+            else if (notification.type === "challenge.won" && notification.payout) {
+                try {
+                    const audio = new Audio("/images/cash_money_sound.mp3");
+                    audio.volume = 0.6;
+                    audio.play().catch((err) => console.warn("Coin sound play failed:", err));
+                } catch (err) {
+                    console.warn("Coin sound error:", err);
+                }
+
+                toast.custom(
+                    (t) => (
+                        <ChallengeWonToast amount={notification.payout!} />
+                    ),
+                    {
+                        duration: 5000,
+                        position: "top-center",
+                    },
+                );
+            }
+            else if (notification.type === "challenge.lost" && notification.payout) {
+
+            }
+        })
+
 
         cleanups.push(() => {
             detachPrivateNotificationDebug();

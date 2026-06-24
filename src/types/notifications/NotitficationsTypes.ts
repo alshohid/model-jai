@@ -5,6 +5,8 @@ export type TNotificationDataType =
   | "user.withdrawal.completed"
   | "user.withdrawal.declined"
   | "coin.received"
+  | "challenge.win"
+  | "challenge.lost"
   | "generic";
 
 export interface IRawNotificationData {
@@ -22,6 +24,7 @@ export interface IRawNotificationData {
   usd_amount?: string;
   status?: string;
   rules?: string;
+  payout?: number;
   player_ids?: number[];
 }
 
