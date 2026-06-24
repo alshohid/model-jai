@@ -126,6 +126,19 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ChallengeManagement"],
     }),
+    winnerSelectForChallengeByAdmin: builder.mutation<
+      ChallengeAcceptResponse,
+      { id: number; winner_id: number }
+    >({
+      query: ({ id, winner_id }) => ({
+        url: `/admin/challenges/${id}/winner`,
+        method: "POST",
+        body: {
+          winner_id: winner_id,
+        },
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
 
     adminDeclineChallenge: builder.mutation<
       ChallengeAcceptResponse,
@@ -151,5 +164,6 @@ export const {
   useUserAcceptChallengeMutation,
   useAdminAcceptChallengeMutation,
   useAdminDeclineChallengeMutation,
+  useWinnerSelectForChallengeByAdminMutation,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;
