@@ -17,14 +17,13 @@ import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import type { ChallengeMatchOffer, ChallengePlayer } from "../types";
-import { currentChallengeBalance } from "../data/challengeMatchMockData";
 import { formatChallengeCurrency, formatChallengePoints } from "../utils";
 import ChallengeAcceptButton from "./ChallengeAcceptButton";
 import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
 
 type ChallengeDialogOutcome = "confirm" | "success" | "insufficient";
 type ChallengeTone = "gold" | "green" | "pink";
@@ -311,7 +310,7 @@ export default function ChallengeMatchDetails({
   const gameLogo = getGameLogo(offer.game);
   const rightPlayer = acceptedPlayer ?? anonymousChallengePlayer;
   const rightLabel = acceptedPlayer?.handle ?? anonymousChallengePlayer.handle;
-
+  const currentChallengeBalance = meData?.data?.total_balance ?? 0;
   const openAcceptDialog = () => {
 
     setAgreed(false);
