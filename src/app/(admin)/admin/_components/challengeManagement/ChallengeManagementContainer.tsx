@@ -5,13 +5,14 @@ import { ReactNode, useState } from "react";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, User2, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Gamepad2, User2, Loader2, CheckCircle2, XCircle, Trophy } from "lucide-react";
 import { ChallengeItem } from "@/types/challenge/challengeTypes";
 import {
     useAdminAcceptChallengeMutation,
     useAdminDeclineChallengeMutation,
     useGetAllChallengesListQuery,
 } from "@/redux/features/challenge/challengeManagement";
+import WinnerSelectModal from "./WinnerSelectModal";
 import { toast } from "sonner";
 
 export default function ChallengeManagementContainer() {
@@ -34,6 +35,10 @@ export default function ChallengeManagementContainer() {
     const [processingAction, setProcessingAction] = useState<"accept" | "decline" | null>(
         null
     );
+
+    // Winner select modal state
+    const [winnerModalOpen, setWinnerModalOpen] = useState(false);
+    const [selectedChallengeForWinner, setSelectedChallengeForWinner] = useState<ChallengeItem | null>(null);
 
     const tableHeader = [
         "Challenge No",
@@ -138,11 +143,42 @@ export default function ChallengeManagementContainer() {
                 </span>
             ),
             (item) => {
+                const isAccepted = item.status?.toLowerCase() === "accepted";
+                const winnerName = item.winnerId
+                    ? item.challenger?.id === item.winnerId
+                        ? item.challenger?.name
+                        : item.acceptor?.id === item.winnerId
+                            ? item.acceptor?.name
+                            : null
+                    : null;
+
+                if (winnerName) {
+                    return (
+                        <span className="text-yellow-400 font-medium text-sm">
+                            {winnerName}
+                        </span>
+                    );
+                }
+
                 return (
                     <div className="flex items-center gap-2">
-                        winner select hobe
+                        {isAccepted ? (
+                            <Button
+                                type="button"
+                                onClick={() => {
+                                    setSelectedChallengeForWinner(item);
+                                    setWinnerModalOpen(true);
+                                }}
+                                className="!bg-yellow-500 !text-black !text-xs !px-3 !py-1 !h-auto hover:!bg-yellow-400"
+                            >
+                                <Trophy className="size-3.5 mr-1" />
+                                Select Winner
+                            </Button>
+                        ) : (
+                            <span className="text-gray-500 text-xs">---</span>
+                        )}
                     </div>
-                )
+                );
             },
             (item) => {
                 const isCurrentRowProcessing = processingChallengeId === item.id;
@@ -197,6 +233,20 @@ export default function ChallengeManagementContainer() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="text-2xl font-bold text-white">Challenge List</h2>
             </div>
+
+            {/* Winner Select Modal */}
+            {selectedChallengeForWinner && (
+                <WinnerSelectModal
+                    open={winnerModalOpen}
+                    onOpenChange={(open) => {
+                        setWinnerModalOpen(open);
+                        if (!open) setSelectedChallengeForWinner(null);
+                    }}
+                    challengeId={selectedChallengeForWinner.id}
+                    challenger={selectedChallengeForWinner.challenger}
+                    acceptor={selectedChallengeForWinner.acceptor!}
+                />
+            )}
 
             <div className="py-10">
                 <ReuseAbleTable

@@ -92,8 +92,8 @@ export interface ChallengeItem {
   game: GameInfo;
   challenger: PlayerInfo;
   target_player?: PlayerInfo | null;
-  acceptor: unknown;
-  winnerId: unknown;
+  acceptor: PlayerInfo | null;
+  winnerId: number | null;
   createdAt: string;
 }
 
