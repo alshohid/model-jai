@@ -6,7 +6,15 @@ import { useEffect, useState } from "react";
 interface ChallengeMatchOffer {
     match_date: string; // Format: "2026-06-25"
     match_time: string; // Format: "23:11"
-    status: "accepted" | "pending" | "rejected" | "expired";
+    status:
+    | "pending"
+    | "offered"
+    | "accepted"
+    | "rejected"
+    | "declined"
+    | "cancelled"
+    | "expired"
+    | "completed";
     kind?: string;
 }
 
@@ -33,13 +41,12 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
         totalSeconds: 0,
     });
 
-
     const calculateTimeRemaining = () => {
         // Parse match_date (YYYY-MM-DD) and match_time (HH:MM)
         const [year, month, day] = offer.match_date.split("-").map(Number);
-        let [hours, minutes] = offer.match_time.split(":").map(Number);
+        const [matchHours, matchMinutes] = offer.match_time.split(":").map(Number);
 
-        const matchDateTime = new Date(year, month - 1, day, hours, minutes, 0);
+        const matchDateTime = new Date(year, month - 1, day, matchHours, matchMinutes, 0);
         const now = new Date();
         const diff = matchDateTime.getTime() - now.getTime();
 
@@ -57,8 +64,8 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
 
         const totalSeconds = Math.floor(diff / 1000);
         const days = Math.floor(totalSeconds / (24 * 3600));
-        hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-        minutes = Math.floor((totalSeconds % 3600) / 60);
+        const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
         setTimeRemaining({
@@ -72,8 +79,8 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
     };
 
     useEffect(() => {
-        calculateTimeRemaining();
-        if (offer.status === "accepted" || offer.status === "expired" || offer.status === "rejected") {
+        // Only run timer for pending or offered status
+        if (offer.status !== "pending" && offer.status !== "offered") {
             setTimeRemaining({
                 days: 0,
                 hours: 0,
@@ -82,15 +89,20 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
                 isExpired: true,
                 totalSeconds: 0,
             });
-        } else {
-            return
+            return;
         }
+
+        // Calculate immediately on mount
+        calculateTimeRemaining();
+
+        // Set up interval to update every second
         const interval = setInterval(calculateTimeRemaining, 1000);
         return () => clearInterval(interval);
-    }, [offer.match_date, offer.match_time]);
+    }, [offer.match_date, offer.match_time, offer.status]);
 
     // Determine color theme based on status and time remaining
     const getThemeColors = () => {
+        // Expired state
         if (timeRemaining.isExpired || offer.status === "expired") {
             return {
                 borderColor: "#ff3737",
@@ -100,7 +112,8 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
             };
         }
 
-        if (offer.status === "accepted") {
+        // Accepted state - green
+        if (offer.status === "accepted" || offer.status === "completed") {
             return {
                 borderColor: "#24ff7a",
                 glowColor: "rgba(36, 255, 122, 0.45)",
@@ -109,15 +122,21 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
             };
         }
 
-        if (offer.status === "rejected") {
+        // Rejected/Declined/Cancelled states - red/pink
+        if (
+            offer.status === "rejected" ||
+            offer.status === "declined" ||
+            offer.status === "cancelled"
+        ) {
             return {
-                borderColor: "#ff37dc",
-                glowColor: "rgba(255, 55, 220, 0.45)",
-                textColor: "#ff37dc",
-                bgGlow: "rgba(255, 55, 220, 0.1)",
+                borderColor: "#ff3737",
+                glowColor: "rgba(255, 55, 55, 0.45)",
+                textColor: "#ff6b6b",
+                bgGlow: "rgba(255, 55, 55, 0.1)",
             };
         }
 
+        // Pending/Offered states - pink/gold
         return {
             borderColor: "#ff37dc",
             glowColor: "rgba(255, 55, 220, 0.45)",
@@ -127,11 +146,43 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
     };
 
     const theme = getThemeColors();
-    const displayText = timeRemaining.isExpired || offer.status === "expired";
 
     // Format time display with leading zeros
     const formatDisplay = () => {
-        if (displayText) {
+        // Show status-specific messages for non-timer statuses
+        if (offer.status === "accepted" || offer.status === "completed") {
+            return {
+                line1: "Match",
+                line2: "Accepted",
+                line3: "✓",
+            };
+        }
+
+        if (offer.status === "rejected") {
+            return {
+                line1: "Match",
+                line2: "Rejected",
+                line3: "✗",
+            };
+        }
+
+        if (offer.status === "declined") {
+            return {
+                line1: "Match",
+                line2: "Declined",
+                line3: "✗",
+            };
+        }
+
+        if (offer.status === "cancelled") {
+            return {
+                line1: "Match",
+                line2: "Cancelled",
+                line3: "✗",
+            };
+        }
+
+        if (offer.status === "expired" || timeRemaining.isExpired) {
             return {
                 line1: "Match",
                 line2: "Expired",
@@ -139,6 +190,7 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
             };
         }
 
+        // Timer display for pending/offered status
         if (timeRemaining.days > 0) {
             return {
                 line1: `Day ${timeRemaining.days}`,
@@ -194,9 +246,15 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
                     transition: "all 0.3s ease-in-out",
                 }}
             >
-                {timeRemaining.isExpired || offer.status === "expired"
-                    ? "ENDED"
-                    : "VS"}
+                {offer.status === "accepted" || offer.status === "completed"
+                    ? "✓"
+                    : offer.status === "rejected" ||
+                        offer.status === "declined" ||
+                        offer.status === "cancelled"
+                        ? "✗"
+                        : offer.status === "expired" || timeRemaining.isExpired
+                            ? "ENDED"
+                            : "VS"}
             </p>
 
             {/* Status Badge */}
@@ -209,9 +267,7 @@ function ChallengeCenterBadge({ offer }: ChallengeCenterBadgeProps) {
                     transition: "all 0.3s ease-in-out",
                 }}
             >
-                {timeRemaining.isExpired || offer.status === "expired"
-                    ? "Expired"
-                    : offer.status}
+                {offer.status}
             </div>
 
             {/* Kind Text */}
