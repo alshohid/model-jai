@@ -69,20 +69,20 @@ export default function ChallengeManagementContainer() {
         return styles[status?.toLowerCase()] ?? "bg-gray-500 text-white";
     };
 
-    // const handleAcceptChallenge = async (id: number) => {
-    //     try {
-    //         setProcessingChallengeId(id);
-    //         setProcessingAction("accept");
+    const handleAcceptChallenge = async (id: number) => {
+        try {
+            setProcessingChallengeId(id);
+            setProcessingAction("accept");
 
-    //         const response = await acceptChallenge({ id }).unwrap();
-    //         toast.success(response?.message);
-    //     } catch (error: any) {
-    //         toast.error(error?.data?.message ?? error?.message ?? "Failed to accept challenge");
-    //     } finally {
-    //         setProcessingChallengeId(null);
-    //         setProcessingAction(null);
-    //     }
-    // };
+            const response = await acceptChallenge({ id }).unwrap();
+            toast.success(response?.message);
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? error?.message ?? "Failed to accept challenge");
+        } finally {
+            setProcessingChallengeId(null);
+            setProcessingAction(null);
+        }
+    };
 
     const handleDeclineChallenge = async (id: number) => {
         try {
@@ -150,7 +150,7 @@ export default function ChallengeManagementContainer() {
 
                 return (
                     <div className="flex items-center gap-2">
-                        {/* <Button
+                        <Button
                             type="button"
                             onClick={() => handleAcceptChallenge(item.id)}
                             disabled={!canAct || isGlobalProcessing}
@@ -167,7 +167,7 @@ export default function ChallengeManagementContainer() {
                                     Accept
                                 </span>
                             )}
-                        </Button> */}
+                        </Button>
 
                         <Button
                             type="button"

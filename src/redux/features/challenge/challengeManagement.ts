@@ -115,7 +115,7 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
     }),
     userAcceptChallenge: builder.mutation<
       UserAcceptChallengeResponse,
-      { id: number; terms_accepted: string }
+      { id: number; terms_accepted: boolean }
     >({
       query: ({ id, terms_accepted }) => ({
         url: `/challenges/${id}/accept`,

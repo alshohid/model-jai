@@ -24,6 +24,7 @@ import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
 import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet";
 import { toast } from "sonner";
+import ChallengeCenterBadge from "./ChallengeCenterBadge";
 
 
 type ChallengeDialogOutcome = "confirm" | "success" | "insufficient" | "error";
@@ -103,12 +104,12 @@ function ChallengePortraitCard({
         unoptimized
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/16 to-transparent" />
-      {/* {accepted ? (
+      {accepted ? (
         <div className="absolute right-1 top-1 inline-flex items-center gap-1 rounded-full border border-[#62ff52]/40 bg-black/70 px-1.5 py-0.5 text-[8px] font-black uppercase text-[#62ff52] shadow-[0_0_12px_rgba(98,255,82,0.45)]">
           <ShieldCheck className="h-3 w-3" />
           Accepted
         </div>
-      ) : null} */}
+      ) : null}
       <div className="absolute inset-x-1 bottom-1 text-center">
         <p className={cn("truncate text-[11px] font-black sm:text-base", toneClass)}>
           {label}
@@ -193,44 +194,54 @@ function ChallengeSideOfferPanel({
   );
 }
 
-function ChallengeCenterBadge({ offer }: { offer: ChallengeMatchOffer }) {
-  return (
-    <div className="flex min-w-0 flex-col items-center pt-8 text-center">
-      <div className="grid h-12 w-12 place-items-center rounded-full border border-[#ff37dc] bg-black shadow-[0_0_20px_rgba(255,55,220,0.45)] sm:h-16 sm:w-16">
-        <div className="text-[8px] font-bold leading-tight text-[#24ff7a] sm:text-[10px]">
-          <span className="block">Sat 28</span>
-          <span className="block">10:18</span>
-          <span className="block">13:17</span>
-        </div>
-      </div>
-      <p className="mt-1 text-xs font-black uppercase italic text-white">VS</p>
-      <p className="mt-1 [writing-mode:vertical-rl] text-[10px] font-semibold capitalize text-white/70">
-        {offer.kind}
-      </p>
-    </div>
-  );
-}
+// function ChallengeCenterBadge({ offer }: { offer: ChallengeMatchOffer }) {
+//   return (
+//     <div className="flex min-w-0 flex-col items-center pt-8 text-center">
+//       <div className="grid h-12 w-12 place-items-center rounded-full border border-[#ff37dc] bg-black shadow-[0_0_20px_rgba(255,55,220,0.45)] sm:h-16 sm:w-16">
+//         <div className="text-[8px] font-bold leading-tight text-[#24ff7a] sm:text-[10px]">
+//           <span className="block">Sat 28</span>
+//           <span className="block">10:18</span>
+//           <span className="block">13:17</span>
+//         </div>
+//       </div>
+//       <p className="mt-1 text-xs font-black uppercase italic text-white">VS</p>
+//       <p className="mt-1 [writing-mode:vertical-rl] text-[10px] font-semibold capitalize text-white/70">
+//         {offer.kind}
+//       </p>
+//     </div>
+//   );
+// }
 
 function ChallengeAcceptPanel({
   offer,
   gameLogo,
   onAccept,
-  isLoading
+  isAccepted,
+  handleShareClick
 }: {
   offer: ChallengeMatchOffer;
   gameLogo: string;
   onAccept: () => void;
-  isLoading?: boolean
+  isAccepted?: boolean
+  handleShareClick: () => void;
 }) {
   return (
     <div className="relative min-h-[150px] rounded-[16px] border border-white/16 bg-[#101116]/95 px-2.5 pb-3 pt-4 shadow-[inset_0_0_24px_rgba(255,255,255,0.04)] sm:min-h-[190px] sm:px-4">
-      <button
-        type="button"
-        onClick={onAccept}
-        className="absolute left-1/2 top-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-[#66d7ff]/45 bg-[linear-gradient(180deg,#8ce8ff,#1c8ad8)] px-4 py-0.5 text-[10px] font-black uppercase text-white shadow-[0_0_14px_rgba(80,198,255,0.58)] transition hover:brightness-110"
-      >
-        Click Here
-      </button>
+      {
+        isAccepted ? (<div className={`absolute left-1/2 top-2 -translate-x-1/2 rounded-full border border-[#66d7ff]/45  px-4 py-0.5 text-[10px] font-black uppercase text-white shadow-[0_0_14px_rgba(80,198,255,0.58)] ${isAccepted ? "bg-green-600" : "bg-red-600"}`}>
+          Accepted
+        </div>) : (
+          <button
+            type="button"
+            onClick={onAccept}
+            className="absolute left-1/2 top-2 -translate-x-1/2 whitespace-nowrap rounded-full border border-[#66d7ff]/45 bg-[linear-gradient(180deg,#8ce8ff,#1c8ad8)] px-4 py-0.5 text-[10px] font-black uppercase text-white shadow-[0_0_14px_rgba(80,198,255,0.58)] transition hover:brightness-110"
+          >
+            Click Here
+          </button>
+
+        )
+      }
+
 
       <div className="mt-7 flex items-center gap-2">
         <Image
@@ -251,7 +262,24 @@ function ChallengeAcceptPanel({
       </div>
 
       <div className="mt-4 flex justify-center">
-        <ChallengeAcceptButton onClick={onAccept} />
+        {isAccepted ? (
+          <div className="text-center">
+            <p className="mt-1 text-[16px] font-black text-white sm:text-2xl">
+              +{formatChallengeCurrency(offer.amount)}
+            </p>
+            <StartStreamingButton
+              onClick={handleShareClick}
+              className={cn(
+                "h-[23px] md:h-[30px] text-[8px] md:text-[14px] px-3 rounded-md"
+
+              )}
+            >
+              Share Referral
+            </StartStreamingButton>
+          </div>
+        ) : (
+          <ChallengeAcceptButton onClick={onAccept} />
+        )}
       </div>
     </div>
   );
@@ -306,15 +334,13 @@ export default function ChallengeMatchDetails({
   const [agreed, setAgreed] = useState(false);
   const [outcome, setOutcome] = useState<ChallengeDialogOutcome>("confirm");
   const [errorMessage, setErrorMessage] = useState("");
-  const [acceptedPlayer, setAcceptedPlayer] = useState<ChallengePlayer | null>(null);
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [shareSheetTitle, setShareSheetTitle] = useState("");
   const [shareUrl, setShareUrl] = useState("");
   const [shareSheetImageSrc, setShareSheetImageSrc] = useState("");
   const [shareSheetImageAlt, setShareSheetImageAlt] = useState("");
   const gameLogo = getGameLogo(offer.game);
-  const rightPlayer = acceptedPlayer ?? anonymousChallengePlayer;
-  const rightLabel = acceptedPlayer?.handle ?? anonymousChallengePlayer.handle;
+
   const currentChallengeBalance = meData?.data?.total_balance ?? 0;
   const openAcceptDialog = () => {
 
@@ -325,37 +351,17 @@ export default function ChallengeMatchDetails({
 
   const handleConfirm = async () => {
     const canAccept = currentChallengeBalance >= offer.amount;
-
     if (!canAccept) {
       setOutcome("insufficient");
       return;
     }
 
     try {
-      const response = await userAcceptChallenge({
+      await userAcceptChallenge({
         id: Number(offer.id),
-        terms_accepted: "yes",
+        terms_accepted: agreed,
       }).unwrap();
-      console.log("response", response);
-
-      if (response?.success) {
-        const user = meData?.data?.user;
-        const artistName = user?.artist_name?.trim();
-        const displayName = artistName || user?.name || "Accepted Player";
-
-        setAcceptedPlayer({
-          id: user?.id ?? 0,
-          name: displayName,
-          handle: artistName ? `@${artistName}` : `@${displayName.replace(/\s+/g, "")}`,
-          avatar: getSafeImageSrc(user?.image, "/images/home/avatar_img.png"),
-          game: user?.game?.name ?? offer.game,
-        });
-
-        setOutcome("success");
-      } else {
-        setErrorMessage(response.message || "Failed to accept challenge.");
-        setOutcome("error");
-      }
+      setOutcome("success");
     } catch (err: unknown) {
       const apiError = err as { data?: { message?: string }; message?: string };
       const msg =
@@ -399,6 +405,42 @@ export default function ChallengeMatchDetails({
     const shareTitle = `Challenge ${getDisplayName(offer)} on ${offer.game}`;
     const shareImage = getSafeImageSrc(
       offer.challenger.avatar,
+      "/images/home/avatar_img.png"
+    );
+
+    setShareSheetTitle(shareTitle);
+    setShareSheetImageSrc(shareImage);
+    setShareSheetImageAlt(getDisplayName(offer));
+    setShareUrl(nextShareUrl.toString());
+    setShareSheetOpen(true);
+  };
+  const rightPlayerShareLink = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.stopPropagation();
+
+    if (typeof window === "undefined") {
+      toast.error("Share link is not available right now.");
+      return;
+    }
+
+    const user = meData?.data?.user;
+    const userReferralNo = user?.referral_no;
+
+    const nextShareUrl = new URL(
+      `/challenge-dashboard/${offer.id}`,
+      window.location.origin
+    );
+    const currentPlatform =
+      new URLSearchParams(window.location.search).get("platform") || "tiktok";
+
+    nextShareUrl.searchParams.set("platform", currentPlatform);
+
+    if (userReferralNo) {
+      nextShareUrl.searchParams.set("ref", userReferralNo);
+    }
+
+    const shareTitle = `Challenge ${getDisplayName(offer)} on ${offer.game}`;
+    const shareImage = getSafeImageSrc(
+      offer.accepted.avatar,
       "/images/home/avatar_img.png"
     );
 
@@ -458,29 +500,31 @@ export default function ChallengeMatchDetails({
             />
             <ChallengePortraitCard
               player={offer.accepted}
-              label={offer.accepted.avatar}
-              tone={offer.accepted.name != null ? "green" : "pink"}
+              label={offer.accepted.name || offer.accepted.handle}
+              tone={offer.isAccepted ? "green" : "pink"}
               points={offer.amount}
-              accepted={offer.accepted != null ? true : false}
-
-            // player={rightPlayer}
-            // label={rightLabel}
-            // tone={acceptedPlayer ? "green" : "pink"}
-            // points={acceptedPlayer ? offer.amount : undefined}
-            // accepted={Boolean(acceptedPlayer)}
-            // imageOverride={acceptedPlayer ? undefined : "/images/home/avatar_img.png"}
+              accepted={offer.isAccepted}
             />
           </div>
 
-          <ChallengeTitleStrip offer={offer} rightLabel={rightLabel} />
+          <ChallengeTitleStrip offer={offer} rightLabel={offer?.accepted?.name || offer?.accepted?.handle} />
 
           <div className="relative grid grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] gap-1 px-2 pt-3 sm:grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] sm:px-4">
             <ChallengeSideOfferPanel offer={offer} gameLogo={gameLogo} handleShareClick={handleShareClick} />
-            <ChallengeCenterBadge offer={offer} />
+            <ChallengeCenterBadge
+              offer={{
+                match_date: offer.match_date,
+                match_time: offer.match_time,
+                status: offer.status,
+                kind: offer.kind,
+              }}
+            />
             <ChallengeAcceptPanel
               offer={offer}
               gameLogo={gameLogo}
               onAccept={openAcceptDialog}
+              isAccepted={offer.isAccepted}
+              handleShareClick={rightPlayerShareLink}
             />
           </div>
 
@@ -533,6 +577,7 @@ export default function ChallengeMatchDetails({
         onAgreeChange={setAgreed}
         onConfirm={handleConfirm}
         onClose={handleClose}
+        isLoading={isAccepting}
       />
     </main>
   );

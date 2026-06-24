@@ -17,6 +17,7 @@ type ChallengeAcceptDialogProps = {
   onConfirm: () => void;
   onClose: () => void;
   errorMessage?: string;
+  isLoading?: boolean;
 };
 
 function DialogShell({
@@ -81,6 +82,7 @@ export default function ChallengeAcceptDialog({
   onAgreeChange,
   onConfirm,
   onClose,
+  isLoading,
 }: ChallengeAcceptDialogProps) {
   if (!open || !offer) return null;
 
@@ -139,11 +141,11 @@ export default function ChallengeAcceptDialog({
 
           <button
             type="button"
-            disabled={!agreed}
+            disabled={!agreed || isLoading}
             onClick={onConfirm}
             className="mt-5 h-12 w-full rounded-xl bg-[linear-gradient(180deg,#ff31ff,#b500e7)] text-sm font-black uppercase text-white shadow-[0_0_22px_rgba(245,35,255,0.55)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Confirm Challenge
+            {isLoading ? "Loading..." : "Confirm Challenge"}
           </button>
           <button
             type="button"
