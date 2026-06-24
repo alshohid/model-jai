@@ -71,7 +71,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+/* [data-sonner-toaster],[data-hot-toast] {
+  width: calc(100vw - 24px);
+  max-width: 420px;
+} */
 /* Make the internal video behave like object-cover */
 mux-player::part(video) {
   object-fit: cover;

@@ -18,6 +18,7 @@ import {
 } from "../lib/notificationMapper";
 import { IRawNotificationData } from "@/types/notifications/NotitficationsTypes";
 import MatchRulesModal from "../components/modal/MatchRulesModal";
+import CoinReceivedToast from "../components/CoinReceivedToast";
 import {
     attachRealtimeChannelDebug,
     logRealtimeLifecycle,
@@ -114,7 +115,6 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
 
             seenRealtimeEventsRef.current.add(eventKey);
             dispatch(addNotification(mapSocketMatchCompletedNotification(event)));
-            console.log("match completed", event);
             toast.success(event.message || "The match is over.");
         });
 
@@ -141,6 +141,33 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
 
         privateNotificationChannel.notification((notification: IRawNotificationData) => {
             dispatch(addNotification(mapSocketPrivateNotification(notification)));
+
+            // Show custom toast with sound for coin.received event
+            if (notification.type === "coin.received" && notification.amount && notification.sender_name) {
+                // Play cash money sound
+                try {
+                    const audio = new Audio("/images/cash_money_sound.mp3");
+                    audio.volume = 0.6;
+                    audio.play().catch((err) => console.warn("Coin sound play failed:", err));
+                } catch (err) {
+                    console.warn("Coin sound error:", err);
+                }
+
+                // Show custom toast notification
+                toast.custom(
+                    (t) => (
+                        <CoinReceivedToast
+                            sender_name={notification.sender_name!}
+                            amount={notification.amount!}
+                        // message={notification.message}
+                        />
+                    ),
+                    {
+                        duration: 5000,
+                        position: "top-center",
+                    },
+                );
+            }
         });
 
         cleanups.push(() => {

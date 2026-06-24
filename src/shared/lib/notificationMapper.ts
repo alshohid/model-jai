@@ -16,6 +16,8 @@ function getNotificationTitle(type?: string) {
       return "Withdrawal Completed";
     case "user.withdrawal.declined":
       return "Withdrawal Declined";
+    case "coin.received":
+      return "Coin Received";
     default:
       return "Notification";
   }
@@ -61,8 +63,6 @@ export function mapSocketMatchCompletedNotification(payload: {
 export function mapSocketPrivateNotification(
   payload: IRawNotificationData & { id?: string },
 ): IAppNotificationItem {
-  console.log("payload", payload);
-
   return {
     id:
       payload.id ||

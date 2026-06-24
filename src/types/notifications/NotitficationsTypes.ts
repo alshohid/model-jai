@@ -4,6 +4,7 @@ export type TNotificationDataType =
   | "admin.withdrawal.created"
   | "user.withdrawal.completed"
   | "user.withdrawal.declined"
+  | "coin.received"
   | "generic";
 
 export interface IRawNotificationData {
@@ -14,6 +15,9 @@ export interface IRawNotificationData {
   withdraw_no?: string;
   user_id?: number;
   user_name?: string;
+  sender_id?: number;
+  sender_name?: string;
+  amount?: number;
   coin_amount?: string;
   usd_amount?: string;
   status?: string;
