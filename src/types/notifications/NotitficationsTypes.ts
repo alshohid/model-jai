@@ -5,7 +5,7 @@ export type TNotificationDataType =
   | "user.withdrawal.completed"
   | "user.withdrawal.declined"
   | "coin.received"
-  | "challenge.win"
+  | "challenge.won"
   | "challenge.lost"
   | "generic";
 
