@@ -10,6 +10,7 @@ import type {
   ChallengeRequest,
   ChallengeAcceptResponse,
   ChallengeDetailsResponse,
+  UserAcceptChallengeResponse,
 } from "@/types/challenge/challengeTypes";
 
 const ChallengeManagementApi = baseApi.injectEndpoints({
@@ -113,7 +114,7 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       invalidatesTags: ["ChallengeManagement"],
     }),
     userAcceptChallenge: builder.mutation<
-      ChallengeAcceptResponse,
+      UserAcceptChallengeResponse,
       { id: number; terms_accepted: string }
     >({
       query: ({ id, terms_accepted }) => ({

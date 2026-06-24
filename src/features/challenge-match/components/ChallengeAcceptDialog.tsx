@@ -11,11 +11,12 @@ type ChallengeAcceptDialogProps = {
   offer: ChallengeMatchOffer | null;
   open: boolean;
   balance: number;
-  outcome: "confirm" | "success" | "insufficient";
+  outcome: "confirm" | "success" | "insufficient" | "error";
   agreed: boolean;
   onAgreeChange: (value: boolean) => void;
   onConfirm: () => void;
   onClose: () => void;
+  errorMessage?: string;
 };
 
 function DialogShell({
@@ -76,6 +77,7 @@ export default function ChallengeAcceptDialog({
   balance,
   outcome,
   agreed,
+  errorMessage,
   onAgreeChange,
   onConfirm,
   onClose,
@@ -181,7 +183,7 @@ export default function ChallengeAcceptDialog({
             Got It
           </button>
         </DialogShell>
-      ) : (
+      ) : outcome === "insufficient" ? (
         <DialogShell tone="red">
           <button
             type="button"
@@ -224,6 +226,39 @@ export default function ChallengeAcceptDialog({
             className="mt-3 h-10 w-full text-sm font-semibold uppercase text-white/55 hover:text-white"
           >
             Cancel
+          </button>
+        </DialogShell>
+      ) : (
+        <DialogShell tone="red">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/8 text-white/70 transition hover:bg-white/12 hover:text-white"
+            aria-label="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <div className="text-center">
+            <p className="text-xl font-black uppercase italic text-[#ff4058] [text-shadow:0_0_16px_rgba(255,64,88,0.65)]">
+              Something Went Wrong
+            </p>
+            <div className="mx-auto mt-5 grid h-20 w-20 place-items-center text-[#ff4058]">
+              <AlertTriangle className="h-16 w-16 drop-shadow-[0_0_18px_rgba(255,64,88,0.7)]" />
+            </div>
+            <p className="mx-auto mt-2 max-w-[260px] text-sm leading-5 text-white/58">
+              {errorMessage || "An unexpected error occurred while accepting the challenge. Please try again."}
+            </p>
+          </div>
+
+          <p className="mx-auto mt-5 max-w-[240px] text-center text-sm leading-5 text-white/55">
+            Please try again later or contact support if the issue persists.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-5 h-12 w-full rounded-xl bg-[linear-gradient(180deg,#ff275a,#b80b35)] text-sm font-black uppercase text-white shadow-[0_0_22px_rgba(255,39,90,0.42)] transition hover:brightness-110"
+          >
+            Close
           </button>
         </DialogShell>
       )}

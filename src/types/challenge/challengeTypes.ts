@@ -127,4 +127,8 @@ export interface ChallengeAcceptResponse {
   status: boolean;
   message: string;
 }
+export interface UserAcceptChallengeResponse {
+  success: boolean;
+  message: string;
+}
 export type ChallengeDetailsResponse = ChallengeListResponse;

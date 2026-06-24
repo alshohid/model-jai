@@ -18,6 +18,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import type { ChallengeMatchOffer, ChallengePlayer } from "../types";
 import { formatChallengeCurrency, formatChallengePoints } from "../utils";
+import { useUserAcceptChallengeMutation } from "@/redux/features/challenge/challengeManagement";
 import ChallengeAcceptButton from "./ChallengeAcceptButton";
 import ChallengeAcceptDialog from "./ChallengeAcceptDialog";
 import StartStreamingButton from "@/shared/UI/button/StartStreamingButton";
@@ -25,7 +26,7 @@ import ReferralShareSheet from "@/shared/components/myProfile/ReferralShareSheet
 import { toast } from "sonner";
 
 
-type ChallengeDialogOutcome = "confirm" | "success" | "insufficient";
+type ChallengeDialogOutcome = "confirm" | "success" | "insufficient" | "error";
 type ChallengeTone = "gold" | "green" | "pink";
 
 type ChallengeMatchDetailsProps = {
@@ -214,10 +215,12 @@ function ChallengeAcceptPanel({
   offer,
   gameLogo,
   onAccept,
+  isLoading
 }: {
   offer: ChallengeMatchOffer;
   gameLogo: string;
   onAccept: () => void;
+  isLoading?: boolean
 }) {
   return (
     <div className="relative min-h-[150px] rounded-[16px] border border-white/16 bg-[#101116]/95 px-2.5 pb-3 pt-4 shadow-[inset_0_0_24px_rgba(255,255,255,0.04)] sm:min-h-[190px] sm:px-4">
@@ -298,9 +301,11 @@ export default function ChallengeMatchDetails({
   const { data: meData } = useGetMeDataQuery(undefined, {
     skip: !isAuthenticated,
   });
+  const [userAcceptChallenge, { isLoading: isAccepting }] = useUserAcceptChallengeMutation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [outcome, setOutcome] = useState<ChallengeDialogOutcome>("confirm");
+  const [errorMessage, setErrorMessage] = useState("");
   const [acceptedPlayer, setAcceptedPlayer] = useState<ChallengePlayer | null>(null);
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [shareSheetTitle, setShareSheetTitle] = useState("");
@@ -318,24 +323,48 @@ export default function ChallengeMatchDetails({
     setDialogOpen(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const canAccept = currentChallengeBalance >= offer.amount;
 
-    if (canAccept) {
-      const user = meData?.data?.user;
-      const artistName = user?.artist_name?.trim();
-      const displayName = artistName || user?.name || "Accepted Player";
-
-      setAcceptedPlayer({
-        id: user?.id ?? 0,
-        name: displayName,
-        handle: artistName ? `@${artistName}` : `@${displayName.replace(/\s+/g, "")}`,
-        avatar: getSafeImageSrc(user?.image, "/images/home/avatar_img.png"),
-        game: user?.game?.name ?? offer.game,
-      });
+    if (!canAccept) {
+      setOutcome("insufficient");
+      return;
     }
 
-    setOutcome(canAccept ? "success" : "insufficient");
+    try {
+      const response = await userAcceptChallenge({
+        id: Number(offer.id),
+        terms_accepted: "yes",
+      }).unwrap();
+      console.log("response", response);
+
+      if (response?.success) {
+        const user = meData?.data?.user;
+        const artistName = user?.artist_name?.trim();
+        const displayName = artistName || user?.name || "Accepted Player";
+
+        setAcceptedPlayer({
+          id: user?.id ?? 0,
+          name: displayName,
+          handle: artistName ? `@${artistName}` : `@${displayName.replace(/\s+/g, "")}`,
+          avatar: getSafeImageSrc(user?.image, "/images/home/avatar_img.png"),
+          game: user?.game?.name ?? offer.game,
+        });
+
+        setOutcome("success");
+      } else {
+        setErrorMessage(response.message || "Failed to accept challenge.");
+        setOutcome("error");
+      }
+    } catch (err: unknown) {
+      const apiError = err as { data?: { message?: string }; message?: string };
+      const msg =
+        apiError?.data?.message ||
+        apiError?.message ||
+        "An unexpected error occurred. Please try again.";
+      setErrorMessage(msg);
+      setOutcome("error");
+    }
   };
 
   const handleClose = () => {
@@ -428,12 +457,18 @@ export default function ChallengeMatchDetails({
               imageOverride="/images/home/middle.png"
             />
             <ChallengePortraitCard
-              player={rightPlayer}
-              label={rightLabel}
-              tone={acceptedPlayer ? "green" : "pink"}
-              points={acceptedPlayer ? offer.amount : undefined}
-              accepted={Boolean(acceptedPlayer)}
-              imageOverride={acceptedPlayer ? undefined : "/images/home/avatar_img.png"}
+              player={offer.accepted}
+              label={offer.accepted.avatar}
+              tone={offer.accepted.name != null ? "green" : "pink"}
+              points={offer.amount}
+              accepted={offer.accepted != null ? true : false}
+
+            // player={rightPlayer}
+            // label={rightLabel}
+            // tone={acceptedPlayer ? "green" : "pink"}
+            // points={acceptedPlayer ? offer.amount : undefined}
+            // accepted={Boolean(acceptedPlayer)}
+            // imageOverride={acceptedPlayer ? undefined : "/images/home/avatar_img.png"}
             />
           </div>
 
@@ -494,6 +529,7 @@ export default function ChallengeMatchDetails({
         balance={currentChallengeBalance}
         outcome={outcome}
         agreed={agreed}
+        errorMessage={errorMessage}
         onAgreeChange={setAgreed}
         onConfirm={handleConfirm}
         onClose={handleClose}

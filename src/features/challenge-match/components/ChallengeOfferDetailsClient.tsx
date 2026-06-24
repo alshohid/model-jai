@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useParams } from "next/navigation";
@@ -11,6 +12,7 @@ function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>):
 
     const data = apiResponse.data as Record<string, unknown> | undefined;
     if (!data) return null;
+    console.log(data)
 
     const game = data.game as Record<string, unknown> | undefined;
     const challengerApi = data.challenger as Record<string, unknown> | undefined;
@@ -41,12 +43,29 @@ function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>):
         };
 
     const amount = parseFloat((data.amount as string) ?? "0");
+    const acceptedPlayer = data.acceptor as Record<string, unknown> | null | undefined;
+    const accepted: any = acceptedPlayer
+        ? {
+            id: (acceptedPlayer.id as number) ?? 0,
+            name: (acceptedPlayer.name as string) ?? "Unknown",
+            handle: `@${(acceptedPlayer.name as string)?.replace(/\s+/g, "") ?? "Unknown"}`,
+            avatar: (acceptedPlayer.image as string) ?? "/images/home/avatar_img.png",
+            game: (game?.name as string) ?? "Unknown Game",
+        }
+        : {
+            id: 0,
+            name: "Open Challenge",
+            handle: "@OpenChallenge",
+            avatar: "/images/home/avatar_img.png",
+            game: (game?.name as string) ?? "Unknown Game",
+        };
 
     return {
         id: String(data.id as number),
         rank: (data.rank as number) ?? 0,
         challenger,
         target,
+        accepted,
         amount: isNaN(amount) ? 0 : amount,
         game: (game?.name as string) ?? "Unknown Game",
         memo: (data.memo as string) ?? "",

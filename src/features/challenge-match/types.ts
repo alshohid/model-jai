@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type ChallengeMatchStatus = "open" | "accepted" | "official" | "delayed";
 export type ChallengeMatchKind = "voting" | "supporting";
 export type ChallengeCreateScope = "unique" | "global";
@@ -15,6 +16,7 @@ export type ChallengeMatchOffer = {
   rank: number;
   challenger: ChallengePlayer;
   target: ChallengePlayer;
+  accepted: any;
   amount: number;
   game: string;
   memo: string;
