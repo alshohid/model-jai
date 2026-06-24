@@ -54,7 +54,7 @@ export const challengeAmounts = [
   "10000",
 ];
 
-export const challengeMatchOffers: ChallengeMatchOffer[] = [
+export const DummyChallengeMatchOffers: ChallengeMatchOffer[] = [
   {
     id: "boss-10000-fc26",
     rank: 1,
@@ -72,6 +72,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: true,
     createdAt: "2026-06-07T08:00:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "junior-8000-mortal",
@@ -86,6 +91,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: false,
     createdAt: "2026-06-07T07:30:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "breezy-6000-fifa",
@@ -103,6 +113,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: true,
     createdAt: "2026-06-07T07:00:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "fat-6000-fc26",
@@ -117,6 +132,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: true,
     createdAt: "2026-06-07T06:40:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "dieumens-6000-fc26",
@@ -136,6 +156,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: false,
     createdAt: "2026-06-07T06:20:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "pdous-5000-street",
@@ -155,6 +180,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: true,
     createdAt: "2026-06-07T06:00:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "pann-5000-mortal",
@@ -174,6 +204,11 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: true,
     createdAt: "2026-06-07T05:40:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
   {
     id: "wizz-4500-fc26",
@@ -193,13 +228,18 @@ export const challengeMatchOffers: ChallengeMatchOffer[] = [
     status: "open",
     showRealName: false,
     createdAt: "2026-06-07T05:20:00Z",
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
+    match_date: "",
+    match_time: "",
   },
 ];
 
 export const getSortedChallengeMatchOffers = () =>
-  [...challengeMatchOffers].sort((a, b) => b.amount - a.amount);
+  [...DummyChallengeMatchOffers].sort((a, b) => b.amount - a.amount);
 
 export const getChallengeMatchOfferById = (offerId: string) =>
-  challengeMatchOffers.find((offer) => offer.id === offerId) ?? null;
+  DummyChallengeMatchOffers.find((offer) => offer.id === offerId) ?? null;
 
 export const currentChallengeBalance = 48300;

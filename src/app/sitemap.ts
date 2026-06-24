@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl } from "@/shared/seo/site";
-import { getSortedChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
+// import { getSortedChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
@@ -30,14 +30,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const offers = await getSortedChallengeMatchOffers();
+  // const offers = await getSortedChallengeMatchOffers();
 
-  const challengePages: MetadataRoute.Sitemap = offers.map((offer) => ({
-    url: absoluteUrl(`/challenge-dashboard/${offer.id}`),
-    lastModified: new Date(),
-    changeFrequency: "daily",
-    priority: 0.6,
-  }));
+  const challengePages: MetadataRoute.Sitemap = [];
+  //   offers.map((offer) => ({
+  //   url: absoluteUrl(`/challenge-dashboard/${offer.id}`),
+  //   lastModified: new Date(),
+  //   changeFrequency: "daily",
+  //   priority: 0.6,
+  // }));
 
   return [...staticPages, ...challengePages];
 }

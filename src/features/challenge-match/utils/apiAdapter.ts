@@ -102,6 +102,9 @@ export function mapApiChallengeToOffer(
     rank: item.rank,
     challenger,
     target,
+    accepted: null,
+    acceptedPlayer: null,
+    isAccepted: false,
     amount: Number(item.amount),
     game: item.game.name,
     memo: item.memo,
@@ -110,6 +113,8 @@ export function mapApiChallengeToOffer(
     status: statusMap[item.status] ?? "open",
     showRealName: item.show_real_name,
     createdAt: item.created_at,
+    match_date: item.match_date,
+    match_time: item.match_time,
     // extra fields for accept-button logic
     mode: item.mode,
     targetPlayerId: item.target_player?.id ?? null,

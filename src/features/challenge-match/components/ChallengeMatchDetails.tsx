@@ -104,12 +104,12 @@ function ChallengePortraitCard({
         unoptimized
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/16 to-transparent" />
-      {accepted ? (
+      {/* {accepted ? (
         <div className="absolute right-1 top-1 inline-flex items-center gap-1 rounded-full border border-[#62ff52]/40 bg-black/70 px-1.5 py-0.5 text-[8px] font-black uppercase text-[#62ff52] shadow-[0_0_12px_rgba(98,255,82,0.45)]">
           <ShieldCheck className="h-3 w-3" />
           Accepted
         </div>
-      ) : null}
+      ) : null} */}
       <div className="absolute inset-x-1 bottom-1 text-center">
         <p className={cn("truncate text-[11px] font-black sm:text-base", toneClass)}>
           {label}

@@ -27,7 +27,7 @@ import { PaymentMethodId } from "@/types/user/point";
 import { getErrorMessage } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
-import { challengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
+import { DummyChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
 
 const MyProfileSection = () => {
     const [openEdit, setOpenEdit] = useState(false);
@@ -51,7 +51,7 @@ const MyProfileSection = () => {
     const [changeProfileVisibility] = useProfileVisibilityMutation();
     const searchParams = useSearchParams();
     const hash = typeof window !== "undefined" ? window.location.hash : "";
-    const allOffers = challengeMatchOffers;
+    const allOffers = DummyChallengeMatchOffers;
 
     useEffect(() => {
         if (hash) {
