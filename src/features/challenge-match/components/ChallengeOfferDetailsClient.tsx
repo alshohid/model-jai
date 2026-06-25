@@ -7,6 +7,7 @@ import { useGetChallengeByIdQuery } from "@/redux/features/challenge/challengeMa
 import ChallengeMatchDetails from "./ChallengeMatchDetails";
 import type { ChallengeMatchOffer, ChallengePlayer, ChallengeMatchKind, ChallengeMatchStatus } from "../types";
 
+
 function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>): ChallengeMatchOffer | null {
     if (!apiResponse) return null;
 
@@ -46,7 +47,7 @@ function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>):
         };
 
     const amount = parseFloat((data.amount as string) ?? "0");
-    const isAccepted = data.status === "accepted" ? true : false;
+    const isAccepted = ["accepted", "completed", "expired"].includes(data?.status as string);
     const acceptedPlayer = data.acceptor as Record<string, unknown> | null | undefined;
     const accepted: any = acceptedPlayer
         ? {

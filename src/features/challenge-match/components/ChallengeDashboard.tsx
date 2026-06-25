@@ -34,10 +34,12 @@ export default function ChallengeDashboard() {
   }, [challengesData]);
 
   const canAcceptOffer = (offer: ChallengeMatchOffer) => {
-    if (offer.mode === "global") return true;
+    if (offer.mode === "global") {
+      return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
+    }
     if (offer.mode === "unique") {
       return offer.targetPlayerId != null && currentUserId != null
-        ? offer.targetPlayerId === currentUserId
+        ? Number(offer.targetPlayerId) === Number(currentUserId) && Number(offer.challenger.id) !== Number(currentUserId)
         : false;
     }
 
