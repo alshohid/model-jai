@@ -9,17 +9,19 @@ import ArtistProfilePanel from "@/shared/components/user/ArtistProfilePanel";
 import Skeleton from "@/shared/UI/Skeleton";
 import { useShowArtistPostByIdQuery, useViewSingleArtistProfileQuery } from "@/redux/features/user/userManagement";
 import { toast } from "sonner";
-import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
+import { useFollowArtistMutation, useGetMeDataQuery, useUnFollowArtistMutation } from "@/redux/features/auth/authapi";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
-import { DummyChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
+
 import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
 import { useGetIndividualChallengeListByUserIdQuery } from "@/redux/features/challenge/challengeManagement";
 import { ApiChallengeItem, mapApiChallengeToOffer } from "@/features/challenge-match/utils/apiAdapter";
 import { useMemo } from "react";
 import { ChallengeMatchOffer } from "@/features/challenge-match/types";
+import { useAuth } from "@/redux/features/auth/hooks";
 
 
 export default function ArtistProfilePage() {
+    const { isAuthenticated } = useAuth();
     const params = useParams();
     const artistId = Number(params.artistId);
 
@@ -27,11 +29,11 @@ export default function ArtistProfilePage() {
     const { data: postsResponse, isLoading: postsLoading, isError: postsError } = useShowArtistPostByIdQuery(artistId);
     const [followArtist, { isLoading: isFollowing }] = useFollowArtistMutation();
     const [unFollowArtist, { isLoading: isUnfollowing }] = useUnFollowArtistMutation();
-    const allOffers = DummyChallengeMatchOffers;
     const { data: userChallengeList, isLoading: isUserChallengeListLoading, isError: isUserChallengeListError } = useGetIndividualChallengeListByUserIdQuery({
         id: artistId,
     }, { skip: !artistId });
-
+    const { data: meData } = useGetMeDataQuery(undefined, { skip: !isAuthenticated })
+    const currentUserId = meData?.data?.user?.id;
     const topOffers = useMemo(() => {
         if (!userChallengeList?.data) return [];
 
@@ -43,11 +45,11 @@ export default function ArtistProfilePage() {
     }, [userChallengeList]);
     const canAcceptOffer = (offer: ChallengeMatchOffer): boolean => {
         if (offer.mode === "global") {
-            return artistId != null && Number(offer.challenger.id) !== Number(artistId);
+            return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
         }
         if (offer.mode === "unique") {
-            return offer.targetPlayerId != null && artistId != null
-                ? Number(offer.targetPlayerId) === Number(artistId) && Number(offer.challenger.id) !== Number(artistId)
+            return offer.targetPlayerId != null && currentUserId != null
+                ? Number(offer.targetPlayerId) === Number(currentUserId) && Number(offer.challenger.id) !== Number(currentUserId)
                 : false;
         }
 
