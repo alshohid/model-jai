@@ -58,6 +58,7 @@ type Props = {
     isLoading?: boolean;
     offers: ChallengeMatchOffer[];
     onPostsClick?: () => void;
+    canAcceptOffer?: (offer: ChallengeMatchOffer) => boolean;
 };
 
 const avatarFallbackSrc = "/images/home/avatar_img.png";
@@ -115,6 +116,7 @@ export default function ArtistProfilePanel({
     isLoading,
     offers,
     onPostsClick,
+    canAcceptOffer,
 }: Props) {
     const avatarSrc = getSafeImageSrc(artist.avatar, avatarFallbackSrc);
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -169,6 +171,7 @@ export default function ArtistProfilePanel({
                                 offer={offer}
                                 compact
                                 onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
+                                acceptVisible={canAcceptOffer ? canAcceptOffer(offer) : true}
                             />
                         ))}
                         {offers && offers.length > 3 && (
@@ -214,6 +217,7 @@ export default function ArtistProfilePanel({
                                             router.push(`/challenge-dashboard/${offer.id}`);
                                             setSheetOpen(false);
                                         }}
+                                        acceptVisible={canAcceptOffer ? canAcceptOffer(offer) : true}
                                     />
                                 ))}
                             </div>

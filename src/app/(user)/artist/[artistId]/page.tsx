@@ -13,6 +13,10 @@ import { useFollowArtistMutation, useUnFollowArtistMutation } from "@/redux/feat
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 import { DummyChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
 import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
+import { useGetIndividualChallengeListByUserIdQuery } from "@/redux/features/challenge/challengeManagement";
+import { ApiChallengeItem, mapApiChallengeToOffer } from "@/features/challenge-match/utils/apiAdapter";
+import { useMemo } from "react";
+import { ChallengeMatchOffer } from "@/features/challenge-match/types";
 
 
 export default function ArtistProfilePage() {
@@ -24,6 +28,31 @@ export default function ArtistProfilePage() {
     const [followArtist, { isLoading: isFollowing }] = useFollowArtistMutation();
     const [unFollowArtist, { isLoading: isUnfollowing }] = useUnFollowArtistMutation();
     const allOffers = DummyChallengeMatchOffers;
+    const { data: userChallengeList, isLoading: isUserChallengeListLoading, isError: isUserChallengeListError } = useGetIndividualChallengeListByUserIdQuery({
+        id: artistId,
+    }, { skip: !artistId });
+
+    const topOffers = useMemo(() => {
+        if (!userChallengeList?.data) return [];
+
+        const rawItems = userChallengeList.data as unknown as ApiChallengeItem[];
+
+        return rawItems
+            .map(mapApiChallengeToOffer)
+            .sort((a, b) => a.rank - b.rank)
+    }, [userChallengeList]);
+    const canAcceptOffer = (offer: ChallengeMatchOffer): boolean => {
+        if (offer.mode === "global") {
+            return artistId != null && Number(offer.challenger.id) !== Number(artistId);
+        }
+        if (offer.mode === "unique") {
+            return offer.targetPlayerId != null && artistId != null
+                ? Number(offer.targetPlayerId) === Number(artistId) && Number(offer.challenger.id) !== Number(artistId)
+                : false;
+        }
+
+        return true;
+    };
 
     if (isLoading) {
         return (
@@ -119,7 +148,8 @@ export default function ArtistProfilePage() {
                         onFollow={handleFollowToggle}
                         onSendTip={handleSendTip}
                         isLoading={isFollowing || isUnfollowing}
-                        offers={allOffers}
+                        offers={topOffers}
+                        canAcceptOffer={(offer) => canAcceptOffer(offer)}
                         onPostsClick={() => scrollToSection("artist-posts")}
                     />
                     <MissionarySection
