@@ -103,6 +103,16 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ChallengeManagement"],
     }),
+    getIndividualChallengeListByUserId: builder.query<
+      ChallengeListResponse,
+      { id: number }
+    >({
+      query: ({ id }) => ({
+        url: `/users/${id}/challenges`,
+        method: "GET",
+      }),
+      providesTags: ["ChallengeManagement"],
+    }),
     adminAcceptChallenge: builder.mutation<
       ChallengeAcceptResponse,
       { id: number }
@@ -165,5 +175,6 @@ export const {
   useAdminAcceptChallengeMutation,
   useAdminDeclineChallengeMutation,
   useWinnerSelectForChallengeByAdminMutation,
+  useGetIndividualChallengeListByUserIdQuery,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;

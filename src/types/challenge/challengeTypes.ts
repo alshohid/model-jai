@@ -67,7 +67,7 @@ export interface UserSearchParams {
 
 // Challenge list response
 export interface ChallengeListResponse {
-  status: boolean;
+  success: boolean;
   message: string;
   data: ChallengeItem[];
   meta: PaginationMeta;

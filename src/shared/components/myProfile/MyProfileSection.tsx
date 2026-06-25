@@ -28,8 +28,12 @@ import { getErrorMessage } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
 import { DummyChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
+import { useGetIndividualChallengeListByUserIdQuery } from "@/redux/features/challenge/challengeManagement";
+import { useAuth } from "@/redux/features/auth/hooks";
+import { ApiChallengeItem, mapApiChallengeToOffer } from "@/features/challenge-match/utils/apiAdapter";
 
 const MyProfileSection = () => {
+    const { isAuthenticated } = useAuth();
     const [openEdit, setOpenEdit] = useState(false);
     const [sendMoneyOpen, setSendMoneyOpen] = useState(false);
     const [withdrawal, setwithdrawalOpen] = useState(false);
@@ -47,8 +51,9 @@ const MyProfileSection = () => {
     const [disconnectPaymentMethod] = useDisconnectPaymentMethodMutation()
     const [editProfile, { isLoading: isEditProfileLoading }] = useEditProfileMutation()
     const [changeFavoriteGame, { isLoading: isChangeFavoriteGameLoading }] = useChangeFavoriteGameMutation()
-    const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery()
+    const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery(undefined, { skip: !isAuthenticated })
     const [changeProfileVisibility] = useProfileVisibilityMutation();
+
     const searchParams = useSearchParams();
     const hash = typeof window !== "undefined" ? window.location.hash : "";
     const allOffers = DummyChallengeMatchOffers;
@@ -83,7 +88,9 @@ const MyProfileSection = () => {
                 : null,
         [user?.game]
     );
-
+    const { data: userChallengeList, isLoading: isUserChallengeListLoading, isError: isUserChallengeListError } = useGetIndividualChallengeListByUserIdQuery({
+        id: user?.id || 0,
+    })
     const {
         allMethods: paymentMethods,
         connectedMethods,
@@ -91,7 +98,30 @@ const MyProfileSection = () => {
     } = usePaymentConnectionStatuses({
         enabled: Boolean(user),
     });
+    const currentUserId = user?.id;
+    const topOffers = useMemo(() => {
+        if (!userChallengeList?.data) return [];
 
+        const rawItems = userChallengeList.data as unknown as ApiChallengeItem[];
+
+        return rawItems
+            .map(mapApiChallengeToOffer)
+            .sort((a, b) => a.rank - b.rank)
+            .slice(0, 3);
+    }, [userChallengeList]);
+
+
+    const canAcceptOffer = (offer: ReturnType<typeof mapApiChallengeToOffer>) => {
+        if (offer.mode === "global") {
+            return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
+        }
+        if (offer.mode === "unique") {
+            return offer.targetPlayerId != null && currentUserId != null
+                ? Number(offer.targetPlayerId) === Number(currentUserId) && Number(offer.challenger.id) !== Number(currentUserId)
+                : false;
+        }
+
+    };
 
     const visibility = {
         show_email: user?.show_email ?? false,
