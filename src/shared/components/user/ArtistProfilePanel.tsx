@@ -122,7 +122,7 @@ export default function ArtistProfilePanel({
     const [sheetOpen, setSheetOpen] = useState(false);
     const router = useRouter();
 
-
+    console.log("artist", artist);
     return (
         <section
             className={cn(
@@ -195,7 +195,7 @@ export default function ArtistProfilePanel({
                             <SheetHeader className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/10 ">
                                 <div className="flex items-center justify-between">
                                     <SheetTitle className="text-white text-[17px] font-semibold">
-                                        <h4 className="text-center ">Ariana&apos;s <span className="text-pink-500"> Offers</span></h4>
+                                        <h4 className="text-center ">{artist?.username ? artist?.username : artist?.name} &apos;s<span className="text-pink-500"> Offers</span></h4>
                                     </SheetTitle>
                                     <SheetClose asChild>
                                         <button
