@@ -161,7 +161,6 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                         <CoinReceivedToast
                             sender_name={notification.sender_name!}
                             amount={notification.amount!}
-                        // message={notification.message}
                         />
                     ),
                     {
@@ -170,7 +169,7 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                     },
                 );
             }
-            else if (notification.type === "challenge.won" && notification.payout) {
+            else if (notification.type === "challenge.won" && notification.payout!) {
                 try {
                     const audio = new Audio("/images/cash_money_sound.mp3");
                     audio.volume = 0.6;
@@ -189,7 +188,7 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                     },
                 );
             }
-            else if (notification.type === "challenge.lost" && notification.payout) {
+            else if (notification.type === "challenge.lost") {
                 try {
                     const audio = new Audio("/images/cash_money_sound.mp3");
                     audio.volume = 0.6;
@@ -200,7 +199,7 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
 
                 toast.custom(
                     (t) => (
-                        <ChallengeLostToast amount={notification.payout!} />
+                        <ChallengeLostToast amount={notification.stake!} />
                     ),
                     {
                         duration: 5000,

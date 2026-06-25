@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function BrandMark({
-    width=130,
+    width = 130,
     height = 90,
-    
-}) {
+
+}: { width?: number, height?: number }) {
     return (
         <Link href={'/'} className="block">
             <div className="flex items-center justify-center">

@@ -20,6 +20,7 @@ export interface IRawNotificationData {
   sender_id?: number;
   sender_name?: string;
   amount?: number;
+  stake?: number;
   coin_amount?: string;
   usd_amount?: string;
   status?: string;

@@ -63,7 +63,6 @@ export function mapSocketMatchCompletedNotification(payload: {
 export function mapSocketPrivateNotification(
   payload: IRawNotificationData & { id?: string },
 ): IAppNotificationItem {
-  console.log(payload);
   return {
     id:
       payload.id ||
