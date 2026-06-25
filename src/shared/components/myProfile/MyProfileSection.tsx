@@ -27,10 +27,10 @@ import { PaymentMethodId } from "@/types/user/point";
 import { getErrorMessage } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { scrollToSection } from "@/shared/lib/utils/scrollToSection";
-import { DummyChallengeMatchOffers } from "@/features/challenge-match/data/challengeMatchMockData";
 import { useGetIndividualChallengeListByUserIdQuery } from "@/redux/features/challenge/challengeManagement";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { ApiChallengeItem, mapApiChallengeToOffer } from "@/features/challenge-match/utils/apiAdapter";
+import type { ChallengeMatchOffer } from "@/features/challenge-match/types";
 
 const MyProfileSection = () => {
     const { isAuthenticated } = useAuth();
@@ -56,7 +56,6 @@ const MyProfileSection = () => {
 
     const searchParams = useSearchParams();
     const hash = typeof window !== "undefined" ? window.location.hash : "";
-    const allOffers = DummyChallengeMatchOffers;
 
     useEffect(() => {
         if (hash) {
@@ -107,11 +106,10 @@ const MyProfileSection = () => {
         return rawItems
             .map(mapApiChallengeToOffer)
             .sort((a, b) => a.rank - b.rank)
-            .slice(0, 3);
     }, [userChallengeList]);
 
 
-    const canAcceptOffer = (offer: ReturnType<typeof mapApiChallengeToOffer>) => {
+    const canAcceptOffer = (offer: ChallengeMatchOffer): boolean => {
         if (offer.mode === "global") {
             return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
         }
@@ -121,6 +119,7 @@ const MyProfileSection = () => {
                 : false;
         }
 
+        return true;
     };
 
     const visibility = {
@@ -435,7 +434,8 @@ const MyProfileSection = () => {
                         onSelectPaymentMethod={setSelectedPaymentMethod}
                         onConnectPaymentMethod={openConnectWalletDialog}
                         onDisconnectPaymentMethod={handleDisconnectWallet}
-                        topOneOffer={allOffers}
+                        topOneOffer={topOffers}
+                        canAcceptOffer={(offer) => canAcceptOffer(offer)}
                         onPostsClick={() => scrollToSection("my-posts")}
                     />
                 )

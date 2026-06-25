@@ -93,6 +93,7 @@ type Props = {
     className?: string;
     topOneOffer?: ChallengeMatchOffer[];
     onPostsClick?: () => void;
+    canAcceptOffer?: (offer: ChallengeMatchOffer) => boolean;
 };
 
 const statToggleKeyMap: Array<{
@@ -127,7 +128,8 @@ export default function MyProfilePanel({
     onDisconnectPaymentMethod,
     className,
     topOneOffer,
-    onPostsClick
+    onPostsClick,
+    canAcceptOffer,
 }: Props) {
     const [sheetOpen, setSheetOpen] = useState(false);
     const game = profile.favoriteGame;
@@ -186,6 +188,7 @@ export default function MyProfilePanel({
                                 offer={offer}
                                 compact
                                 onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
+                                acceptVisible={canAcceptOffer ? canAcceptOffer(offer) : true}
                             />
                         ))}
                         {topOneOffer && topOneOffer.length > 1 && (
@@ -232,6 +235,8 @@ export default function MyProfilePanel({
                                             router.push(`/challenge-dashboard/${offer.id}`);
                                             setSheetOpen(false);
                                         }}
+                                        acceptVisible={canAcceptOffer ? canAcceptOffer(offer) : true}
+
                                     />
                                 ))}
                             </div>
