@@ -36,13 +36,15 @@ export default function ChallengeHomePreview() {
 
 
   const canAcceptOffer = (offer: ReturnType<typeof mapApiChallengeToOffer>) => {
-    if (offer.mode === "global") return true;
+    if (offer.mode === "global") {
+      return offer.challenger.id !== currentUserId ? true : false;
+    }
     if (offer.mode === "unique") {
       return offer.targetPlayerId != null && currentUserId != null
-        ? offer.targetPlayerId === currentUserId
+        ? offer.targetPlayerId === currentUserId && offer.challenger.id !== currentUserId
         : false;
     }
-    return true;
+
   };
 
   if (isLoading) {
@@ -93,6 +95,7 @@ export default function ChallengeHomePreview() {
               key={offer.id}
               offer={offer}
               compact
+
               onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
               acceptVisible={canAcceptOffer(offer)}
             />

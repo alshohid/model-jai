@@ -15,12 +15,14 @@ type ChallengeOfferCardProps = {
   compact?: boolean;
   onAccept?: (offer: ChallengeMatchOffer) => void;
   acceptVisible?: boolean;
+
 };
 
 export default function ChallengeOfferCard({
   offer,
   onAccept,
   acceptVisible = true,
+
 }: ChallengeOfferCardProps) {
   const [isMemoOpen, setIsMemoOpen] = useState(false);
   const challengerName = offer.showRealName
@@ -91,10 +93,13 @@ export default function ChallengeOfferCard({
         </div>
       </div>
 
+
       <ChallengeAcceptButton
         onClick={() => onAccept?.(offer)}
         visible={acceptVisible}
+
       />
+
 
       <AppDialog
         open={isMemoOpen}
