@@ -70,6 +70,11 @@ export default function ArtistProfilePage() {
     const artistData = profileResponse?.data;
     const user = artistData.user;
     const artistPosts = postsResponse?.data?.posts ?? [];
+    const challengeStats = {
+        total: user?.challenge_total_count,
+        won: user?.challenge_wins_count,
+        lost: user?.challenge_losses_count,
+    }
 
 
     const mappedArtist = {
@@ -151,6 +156,7 @@ export default function ArtistProfilePage() {
                         onSendTip={handleSendTip}
                         isLoading={isFollowing || isUnfollowing}
                         offers={topOffers}
+                        challengeStats={challengeStats}
                         canAcceptOffer={(offer) => canAcceptOffer(offer)}
                         onPostsClick={() => scrollToSection("artist-posts")}
                     />

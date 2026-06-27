@@ -52,6 +52,11 @@ type StatItem = {
 type Props = {
     artist: ArtistInfo;
     stats: StatItem[];
+    challengeStats?: {
+        total: number;
+        won: number;
+        lost: number;
+    };
     onFollow?: () => void;
     onSendTip?: () => void;
     className?: string;
@@ -111,6 +116,7 @@ function ArtistAvatarImage({ src, alt }: { src: string; alt: string }) {
 export default function ArtistProfilePanel({
     artist,
     stats,
+    challengeStats,
     onFollow,
     className,
     isLoading,
@@ -254,13 +260,13 @@ export default function ArtistProfilePanel({
                         )} */}
                         <div className="w-full flex items-center justify-center">
                             <MatchScoreCard
-                                title="On 21 Match"
+                                title={`On ${challengeStats?.total || 0} Match`}
                                 left={{
-                                    score: 10,
+                                    score: challengeStats?.won || 0,
                                     color: "green",
                                 }}
                                 right={{
-                                    score: 11,
+                                    score: challengeStats?.lost || 0,
                                     color: "red",
                                 }}
                             />
