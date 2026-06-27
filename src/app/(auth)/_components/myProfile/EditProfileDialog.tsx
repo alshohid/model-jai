@@ -11,6 +11,7 @@ import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
 import { MailIcon } from "@/shared/UI/icon/icon";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { getErrorMessage } from "@/lib/utils";
+import AlertMessage from "./AlertMessage";
 
 type EditProfileFormValues = {
     first_name: string;
@@ -109,21 +110,24 @@ export default function EditProfileDialog({
 
                 {/* upload button overlay */}
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 w-full flex justify-center">
-                    <button
-                        type="button"
-                        onClick={() => fileRef.current?.click()}
-                        className={cn(
-                            "cursor-pointer",
-                            "h-[34px] px-4 sm:px-5 rounded-[8px]",
-                            "bg-[#FF2EC8] text-white text-[12px] sm:text-[13px] font-medium",
-                            "border border-white/35",
-                            "shadow-[0_6px_20px_rgba(255,46,200,0.25)]",
-                            "hover:opacity-95 transition",
-                            "max-w-[90%] whitespace-nowrap"
-                        )}
-                    >
-                        Upload Profile Picture
-                    </button>
+                    <div className="flex flex-col items-center gap-4">
+                        <AlertMessage message="Profile picture must be 2MB or less." />
+                        <button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className={cn(
+                                "cursor-pointer",
+                                "h-[34px] px-4 sm:px-5 rounded-[8px]",
+                                "bg-[#FF2EC8] text-white text-[12px] sm:text-[13px] font-medium",
+                                "border border-white/35",
+                                "shadow-[0_6px_20px_rgba(255,46,200,0.25)]",
+                                "hover:opacity-95 transition",
+                                "max-w-[90%] whitespace-nowrap"
+                            )}
+                        >
+                            Upload Profile Picture
+                        </button>
+                    </div>
                 </div>
 
                 <input
