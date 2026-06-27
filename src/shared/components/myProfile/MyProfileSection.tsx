@@ -107,7 +107,11 @@ const MyProfileSection = () => {
             .map(mapApiChallengeToOffer)
             .sort((a, b) => a.rank - b.rank)
     }, [userChallengeList]);
-
+    const challenge_matchInfo = {
+        total: user?.challenge_total_count || 0,
+        lost: user?.challenge_losses_count || 0,
+        won: user?.challenge_wins_count || 0,
+    }
 
     const canAcceptOffer = (offer: ChallengeMatchOffer): boolean => {
         if (offer.mode === "global") {
@@ -405,6 +409,7 @@ const MyProfileSection = () => {
                                 icon: "/images/home/stat_button_3.png",
                             },
                         ]}
+                        challengeStats={challenge_matchInfo}
                         isBigBoss={isBigBoss}
                         paymentMethods={paymentMethods}
                         selectedPaymentMethod={selectedPaymentMethod}

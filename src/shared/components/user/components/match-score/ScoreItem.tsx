@@ -17,13 +17,13 @@ export const ScoreItem = memo(function ScoreItem({
 }: ScoreItemProps) {
     return (
         <div className="flex items-center gap-3">
-            <span className="text-3xl font-semibold tracking-tight text-white">
+            <span className="md:text-3xl text-lg font-semibold tracking-tight text-white">
                 {score}
             </span>
 
             <span
                 className={cn(
-                    "h-7 w-7 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.12)]",
+                    "md:h-7 md:w-7 h-5 w-5 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.12)]",
                     colors[color]
                 )}
             />

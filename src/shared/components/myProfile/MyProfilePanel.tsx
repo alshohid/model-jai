@@ -77,6 +77,11 @@ type Props = {
         identifier: string | null;
         isLoading?: boolean;
     }>;
+    challengeStats?: {
+        total: number;
+        won: number;
+        lost: number;
+    };
     selectedPaymentMethod?: PaymentMethodId | null;
     walletActionMethod?: PaymentMethodId | null;
     walletActionMode?: "connect" | "disconnect" | null;
@@ -117,6 +122,7 @@ export default function MyProfilePanel({
     walletActionMethod,
     walletActionMode,
     visibility,
+    challengeStats,
     visibilityToggles,
     onEditProfile,
     onChangeFavoriteGame,
@@ -346,13 +352,13 @@ export default function MyProfilePanel({
                         <div>
                             <div className="md:mt-2 mt-3 w-full flex items-center justify-center">
                                 <MatchScoreCard
-                                    title="On 21 Match"
+                                    title={`On ${challengeStats?.total || 0} Match`}
                                     left={{
-                                        score: 10,
+                                        score: challengeStats?.won || 0,
                                         color: "green",
                                     }}
                                     right={{
-                                        score: 11,
+                                        score: challengeStats?.lost || 0,
                                         color: "red",
                                     }}
                                 />

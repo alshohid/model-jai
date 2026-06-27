@@ -26,7 +26,7 @@ export const MatchScoreCard = memo(function MatchScoreCard({
                 </p>
             </div>
 
-            <div className="flex items-center justify-center gap-8">
+            <div className="flex items-center justify-center gap-3 md:gap-5">
                 <ScoreItem
                     score={left.score}
                     color={left.color}

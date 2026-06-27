@@ -155,6 +155,9 @@ export interface IUser {
   middle_name?: string | null;
   last_name?: string | null;
   email: string;
+  challenge_total_count: number;
+  challenge_wins_count: number;
+  challenge_losses_count: number;
   phone_number: string | null;
   nationality: string | null;
   image: string | null;
