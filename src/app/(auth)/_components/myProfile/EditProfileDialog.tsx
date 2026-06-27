@@ -88,8 +88,8 @@ export default function EditProfileDialog({
                 ...data,
                 image: file,
             });
-        } catch (error) {
-            toast.error(getErrorMessage(error, "Profile update failed"));
+        } catch (error: any) {
+            toast.error(getErrorMessage(error.message, "Profile update failed"));
         }
     };
 
