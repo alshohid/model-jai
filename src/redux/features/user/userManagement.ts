@@ -216,7 +216,7 @@ const UserManagementApi = baseApi.injectEndpoints({
         url: `/show_artist_prifile/${id}`,
         method: "GET",
       }),
-      providesTags: ["ManageUser"],
+      providesTags: ["ManageUser", "User"],
     }),
     getTotalUserCount: builder.query<any, void>({
       query: () => ({

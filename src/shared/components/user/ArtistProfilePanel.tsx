@@ -64,6 +64,7 @@ type Props = {
     offers: ChallengeMatchOffer[];
     onPostsClick?: () => void;
     canAcceptOffer?: (offer: ChallengeMatchOffer) => boolean;
+
 };
 
 const avatarFallbackSrc = "/images/home/avatar_img.png";
@@ -123,12 +124,12 @@ export default function ArtistProfilePanel({
     offers,
     onPostsClick,
     canAcceptOffer,
+
 }: Props) {
     const avatarSrc = getSafeImageSrc(artist.avatar, avatarFallbackSrc);
     const [sheetOpen, setSheetOpen] = useState(false);
     const router = useRouter();
 
-    console.log("artist", artist);
     return (
         <section
             className={cn(
@@ -251,13 +252,11 @@ export default function ArtistProfilePanel({
                                 {artist.show_email && <InfoRow label="Email" value={artist.email} />}
                             </div>
                         </div>
-
-                        {/* Bio */}
-                        {/* {artist.bio && (
+                        {artist.bio && (
                             <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
-                                <p className="text-white/80 text-sm leading-relaxed">{artist.bio}</p>
+                                <p className="text-white/80 text-sm text-wrap leading-relaxed">{artist.bio}</p>
                             </div>
-                        )} */}
+                        )}
                         <div className="w-full flex items-center justify-center">
                             <MatchScoreCard
                                 title={`On ${challengeStats?.total || 0} Match`}

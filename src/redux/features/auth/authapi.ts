@@ -103,7 +103,7 @@ const authApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { bio: body.bio },
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "ManageUser"],
     }),
 
     facebookLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({

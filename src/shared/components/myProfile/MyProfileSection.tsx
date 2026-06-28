@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import EditProfileDialog from "@/app/(auth)/_components/myProfile/EditProfileDialog";
+import EditBioDialog from "@/app/(auth)/_components/myProfile/EditBioDialog";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import MyProfilePanel from "./MyProfilePanel"
 import { useEffect, useMemo, useState } from "react";
@@ -35,6 +36,7 @@ import type { ChallengeMatchOffer } from "@/features/challenge-match/types";
 const MyProfileSection = () => {
     const { isAuthenticated } = useAuth();
     const [openEdit, setOpenEdit] = useState(false);
+    const [editBioOpen, setEditBioOpen] = useState(false);
     const [sendMoneyOpen, setSendMoneyOpen] = useState(false);
     const [withdrawal, setwithdrawalOpen] = useState(false);
     const [referralLinkOpen, setReferralLinkOpen] = useState(false);
@@ -53,7 +55,7 @@ const MyProfileSection = () => {
     const [changeFavoriteGame, { isLoading: isChangeFavoriteGameLoading }] = useChangeFavoriteGameMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery(undefined, { skip: !isAuthenticated })
     const [changeProfileVisibility] = useProfileVisibilityMutation();
-    const [updateProfileBio] = useUpdateProfileBioMutation();
+    const [updateProfileBio, { isLoading: isUpdateBioLoading }] = useUpdateProfileBioMutation();
 
     const searchParams = useSearchParams();
     const hash = typeof window !== "undefined" ? window.location.hash : "";
@@ -327,6 +329,19 @@ const MyProfileSection = () => {
             toast.error(getErrorMessage(error, "Failed to update favorite game"));
         }
     };
+    const handleBioSave = async (bio: string) => {
+        try {
+            const response = await updateProfileBio({ bio }).unwrap();
+            if (response?.success) {
+                toast.success(response.message || "Bio updated successfully");
+                setEditBioOpen(false);
+            } else {
+                toast.error(response?.message || "Failed to update bio");
+            }
+        } catch (error) {
+            toast.error(getErrorMessage(error, "Failed to update bio"));
+        }
+    };
     const handleVisibilityToggle = async (
         key: keyof IProfileVisibilityParams
     ) => {
@@ -380,6 +395,7 @@ const MyProfileSection = () => {
                             posts: user?.total_post ?? 0,
                             followers: String(user?.followers_count ?? 0),
                             following: String(user?.following_count ?? 0),
+                            bio: user?.bio ?? null,
                             favoriteGame: user?.game
                                 ? {
                                     id: user.game.id,
@@ -443,6 +459,7 @@ const MyProfileSection = () => {
                         topOneOffer={topOffers}
                         canAcceptOffer={(offer) => canAcceptOffer(offer)}
                         onPostsClick={() => scrollToSection("my-posts")}
+                        onEditBio={() => setEditBioOpen(true)}
                     />
                 )
             }
@@ -563,6 +580,14 @@ const MyProfileSection = () => {
                 imageSrc={user?.image}
                 onCopy={() => toast.success("Referral link copied")}
                 onShare={() => toast.success("Referral link shared")}
+            />
+
+            <EditBioDialog
+                open={editBioOpen}
+                onOpenChange={setEditBioOpen}
+                defaultBio={user?.bio}
+                onSave={handleBioSave}
+                isLoading={isUpdateBioLoading}
             />
 
         </div>

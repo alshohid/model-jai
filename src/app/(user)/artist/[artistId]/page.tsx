@@ -89,7 +89,7 @@ export default function ArtistProfilePage() {
         followers: String(user?.followers_count || 0),
         following: String(user?.following_count || 0),
         isFollowing: artistData?.is_followed,
-        bio: user?.note || "No memo available",
+        bio: user?.bio || "No bio available",
         contact: user?.phone_number || "N/A",
         nationality: user?.nationality || "N/A",
         show_name: user?.show_name,

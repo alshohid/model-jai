@@ -176,6 +176,7 @@ export interface IUser {
   total_balance: number;
   artist_name?: string | null;
   city?: string | null;
+  bio?: string | null;
   show_email: boolean;
   show_name: boolean;
   show_total_earning: boolean;

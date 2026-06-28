@@ -40,6 +40,7 @@ type ProfileInfo = {
         name?: string;
         image?: string | null;
     } | null;
+    bio?: string | null;
 };
 
 type StatItem = {
@@ -99,6 +100,7 @@ type Props = {
     topOneOffer?: ChallengeMatchOffer[];
     onPostsClick?: () => void;
     canAcceptOffer?: (offer: ChallengeMatchOffer) => boolean;
+    onEditBio?: () => void;
 };
 
 const statToggleKeyMap: Array<{
@@ -136,6 +138,7 @@ export default function MyProfilePanel({
     topOneOffer,
     onPostsClick,
     canAcceptOffer,
+    onEditBio,
 }: Props) {
     const [sheetOpen, setSheetOpen] = useState(false);
     const game = profile.favoriteGame;
@@ -256,7 +259,7 @@ export default function MyProfilePanel({
                         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                             {/* Info rows */}
                             <div className="min-w-0 space-y-2 py-3 md:py-8">
-                                <div onClick={() => console.log("modal open hobe")}
+                                <div onClick={onEditBio}
                                     className="mb-2 cursor-pointer">
                                     <div className="flex justify-start">
                                         <Image
