@@ -256,6 +256,19 @@ export default function MyProfilePanel({
                         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
                             {/* Info rows */}
                             <div className="min-w-0 space-y-2 py-3 md:py-8">
+                                <div onClick={() => console.log("modal open hobe")}
+                                    className="mb-2 cursor-pointer">
+                                    <div className="flex justify-start">
+                                        <Image
+                                            src="/images/bio_pic.png"
+                                            alt="bio pic"
+                                            width={200}
+                                            height={200}
+                                            className=" w-16 h-16"
+                                        />
+
+                                    </div>
+                                </div>
                                 <div className="flex items-center gap-2">
                                     <InfoRow
                                         label="Name"

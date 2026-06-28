@@ -12,7 +12,7 @@ import {
     useDisconnectPaymentMethodMutation,
     useWithdrawRequestMutation,
 } from "@/redux/features/pointstore/buypoint";
-import { useChangeFavoriteGameMutation, useEditProfileMutation, useGetMeDataQuery, useProfileVisibilityMutation } from "@/redux/features/auth/authapi";
+import { useChangeFavoriteGameMutation, useEditProfileMutation, useGetMeDataQuery, useProfileVisibilityMutation, useUpdateProfileBioMutation } from "@/redux/features/auth/authapi";
 import { toast } from "sonner";
 import ProfileSkeleton from "./ProfileSkeleton";
 import { IGameOption } from "@/types/game/gameList/gameListTypes";
@@ -53,6 +53,7 @@ const MyProfileSection = () => {
     const [changeFavoriteGame, { isLoading: isChangeFavoriteGameLoading }] = useChangeFavoriteGameMutation()
     const { data: meData, isLoading: isMeDataLoading, isFetching: isMeDataFetching } = useGetMeDataQuery(undefined, { skip: !isAuthenticated })
     const [changeProfileVisibility] = useProfileVisibilityMutation();
+    const [updateProfileBio] = useUpdateProfileBioMutation();
 
     const searchParams = useSearchParams();
     const hash = typeof window !== "undefined" ? window.location.hash : "";
@@ -87,7 +88,7 @@ const MyProfileSection = () => {
                 : null,
         [user?.game]
     );
-    const { data: userChallengeList, isLoading: isUserChallengeListLoading, isError: isUserChallengeListError } = useGetIndividualChallengeListByUserIdQuery({
+    const { data: userChallengeList } = useGetIndividualChallengeListByUserIdQuery({
         id: user?.id || 0,
     })
     const {

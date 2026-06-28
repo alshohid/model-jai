@@ -94,6 +94,17 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    updateProfileBio: builder.mutation<
+      ApiResponse<IUserInfoResponse>,
+      { bio: string | null }
+    >({
+      query: (body) => ({
+        url: "/profile/bio",
+        method: "PATCH",
+        body: { bio: body.bio },
+      }),
+      invalidatesTags: ["User"],
+    }),
 
     facebookLogin: builder.mutation<ApiResponse<IGoogleRedirectData>, void>({
       query: () => ({
@@ -175,5 +186,6 @@ export const {
   useResetPasswordMutation,
   useAppleLoginMutation,
   useProfileVisibilityMutation,
+  useUpdateProfileBioMutation,
 } = authApi;
 export default authApi;
