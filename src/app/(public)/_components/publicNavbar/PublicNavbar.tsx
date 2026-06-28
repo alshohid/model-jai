@@ -54,7 +54,7 @@ export default function PublicNavbar() {
                         <div className={cn("flex items-center justify-between", "container")}>
                             <BrandMark />
 
-                            <nav className="hidden md:flex items-center gap-2">
+                            <nav className="hidden lg:flex items-center gap-2">
                                 {navItems.map((item) => {
                                     const active = pathname === item.href;
                                     return (
@@ -62,7 +62,7 @@ export default function PublicNavbar() {
                                             key={item.href}
                                             href={item.href}
                                             className={cn(
-                                                "cursor-pointer rounded-md px-3 py-1.5 transition text-[1rem] md:text-[1.125rem]",
+                                                "cursor-pointer rounded-md px-3 py-1.5 transition text-[1rem] lg:text-[1.125rem]",
                                                 active ? "bg-navActive text-white" : "text-[#070707]"
                                             )}
                                         >
@@ -81,8 +81,8 @@ export default function PublicNavbar() {
 
 
                             {isAuthenticated && (role === "user" || role === "artist") ? (
-                                <div className="flex items-center gap-2 md:gap-4">
-                                    <div className="hidden md:block">
+                                <div className="flex items-center gap-2 lg:gap-4">
+                                    <div className="hidden lg:block">
                                         <NavbarSearch />
                                     </div>
                                     <div className="mr-2">
@@ -90,13 +90,13 @@ export default function PublicNavbar() {
                                             href="/notifications"
                                             className={cn(
                                                 "relative inline-flex items-center justify-center shrink-0",
-                                                "size-7 sm:size-8 md:size-10 rounded-lg",
+                                                "size-7 sm:size-8 lg:size-10 rounded-lg",
                                                 "bg-[#FF2EC8]/20 border border-[#FF2EC8]/30",
                                                 "text-white transition-all hover:bg-[#FF2EC8]/30",
                                                 pathname === "/notifications" && "bg-[#FF2EC8]/30 border-[#FF2EC8]/50"
                                             )}
                                         >
-                                            <Bell className="size-3.5 sm:size-4 md:size-5" />
+                                            <Bell className="size-3.5 sm:size-4 lg:size-5" />
 
                                             {unreadCount > 0 && (
                                                 <span className={cn(
@@ -114,22 +114,22 @@ export default function PublicNavbar() {
                                     </div>
                                     <div className="flex items-center gap-4">
                                         {isMeDataLoading || isMeDataFetching ? (
-                                            <div className="block md:hidden">
+                                            <div className="block lg:hidden">
                                                 <Skeleton className="h-8 w-20 rounded-md bg-black/10" />
                                             </div>
                                         ) : (
                                             <PointsMenuButton
                                                 points={Number(userProfileData?.total_balance || 0)}
                                                 size="compact"
-                                                className="block md:hidden"
+                                                className="block lg:hidden"
                                             />
                                         )}
-                                        {isMeDataFetching || isMeDataLoading ? <div className="hidden md:block">
+                                        {isMeDataFetching || isMeDataLoading ? <div className="hidden lg:block">
                                             <Skeleton />
                                         </div> : <PointsMenuButton
                                             points={Number(userProfileData?.total_balance || 0)}
                                             size="default"
-                                            className="hidden md:block"
+                                            className="hidden lg:block"
                                         />}
 
                                         {isMeDataLoading || isMeDataFetching ? <div className="animate-pulse size-10 rounded-full bg-black/10" /> : <ProfileDropdown avatarSrc={getSafeImageSrc(userProfileData?.user?.image) ?? "/images/home/profile_img.png"} />}

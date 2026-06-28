@@ -56,7 +56,7 @@ export default function MobileNavSheet({
         <Sheet>
             <div className="relative">
                 {isAuthenticated && (role === "user" || role === "artist") && (
-                    <div className="py-2 ml-2 flex md:hidden ">
+                    <div className="py-2 ml-2 flex lg:hidden ">
                         <NavbarSearch />
                     </div>
                 )}
@@ -64,7 +64,7 @@ export default function MobileNavSheet({
                     <button
                         type="button"
                         className={cn(
-                            "md:hidden cursor-pointer inline-flex items-center justify-center shrink-0",
+                            "lg:hidden cursor-pointer inline-flex items-center justify-center shrink-0",
                             "h-8 w-8 sm:h-9 sm:w-9 rounded-[10px] p-1.5",
                             triggerStyles,
                             "transition"

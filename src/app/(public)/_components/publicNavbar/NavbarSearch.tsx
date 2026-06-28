@@ -77,7 +77,7 @@ export default function NavbarSearch() {
     return (
         <>
             {/* Desktop UI */}
-            <div ref={wrapperRef} className="hidden md:block relative flex-1 min-w-0 max-w-[280px] lg:max-w-[320px]">
+            <div ref={wrapperRef} className="hidden lg:block relative flex-1 min-w-0 max-w-[320px]">
                 <div className="relative">
                     {isFetching ? (
                         <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#FF2EC8] animate-spin" />
@@ -111,7 +111,7 @@ export default function NavbarSearch() {
             </div>
 
             {/* Mobile Icon */}
-            <div className="md:hidden flex items-center">
+            <div className="lg:hidden flex items-center">
                 <button onClick={openModal} className="size-8 flex items-center justify-center bg-black/5 border border-black/10 rounded-lg">
                     <Search className="size-4 text-[#070707]" />
                 </button>

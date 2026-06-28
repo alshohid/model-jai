@@ -34,7 +34,7 @@ export default function ChallengeDropdownDesktop({
                 onClick={() => setOpen((prev) => !prev)}
                 onMouseEnter={() => setOpen(true)}
                 className={cn(
-                    "cursor-pointer flex items-center gap-1.5 rounded-md px-3 py-1.5 transition text-[1rem] md:text-[1.125rem]",
+                    "cursor-pointer flex items-center gap-1.5 rounded-md px-3 py-1.5 transition text-[1rem] lg:text-[1.125rem]",
                     pathname.startsWith("/challenge-dashboard")
                         ? "bg-navActive text-white"
                         : "text-[#070707] hover:bg-black/5"
