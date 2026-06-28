@@ -38,6 +38,7 @@ const menuItems = [
         children: [
             { label: "Gallery", href: "/admin/dashboard/gallery", icon: <GalleryVerticalIcon /> },
             { label: "News", href: "/admin/dashboard/news", icon: <NewspaperIcon /> },
+            { label: "Promotional settings", href: "/admin/dashboard/promotional-settings", icon: <NewspaperIcon /> },
             { label: "All Transactions", href: "/admin/dashboard/all-transactions", icon: <WalletIcon /> },
             { label: "Account Settings", href: "/admin/dashboard/profile", icon: <User /> },
 
