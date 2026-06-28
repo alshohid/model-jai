@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -44,7 +45,7 @@ export default function EditBioDialog({
     const submit = async (data: EditBioFormValues) => {
         try {
             await onSave?.(data.bio);
-        } catch (error: unknown) {
+        } catch (error: any) {
             toast.error(getErrorMessage(error, "Bio update failed"));
         }
     };
