@@ -12,8 +12,8 @@ export const siteConfig = {
   locale: "en_US",
   language: "en",
   ogImage: "/images/content.png",
-  ogImageWidth: 1280,
-  ogImageHeight: 720,
+  ogImageWidth: 600,
+  ogImageHeight: 600,
   logo: "/images/home/brand-logo.png",
   keywords: [
     "Model Boss Offers",
