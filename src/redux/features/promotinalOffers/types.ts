@@ -2,7 +2,7 @@
 
 export interface IPromotionalOffersData {
   prize: number;
-  list: [];
+  list: string[];
 }
 
 export interface IPromotionalOffersBaseResponse {
@@ -15,5 +15,5 @@ export interface IPromotionalOffersListResponse extends IPromotionalOffersBaseRe
 export interface IAddPromotionalOffersResponse extends IPromotionalOffersListResponse {}
 export interface IAddPromotionalOffersParams {
   prize: number;
-  list: [];
+  list: string[];
 }
