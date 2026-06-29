@@ -4,9 +4,11 @@
 import { useState } from "react";
 import { Star, Trophy } from "lucide-react";
 import PromotionalTermsModal from "./PromotionalTermsModal";
+import { useGetPublicPromotionalOffersQuery } from "@/redux/features/promotinalOffers/promotionalOffers";
 
 export default function PromotionalPriceOffer() {
     const [modalOpen, setModalOpen] = useState(false);
+    const { data } = useGetPublicPromotionalOffersQuery();
 
     return (
         <>
@@ -24,7 +26,7 @@ export default function PromotionalPriceOffer() {
                             <p className="text-sm font-bold leading-none text-white">Price:</p>
                             <div className="mt-1 flex items-end gap-1">
                                 <span className="text-4xl font-black leading-none text-[#fff200] [text-shadow:0_0_8px_rgba(255,242,0,0.65)]">
-                                    1000
+                                    {data?.prize}
                                 </span>
                                 <span className="pb-1 text-xs font-black uppercase tracking-[0.08em] text-white">
                                     Points
@@ -41,6 +43,7 @@ export default function PromotionalPriceOffer() {
             </div>
 
             <PromotionalTermsModal
+                data={data}
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
             />

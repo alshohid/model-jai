@@ -4,15 +4,12 @@ import { baseApi } from "@/redux/api/baseApi";
 import {
   IAddPromotionalOffersParams,
   IAddPromotionalOffersResponse,
-  IPromotionalOffersListResponse,
+  IPromotionalOffersData,
 } from "./types";
 
 export const promotionalOffersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAdminPromotionalOffers: builder.query<
-      IPromotionalOffersListResponse,
-      void
-    >({
+    getAdminPromotionalOffers: builder.query<IPromotionalOffersData, void>({
       query: () => ({
         url: "/admin/promotional-terms",
         method: "GET",
@@ -22,10 +19,7 @@ export const promotionalOffersApi = baseApi.injectEndpoints({
         return response?.data ?? response;
       },
     }),
-    getPublicPromotionalOffers: builder.query<
-      IPromotionalOffersListResponse,
-      void
-    >({
+    getPublicPromotionalOffers: builder.query<IPromotionalOffersData, void>({
       query: () => ({
         url: "/promotional-terms",
         method: "GET",

@@ -1,16 +1,19 @@
 "use client";
 
 import AppDialog from "@/shared/components/modal/AppDialog";
-import { Star, Trophy, ShieldCheck, Info, AlertTriangle } from "lucide-react";
+import { IPromotionalOffersData } from "@/redux/features/promotinalOffers/types";
+import { Star, Trophy, Info, AlertTriangle } from "lucide-react";
 
 interface PromotionalTermsModalProps {
     open: boolean;
     onClose: () => void;
+    data: IPromotionalOffersData | undefined;
 }
 
 export default function PromotionalTermsModal({
     open,
     onClose,
+    data
 }: PromotionalTermsModalProps) {
     return (
         <AppDialog
@@ -43,7 +46,7 @@ export default function PromotionalTermsModal({
                             <p className="text-sm font-bold leading-none text-white">Promotional Price:</p>
                             <div className="mt-1 flex items-end gap-1">
                                 <span className="text-3xl font-black leading-none text-[#fff200] [text-shadow:0_0_8px_rgba(255,242,0,0.65)]">
-                                    1000
+                                    {data?.prize}
                                 </span>
                                 <span className="pb-1 text-xs font-black uppercase tracking-[0.08em] text-white">
                                     Points
@@ -58,46 +61,26 @@ export default function PromotionalTermsModal({
                 </div>
 
                 {/* Terms & Conditions */}
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                        <Info className="h-3.5 w-3.5 text-[#ff49ff]" />
-                        <p className="text-[11px] font-semibold uppercase tracking-widest text-white/40">
-                            Terms & Conditions
-                        </p>
-                    </div>
-                    <div className="rounded-lg bg-white/5 border border-white/10 px-4 py-3.5 space-y-3">
-                        <div className="flex items-start gap-2.5">
-                            <span className="shrink-0 mt-0.5 h-1.5 w-1.5 rounded-full bg-[#ff49ff]" />
-                            <p className="text-[13px] text-white/80 leading-relaxed">
-                                This promotional offer is available for a limited time only and may be withdrawn or modified at any time without prior notice.
+                {data?.list && data.list.length > 0 && (
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                            <Info className="h-3.5 w-3.5 text-[#ff49ff]" />
+                            <p className="text-[11px] font-semibold uppercase tracking-widest text-white/40">
+                                Terms & Conditions
                             </p>
                         </div>
-                        <div className="flex items-start gap-2.5">
-                            <span className="shrink-0 mt-0.5 h-1.5 w-1.5 rounded-full bg-[#ff49ff]" />
-                            <p className="text-[13px] text-white/80 leading-relaxed">
-                                Each user is eligible for this promotional price offer only once. Subsequent purchases will be charged at the standard rate.
-                            </p>
-                        </div>
-                        <div className="flex items-start gap-2.5">
-                            <span className="shrink-0 mt-0.5 h-1.5 w-1.5 rounded-full bg-[#ff49ff]" />
-                            <p className="text-[13px] text-white/80 leading-relaxed">
-                                Promotional points are non-transferable and cannot be exchanged for cash or other currencies.
-                            </p>
-                        </div>
-                        <div className="flex items-start gap-2.5">
-                            <span className="shrink-0 mt-0.5 h-1.5 w-1.5 rounded-full bg-[#ff49ff]" />
-                            <p className="text-[13px] text-white/80 leading-relaxed">
-                                In case of any abuse or fraudulent activity, ModalJai reserves the right to cancel the promotion and deduct any points awarded.
-                            </p>
-                        </div>
-                        <div className="flex items-start gap-2.5">
-                            <span className="shrink-0 mt-0.5 h-1.5 w-1.5 rounded-full bg-[#ff49ff]" />
-                            <p className="text-[13px] text-white/80 leading-relaxed">
-                                By availing this offer, you agree to all terms and conditions set forth by ModalJai.
-                            </p>
+                        <div className="rounded-lg bg-white/5 border border-white/10 px-4 py-3.5 space-y-3">
+                            {data.list.map((item, index) => (
+                                <div key={index} className="flex items-start gap-2.5">
+                                    <span className="shrink-0 mt-0.5 h-1.5 w-1.5 rounded-full bg-[#ff49ff]" />
+                                    <p className="text-[13px] text-white/80 leading-relaxed">
+                                        {item}
+                                    </p>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Important note */}
                 <div className="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-[#fff200]/5 border border-[#fff200]/15">

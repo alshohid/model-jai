@@ -12,7 +12,9 @@ export interface IPromotionalOffersBaseResponse {
 export interface IPromotionalOffersListResponse extends IPromotionalOffersBaseResponse {
   data: IPromotionalOffersData;
 }
-export interface IAddPromotionalOffersResponse extends IPromotionalOffersListResponse {}
+export interface IAddPromotionalOffersResponse extends IPromotionalOffersBaseResponse {
+  data: IPromotionalOffersData;
+}
 export interface IAddPromotionalOffersParams {
   prize: number;
   list: string[];
