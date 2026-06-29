@@ -139,7 +139,7 @@ export const baseApi = createApi({
     "UserPost",
     "Credentials",
     "ChallengeManagement",
-    "PromotinalOffers"
+    "PromotionalOffers",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<ILoginPayload, ILoginParams>({

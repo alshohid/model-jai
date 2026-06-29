@@ -1,41 +1,57 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { baseApi } from "@/redux/api/baseApi";
-import { IAddPromotinalOffersParams, IAddPromotinalOffersResponse, IPromotinalOffersListResponse } from "./types";
-
+import {
+  IAddPromotionalOffersParams,
+  IAddPromotionalOffersResponse,
+  IPromotionalOffersListResponse,
+} from "./types";
 
 export const promotionalOffersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAdminPromotinalOffers: builder.query<IPromotinalOffersListResponse, void>({
+    getAdminPromotionalOffers: builder.query<
+      IPromotionalOffersListResponse,
+      void
+    >({
       query: () => ({
         url: "/admin/promotional-terms",
         method: "GET",
       }),
-      providesTags: ["PromotinalOffers"],
+      providesTags: ["PromotionalOffers"],
       transformResponse: (response: any) => {
         return response?.data ?? response;
       },
     }),
-    getPublicPromotinalOffers: builder.query<IPromotinalOffersListResponse, void>({
+    getPublicPromotionalOffers: builder.query<
+      IPromotionalOffersListResponse,
+      void
+    >({
       query: () => ({
         url: "/promotional-terms",
         method: "GET",
       }),
-      providesTags: ["PromotinalOffers"],
+      providesTags: ["PromotionalOffers"],
       transformResponse: (response: any) => {
         return response?.data ?? response;
       },
     }),
 
-    addAdminPromotinalOffers: builder.mutation<IAddPromotinalOffersResponse, IAddPromotinalOffersParams >({
+    addAdminPromotionalOffers: builder.mutation<
+      IAddPromotionalOffersResponse,
+      IAddPromotionalOffersParams
+    >({
       query: (params) => ({
         url: "/admin/promotional-terms",
         method: "PUT",
-        body: params
+        body: params,
       }),
-      invalidatesTags: ["PromotinalOffers"],
+      invalidatesTags: ["PromotionalOffers"],
     }),
   }),
 });
 
-export const { useGetPublicPromotinalOffersQuery, useGetAdminPromotinalOffersQuery, useAddAdminPromotinalOffersMutation } =
-  promotionalOffersApi;
+export const {
+  useGetPublicPromotionalOffersQuery,
+  useGetAdminPromotionalOffersQuery,
+  useAddAdminPromotionalOffersMutation,
+} = promotionalOffersApi;

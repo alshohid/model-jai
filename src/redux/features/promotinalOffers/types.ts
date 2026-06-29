@@ -1,20 +1,19 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 
-
-export interface IPromotinalOffersData {
-    prize: number,
-    list: []
+export interface IPromotionalOffersData {
+  prize: number;
+  list: [];
 }
 
-export interface IPromotinalOffersBaseResponse {
-    success: boolean,
-    message: string,
-
+export interface IPromotionalOffersBaseResponse {
+  success: boolean;
+  message: string;
 }
-export interface IPromotinalOffersListResponse extends IPromotinalOffersBaseResponse {
-    data: IPromotinalOffersData
+export interface IPromotionalOffersListResponse extends IPromotionalOffersBaseResponse {
+  data: IPromotionalOffersData;
 }
-export interface IAddPromotinalOffersResponse extends IPromotinalOffersListResponse { }
-export interface IAddPromotinalOffersParams {
-    prize: number,
-    list: []
+export interface IAddPromotionalOffersResponse extends IPromotionalOffersListResponse {}
+export interface IAddPromotionalOffersParams {
+  prize: number;
+  list: [];
 }
