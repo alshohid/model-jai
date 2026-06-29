@@ -1,186 +1,44 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, ImagePlus, X } from "lucide-react";
-import { useGetAllPublicGamesListQuery, useGetUsersForSelectQuery, useCreateChallengeMutation } from "@/redux/features/challenge/challengeManagement";
-import type { ChallengeCreateFormValues, ChallengeCreateScope } from "../types";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useGetAllPublicGamesListQuery } from "@/redux/features/challenge/challengeManagement";
 import { cn } from "@/shared/lib/utils/cn";
-import { toast } from "sonner";
-import { useDebounce } from "@/app/(admin)/admin/hook/useDebounce";
-
-const initialFormValues: ChallengeCreateFormValues = {
-  gameId: "",
-  price: "",
-  matchDateTime: "",
-  scope: "unique",
-  targetPlayerId: "",
-  showRealName: true,
-  memo: "",
-};
-
-function FieldLabel({
-  children,
-  required = false,
-}: {
-  children: React.ReactNode;
-  required?: boolean;
-}) {
-  return (
-    <label className="text-xs font-black uppercase tracking-[0.12em] text-white/75">
-      {children} {required ? <span className="text-[#ff43ff]">*</span> : null}
-    </label>
-  );
-}
+import useChallengeForm from "../hooks/useChallengeForm";
+import useUserSearch from "../hooks/useUserSearch";
+import FieldLabel from "./FieldLabel";
+import ChallengeCreateConfirmModal from "./ChallengeCreateConfirmModal";
 
 export default function ChallengeCreateForm() {
-  const [values, setValues] = useState<ChallengeCreateFormValues>(initialFormValues);
-  const [, setFileName] = useState("No file selected");
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [userSearch, setUserSearch] = useState("");
-  const debouncedUserSearch = useDebounce(userSearch, 400);
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const {
+    values,
+    isSubmitting,
+    showConfirmModal,
+    sharedFieldClass,
+    minDateTime,
+    updateValue,
+    updateScope,
+    handleFormSubmit,
+    handleConfirmSubmit,
+    closeConfirmModal,
+  } = useChallengeForm();
 
-  const { data: gamesData, isLoading: gamesLoading } = useGetAllPublicGamesListQuery({ page: 1, limit: 2000 });
-  const [createChallenge, { isLoading: isSubmitting }] = useCreateChallengeMutation();
-  const { data: usersData, isFetching: usersLoading } = useGetUsersForSelectQuery(
-    { search: debouncedUserSearch },
-    { skip: debouncedUserSearch.length < 2 },
-  );
+  const {
+    userSearch,
+    showUserDropdown,
+    dropdownRef,
+    users,
+    isLoading: usersLoading,
+    setUserSearch,
+    handleUserSearchChange,
+    closeDropdown,
+  } = useUserSearch();
 
-  const updateValue = <Key extends keyof ChallengeCreateFormValues>(
-    key: Key,
-    value: ChallengeCreateFormValues[Key],
-  ) => {
-    setValues((current) => ({ ...current, [key]: value }));
-  };
+  const { data: gamesData, isLoading: gamesLoading } =
+    useGetAllPublicGamesListQuery({ page: 1, limit: 2000 });
 
-  const updateScope = (scope: ChallengeCreateScope) => {
-    setValues((current) => ({
-      ...current,
-      scope,
-      targetPlayerId: scope === "global" ? "" : current.targetPlayerId,
-    }));
-  };
-
-  // Debounced user search
-  const handleUserSearchChange = useCallback((value: string) => {
-    setUserSearch(value);
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-    debounceTimerRef.current = setTimeout(() => {
-      if (value.length >= 2) {
-        setShowUserDropdown(true);
-      } else {
-        setShowUserDropdown(false);
-      }
-    }, 400);
-  }, []);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowUserDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Cleanup debounce timer
-  useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, []);
-
-  const sharedFieldClass =
-    "mt-2 w-full rounded-lg border border-white/10 bg-white/[0.05] px-3 text-sm text-white outline-none transition focus:border-[#ff43ff]/60";
-
-  // Get today's date in local format for min attribute
-  const today = new Date();
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  const minDateTime = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}T${pad(today.getHours())}:${pad(today.getMinutes())}`;
-
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0] ?? null;
-  //   if (file) {
-  //     setFileName(file.name);
-  //     setLogoFile(file);
-  //   } else {
-  //     setFileName("No file selected");
-  //     setLogoFile(null);
-  //   }
-  // };
-
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-  const handleFormSubmit = () => {
-    // Validation
-    if (!values.gameId) {
-      toast.error("Please select a game");
-      return false;
-    }
-    if (!values.price || Number(values.price) < 1) {
-      toast.error("Please enter a valid price");
-      return false;
-    }
-    if (!values.matchDateTime) {
-      toast.error("Please select match date & time");
-      return false;
-    }
-    if (values.scope === "unique" && !values.targetPlayerId) {
-      toast.error("Please select a player or user to challenge");
-      return false;
-    }
-    // Open confirmation modal instead of submitting directly
-    setShowConfirmModal(true);
-    return true;
-  };
-
-  const handleConfirmSubmit = async () => {
-    try {
-      const [dateOnly, timeOnly] = values.matchDateTime.split("T");
-
-      const result = await createChallenge({
-        game_id: Number(values.gameId),
-        amount: Number(values.price),
-        match_date: dateOnly,
-        match_time: timeOnly,
-        mode: values.scope,
-        target_player_id: values.scope === "unique" ? Number(values.targetPlayerId) : null,
-        show_real_name: values.showRealName,
-        memo: values.memo,
-        logo: logoFile,
-      }).unwrap();
-
-      if (result.success) {
-        toast.success(result.message || "Challenge created successfully!");
-        // Reset form
-        setValues(initialFormValues);
-        setFileName("No file selected");
-        setLogoFile(null);
-        setUserSearch("");
-        setShowConfirmModal(false);
-      }
-    } catch (error: unknown) {
-      const err = error as { data?: { message?: string }; message?: string };
-      const errorMessage = err?.data?.message || err?.message || "Failed to create challenge. Please try again.";
-      toast.error(errorMessage);
-    }
-  };
-
-  // Derive games & users from API data
   const games = gamesData?.data ?? [];
-  const users = usersData?.data ?? [];
-
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-black text-white">
       <div
@@ -189,9 +47,7 @@ export default function ChallengeCreateForm() {
       />
 
       <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-[420px] items-start px-4 py-8 sm:items-center">
-        <form
-          className="relative w-full rounded-[24px] border border-[#ff43ff]/35 bg-[#111017]/92 p-4 shadow-[0_0_40px_rgba(255,67,255,0.32)] backdrop-blur-xl sm:p-5"
-        >
+        <form className="relative w-full rounded-[24px] border border-[#ff43ff]/35 bg-[#111017]/92 p-4 shadow-[0_0_40px_rgba(255,67,255,0.32)] backdrop-blur-xl sm:p-5">
           <Link
             href="/challenge-dashboard"
             className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/8 text-white/75 transition hover:bg-white/12 hover:text-white"
@@ -199,8 +55,7 @@ export default function ChallengeCreateForm() {
           >
             <X className="h-4 w-4" />
           </Link>
-
-          <div className=" text-center">
+          <div className="text-center">
             <Image
               src="/images/challenge-match.png"
               alt="Create a challenge"
@@ -215,7 +70,7 @@ export default function ChallengeCreateForm() {
               <FieldLabel required>Game</FieldLabel>
               <select
                 value={values.gameId}
-                onChange={(event) => updateValue("gameId", event.target.value)}
+                onChange={(e) => updateValue("gameId", e.target.value)}
                 className={cn(sharedFieldClass, "h-11")}
               >
                 <option className="bg-[#111017]" value="">
@@ -228,7 +83,6 @@ export default function ChallengeCreateForm() {
                 ))}
               </select>
             </div>
-
             <div>
               <FieldLabel required>Price</FieldLabel>
               <input
@@ -236,23 +90,25 @@ export default function ChallengeCreateForm() {
                 min="1"
                 inputMode="numeric"
                 value={values.price}
-                onChange={(event) => updateValue("price", event.target.value)}
+                onChange={(e) => updateValue("price", e.target.value)}
                 placeholder="Enter challenge price"
                 className={cn(sharedFieldClass, "h-11 placeholder:text-white/35")}
               />
             </div>
 
+            {/* Match date & time */}
             <div>
               <FieldLabel required>Match date & time</FieldLabel>
               <input
                 type="datetime-local"
                 min={minDateTime}
                 value={values.matchDateTime}
-                onChange={(event) => updateValue("matchDateTime", event.target.value)}
+                onChange={(e) => updateValue("matchDateTime", e.target.value)}
                 className={cn(sharedFieldClass, "h-11 [color-scheme:dark]")}
               />
             </div>
 
+            {/* Challenge type */}
             <fieldset className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
               <legend className="px-1 text-xs font-black uppercase tracking-[0.12em] text-[#c858ff]">
                 Challenge type
@@ -280,13 +136,15 @@ export default function ChallengeCreateForm() {
                   />
                   Global
                 </label>
-
               </div>
             </fieldset>
 
+            {/* User search (unique only) */}
             {values.scope === "unique" ? (
               <div className="relative" ref={dropdownRef}>
-                <FieldLabel required>Challenge a unique player or user</FieldLabel>
+                <FieldLabel required>
+                  Challenge a unique player or user
+                </FieldLabel>
                 <div className="relative">
                   <input
                     type="text"
@@ -297,7 +155,7 @@ export default function ChallengeCreateForm() {
                       handleUserSearchChange(val);
                     }}
                     onFocus={() => {
-                      if (userSearch.length >= 2) setShowUserDropdown(true);
+                      if (userSearch.length >= 2) setUserSearch(userSearch);
                     }}
                     placeholder="Search player or user..."
                     className={cn(sharedFieldClass, "h-11 placeholder:text-white/35")}
@@ -322,13 +180,11 @@ export default function ChallengeCreateForm() {
                         onClick={() => {
                           updateValue("targetPlayerId", String(u.id));
                           setUserSearch(u.artist ?? `User #${u.id}`);
-                          setShowUserDropdown(false);
+                          closeDropdown();
                         }}
                       >
                         <span>{u.artist ?? `User #${u.id}`}</span>
-                        <span className="ml-2 text-[10px] uppercase text-white/40">
-                          {u.role}
-                        </span>
+                        <span className="ml-2 text-[10px] uppercase text-white/40">{u.role}</span>
                       </button>
                     ))}
                   </div>
@@ -340,52 +196,34 @@ export default function ChallengeCreateForm() {
                   </div>
                 )}
 
-                {/* Hidden select to store the selected value for the form */}
                 <input type="hidden" value={values.targetPlayerId} readOnly />
               </div>
             ) : null}
 
-            {/* <div>
-              <FieldLabel required>Master J@Y Logo</FieldLabel>
-              <label className="mt-2 flex cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-[#6d2c7a] bg-black/20 px-5 py-7 text-center transition hover:border-[#ff43ff]/70 hover:bg-[#ff43ff]/5">
-                <input
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  className="sr-only"
-                  onChange={handleFileChange}
-                />
-                <span className="grid h-11 w-11 place-items-center rounded-full border border-[#ff43ff]/35 bg-[#ff43ff]/10 text-[#ff72ff]">
-                  <ImagePlus className="h-5 w-5" />
-                </span>
-                <span className="mt-4 text-sm font-semibold text-white">Upload Master J@Y Logo</span>
-                <span className="mt-1 max-w-[190px] text-xs leading-5 text-white/45">
-                  PNG, JPG, or WEBP looks best here.
-                </span>
-                <span className="mt-4 inline-flex rounded-full border border-[#ff43ff]/45 px-5 py-2 text-[11px] font-black uppercase tracking-[0.25em] text-[#ff9cff]">
-                  Choose Logo
-                </span>
-                <span className="mt-2 max-w-full truncate text-xs text-white/45">{fileName}</span>
-              </label>
-            </div> */}
-
+            {/* Show real name */}
             <label className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
               <span>
-                <span className="block text-sm font-semibold text-white">Show real name</span>
-                <span className="text-xs text-white/45">Let players see your public real name.</span>
+                <span className="block text-sm font-semibold text-white">
+                  Show real name
+                </span>
+                <span className="text-xs text-white/45">
+                  Let players see your public real name.
+                </span>
               </span>
               <input
                 type="checkbox"
                 checked={values.showRealName}
-                onChange={(event) => updateValue("showRealName", event.target.checked)}
+                onChange={(e) => updateValue("showRealName", e.target.checked)}
                 className="h-5 w-5 accent-[#ff19d7]"
               />
             </label>
 
+            {/* Memo */}
             <div>
               <FieldLabel>Memo</FieldLabel>
               <textarea
                 value={values.memo}
-                onChange={(event) => updateValue("memo", event.target.value)}
+                onChange={(e) => updateValue("memo", e.target.value)}
                 rows={3}
                 placeholder="Write a short challenge memo..."
                 className={cn(sharedFieldClass, "min-h-24 py-3 placeholder:text-white/35")}
@@ -393,6 +231,7 @@ export default function ChallengeCreateForm() {
             </div>
           </div>
 
+          {/* Submit button */}
           <button
             type="button"
             disabled={isSubmitting}
@@ -405,115 +244,16 @@ export default function ChallengeCreateForm() {
           </button>
         </form>
       </section>
-
-      {/* Confirmation Modal */}
-      {showConfirmModal && (
-        <div className="fixed inset-0 z-[90] grid place-items-center bg-black/70 px-4 backdrop-blur-sm">
-          <div className="relative w-[min(92vw,400px)] rounded-[22px] border border-[#d63cff] bg-[#0c0b12]/95 p-5 text-white shadow-[0_0_35px_rgba(214,60,255,0.35)] backdrop-blur-xl">
-            {/* Close button */}
-            <button
-              type="button"
-              onClick={() => setShowConfirmModal(false)}
-              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/8 text-white/70 transition hover:bg-white/12 hover:text-white"
-              aria-label="Close"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            {/* Title */}
-            <p className="text-center text-xl font-black uppercase italic tracking-wide text-white [text-shadow:0_0_16px_#ff4cff]">
-              Confirm Challenge
-            </p>
-
-            {/* Summary */}
-            <div className="mt-5 space-y-3 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
-              {/* Game */}
-              <div className="flex items-center justify-between border-b border-white/10 py-2 last:border-b-0">
-                <span className="text-sm text-white/68">Game</span>
-                <span className="text-sm font-bold text-white">
-                  {games.find((g) => String(g.id) === values.gameId)?.name ?? "—"}
-                </span>
-              </div>
-
-              {/* Price */}
-              <div className="flex items-center justify-between border-b border-white/10 py-2 last:border-b-0">
-                <span className="text-sm text-white/68">Price</span>
-                <span className="text-sm font-bold text-white">
-                  {Number(values.price).toLocaleString()} Points
-                </span>
-              </div>
-
-              {/* Date & Time */}
-              <div className="flex items-center justify-between border-b border-white/10 py-2 last:border-b-0">
-                <span className="text-sm text-white/68">Date & Time</span>
-                <span className="text-sm font-bold text-white">
-                  {values.matchDateTime
-                    ? new Date(values.matchDateTime).toLocaleString("en-US", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })
-                    : "—"}
-                </span>
-              </div>
-
-              {/* Scope */}
-              <div className="flex items-center justify-between border-b border-white/10 py-2 last:border-b-0">
-                <span className="text-sm text-white/68">Challenge Type</span>
-                <span className="text-sm font-bold uppercase text-white">
-                  {values.scope === "global" ? "Global" : "Unique"}
-                </span>
-              </div>
-
-              {/* Target Player (unique only) */}
-              {values.scope === "unique" && (
-                <div className="flex items-center justify-between border-b border-white/10 py-2 last:border-b-0">
-                  <span className="text-sm text-white/68">Target Player</span>
-                  <span className="text-sm font-bold text-white">
-                    {users.find((u) => String(u.id) === values.targetPlayerId)?.artist ??
-                      `User #${values.targetPlayerId}`}
-                  </span>
-                </div>
-              )}
-
-              {/* Show Real Name */}
-              <div className="flex items-center justify-between border-b border-white/10 py-2 last:border-b-0">
-                <span className="text-sm text-white/68">Show Real Name</span>
-                <span className="text-sm font-bold text-white">
-                  {values.showRealName ? "Yes" : "No"}
-                </span>
-              </div>
-
-              {/* Memo (if any) */}
-              {values.memo && (
-                <div className="flex flex-col gap-1 border-b border-white/10 py-2 last:border-b-0">
-                  <span className="text-sm text-white/68">Memo</span>
-                  <span className="text-sm font-bold text-white/90">{values.memo}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <button
-              type="button"
-              disabled={isSubmitting}
-              onClick={handleConfirmSubmit}
-              className="mt-5 flex h-13 w-full items-center justify-between rounded-xl border border-[#ff43ff]/70 bg-[#4b0057] px-4 text-sm font-black uppercase italic tracking-[0.08em] text-white shadow-[0_0_24px_rgba(255,67,255,0.7),inset_0_0_14px_rgba(255,255,255,0.18)] transition hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="h-5 w-5 text-[#ff60ff]" />
-              {isSubmitting ? "Submitting..." : "Confirm & Launch"}
-              <ChevronRight className="h-5 w-5 text-[#ff60ff]" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowConfirmModal(false)}
-              className="mt-3 h-10 w-full text-sm font-semibold uppercase text-white/55 hover:text-white"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      <ChallengeCreateConfirmModal
+        open={showConfirmModal}
+        values={values}
+        isSubmitting={isSubmitting}
+        games={games}
+        users={users}
+        onConfirm={handleConfirmSubmit}
+        onClose={closeConfirmModal}
+      />
     </main>
   );
 }
+
