@@ -1,9 +1,5 @@
 import type { ChallengeMatchOffer, ChallengePlayer } from "../types";
 
-/**
- * Raw shape returned by the GET /challenges endpoint.
- * The server returns snake_case keys; this type models the actual JSON.
- */
 export interface ApiChallengeItem {
   id: number;
   challenge_no: string;
@@ -40,10 +36,6 @@ export interface ApiChallengeItem {
   created_at: string;
 }
 
-/**
- * Build a ChallengePlayer from the API's player info shape.
- * Falls back to anonymous data when the info is null.
- */
 function toChallengePlayer(
   player: { id: number; name: string; image: string } | null | undefined,
   fallbackName = "Anyone",
@@ -102,8 +94,8 @@ export function mapApiChallengeToOffer(
     rank: item.rank,
     challenger,
     target,
-    accepted: null,
-    acceptedPlayer: null,
+    accepted: item?.acceptor || null,
+    acceptedPlayer: item?.acceptor || null,
     isAccepted: false,
     amount: Number(item.amount),
     game: item.game.name,

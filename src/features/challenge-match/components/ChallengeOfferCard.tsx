@@ -16,12 +16,14 @@ type ChallengeOfferCardProps = {
   compact?: boolean;
   onAccept?: (offer: ChallengeMatchOffer) => void;
   acceptVisible?: boolean;
+  isShowAcceptedButton?: boolean;
 };
 
 export default function ChallengeOfferCard({
   offer,
   onAccept,
   acceptVisible = true,
+  isShowAcceptedButton = false,
 
 }: ChallengeOfferCardProps) {
   const [isMemoOpen, setIsMemoOpen] = useState(false);
@@ -69,7 +71,7 @@ export default function ChallengeOfferCard({
             </Link>
           ) : (
             <p className="min-w-0 flex-1 truncate text-[11px] font-black text-[#ff3348] hover:text-white sm:text-sm">
-              {offer.target.handle}
+              {offer?.accepted?.name ? offer?.accepted?.name : offer.target.handle}
             </p>
           )}
         </div>
@@ -92,11 +94,17 @@ export default function ChallengeOfferCard({
           </button>
         </div>
       </div>
-
-      <ChallengeAcceptButton
-        onClick={() => onAccept?.(offer)}
-        visible={acceptVisible}
-      />
+      {isShowAcceptedButton ? (
+        <ChallengeAcceptedButton
+          visible={true}
+        />
+      )
+        :
+        <ChallengeAcceptButton
+          onClick={() => onAccept?.(offer)}
+          visible={acceptVisible}
+        />
+      }
 
 
       <AppDialog

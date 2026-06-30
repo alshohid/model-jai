@@ -5,7 +5,7 @@ type ChallengeAcceptedButtonProps = {
 };
 
 export default function ChallengeAcceptedButton({
-    visible = true,
+    visible = false,
 }: ChallengeAcceptedButtonProps) {
     if (!visible) return null;
 
