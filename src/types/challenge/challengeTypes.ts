@@ -124,8 +124,13 @@ export interface ChallengeRequest {
   limit?: number;
 }
 export interface ChallengeAcceptResponse {
-  status: boolean;
+  success: boolean;
   message: string;
+}
+export interface AutoAcceptChallengeResponse extends ChallengeAcceptResponse {
+  data: {
+    value: string;
+  };
 }
 export interface UserAcceptChallengeResponse {
   success: boolean;

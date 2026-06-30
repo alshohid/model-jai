@@ -11,6 +11,7 @@ import type {
   ChallengeAcceptResponse,
   ChallengeDetailsResponse,
   UserAcceptChallengeResponse,
+  AutoAcceptChallengeResponse,
 } from "@/types/challenge/challengeTypes";
 
 const ChallengeManagementApi = baseApi.injectEndpoints({
@@ -160,6 +161,27 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ChallengeManagement"],
     }),
+
+    toggleAutoAcceptChallenge: builder.mutation<
+      AutoAcceptChallengeResponse,
+      { value: string }
+    >({
+      query: ({ value }) => ({
+        url: `/admin/settings/auto_offer_challenges`,
+        method: "PUT",
+        body: {
+          value: value,
+        },
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
+    getAutoAcceptChallenge: builder.query<AutoAcceptChallengeResponse, void>({
+      query: () => ({
+        url: `/admin/settings/auto_offer_challenges`,
+        method: "GET",
+      }),
+      providesTags: ["ChallengeManagement"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -176,5 +198,7 @@ export const {
   useAdminDeclineChallengeMutation,
   useWinnerSelectForChallengeByAdminMutation,
   useGetIndividualChallengeListByUserIdQuery,
+  useToggleAutoAcceptChallengeMutation,
+  useGetAutoAcceptChallengeQuery,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;

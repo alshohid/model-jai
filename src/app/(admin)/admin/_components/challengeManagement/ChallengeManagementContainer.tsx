@@ -11,34 +11,35 @@ import {
     useAdminAcceptChallengeMutation,
     useAdminDeclineChallengeMutation,
     useGetAllChallengesListQuery,
+    useGetAutoAcceptChallengeQuery,
+    useToggleAutoAcceptChallengeMutation,
 } from "@/redux/features/challenge/challengeManagement";
 import WinnerSelectModal from "./WinnerSelectModal";
 import { toast } from "sonner";
+import ToggleCard from "@/features/challenge-match/components/ToggleCard";
 
 export default function ChallengeManagementContainer() {
     const [page, setPage] = useState(1);
-    const limit = 10;
-
-    const { data: challengeList, isLoading } = useGetAllChallengesListQuery({
-        page,
-        limit,
-    });
-
-    const [acceptChallenge, { isLoading: isAcceptLoading }] =
-        useAdminAcceptChallengeMutation();
-    const [declineChallenge, { isLoading: isDeclineLoading }] =
-        useAdminDeclineChallengeMutation();
-
+    const [isToggling, setIsToggling] = useState(false);
     const [processingChallengeId, setProcessingChallengeId] = useState<number | null>(
         null
     );
     const [processingAction, setProcessingAction] = useState<"accept" | "decline" | null>(
         null
     );
-
-    // Winner select modal state
     const [winnerModalOpen, setWinnerModalOpen] = useState(false);
     const [selectedChallengeForWinner, setSelectedChallengeForWinner] = useState<ChallengeItem | null>(null);
+
+    const limit = 10;
+
+    const { data: challengeList, isLoading } = useGetAllChallengesListQuery({
+        page,
+        limit,
+    });
+    const { data, isLoading: isAutoAcceptLoading } = useGetAutoAcceptChallengeQuery();
+    const [toggleAutoAcceptChallenge] = useToggleAutoAcceptChallengeMutation();
+    const [acceptChallenge, { isLoading: isAcceptLoading }] = useAdminAcceptChallengeMutation();
+    const [declineChallenge, { isLoading: isDeclineLoading }] = useAdminDeclineChallengeMutation();
 
     const tableHeader = [
         "Challenge No",
@@ -50,9 +51,8 @@ export default function ChallengeManagementContainer() {
         "winner",
         "Actions",
     ];
-
+    const isAutoAcceptOn = data?.data?.value === "true";
     const challenges: ChallengeItem[] = challengeList?.data ?? [];
-
     const meta = {
         page: challengeList?.meta?.currentPage ?? 1,
         limit: challengeList?.meta?.perPage ?? 10,
@@ -101,6 +101,26 @@ export default function ChallengeManagementContainer() {
         } finally {
             setProcessingChallengeId(null);
             setProcessingAction(null);
+        }
+    };
+    const handleAutoAcceptToggle = async () => {
+        try {
+            setIsToggling(true);
+
+            await toggleAutoAcceptChallenge({
+                value: isAutoAcceptOn ? "false" : "true",
+            }).unwrap();
+
+            toast.success(
+                `Auto Accept ${!isAutoAcceptOn ? "Enabled" : "Disabled"
+                } successfully`
+            );
+        } catch (error: any) {
+            toast.error(
+                error?.data?.message || "Failed to update setting"
+            );
+        } finally {
+            setIsToggling(false);
         }
     };
 
@@ -232,21 +252,20 @@ export default function ChallengeManagementContainer() {
         <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h2 className="text-2xl font-bold text-white">Challenge List</h2>
+                <ToggleCard
+                    title="Auto Accept"
+                    description={
+                        isAutoAcceptOn
+                            ? "Challenges are accepted automatically"
+                            : "Manual acceptance required"
+                    }
+                    checked={isAutoAcceptOn}
+                    loading={isToggling}
+                    disabled={isAutoAcceptLoading}
+                    onToggle={handleAutoAcceptToggle}
+                />
             </div>
 
-            {/* Winner Select Modal */}
-            {selectedChallengeForWinner && (
-                <WinnerSelectModal
-                    open={winnerModalOpen}
-                    onOpenChange={(open) => {
-                        setWinnerModalOpen(open);
-                        if (!open) setSelectedChallengeForWinner(null);
-                    }}
-                    challengeId={selectedChallengeForWinner.id}
-                    challenger={selectedChallengeForWinner.challenger}
-                    acceptor={selectedChallengeForWinner.acceptor!}
-                />
-            )}
 
             <div className="py-10">
                 <ReuseAbleTable
@@ -262,6 +281,18 @@ export default function ChallengeManagementContainer() {
                 <div className="mt-6">
                     <AppPagination meta={meta} onPageChange={setPage} showSummary={false} />
                 </div>
+                {selectedChallengeForWinner && (
+                    <WinnerSelectModal
+                        open={winnerModalOpen}
+                        onOpenChange={(open) => {
+                            setWinnerModalOpen(open);
+                            if (!open) setSelectedChallengeForWinner(null);
+                        }}
+                        challengeId={selectedChallengeForWinner.id}
+                        challenger={selectedChallengeForWinner.challenger}
+                        acceptor={selectedChallengeForWinner.acceptor!}
+                    />
+                )}
             </div>
         </div>
     );
