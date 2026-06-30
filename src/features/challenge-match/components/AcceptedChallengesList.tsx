@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useGetUserAcceptedChallengesListQuery } from "@/redux/features/challenge/challengeManagement";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
@@ -9,11 +9,13 @@ import { cn } from "@/shared/lib/utils/cn";
 import ChallengeOfferCard from "./ChallengeOfferCard";
 import BigBossChallengeOffers from "./BigBossChallengeOffers";
 import { mapApiChallengeToOffer, type ApiChallengeItem } from "../utils/apiAdapter";
+import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
 
 const PAGE_SIZE = 10;
 
 export default function AcceptedChallengesList() {
     const { isAuthenticated } = useAuth();
+    const [currentPage, setCurrentPage] = useState(1);
     const { data: meData } = useGetMeDataQuery(undefined, {
         skip: !isAuthenticated,
     });
@@ -24,7 +26,7 @@ export default function AcceptedChallengesList() {
         isLoading,
         isError,
     } = useGetUserAcceptedChallengesListQuery(
-        { userId: currentUserId ?? 0, page: 1, limit: PAGE_SIZE },
+        { userId: currentUserId ?? 0, page: currentPage, limit: PAGE_SIZE },
         { skip: !currentUserId },
     );
 
@@ -35,6 +37,25 @@ export default function AcceptedChallengesList() {
             .map(mapApiChallengeToOffer)
             .sort((a, b) => a.rank - b.rank);
     }, [acceptedData]);
+    const paginationMeta = useMemo(() => {
+        if (!acceptedData?.meta) return null;
+        const rawMeta = acceptedData.meta as unknown as Record<string, unknown>;
+        const apiPage = Number(rawMeta.current_page ?? rawMeta.currentPage ?? 1);
+        const perPage = Number(rawMeta.per_page ?? rawMeta.perPage ?? PAGE_SIZE);
+        const total = Number(rawMeta.total ?? 0);
+        const totalPages = Math.max(1, Math.ceil(total / perPage));
+        return {
+            page: apiPage,
+            limit: perPage,
+            total,
+            prev: apiPage > 1,
+            next: apiPage < totalPages,
+        };
+    }, [acceptedData]);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
     if (!isAuthenticated) {
         return (
@@ -155,7 +176,7 @@ export default function AcceptedChallengesList() {
 
                     <div className="mt-2 mb-4">
                         <h2 className="text-lg font-bold text-white/80 px-2">
-                            Accepted Challenges ({acceptedOffers.length})
+                            Accepted Challenges ({paginationMeta?.total})
                         </h2>
                     </div>
 
@@ -165,7 +186,7 @@ export default function AcceptedChallengesList() {
                                 You haven&apos;t accepted any challenges yet.
                             </div>
                         ) : (
-                            <>
+                            <div className="flex flex-col gap-y-4">
                                 {acceptedOffers.map((offer) => (
                                     <ChallengeOfferCard
                                         key={offer.id}
@@ -174,7 +195,15 @@ export default function AcceptedChallengesList() {
                                         isShowAcceptedButton={true}
                                     />
                                 ))}
-                            </>
+                                {paginationMeta && (
+                                    <AppPagination
+                                        meta={paginationMeta}
+                                        onPageChange={handlePageChange}
+                                        showSummary={false}
+                                    />
+                                )}
+
+                            </div>
                         )}
                     </div>
                 </div>
