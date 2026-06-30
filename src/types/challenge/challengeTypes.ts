@@ -119,6 +119,7 @@ export interface PaginationMeta {
 }
 
 export interface ChallengeRequest {
+  userId: number;
   search?: string;
   page?: number;
   limit?: number;

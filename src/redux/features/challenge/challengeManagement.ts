@@ -97,6 +97,38 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["ChallengeManagement"],
     }),
+    getUserAcceptedChallengesList: builder.query<
+      ChallengeListResponse,
+      ChallengeRequest
+    >({
+      query: ({ userId, search, page = 1, limit = 10 }) => {
+        const params: Record<string, unknown> = { page, per_page: limit };
+
+        if (search) params.search = search;
+        return {
+          url: `/users/${userId}/accepted-challenges`,
+          method: "GET",
+          params,
+        };
+      },
+      providesTags: ["ChallengeManagement"],
+    }),
+    getUserCompletedChallengesList: builder.query<
+      ChallengeListResponse,
+      ChallengeRequest
+    >({
+      query: ({ userId, search, page = 1, limit = 10 }) => {
+        const params: Record<string, unknown> = { page, per_page: limit };
+
+        if (search) params.search = search;
+        return {
+          url: `/users/${userId}/completed-challenges`,
+          method: "GET",
+          params,
+        };
+      },
+      providesTags: ["ChallengeManagement"],
+    }),
     getChallengeById: builder.query<ChallengeDetailsResponse, { id: number }>({
       query: ({ id }) => ({
         url: `/challenges/${id}`,
@@ -200,5 +232,7 @@ export const {
   useGetIndividualChallengeListByUserIdQuery,
   useToggleAutoAcceptChallengeMutation,
   useGetAutoAcceptChallengeQuery,
+  useGetUserAcceptedChallengesListQuery,
+  useGetUserCompletedChallengesListQuery,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;
