@@ -36,6 +36,7 @@ export default function ChallengeHomePreview() {
 
 
   const canAcceptOffer = (offer: ReturnType<typeof mapApiChallengeToOffer>) => {
+
     if (offer.mode === "global") {
       return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
     }

@@ -152,6 +152,7 @@ export default function ChallengeDashboard() {
                     offer={offer}
                     onAccept={handleAccept}
                     acceptVisible={canAcceptOffer(offer)}
+
                   />
                 ))}
                 {/* {challengesData?.meta && (

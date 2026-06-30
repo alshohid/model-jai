@@ -83,6 +83,21 @@ export default function ChallengeDropdownDesktop({
                         >
                             Create a challenge
                         </Link>
+
+                    )}
+                    {isChallenger && (
+                        <Link
+                            href="/challenge-dashboard/accepted-challenges"
+                            onClick={() => setOpen(false)}
+                            className={cn(
+                                "block border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                pathname === "/challenge-dashboard/accepted-challenges" &&
+                                "bg-white/10 text-white"
+                            )}
+                        >
+                            Accepted challenges
+                        </Link>
+
                     )}
                 </div>
             )}

@@ -85,12 +85,12 @@ export function mapApiChallengeToOffer(
   // Map server status to the union expected by the card
   const statusMap: Record<
     string,
-    "open" | "accepted" | "official" | "delayed"
+    "open" | "accepted" | "completed" | "delayed"
   > = {
     offered: "open",
     pending: "open",
     accepted: "accepted",
-    official: "official",
+    completed: "completed",
     delayed: "delayed",
   };
 

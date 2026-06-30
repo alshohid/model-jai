@@ -9,13 +9,13 @@ import { formatChallengePoints } from "../utils";
 import ChallengeAcceptButton from "./ChallengeAcceptButton";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { MessageSquare, Trophy, Flame, PhilippinePeso } from "lucide-react";
+import ChallengeAcceptedButton from "./ChallengeAcceptedButton";
 
 type ChallengeOfferCardProps = {
   offer: ChallengeMatchOffer;
   compact?: boolean;
   onAccept?: (offer: ChallengeMatchOffer) => void;
   acceptVisible?: boolean;
-
 };
 
 export default function ChallengeOfferCard({
@@ -93,11 +93,9 @@ export default function ChallengeOfferCard({
         </div>
       </div>
 
-
       <ChallengeAcceptButton
         onClick={() => onAccept?.(offer)}
         visible={acceptVisible}
-
       />
 
 
