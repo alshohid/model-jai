@@ -99,6 +99,20 @@ export default function ChallengeDropdownDesktop({
                         </Link>
 
                     )}
+                    {isChallenger && (
+                        <Link
+                            href="/challenge-dashboard/completed-challenges"
+                            onClick={() => setOpen(false)}
+                            className={cn(
+                                "block border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                pathname === "/challenge-dashboard/completed-challenges" &&
+                                "bg-white/10 text-white"
+                            )}
+                        >
+                            Completed challenges
+                        </Link>
+
+                    )}
                 </div>
             )}
         </div>

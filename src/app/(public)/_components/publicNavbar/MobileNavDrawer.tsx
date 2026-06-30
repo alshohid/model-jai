@@ -208,6 +208,18 @@ export default function MobileNavSheet({
                                                 Accepted challenges
                                             </Link>
                                         </SheetClose>}
+                                        {isChallenger && <SheetClose asChild>
+                                            <Link
+                                                href="/challenge-dashboard/completed-challenges"
+                                                className={cn(
+                                                    "border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                                    pathname === "/challenge-dashboard/completed-challenges" &&
+                                                    "bg-white/10 text-white"
+                                                )}
+                                            >
+                                                Completed challenges
+                                            </Link>
+                                        </SheetClose>}
                                     </div>
                                 ) : null}
                             </div>

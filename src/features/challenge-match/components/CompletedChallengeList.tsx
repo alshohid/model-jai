@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { useGetUserAcceptedChallengesListQuery } from "@/redux/features/challenge/challengeManagement";
+import { useGetUserCompletedChallengesListQuery } from "@/redux/features/challenge/challengeManagement";
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
@@ -12,7 +12,7 @@ import { mapApiChallengeToOffer, type ApiChallengeItem } from "../utils/apiAdapt
 
 const PAGE_SIZE = 10;
 
-export default function AcceptedChallengesList() {
+export default function CompletedChallengesList() {
     const { isAuthenticated } = useAuth();
     const { data: meData } = useGetMeDataQuery(undefined, {
         skip: !isAuthenticated,
@@ -23,7 +23,7 @@ export default function AcceptedChallengesList() {
         data: acceptedData,
         isLoading,
         isError,
-    } = useGetUserAcceptedChallengesListQuery(
+    } = useGetUserCompletedChallengesListQuery(
         { userId: currentUserId ?? 0, page: 1, limit: PAGE_SIZE },
         { skip: !currentUserId },
     );
@@ -47,7 +47,7 @@ export default function AcceptedChallengesList() {
                 <section className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-3 pt-[120px] sm:pt-[124px]">
                     <div className="md:mt-6 rounded-[22px] md:px-3 md:py-3">
                         <div className="w-full py-8 text-center text-white/50 text-sm">
-                            Please log in to view your accepted challenges.
+                            Please log in to view your completed challenges.
                         </div>
                     </div>
                 </section>
@@ -95,7 +95,7 @@ export default function AcceptedChallengesList() {
                             </div>
                         </Link>
                         <div className="w-full py-8 text-center text-white/50 text-sm">
-                            Loading accepted challenges...
+                            Loading completed challenges...
                         </div>
                     </div>
                 </section>
@@ -124,7 +124,7 @@ export default function AcceptedChallengesList() {
                             </div>
                         </Link>
                         <div className="w-full py-8 text-center text-red-400 text-sm">
-                            Failed to load accepted challenges. Please try again later.
+                            Failed to load completed challenges. Please try again later.
                         </div>
                     </div>
                 </section>
@@ -155,14 +155,14 @@ export default function AcceptedChallengesList() {
 
                     <div className="mt-2 mb-4">
                         <h2 className="text-lg font-bold text-white/80 px-2">
-                            Accepted Challenges ({acceptedOffers.length})
+                            Completed Challenges ({acceptedOffers.length})
                         </h2>
                     </div>
 
                     <div>
                         {acceptedOffers.length === 0 ? (
                             <div className="w-full py-8 text-center text-white/50 text-sm">
-                                You haven&apos;t accepted any challenges yet.
+                                You haven&apos;t completed any challenges yet.
                             </div>
                         ) : (
                             <>
