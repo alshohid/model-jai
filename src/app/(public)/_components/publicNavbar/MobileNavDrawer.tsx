@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 
 import { LuAlignRight } from "react-icons/lu";
-import { ChevronDown, Crown } from "lucide-react";
+import { ChevronDown, Crown, CrownIcon } from "lucide-react";
 import TipShortcutToggle from "@/shared/components/TipShortcutToggle";
 import NavbarSearch from "./NavbarSearch";
 import { useAuth } from "@/redux/features/auth/hooks";
@@ -194,6 +194,18 @@ export default function MobileNavSheet({
                                                 )}
                                             >
                                                 Create a challenge
+                                            </Link>
+                                        </SheetClose>}
+                                        {isChallenger && <SheetClose asChild>
+                                            <Link
+                                                href="/challenge-dashboard/received-challenges"
+                                                className={cn(
+                                                    "flex items-center gap-4 border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                                    pathname === "/challenge-dashboard/received-challenges" &&
+                                                    "bg-white/10 text-white"
+                                                )}
+                                            >
+                                                Received challenges <span className="text-[#ad9105]"><CrownIcon className="h-4 w-4" /></span>
                                             </Link>
                                         </SheetClose>}
                                         {isChallenger && <SheetClose asChild>

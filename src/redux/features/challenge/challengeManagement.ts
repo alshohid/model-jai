@@ -129,6 +129,22 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       },
       providesTags: ["ChallengeManagement"],
     }),
+    getReceivedChallengesList: builder.query<
+      ChallengeListResponse,
+      ChallengeRequest
+    >({
+      query: ({ search, page = 1, limit = 10 }) => {
+        const params: Record<string, unknown> = { page, per_page: limit };
+
+        if (search) params.search = search;
+        return {
+          url: `/challenges-for-me`,
+          method: "GET",
+          params,
+        };
+      },
+      providesTags: ["ChallengeManagement"],
+    }),
     getChallengeById: builder.query<ChallengeDetailsResponse, { id: number }>({
       query: ({ id }) => ({
         url: `/challenges/${id}`,
@@ -234,5 +250,6 @@ export const {
   useGetAutoAcceptChallengeQuery,
   useGetUserAcceptedChallengesListQuery,
   useGetUserCompletedChallengesListQuery,
+  useGetReceivedChallengesListQuery,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;

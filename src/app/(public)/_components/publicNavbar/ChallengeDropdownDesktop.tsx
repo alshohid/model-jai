@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/shared/lib/utils/cn";
-import { ChevronDown, Crown } from "lucide-react";
+import { ChevronDown, Crown, CrownIcon } from "lucide-react";
 
 interface ChallengeDropdownDesktopProps {
     pathname: string;
@@ -82,6 +82,20 @@ export default function ChallengeDropdownDesktop({
                             )}
                         >
                             Create a challenge
+                        </Link>
+
+                    )}
+                    {isChallenger && (
+                        <Link
+                            href="/challenge-dashboard/received-challenges"
+                            onClick={() => setOpen(false)}
+                            className={cn(
+                                " flex items-center gap-4 border-t border-white/10 px-4 py-3 text-sm font-medium text-[#f2a6ff] transition hover:bg-white/8 hover:text-white",
+                                pathname === "/challenge-dashboard/received-challenges" &&
+                                "bg-white/10 text-white"
+                            )}
+                        >
+                            Received challenges <span className="text-[#ad9105]"><CrownIcon className="h-4 w-4" /></span>
                         </Link>
 
                     )}
