@@ -28,11 +28,16 @@ export function AuthInput({
     name,
     readOnly = false,
     required = true,
+    onFocus,
+    onBlur,
 }: AuthInputProps) {
     const isPassword = type === "password";
     const [showPassword, setShowPassword] = useState(false);
 
     const resolvedType = isPassword ? (showPassword ? "text" : "password") : type;
+
+    // Merge register's event handlers with our custom ones (only onFocus, onBlur)
+    const { onBlur: rhfOnBlur, ...restRegisterProps } = register(name, { required });
 
     return (
         <div className="relative">
@@ -57,7 +62,12 @@ export function AuthInput({
                     text-white/90 placeholder:text-white/35
                     text-[0.75rem] md:text-[0.87rem]
                     "
-                    {...register(name, { required })}
+                    onFocus={onFocus}
+                    onBlur={(e) => {
+                        rhfOnBlur(e);
+                        onBlur?.(e);
+                    }}
+                    {...restRegisterProps}
                 />
                 {isPassword && (
                     <button

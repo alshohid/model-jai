@@ -8,4 +8,7 @@ export type AuthInputProps = {
   name: string;
   readOnly?: boolean;
   required?: boolean;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 };

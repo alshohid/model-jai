@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAppleLoginMutation, useFacebookLoginMutation, useGoogleLoginMutation, useRegisterUserMutation } from "@/redux/features/auth/authapi";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { SocialButton } from "@/shared/UI/button/SocialButton";
@@ -15,9 +15,10 @@ import { toast } from "sonner";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import { IGameOption } from "@/types/game/gameList/gameListTypes";
 import { IAuthRegisterParams } from "@/types/user/auth";
-import { Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon } from "lucide-react";
+import { Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
+import { useNominatimGeocode } from "@/shared/hooks/useNominatimGeocode";
 
 const PENDING_REFERRAL_KEY = "pending_referral";
 const PENDING_AUTH_REDIRECT_KEY = "pending_auth_redirect";
@@ -57,6 +58,24 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
 
     const [gamePickerOpen, setGamePickerOpen] = useState(false);
     const [selectedGame, setSelectedGame] = useState<IGameOption | null>(null);
+    const [addressFocused, setAddressFocused] = useState(false);
+
+    const {
+        results: addressResults,
+        isLoading: isAddressLoading,
+        setSearchQuery: setAddressQuery,
+        clearResults: clearAddressResults,
+        parseAddressFields,
+    } = useNominatimGeocode();
+
+    const watchedAddress = useWatch({ control, name: "address" });
+
+    useEffect(() => {
+        if (watchedAddress && addressFocused) {
+            setAddressQuery(watchedAddress);
+        }
+    }, [watchedAddress, addressFocused, setAddressQuery]);
+
     const isSocialVerificationEnabled = useWatch({
         control,
         name: "social_verification_status",
@@ -224,13 +243,78 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         register={register as any}
                         icon={<MailIcon />}
                     />
+                    {/* ── Address with Nominatim autocomplete ── */}
+                    <div className="relative">
+                        <AuthInput
+                            label="Address"
+                            name="address"
+                            register={register as any}
+                            icon={<MapPinnedIcon className="size-4 text-white" />}
+                            required={false}
+                            onFocus={() => {
+                                setAddressFocused(true);
+                            }}
+                            onBlur={() => {
+                                // Delay hiding so click on dropdown registers first
+                                setTimeout(() => {
+                                    setAddressFocused(false);
+                                }, 200);
+                            }}
+                        />
+
+                        {/* Nominatim suggestion dropdown */}
+                        {addressFocused && (addressResults.length > 0 || isAddressLoading) && (
+                            <div className="absolute z-50 mt-1 w-full rounded-lg border border-white/10 bg-[#1a1a2e] shadow-xl backdrop-blur-md max-h-52 overflow-y-auto">
+                                {isAddressLoading && (
+                                    <div className="flex items-center justify-center gap-2 px-4 py-3 text-[13px] text-white/50">
+                                        <Loader2 className="size-4 animate-spin" />
+                                        Searching...
+                                    </div>
+                                )}
+
+                                {!isAddressLoading &&
+                                    addressResults.map((result) => (
+                                        <button
+                                            key={result.place_id}
+                                            type="button"
+                                            onMouseDown={(e) => {
+                                                e.preventDefault();
+
+                                                const fields = parseAddressFields(result);
+
+                                                setValue("address", result.display_name, {
+                                                    shouldDirty: true,
+                                                });
+                                                setValue("city", fields.city, {
+                                                    shouldDirty: true,
+                                                });
+                                                setValue("state", fields.state, {
+                                                    shouldDirty: true,
+                                                });
+                                                setValue("zip_code", fields.zip_code, {
+                                                    shouldDirty: true,
+                                                });
+
+                                                // Clear results so the watcher doesn't re-trigger with same value
+                                                clearAddressResults();
+                                                setAddressFocused(false);
+                                            }}
+                                            className="w-full text-left px-4 py-2.5 text-[13px] text-white/80 hover:bg-white/10 hover:text-white transition-colors border-b border-white/5 last:border-b-0"
+                                        >
+                                            <span className="block truncate">
+                                                {result.display_name}
+                                            </span>
+                                            <span className="block text-[11px] text-white/40 mt-0.5">
+                                                {result.type} • {result.lat}, {result.lon}
+                                            </span>
+                                        </button>
+                                    ))}
+                            </div>
+                        )}
+                    </div>
+                    {/* ── End Address autocomplete ── */}
+
                     <AuthInput
-                        label="Address"
-                        name="address"
-                        register={register as any}
-                        icon={<MapPinnedIcon className="size-4 text-white" />}
-                        required={false}
-                    /> <AuthInput
                         label="City"
                         name="city"
                         register={register as any}
