@@ -50,6 +50,7 @@ export default function CompletedChallengesList() {
             page: apiPage,
             limit: perPage,
             total,
+            totalPages,
             prev: apiPage > 1,
             next: apiPage < totalPages,
         };
@@ -197,7 +198,7 @@ export default function CompletedChallengesList() {
                                         isShowAcceptedButton={true}
                                     />
                                 ))}
-                                {paginationMeta && (
+                                {paginationMeta && paginationMeta?.totalPages > 1 && (
                                     <AppPagination
                                         meta={paginationMeta}
                                         onPageChange={handlePageChange}

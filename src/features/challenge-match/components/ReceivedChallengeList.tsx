@@ -65,7 +65,7 @@ export default function ReceivedChallengesList() {
                 <section className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-3 pt-[120px] sm:pt-[124px]">
                     <div className="md:mt-6 rounded-[22px] md:px-3 md:py-3">
                         <div className="w-full py-8 text-center text-white/50 text-sm">
-                            Please log in to view your completed challenges.
+                            Please log in to view your received challenges.
                         </div>
                     </div>
                 </section>
@@ -94,7 +94,7 @@ export default function ReceivedChallengesList() {
                             </div>
                         </Link>
                         <div className="w-full py-8 text-center text-white/50 text-sm">
-                            Loading completed challenges...
+                            Loading received challenges...
                         </div>
                     </div>
                 </section>
@@ -123,7 +123,7 @@ export default function ReceivedChallengesList() {
                             </div>
                         </Link>
                         <div className="w-full py-8 text-center text-red-400 text-sm">
-                            Failed to load completed challenges. Please try again later.
+                            Failed to load received challenges. Please try again later.
                         </div>
                     </div>
                 </section>
@@ -154,14 +154,14 @@ export default function ReceivedChallengesList() {
 
                     <div className="mt-2 mb-4">
                         <h2 className="text-lg font-bold text-white/80 px-2">
-                            Completed Challenges ({paginationMeta?.total ?? 0})
+                            Received Challenges ({paginationMeta?.total ?? 0})
                         </h2>
                     </div>
 
                     <div>
                         {acceptedOffers.length === 0 ? (
                             <div className="w-full py-8 text-center text-white/50 text-sm">
-                                You haven&apos;t completed any challenges yet.
+                                You haven&apos;t received any challenges yet.
                             </div>
                         ) : (
                             <div className="flex flex-col gap-y-4">
