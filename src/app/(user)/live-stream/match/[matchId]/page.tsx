@@ -65,8 +65,6 @@ export default function MatchDetails({
     const userReferralNo = meData?.data?.user?.referral_no || "";
     const liveStore = useMatchDemoStore(matchId, currentMatch);
 
-    console.log("liveStore", liveStore?.leftBossTotalAmount, liveStore?.rightBossTotalAmount)
-
     const isLiveContinue = Boolean(twitchLiveData?.data?.is_live) && isLiveStatus && matchData?.data?.type === "live";
     const twitchChannel = twitchLiveData?.data?.stream?.user_login || "";
     const supportClosed = isLiveContinue;
