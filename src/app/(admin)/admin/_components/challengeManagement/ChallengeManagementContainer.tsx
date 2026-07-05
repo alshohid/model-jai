@@ -306,7 +306,6 @@ export default function ChallengeManagementContainer() {
                     minTableWidthPx={1320}
                     variant="rank-dark"
                 />
-
                 <div className="mt-6">
                     <AppPagination meta={meta} onPageChange={setPage} showSummary={false} />
                 </div>
