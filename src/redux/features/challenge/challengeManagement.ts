@@ -12,6 +12,7 @@ import type {
   ChallengeDetailsResponse,
   UserAcceptChallengeResponse,
   AutoAcceptChallengeResponse,
+  MakeChallengeOfficialPayload,
 } from "@/types/challenge/challengeTypes";
 
 const ChallengeManagementApi = baseApi.injectEndpoints({
@@ -211,12 +212,45 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
     }),
     makeChallengeOfficial: builder.mutation<
       ChallengeAcceptResponse,
-      { id: number }
+      MakeChallengeOfficialPayload
     >({
-      query: ({ id }) => ({
-        url: `/admin/challenges/${id}/official`,
-        method: "POST",
-      }),
+      query: (payload) => {
+        const formData = new FormData();
+
+        if (payload.player_one_logo instanceof File) {
+          formData.append("player_one_logo", payload.player_one_logo);
+        }
+        if (payload.player_two_logo instanceof File) {
+          formData.append("player_two_logo", payload.player_two_logo);
+        }
+        formData.append(
+          "winner_percentage",
+          payload.winner_percentage ? "1" : "0",
+        );
+        formData.append(
+          "loser_percentage",
+          payload.loser_percentage ? "1" : "0",
+        );
+        if (payload.tiktok_link) {
+          formData.append("tiktok_link", payload.tiktok_link);
+        }
+        if (payload.twitch_link) {
+          formData.append("twitch_link", payload.twitch_link);
+        }
+        if (payload.rules) {
+          formData.append("rules", payload.rules);
+        }
+        formData.append("is_free", payload.is_free ? "1" : "0");
+        formData.append("is_ranked", payload.is_ranked ? "1" : "0");
+        formData.append("is_featured", payload.is_featured ? "1" : "0");
+
+        return {
+          url: `/admin/challenges/${payload.id}/publish-match`,
+          method: "POST",
+          body: formData,
+          formData: true,
+        };
+      },
       invalidatesTags: ["ChallengeManagement"],
     }),
     toggleAutoAcceptChallenge: builder.mutation<

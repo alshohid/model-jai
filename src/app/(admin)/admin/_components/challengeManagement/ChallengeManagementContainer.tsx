@@ -12,10 +12,10 @@ import {
     useAdminDeclineChallengeMutation,
     useGetAllChallengesListQuery,
     useGetAutoAcceptChallengeQuery,
-    useMakeChallengeOfficialMutation,
     useToggleAutoAcceptChallengeMutation,
 } from "@/redux/features/challenge/challengeManagement";
 import WinnerSelectModal from "./WinnerSelectModal";
+import MakeOfficialModal from "./MakeOfficialModal";
 import { toast } from "sonner";
 import ToggleCard from "@/features/challenge-match/components/ToggleCard";
 import Link from "next/link";
@@ -31,6 +31,8 @@ export default function ChallengeManagementContainer() {
     );
     const [winnerModalOpen, setWinnerModalOpen] = useState(false);
     const [selectedChallengeForWinner, setSelectedChallengeForWinner] = useState<ChallengeItem | null>(null);
+    const [officialModalOpen, setOfficialModalOpen] = useState(false);
+    const [selectedChallengeForOfficial, setSelectedChallengeForOfficial] = useState<number | null>(null);
 
     const limit = 10;
 
@@ -42,7 +44,6 @@ export default function ChallengeManagementContainer() {
     const [toggleAutoAcceptChallenge] = useToggleAutoAcceptChallengeMutation();
     const [acceptChallenge, { isLoading: isAcceptLoading }] = useAdminAcceptChallengeMutation();
     const [declineChallenge, { isLoading: isDeclineLoading }] = useAdminDeclineChallengeMutation();
-    const [makeChallengeOfficial] = useMakeChallengeOfficialMutation();
 
     const tableHeader = [
         "Challenge No",
@@ -56,10 +57,11 @@ export default function ChallengeManagementContainer() {
         "Actions",
     ];
     const isAutoAcceptOn = data?.data?.value === "true";
-    const challenges: ChallengeItem[] = challengeList?.data ?? [];
+    const challenges: ChallengeItem[] = challengeList?.data ?? []
+
     const meta = {
-        page: challengeList?.meta?.currentPage ?? 1,
-        limit: challengeList?.meta?.perPage ?? 10,
+        page: challengeList?.meta?.current_page ?? 1,
+        limit: challengeList?.meta?.per_page ?? 10,
         total: challengeList?.meta?.total ?? 0,
         prev: challengeList?.meta?.prev ?? false,
         next: challengeList?.meta?.next ?? false,
@@ -127,8 +129,9 @@ export default function ChallengeManagementContainer() {
             setIsToggling(false);
         }
     };
-    const handleMakeOfficial = async (id: number) => {
-        /// EKHANE MODAL OPEN HOBE , 
+    const handleMakeOfficial = (id: number) => {
+        setSelectedChallengeForOfficial(id);
+        setOfficialModalOpen(true);
     };
     const isGlobalProcessing = isAcceptLoading || isDeclineLoading;
 
@@ -171,11 +174,10 @@ export default function ChallengeManagementContainer() {
             (item) => {
                 const isAccepted = item.status?.toLowerCase() === "accepted" && item.is_published === false;
 
-                // const isCompleted = item.status?.toLowerCase() === "completed";
-                const winnerName = item.winnerId
-                    ? item.challenger?.id === item.winnerId
+                const winnerName = item.winner_id
+                    ? item.challenger?.id === item.winner_id
                         ? item.challenger?.name
-                        : item.acceptor?.id === item.winnerId
+                        : item.acceptor?.id === item.winner_id
                             ? item.acceptor?.name
                             : null
                     : null;
@@ -318,6 +320,16 @@ export default function ChallengeManagementContainer() {
                         challengeId={selectedChallengeForWinner.id}
                         challenger={selectedChallengeForWinner.challenger}
                         acceptor={selectedChallengeForWinner.acceptor!}
+                    />
+                )}
+                {selectedChallengeForOfficial && (
+                    <MakeOfficialModal
+                        open={officialModalOpen}
+                        onOpenChange={(open) => {
+                            setOfficialModalOpen(open);
+                            if (!open) setSelectedChallengeForOfficial(null);
+                        }}
+                        challengeId={selectedChallengeForOfficial}
                     />
                 )}
             </div>

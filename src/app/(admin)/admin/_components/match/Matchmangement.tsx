@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import MatchListToolbar from "../reusable/MatchListToolbar";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
@@ -18,6 +18,10 @@ import WinnerSelectModal from "./WinnerSelectModal";
 import Link from "next/link";
 import { formateDate, formateTime } from "@/shared/lib/utils/dateFormater";
 import MatchConfirmationModal from "./MatchConfirmationModal";
+import { cn } from "@/lib/utils";
+import { FiSearch } from "react-icons/fi";
+import { useDebounce } from "../../hook/useDebounce";
+import { useSearchParams } from "next/navigation";
 
 
 export default function MatchManagement() {
@@ -36,16 +40,27 @@ export default function MatchManagement() {
     const [pinLoadingId, setPinLoadingId] = useState<number | null>(null);
     const [removeLoadingId, setRemoveLoadingId] = useState<number | null>(null);
 
+    const [keyword, setKeyword] = useState("");
+    const debouncedKeyword = useDebounce(keyword, 400);
+
+
     const { data, isLoading, refetch } = useGetAllMatchesQuery({
         page,
         limit,
         type: matchType,
+        search: debouncedKeyword
     });
 
     const [deleteMatch] = useDeleteMatchMutation();
     const [pinUnpinMatch] = usePinUnpinMatchMutation();
     const [removeViewMatch] = useRemoveViewMatchMutation();
 
+    const searchPrams = useSearchParams();
+    const search = searchPrams.get("search");
+
+    useEffect(() => {
+        setKeyword(search!);
+    }, [search]);
     const matches: IMatch[] = data?.data ?? [];
 
     const meta = {
@@ -310,10 +325,28 @@ export default function MatchManagement() {
                     { label: "Live", value: "live" },
                     { label: "Upcoming", value: "upcoming" },
                     { label: "Completed", value: "completed" },
+                    { label: "Challenge", value: "challenge" },
                 ]}
                 onCreateMatch={() => setOpen(true)}
             />
-
+            <div>
+                <form className="flex items-center relative w-full sm:w-[320px] lg:w-[420px]">
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        className={cn(
+                            "w-full h-10 rounded-[12px]",
+                            "bg-white/5 border border-white/10",
+                            "text-white/85 placeholder:text-white/40",
+                            "pl-10 pr-3 outline-none",
+                            "focus:border-[#FF2EC8]/40"
+                        )}
+                    />
+                    <FiSearch className="absolute left-3 text-white/55" />
+                </form>
+            </div>
             <div className="py-10">
                 <ReuseAbleTable
                     isLoadings={isLoading}

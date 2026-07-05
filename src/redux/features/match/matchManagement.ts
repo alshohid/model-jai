@@ -53,13 +53,22 @@ const MatchManagementApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllMatches: builder.query<
       IMatchListResponse,
-      { page?: number; limit?: number; type?: string }
+      {
+        page?: number;
+        limit?: number;
+        type?: string;
+        search?: string | null;
+      }
     >({
-      query: ({ page = 1, limit = 10, type }) => {
+      query: ({ page = 1, limit = 10, type, search }) => {
         const params = new URLSearchParams();
 
         params.append("page", String(page));
         params.append("per_page", String(limit));
+
+        if (search) {
+          params.append("search", search);
+        }
 
         if (type && type !== "all") {
           params.append("type", type);

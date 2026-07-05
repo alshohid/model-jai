@@ -94,7 +94,7 @@ export interface ChallengeItem {
   challenger: PlayerInfo;
   target_player?: PlayerInfo | null;
   acceptor: PlayerInfo | null;
-  winnerId: number | null;
+  winner_id: number | null;
   createdAt: string;
   published_match_id?: number | null;
 }
@@ -112,12 +112,12 @@ export interface PlayerInfo {
 }
 
 export interface PaginationMeta {
-  currentPage: number;
-  lastPage: number;
-  perPage: number;
+  current_page: number;
+  last_page: number;
+  per_page: number;
   total: number;
-  prev: boolean;
-  next: boolean;
+  prev?: boolean | null;
+  next?: boolean | null;
 }
 
 export interface ChallengeRequest {
@@ -140,3 +140,18 @@ export interface UserAcceptChallengeResponse {
   message: string;
 }
 export type ChallengeDetailsResponse = ChallengeListResponse;
+
+// Payload for making a challenge official
+export interface MakeChallengeOfficialPayload {
+  id: number;
+  player_one_logo?: File | null;
+  player_two_logo?: File | null;
+  winner_percentage: boolean;
+  loser_percentage: boolean;
+  tiktok_link?: string;
+  twitch_link?: string;
+  rules?: string;
+  is_free?: boolean;
+  is_ranked?: boolean;
+  is_featured?: boolean;
+}
