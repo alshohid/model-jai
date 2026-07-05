@@ -83,6 +83,7 @@ export interface ChallengeItem {
   matchedPoints: string;
   logo?: string;
   memo: string;
+  is_published?: boolean;
   showRealName: boolean;
   durationHours: number;
   durationLabel: string;
@@ -95,6 +96,7 @@ export interface ChallengeItem {
   acceptor: PlayerInfo | null;
   winnerId: number | null;
   createdAt: string;
+  published_match_id?: number | null;
 }
 
 export interface GameInfo {

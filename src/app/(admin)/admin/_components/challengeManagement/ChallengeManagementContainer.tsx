@@ -12,11 +12,13 @@ import {
     useAdminDeclineChallengeMutation,
     useGetAllChallengesListQuery,
     useGetAutoAcceptChallengeQuery,
+    useMakeChallengeOfficialMutation,
     useToggleAutoAcceptChallengeMutation,
 } from "@/redux/features/challenge/challengeManagement";
 import WinnerSelectModal from "./WinnerSelectModal";
 import { toast } from "sonner";
 import ToggleCard from "@/features/challenge-match/components/ToggleCard";
+import Link from "next/link";
 
 export default function ChallengeManagementContainer() {
     const [page, setPage] = useState(1);
@@ -40,6 +42,7 @@ export default function ChallengeManagementContainer() {
     const [toggleAutoAcceptChallenge] = useToggleAutoAcceptChallengeMutation();
     const [acceptChallenge, { isLoading: isAcceptLoading }] = useAdminAcceptChallengeMutation();
     const [declineChallenge, { isLoading: isDeclineLoading }] = useAdminDeclineChallengeMutation();
+    const [makeChallengeOfficial] = useMakeChallengeOfficialMutation();
 
     const tableHeader = [
         "Challenge No",
@@ -49,6 +52,7 @@ export default function ChallengeManagementContainer() {
         "Amount",
         "Status",
         "winner",
+        "Make Official",
         "Actions",
     ];
     const isAutoAcceptOn = data?.data?.value === "true";
@@ -123,7 +127,9 @@ export default function ChallengeManagementContainer() {
             setIsToggling(false);
         }
     };
-
+    const handleMakeOfficial = async (id: number) => {
+        /// EKHANE MODAL OPEN HOBE , 
+    };
     const isGlobalProcessing = isAcceptLoading || isDeclineLoading;
 
     const tableRowDataRenderers: ((item: ChallengeItem, index: number) => ReactNode)[] =
@@ -163,7 +169,9 @@ export default function ChallengeManagementContainer() {
                 </span>
             ),
             (item) => {
-                const isAccepted = item.status?.toLowerCase() === "accepted";
+                const isAccepted = item.status?.toLowerCase() === "accepted" && item.is_published === false;
+
+                // const isCompleted = item.status?.toLowerCase() === "completed";
                 const winnerName = item.winnerId
                     ? item.challenger?.id === item.winnerId
                         ? item.challenger?.name
@@ -194,11 +202,30 @@ export default function ChallengeManagementContainer() {
                                 <Trophy className="size-3.5 mr-1" />
                                 Select Winner
                             </Button>
-                        ) : (
-                            <span className="text-gray-500 text-xs">---</span>
+                        ) : (<>
+                            {item.published_match_id ? (
+                                <Link href={`/admin/dashboard/matches?search=${item.published_match_id}`}><Button> Go to Match Management </Button></Link>
+                            ) : (
+                                <span className="text-white">---</span>
+                            )}
+                        </>
                         )}
                     </div>
                 );
+            },
+            (item) => {
+                const isMakeOfficialEnabled = item.status?.toLowerCase() === "accepted" && item.is_published === false;
+                return (
+                    <Button
+                        className="text-white bg-white/20 border border-white/20 hover:bg-white/30
+                        px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200
+                        flex items-center gap-2 hover:scale-105 active:scale-95"
+                        disabled={!isMakeOfficialEnabled}
+                        onClick={() => handleMakeOfficial(item.id)}
+                    >
+                        Make Official
+                    </Button>
+                )
             },
             (item) => {
                 const isCurrentRowProcessing = processingChallengeId === item.id;

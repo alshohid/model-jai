@@ -209,7 +209,16 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ChallengeManagement"],
     }),
-
+    makeChallengeOfficial: builder.mutation<
+      ChallengeAcceptResponse,
+      { id: number }
+    >({
+      query: ({ id }) => ({
+        url: `/admin/challenges/${id}/official`,
+        method: "POST",
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
     toggleAutoAcceptChallenge: builder.mutation<
       AutoAcceptChallengeResponse,
       { value: string }
@@ -251,5 +260,6 @@ export const {
   useGetUserAcceptedChallengesListQuery,
   useGetUserCompletedChallengesListQuery,
   useGetReceivedChallengesListQuery,
+  useMakeChallengeOfficialMutation,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;
