@@ -3,7 +3,7 @@
 
 import React from "react";
 
-type TabKey = "all" | "past" | "upcoming";
+type TabKey = "all" | "past" | "upcoming" | "challenge";
 
 type Props = {
     value: TabKey;
@@ -13,8 +13,11 @@ type Props = {
 
 const tabs: { key: TabKey; label: string }[] = [
     { key: "all", label: "All Matches" },
-    { key: "past", label: "Past Matches" },
+    { key: "challenge", label: "Challenges" },
     { key: "upcoming", label: "Upcoming Matches" },
+    { key: "past", label: "Past Matches" },
+
+
 ];
 
 export default function MatchHistoryTabs({ value, onChange, className = "" }: Props) {
