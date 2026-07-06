@@ -206,7 +206,7 @@ export default function ChallengeManagementContainer() {
                             </Button>
                         ) : (<>
                             {item.published_match_id ? (
-                                <Link href={`/admin/dashboard/matches?search=${item.published_match_id}`}><Button> Go to Match Management </Button></Link>
+                                <Link href={`/admin/dashboard/matches?search=${item.published_match_id}`}><Button className="!text-white !bg-white/20 !border !border-white/20 !hover:!bg-white/30"> Go to Match Management </Button></Link>
                             ) : (
                                 <span className="text-white">---</span>
                             )}
