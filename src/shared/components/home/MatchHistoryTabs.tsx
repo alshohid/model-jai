@@ -49,7 +49,6 @@ export default function MatchHistoryTabs({ value, onChange, className = "" }: Pr
             <div className="flex items-center gap-2 w-max lg:w-fit">
                 {tabs.map((t) => {
                     const active = value === t.key;
-
                     return (
                         <button
                             key={t.key}
