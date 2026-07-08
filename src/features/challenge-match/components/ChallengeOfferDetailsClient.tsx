@@ -21,6 +21,10 @@ function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>):
     const match_date = data.match_date as string | undefined;
     const match_time = data.match_time as string | undefined;
     const status = data.status as ChallengeMatchStatus;
+    const model = data.model as Record<string, unknown> | undefined;
+    const modelImage = (model?.image as string) ?? "/images/home/middle.png";
+    const modelId = (model?.id as number) ?? 0;
+    const modelName = (model?.name as string) ?? "Unknown";
 
     const challenger: ChallengePlayer = {
         id: (challengerApi?.id as number) ?? 0,
@@ -73,6 +77,9 @@ function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>):
         accepted,
         acceptedPlayer,
         isAccepted,
+        modelImage,
+        modelId,
+        modelName,
         amount: isNaN(amount) ? 0 : amount,
         game: (game?.name as string) ?? "Unknown Game",
         memo: (data.memo as string) ?? "",

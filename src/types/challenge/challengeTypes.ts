@@ -97,6 +97,11 @@ export interface ChallengeItem {
   winner_id: number | null;
   createdAt: string;
   published_match_id?: number | null;
+  model: {
+    id: number;
+    name: string;
+    image: string | null;
+  };
 }
 
 export interface GameInfo {

@@ -33,6 +33,9 @@ export type ChallengeMatchOffer = {
   targetPlayerId?: number | null;
   match_date: string;
   match_time: string;
+  modelId?: number;
+  modelName?: string;
+  modelImage?: string | null;
 };
 
 export type ChallengeCreateFormValues = {

@@ -490,13 +490,13 @@ export default function ChallengeMatchDetails({
             <ChallengePortraitCard
               player={{
                 id: 0,
-                name: "Model Boss",
-                handle: "@ModelBoss",
-                avatar: "/images/home/middle.png",
+                name: offer.modelName || "Model Boss",
+                handle: offer.modelName ? `@${offer.modelName.replace(/\s+/g, "")}` : "@ModelBoss",
+                avatar: offer.modelImage || "/images/home/middle.png",
               }}
               label="Model"
               tone="green"
-              imageOverride="/images/home/middle.png"
+              imageOverride={offer.modelImage || "/images/home/middle.png"}
             />
             <ChallengePortraitCard
               player={offer.accepted}
