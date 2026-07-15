@@ -5,6 +5,10 @@ import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { useGetChallengeByIdQuery } from "@/redux/features/challenge/challengeManagement";
 import ChallengeMatchDetails from "./ChallengeMatchDetails";
+import {
+    useReferralRedirect,
+    ReferralRegistrationPrompt,
+} from "@/shared/hooks/useReferralRedirect";
 import type { ChallengeMatchOffer, ChallengePlayer, ChallengeMatchKind, ChallengeMatchStatus } from "../types";
 
 
@@ -97,7 +101,7 @@ function mapApiOfferToChallengeMatchOffer(apiResponse: Record<string, unknown>):
 
 export default function ChallengeOfferDetailsClient({
     offerId: propOfferId,
-    refCode,
+    refCode: propRefCode,
 }: {
     offerId: string;
     refCode?: string;
@@ -110,6 +114,13 @@ export default function ChallengeOfferDetailsClient({
         { id: numericId },
         { skip: !numericId || isNaN(numericId) },
     );
+
+    const {
+        showRegistrationPrompt,
+        handleRegister,
+        handleLogin,
+        handleSkip,
+    } = useReferralRedirect();
 
     if (isLoading) {
         return (
@@ -132,5 +143,16 @@ export default function ChallengeOfferDetailsClient({
         notFound();
     }
 
-    return <ChallengeMatchDetails offer={offer} refCode={refCode} />;
+    return (
+        <>
+            <ChallengeMatchDetails offer={offer} refCode={propRefCode} />
+            <ReferralRegistrationPrompt
+                open={showRegistrationPrompt}
+                onRegister={handleRegister}
+                onLogin={handleLogin}
+                onSkip={handleSkip}
+                artistName={offer.challenger.name}
+            />
+        </>
+    );
 }
