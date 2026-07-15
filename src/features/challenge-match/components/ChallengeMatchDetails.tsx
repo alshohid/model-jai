@@ -402,7 +402,7 @@ export default function ChallengeMatchDetails({
       nextShareUrl.searchParams.set("ref", userReferralNo);
     }
 
-    const shareTitle = `Challenge ${getDisplayName(offer)} on ${offer.game}`;
+    const shareTitle = `${getDisplayName(offer)} challenges you on ${offer.game} — Go to Challenge`;
     const shareImage = getSafeImageSrc(
       offer.challenger.avatar,
       "/images/home/avatar_img.png"
@@ -438,7 +438,7 @@ export default function ChallengeMatchDetails({
       nextShareUrl.searchParams.set("ref", userReferralNo);
     }
 
-    const shareTitle = `Challenge ${getDisplayName(offer)} on ${offer.game}`;
+    const shareTitle = `${getDisplayName(offer)} challenges you on ${offer.game} — Go to Challenge`;
     const shareImage = getSafeImageSrc(
       offer.accepted.avatar,
       "/images/home/avatar_img.png"

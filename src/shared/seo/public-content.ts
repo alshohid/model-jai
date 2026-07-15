@@ -81,6 +81,22 @@ export const getPublicMatchById = async (
 ): Promise<IMatchDetailsResponse | null> =>
   fetchSeoJson<IMatchDetailsResponse>(`match/${matchId}`);
 
+export type PublicChallengeResponse = {
+  status?: boolean;
+  message?: string;
+  data?: {
+    id?: number;
+    game?: { name?: string | null } | null;
+    challenger?: { id?: number; name?: string | null; image?: string | null } | null;
+    target_player?: { id?: number; name?: string | null; image?: string | null } | null;
+  };
+};
+
+export const getPublicChallengeById = async (
+  offerId: string | number,
+): Promise<PublicChallengeResponse | null> =>
+  fetchSeoJson<PublicChallengeResponse>(`challenges/${offerId}`);
+
 export const getFeaturedNews = async (limit = 4): Promise<INews[]> => {
   const response = await fetchSeoJson<INewsListResponse>(
     `get_featured_news?page=1&per_page=${limit}`,

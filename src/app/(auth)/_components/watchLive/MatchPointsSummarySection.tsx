@@ -279,7 +279,7 @@ export default function MatchPointsSummarySection({
             nextShareUrl.searchParams.set("ref", userReferralNo);
         }
 
-        setShareSheetTitle(`Vote for ${playerName}`);
+        setShareSheetTitle(`Vote for ${playerName} — Vote Now`);
         setShareSheetImageSrc(playerImageSrc);
         setShareSheetImageAlt(playerName);
         setShareUrl(nextShareUrl.toString());
@@ -672,7 +672,7 @@ export default function MatchPointsSummarySection({
                                 points={left.points}
                                 compact
                                 positive={true}
-                                shareTitle={`Support ${left.playerName}`}
+                                shareTitle={`Support ${left.playerName} — Support Now`}
                                 matchId={matchId}
                                 matchSide="left"
                                 playerRef={userReferralNo}
@@ -698,7 +698,7 @@ export default function MatchPointsSummarySection({
                                 points={right.points}
                                 compact
                                 positive={false}
-                                shareTitle={`Support ${right.playerName}`}
+                                shareTitle={`Support ${right.playerName} — Support Now`}
                                 matchId={matchId}
                                 matchSide="right"
                                 playerRef={userReferralNo}

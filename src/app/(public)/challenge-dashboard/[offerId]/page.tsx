@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { createMetadata } from "@/shared/seo/metadata";
-import constants from "@/constant";
+import { getPublicChallengeById } from "@/shared/seo/public-content";
 import ChallengeOfferDetailsClient from "@/features/challenge-match/components/ChallengeOfferDetailsClient";
 
 type ChallengeOfferDetailsPageProps = {
@@ -8,45 +8,34 @@ type ChallengeOfferDetailsPageProps = {
   searchParams?: Promise<{ ref?: string }>;
 };
 
-// export function generateStaticParams() {
-//   return [];
-// }
+export async function generateMetadata({
+  params,
+}: ChallengeOfferDetailsPageProps): Promise<Metadata> {
+  const { offerId } = await params;
+  const response = await getPublicChallengeById(offerId);
+  const data = response?.data;
 
-// export async function generateMetadata({
-//   params,
-// }: ChallengeOfferDetailsPageProps): Promise<Metadata> {
-//   const { offerId } = await params;
-//   const numericId = Number(offerId);
-//   let title = "Challenge Match Details";
-//   let description = "View Big Boss challenge match offer details on Model Boss Offers.";
+  const challengerName = data?.challenger?.name ?? "A challenger";
+  const gameName = data?.game?.name ?? "Model Boss Offers";
+  const targetName = data?.target_player?.name;
 
-//   try {
-//     const res = await fetch(`${constants.baseApiURL}/challenges/${numericId}`, {
-//       next: { revalidate: 60 },
-//     });
-//     const json = await res.json();
+  const title = data
+    ? `${challengerName} Challenges You! Go to Challenge`
+    : "Challenge Match Details — Go to Challenge";
+  const description = data
+    ? `Think you've got what it takes? Accept ${challengerName}'s ${gameName} challenge${
+        targetName ? ` against ${targetName}` : ""
+      } and show your skills.`
+    : "View Big Boss challenge match offer details on Model Boss Offers.";
 
-//     if (json?.success && json?.data) {
-//       const d = json.data;
-//       const challengerName = d.challenger?.name ?? "Unknown";
-//       const gameName = d.game?.name ?? "Unknown Game";
-//       const targetName = d.target_player?.name ?? "Open Challenge";
-
-//       title = `${challengerName} vs ${targetName} Challenge`;
-//       description = `View the ${gameName} challenge match offer from ${challengerName} to ${targetName}.`;
-//     }
-//   } catch {
-//     // fallback to default metadata
-//   }
-
-//   return createMetadata({
-//     title,
-//     description,
-//     path: `/challenge-dashboard/${offerId}`,
-//     noIndex: true,
-//     image: `/api/og/challenge/${offerId}`,
-//   });
-// }
+  return createMetadata({
+    title,
+    description,
+    path: `/challenge-dashboard/${offerId}`,
+    noIndex: true,
+    image: data?.challenger?.image ?? undefined,
+  });
+}
 
 export default async function ChallengeOfferDetailsPage({
   params,
@@ -57,4 +46,3 @@ export default async function ChallengeOfferDetailsPage({
 
   return <ChallengeOfferDetailsClient offerId={offerId} refCode={refParam} />;
 }
-// }

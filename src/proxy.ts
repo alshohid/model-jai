@@ -1,7 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Social/link-preview crawlers only ever read <head> metadata — they don't execute
+// client JS or see gated app data — so letting them through the auth gate on share
+// routes is what makes rich link previews (title/description/image) possible at all.
+const CRAWLER_USER_AGENT_PATTERN =
+  /facebookexternalhit|Twitterbot|TelegramBot|WhatsApp|Slackbot|LinkedInBot|Discordbot|Pinterest|redditbot|SkypeUriPreview|TikTok|Googlebot|Applebot|vkShare|line-poker|Bitlybot/i;
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const userAgent = request.headers.get("user-agent") ?? "";
+  const isPreviewCrawler = CRAWLER_USER_AGENT_PATTERN.test(userAgent);
+
+  const isShareableRoute =
+    pathname.startsWith("/live-stream/match") ||
+    pathname.startsWith("/challenge-dashboard");
+
+  if (isPreviewCrawler && isShareableRoute) {
+    return NextResponse.next();
+  }
 
   const token = request.cookies.get("token")?.value;
   const role = request.cookies.get("role")?.value;
