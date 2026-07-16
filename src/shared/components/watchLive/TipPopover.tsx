@@ -130,7 +130,7 @@ export default function TipPopover({
                                 onChange={(e) => setName(e.target.value)}
                                 className={cn(
                                     "min-w-0 w-full bg-transparent outline-none",
-                                    "text-xs sm:text-sm text-white placeholder:text-white/40"
+                                    "text-base sm:text-sm text-white placeholder:text-white/40"
                                 )}
                                 placeholder="Sender name"
                             />
@@ -144,7 +144,7 @@ export default function TipPopover({
                                 inputMode="numeric"
                                 className={cn(
                                     "min-w-0 w-full bg-transparent outline-none",
-                                    "text-xs sm:text-sm text-white placeholder:text-white/40"
+                                    "text-base sm:text-sm text-white placeholder:text-white/40"
                                 )}
                                 placeholder="100"
                             />

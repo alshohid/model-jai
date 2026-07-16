@@ -40,7 +40,7 @@ export default function OtpCodeFieldGroup({
                     onChange={(event) => onDigitChange(index, event.target.value)}
                     onKeyDown={(event) => onKeyDown(index, event)}
                     onPaste={onPaste}
-                    className="h-10 w-full min-w-0 rounded-[10px] border border-white/10 bg-white/8 px-0 text-center text-sm font-semibold text-white outline-none transition focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/8 sm:h-14 sm:rounded-[16px] sm:text-xl"
+                    className="h-10 w-full min-w-0 rounded-[10px] border border-white/10 bg-white/8 px-0 text-center text-base font-semibold text-white outline-none transition focus:border-[#FF2EC8]/60 focus:bg-[#FF2EC8]/8 sm:h-14 sm:rounded-[16px] sm:text-xl"
                 />
             ))}
         </div>

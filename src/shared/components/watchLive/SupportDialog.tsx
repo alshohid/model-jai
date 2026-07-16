@@ -123,7 +123,7 @@ export default function SupportDialog({
                                     type="text"
                                     value={supporterName}
                                     onChange={(e) => setSupporterName(e.target.value)}
-                                    className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-sm"
+                                    className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-base sm:text-sm"
                                     placeholder="Your name"
                                 />
                             </div>
@@ -140,7 +140,7 @@ export default function SupportDialog({
                                     min={1}
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
-                                    className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-base sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0"
                                 />
                                 <span className="text-white/60 text-sm">₱</span>
