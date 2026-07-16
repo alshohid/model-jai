@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
+import authApi, { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useGetAllNotificationsQuery } from "@/redux/features/notification/notificationManagement";
 import { useAppDispatch } from "@/redux/store";
 import { getEcho } from "@/shared/lib/echo";
@@ -146,6 +146,17 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
 
             // Show custom toast with sound for coin.received event
             if (notification.type === "coin.received" && notification.amount && notification.sender_name) {
+                // Reflect the received coins in the cached balance shown in the navbar
+                dispatch(
+                    authApi.util.updateQueryData("getMeData", undefined, (draft) => {
+                        if (!draft.data) return;
+                        draft.data.total_balance = Number(draft.data.total_balance || 0) + Number(notification.amount);
+                        if (draft.data.user) {
+                            draft.data.user.total_balance = Number(draft.data.user.total_balance || 0) + Number(notification.amount);
+                        }
+                    }),
+                );
+
                 // Play cash money sound
                 try {
                     const audio = new Audio("/images/cash_money_sound.mp3");
