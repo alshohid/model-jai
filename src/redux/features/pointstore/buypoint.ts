@@ -77,6 +77,7 @@ const BuyPointApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
     getAutoAcceptStatus: builder.query({
       query: () => ({

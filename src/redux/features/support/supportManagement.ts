@@ -97,6 +97,7 @@ const SupportManagementApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
 
     sendTip: builder.mutation<
@@ -108,6 +109,7 @@ const SupportManagementApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
   }),
 

@@ -155,7 +155,7 @@ const MatchManagementApi = baseApi.injectEndpoints({
           total_vote: params.voteCount,
         },
       }),
-      invalidatesTags: ["PopularArtist"],
+      invalidatesTags: ["PopularArtist", "User"],
     }),
     createPopularArtistVote: builder.mutation<
       IPopularArtistSingleResponse,
