@@ -77,7 +77,7 @@ export default function ChallengeOfferCard({
         </div>
 
         <p className="mt-0.5 w-full truncate text-[13px] font-black leading-none text-[#c50dc5] sm:text-[19px]">
-          <span className="text-green-400">{formatChallengePoints(offer.amount)}</span> offers in <span className="px-1 font-extrabold uppercase tracking-normal [paint-order:stroke_fill] [-webkit-text-stroke:3px_#fff]
+          <span className="text-green-400 [paint-order:stroke_fill] [-webkit-text-stroke:3px_#111]">{formatChallengePoints(offer.amount)}</span> offers in <span className="px-1 font-extrabold uppercase tracking-normal [paint-order:stroke_fill] [-webkit-text-stroke:3px_#fff]
     ">{offer.game}</span>
         </p>
 
