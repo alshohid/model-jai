@@ -9,6 +9,7 @@ import AuthProvider from "@/redux/features/auth/AuthProvider";
 import { Toaster } from "sonner";
 import LiveStatusProvider from "@/shared/providers/LiveStatusProvider";
 import NotificationProvider from "@/shared/providers/NotificationProvider";
+import ChunkErrorReloader from "@/shared/components/ChunkErrorReloader";
 import { rootMetadata } from "@/shared/seo/metadata";
 
 const inter = Inter({
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${manrope.variable} antialiased `}
       >
+        <ChunkErrorReloader />
         <StoreProvider>
           <AuthProvider>
             <LenisProvider>
