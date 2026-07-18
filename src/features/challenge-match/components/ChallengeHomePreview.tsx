@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useGetAllPublicChallengesListQuery } from "@/redux/features/challenge/challengeManagement";
@@ -10,94 +10,74 @@ import ChallengeOfferCard from "./ChallengeOfferCard";
 import BigBossChallengeOffers from "./BigBossChallengeOffers";
 import { mapApiChallengeToOffer, type ApiChallengeItem } from "../utils/apiAdapter";
 
+type ChallengeOffer = ReturnType<typeof mapApiChallengeToOffer>;
+
+export function canAcceptOffer(offer: ChallengeOffer, currentUserId: number | null): boolean {
+  if (currentUserId == null) return false;
+  if (Number(offer.challenger.id) === currentUserId) return false;
+
+  if (offer.mode === "global") return true;
+
+  // mode === "unique"
+  return offer.targetPlayerId != null && Number(offer.targetPlayerId) === currentUserId;
+}
+
+export function PreviewHeader() {
+  return (
+    <Link href="/challenge-dashboard">
+      <div className="relative mx-auto w-full max-w-[520px]">
+        <BigBossChallengeOffers />
+      </div>
+    </Link>
+  );
+}
+
 export default function ChallengeHomePreview() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
 
-
   const { data: challengesData, isLoading, isError } =
     useGetAllPublicChallengesListQuery({ page: 1, limit: 3 });
 
-  const { data: meData } = useGetMeDataQuery(undefined, {
-    skip: !isAuthenticated,
-  });
-
+  const { data: meData } = useGetMeDataQuery(undefined, { skip: !isAuthenticated });
   const currentUserId = meData?.data?.user?.id ?? null;
-  const topOffers = useMemo(() => {
+
+  const offers = useMemo(() => {
     if (!challengesData?.data) return [];
-
-    const rawItems = challengesData.data as unknown as ApiChallengeItem[];
-
-    return rawItems
+    return (challengesData.data as unknown as ApiChallengeItem[])
       .map(mapApiChallengeToOffer)
       .sort((a, b) => a.rank - b.rank)
-      .slice(0, 3);
-  }, [challengesData]);
+      .slice(0, 3)
+      .map((offer) => ({ offer, acceptVisible: canAcceptOffer(offer, currentUserId) }));
+  }, [challengesData, currentUserId]);
 
-
-  const canAcceptOffer = (offer: ReturnType<typeof mapApiChallengeToOffer>) => {
-
-    if (offer.mode === "global") {
-      return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
-    }
-    if (offer.mode === "unique") {
-      return offer.targetPlayerId != null && currentUserId != null
-        ? Number(offer.targetPlayerId) === Number(currentUserId) && Number(offer.challenger.id) !== Number(currentUserId)
-        : false;
-    }
-
-  };
-
-  if (isLoading) {
-    return (
-      <div className="mx-auto w-full rounded-[24px] text-left">
-        <Link href="/challenge-dashboard">
-          <div className="relative mx-auto w-full max-w-[520px]">
-            <BigBossChallengeOffers />
-          </div>
-        </Link>
-        <div className="w-full py-8 text-center text-white/50 text-sm">
-          Loading challenges...
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="mx-auto w-full rounded-[24px] text-left">
-        <Link href="/challenge-dashboard">
-          <div className="relative mx-auto w-full max-w-[520px]">
-            <BigBossChallengeOffers />
-          </div>
-        </Link>
-        <div className="w-full py-8 text-center text-red-400 text-sm">
-          Failed to load challenges. Please try again later.
-        </div>
-      </div>
-    );
-  }
+  const goToOffer = useCallback(
+    (offerId: string) => router.push(`/challenge-dashboard/${offerId}`),
+    [router],
+  );
 
   return (
     <div className="mx-auto w-full rounded-[24px] text-left">
-      <Link href="/challenge-dashboard">
-        <div className="relative mx-auto w-full max-w-[520px]">
-          <BigBossChallengeOffers />
-        </div>
-      </Link>
+      <PreviewHeader />
       <div className="w-full">
-        {topOffers.length === 0 ? (
-          <div className="w-full py-8 text-center text-white/50 text-sm">
+        {isLoading ? (
+          <p className="w-full py-8 text-center text-white/50 text-sm">Loading challenges...</p>
+        ) : isError ? (
+          <p className="w-full py-8 text-center text-red-400 text-sm">
+            Failed to load challenges. Please try again later.
+          </p>
+        ) : offers.length === 0 ? (
+          <p className="w-full py-8 text-center text-white/50 text-sm">
             No challenges available right now.
-          </div>
+          </p>
         ) : (
-          topOffers.map((offer) => (
+          offers.map(({ offer, acceptVisible }) => (
             <ChallengeOfferCard
               key={offer.id}
               offer={offer}
               compact
-              onAccept={() => router.push(`/challenge-dashboard/${offer.id}`)}
-              acceptVisible={canAcceptOffer(offer)}
+              onAccept={() => goToOffer(offer.id)}
+              acceptVisible={acceptVisible}
             />
           ))
         )}
