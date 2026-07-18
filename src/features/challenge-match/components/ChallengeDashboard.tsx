@@ -11,6 +11,7 @@ import type { ChallengeMatchOffer } from "../types";
 import ChallengeOfferCard from "./ChallengeOfferCard";
 import BigBossChallengeOffers from "./BigBossChallengeOffers";
 import { mapApiChallengeToOffer, type ApiChallengeItem } from "../utils/apiAdapter";
+import { canAcceptOffer } from "../utils/canAcceptOffer";
 import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
 
 const PAGE_SIZE = 100;
@@ -32,19 +33,6 @@ export default function ChallengeDashboard() {
       .map(mapApiChallengeToOffer)
       .sort((a, b) => a.rank - b.rank);
   }, [challengesData]);
-
-  const canAcceptOffer = (offer: ChallengeMatchOffer) => {
-    if (offer.mode === "global") {
-      return currentUserId != null && Number(offer.challenger.id) !== Number(currentUserId);
-    }
-    if (offer.mode === "unique") {
-      return offer.targetPlayerId != null && currentUserId != null
-        ? Number(offer.targetPlayerId) === Number(currentUserId) && Number(offer.challenger.id) !== Number(currentUserId)
-        : false;
-    }
-
-    return true;
-  };
 
   const handleAccept = (offer: ChallengeMatchOffer) => {
     if (!isAuthenticated) {
@@ -151,7 +139,7 @@ export default function ChallengeDashboard() {
                     key={offer.id}
                     offer={offer}
                     onAccept={handleAccept}
-                    acceptVisible={canAcceptOffer(offer)}
+                    acceptVisible={canAcceptOffer(offer, currentUserId)}
 
                   />
                 ))}

@@ -194,24 +194,6 @@ function ChallengeSideOfferPanel({
   );
 }
 
-// function ChallengeCenterBadge({ offer }: { offer: ChallengeMatchOffer }) {
-//   return (
-//     <div className="flex min-w-0 flex-col items-center pt-8 text-center">
-//       <div className="grid h-12 w-12 place-items-center rounded-full border border-[#ff37dc] bg-black shadow-[0_0_20px_rgba(255,55,220,0.45)] sm:h-16 sm:w-16">
-//         <div className="text-[8px] font-bold leading-tight text-[#24ff7a] sm:text-[10px]">
-//           <span className="block">Sat 28</span>
-//           <span className="block">10:18</span>
-//           <span className="block">13:17</span>
-//         </div>
-//       </div>
-//       <p className="mt-1 text-xs font-black uppercase italic text-white">VS</p>
-//       <p className="mt-1 [writing-mode:vertical-rl] text-[10px] font-semibold capitalize text-white/70">
-//         {offer.kind}
-//       </p>
-//     </div>
-//   );
-// }
-
 function ChallengeAcceptPanel({
   offer,
   gameLogo,
