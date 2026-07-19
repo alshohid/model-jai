@@ -29,7 +29,7 @@ export default function ArtistProfilePage() {
     const { data: postsResponse, isLoading: postsLoading, isError: postsError } = useShowArtistPostByIdQuery(artistId);
     const [followArtist, { isLoading: isFollowing }] = useFollowArtistMutation();
     const [unFollowArtist, { isLoading: isUnfollowing }] = useUnFollowArtistMutation();
-    const { data: userChallengeList, isLoading: isUserChallengeListLoading, isError: isUserChallengeListError } = useGetIndividualChallengeListByUserIdQuery({
+    const { data: userChallengeList } = useGetIndividualChallengeListByUserIdQuery({
         id: artistId,
     }, { skip: !artistId });
     const { data: meData } = useGetMeDataQuery(undefined, { skip: !isAuthenticated })
@@ -92,6 +92,11 @@ export default function ArtistProfilePage() {
         bio: user?.bio || "No bio available",
         contact: user?.phone_number || "N/A",
         nationality: user?.nationality || "N/A",
+        favGame: {
+            id: user?.game?.id,
+            name: user?.game?.name,
+            image: user?.game?.image,
+        },
         show_name: user?.show_name,
         show_email: user?.show_email,
         show_total_earning: user?.show_total_earning,

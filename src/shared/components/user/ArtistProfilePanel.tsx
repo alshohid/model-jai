@@ -39,6 +39,11 @@ type ArtistInfo = {
     show_total_referral_earning: boolean;
     show_total_tip_received: boolean;
     show_total_withdraw: boolean;
+    favGame: {
+        id: string;
+        name: string;
+        image: string;
+    };
 
 };
 
@@ -140,9 +145,7 @@ export default function ArtistProfilePanel({
                 className
             )}
         >
-            {/* MAIN GRID */}
             <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6 lg:gap-10">
-                {/* LEFT: Profile image */}
                 <div>
                     <h3 className="text-white font-semibold text-[22px] text-center mb-4">
                         Artist Profile
@@ -251,6 +254,18 @@ export default function ArtistProfilePanel({
                                 <InfoRow label="Artist Name" value={`@${artist.username}`} />
                                 {artist.show_email && <InfoRow label="Email" value={artist.email} />}
                             </div>
+                            {artist.favGame && (
+                                <div className="shrink-0 self-center md:self-start">
+                                    <Image
+                                        src={artist.favGame.image}
+                                        alt={artist.favGame.name ?? "Favorite game"}
+                                        height={200}
+                                        width={200}
+                                        className="size-20  md:size-24 rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
+                                        unoptimized
+                                    />
+                                </div>
+                            )}
                         </div>
                         {artist.bio && (
                             <div className="mb-6 p-4 rounded-lg bg-white/5 border border-white/10">
