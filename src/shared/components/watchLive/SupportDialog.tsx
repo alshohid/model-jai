@@ -96,10 +96,6 @@ export default function SupportDialog({
                     <span className="px-3 py-1 rounded-full text-sm font-semibold bg-orange-500/90 text-white">
                         {playerName}
                     </span>
-                    {/* <div className="relative ml-auto">
-                        <Bell className="size-5 text-white/80" />
-                        <span className="absolute -top-0.5 -right-0.5 size-2 bg-[#FF2EC8] rounded-full" />
-                    </div> */}
                 </div>
 
                 {success ? (
