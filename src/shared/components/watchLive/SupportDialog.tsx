@@ -42,6 +42,51 @@ export default function SupportDialog({
     const [success, setSuccess] = React.useState(false);
     const [submitting, setSubmitting] = React.useState(false);
     const [error, setError] = React.useState("");
+    const [keyboardStyle, setKeyboardStyle] = React.useState<
+        React.CSSProperties | undefined
+    >(undefined);
+    const amountInputRef = React.useRef<HTMLInputElement>(null);
+
+    // Keep the focused input visible once the keyboard finishes animating in.
+    const scrollFieldIntoView = (target: HTMLElement) => {
+        window.setTimeout(() => {
+            target.scrollIntoView({ block: "center", behavior: "smooth" });
+        }, 300);
+    };
+
+    // On iOS the keyboard overlays the page without resizing it, so a
+    // vertically-centered fixed dialog ends up hidden behind the keyboard.
+    // Track the visual viewport and pin the dialog inside the visible area
+    // while the keyboard is open.
+    React.useEffect(() => {
+        if (!open) {
+            setKeyboardStyle(undefined);
+            return;
+        }
+        const vv = window.visualViewport;
+        if (!vv) return;
+
+        const update = () => {
+            const keyboardOpen = vv.height < window.innerHeight - 100;
+            setKeyboardStyle(
+                keyboardOpen
+                    ? {
+                          top: vv.offsetTop + 12,
+                          translate: "-50% 0",
+                          maxHeight: vv.height - 24,
+                      }
+                    : undefined
+            );
+        };
+
+        update();
+        vv.addEventListener("resize", update);
+        vv.addEventListener("scroll", update);
+        return () => {
+            vv.removeEventListener("resize", update);
+            vv.removeEventListener("scroll", update);
+        };
+    }, [open]);
 
     React.useEffect(() => {
         if (open) {
@@ -82,10 +127,21 @@ export default function SupportDialog({
             <DialogContent
                 className={cn(
                     "max-w-[calc(100vw-2rem)] w-full sm:max-w-md",
+                    "max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain",
                     "bg-[#1a141a] border-white/10 text-white",
-                    "p-0 gap-0 overflow-hidden"
+                    "p-0 gap-0"
                 )}
+                style={keyboardStyle}
                 showCloseButton={true}
+                onOpenAutoFocus={(e) => {
+                    e.preventDefault();
+                    const input = amountInputRef.current;
+                    if (input) {
+                        input.focus();
+                        input.select();
+                        scrollFieldIntoView(input);
+                    }
+                }}
             >
                 <DialogTitle className="sr-only">Support {playerName}</DialogTitle>
 
@@ -119,6 +175,7 @@ export default function SupportDialog({
                                     type="text"
                                     value={supporterName}
                                     onChange={(e) => setSupporterName(e.target.value)}
+                                    onFocus={(e) => scrollFieldIntoView(e.target)}
                                     className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-base sm:text-sm"
                                     placeholder="Your name"
                                 />
@@ -132,10 +189,12 @@ export default function SupportDialog({
                             <div className="flex items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5">
                                 <PhilippinePeso className="size-4 text-white/50 shrink-0" />
                                 <input
+                                    ref={amountInputRef}
                                     type="number"
                                     min={1}
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
+                                    onFocus={(e) => scrollFieldIntoView(e.target)}
                                     className="flex-1 bg-transparent outline-none text-white placeholder:text-white/40 text-base sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     placeholder="0"
                                 />
