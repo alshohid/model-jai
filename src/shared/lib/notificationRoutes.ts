@@ -1,18 +1,5 @@
 import type { IAppNotificationItem } from "@/types/notifications/NotitficationsTypes";
 
-/**
- * Determines the target route path for a given notification item.
- * This function maps each notification category to its corresponding
- * application route so users are redirected to the correct page on click.
- *
- * Route mapping:
- * - match.created       → /live-stream/match/:match_id  or  /artist/:playerId
- * - match.completed     → /live-stream/match/:match_id
- * - admin.withdrawal.created → /admin/dashboard/withdrawals
- * - user.withdrawal.*   → /transactions
- * - coin.received       → /user-profile  or  /artist/:sender_id
- * - challenge.won/lost  → /live-stream/match/:match_id  or  /challenge-match
- */
 export function getNotificationRoute(
   notification: IAppNotificationItem,
 ): string | null {
@@ -77,7 +64,7 @@ export function getNotificationRoute(
       if (challengeMatchId) {
         return `/live-stream/match/${challengeMatchId}`;
       }
-      return "/challenge-match";
+      return "/challenge-dashboard";
     }
 
     // ── Fallback for generic / unknown notification types ──

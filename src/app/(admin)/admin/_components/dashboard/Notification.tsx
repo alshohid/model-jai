@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import NotificationItem from "@/shared/components/notifications/NotificationItem";
 import { formatNotificationTime } from "@/shared/lib/formateNotificatinTime";
 import { useNotifications } from "@/shared/providers/hook/useNotificaton";
+import { getNotificationRoute } from "@/shared/lib/notificationRoutes";
 import { ArrowLeft, CheckCheck, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -30,6 +31,8 @@ export default function AdminNotificationContainer() {
 
     const notifications = useMemo(() => {
         return appNotifications.map((item) => {
+            const route = getNotificationRoute(item);
+
             if (item.category === "match.created") {
                 return {
                     id: item.id,
@@ -40,6 +43,7 @@ export default function AdminNotificationContainer() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -53,6 +57,7 @@ export default function AdminNotificationContainer() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -66,6 +71,7 @@ export default function AdminNotificationContainer() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -79,6 +85,7 @@ export default function AdminNotificationContainer() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -91,6 +98,7 @@ export default function AdminNotificationContainer() {
                 message: item.message,
                 timestamp: formatNotificationTime(item.createdAt),
                 read: item.read,
+                route,
             };
         });
     }, [appNotifications]);
@@ -196,7 +204,14 @@ export default function AdminNotificationContainer() {
                                     : "border-[#FF2EC8]/30 bg-[#FF2EC8]/8"
                             )}
                         >
-                            <NotificationItem {...notification} />
+                            <NotificationItem
+                                {...notification}
+                                onClick={() => {
+                                    if (!notification.read) {
+                                        handleMarkOneRead(notification.id);
+                                    }
+                                }}
+                            />
 
                             <div className="mt-3 flex items-center gap-2">
                                 {!notification.read ? (

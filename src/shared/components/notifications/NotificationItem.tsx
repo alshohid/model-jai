@@ -13,7 +13,7 @@ interface NotificationItemProps {
     title?: string;
     read?: boolean;
     playerColor?: string; // Instagram-like color copying
-    matchId?: string;
+    route?: string | null;
     message: string;
     timestamp: string;
     onClick?: () => void;
@@ -21,11 +21,9 @@ interface NotificationItemProps {
 }
 
 export default function NotificationItem({
-    id,
     type,
-    playerId,
     playerColor,
-    matchId,
+    route,
     message,
     timestamp,
     onClick,
@@ -34,10 +32,10 @@ export default function NotificationItem({
     const router = useRouter();
 
     const handleClick = () => {
-        if (matchId) {
-            router.push(`/live-stream/match`);
-        }
         onClick?.();
+        if (route) {
+            router.push(route);
+        }
     };
 
     const getTypeColor = () => {

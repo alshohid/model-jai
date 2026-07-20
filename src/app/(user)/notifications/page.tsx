@@ -10,6 +10,7 @@ import NotificationItem from "@/shared/components/notifications/NotificationItem
 import { cn } from "@/shared/lib/utils/cn";
 import { useNotifications } from "@/shared/providers/hook/useNotificaton";
 import { formatNotificationTime } from "@/shared/lib/formateNotificatinTime";
+import { getNotificationRoute } from "@/shared/lib/notificationRoutes";
 
 export default function NotificationsPage() {
     const {
@@ -28,6 +29,8 @@ export default function NotificationsPage() {
 
     const notifications = useMemo(() => {
         return appNotifications.map((item) => {
+            const route = getNotificationRoute(item);
+
             if (item.category === "match.created") {
                 return {
                     id: item.id,
@@ -38,6 +41,7 @@ export default function NotificationsPage() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -51,6 +55,7 @@ export default function NotificationsPage() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -64,6 +69,7 @@ export default function NotificationsPage() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -77,6 +83,7 @@ export default function NotificationsPage() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -90,6 +97,7 @@ export default function NotificationsPage() {
                     message: item.message,
                     timestamp: formatNotificationTime(item.createdAt),
                     read: item.read,
+                    route,
                 };
             }
 
@@ -102,6 +110,7 @@ export default function NotificationsPage() {
                 message: item.message,
                 timestamp: formatNotificationTime(item.createdAt),
                 read: item.read,
+                route,
             };
         });
     }, [appNotifications]);
@@ -209,7 +218,14 @@ export default function NotificationsPage() {
                                     : "border-[#FF2EC8]/30 bg-[#FF2EC8]/8"
                             )}
                         >
-                            <NotificationItem {...notification} />
+                            <NotificationItem
+                                {...notification}
+                                onClick={() => {
+                                    if (!notification.read) {
+                                        handleMarkOneRead(notification.id);
+                                    }
+                                }}
+                            />
 
                             <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                                 {!notification.read ? (
