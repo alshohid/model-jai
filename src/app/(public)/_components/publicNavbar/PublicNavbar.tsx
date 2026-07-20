@@ -60,6 +60,7 @@ export default function PublicNavbar() {
                                     return (
                                         <Link
                                             key={item.href}
+                                            prefetch={false}
                                             href={item.href}
                                             className={cn(
                                                 "cursor-pointer rounded-md px-3 py-1.5 transition text-[1rem] lg:text-[1.125rem]",

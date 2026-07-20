@@ -119,6 +119,7 @@ export default function MobileNavSheet({
                                     <SheetClose asChild key={item.href}>
                                         <Link
                                             href={item.href}
+                                            prefetch={false}
                                             className={cn(
                                                 "cursor-pointer rounded-[12px] px-4 py-3",
                                                 "border border-white/10 bg-white/5 transition",
