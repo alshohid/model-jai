@@ -38,7 +38,6 @@ export function LoginForm({ onGoRegister }: { onGoRegister: () => void }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const dispatch = useAppDispatch();
-
     const { logIn, isLoading: isLoginLoading } = useAuth();
     const redirect = safeRedirect(searchParams.get("redirect") || getStoredAuthRedirect());
     const [errorLogin, setErrorLogin] = useState("")
