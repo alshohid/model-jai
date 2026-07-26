@@ -6,7 +6,7 @@ import { useGetUserAcceptedChallengesListQuery } from "@/redux/features/challeng
 import { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useAuth } from "@/redux/features/auth/hooks";
 import { cn } from "@/shared/lib/utils/cn";
-import ChallengeOfferCard from "./ChallengeOfferCard";
+import AcceptedChallengeCardItem from "./AcceptedChallengeCardItem";
 import BigBossChallengeOffers from "./BigBossChallengeOffers";
 import { mapApiChallengeToOffer, type ApiChallengeItem } from "../utils/apiAdapter";
 import AppPagination from "@/app/(admin)/admin/_components/topComponent/AppPagination";
@@ -29,13 +29,13 @@ export default function AcceptedChallengesList() {
         { userId: currentUserId ?? 0, page: currentPage, limit: PAGE_SIZE },
         { skip: !currentUserId },
     );
-
+    console.log("acceptedData", acceptedData);
     const acceptedOffers = useMemo(() => {
         if (!acceptedData?.data) return [];
         const rawItems = acceptedData.data as unknown as ApiChallengeItem[];
         return rawItems
             .map(mapApiChallengeToOffer)
-            .sort((a, b) => a.rank - b.rank);
+            .sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0));
     }, [acceptedData]);
     const paginationMeta = useMemo(() => {
         if (!acceptedData?.meta) return null;
@@ -188,11 +188,10 @@ export default function AcceptedChallengesList() {
                         ) : (
                             <div className="flex flex-col gap-y-4">
                                 {acceptedOffers.map((offer) => (
-                                    <ChallengeOfferCard
+                                    <AcceptedChallengeCardItem
                                         key={offer.id}
                                         offer={offer}
-                                        acceptVisible={false}
-                                        isShowAcceptedButton={true}
+                                        currentUserId={currentUserId}
                                     />
                                 ))}
                                 {paginationMeta && (

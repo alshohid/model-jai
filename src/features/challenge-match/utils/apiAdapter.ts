@@ -3,19 +3,28 @@ import type { ChallengeMatchOffer, ChallengePlayer } from "../types";
 export interface ApiChallengeItem {
   id: number;
   challenge_no: string;
-  rank: number;
+  rank: number | null;
   mode: "unique" | "global";
   status: string;
   amount: string;
-  matched_points: string;
+  matched_points?: string;
   logo: string | null;
   memo: string;
   show_real_name: boolean;
   duration_hours: number;
-  duration_label: string;
+  duration_label?: string;
   match_date: string;
   match_time: string;
-  offer_expires_at: string;
+  challenger_ready_at?: string | null;
+  acceptor_ready_at?: string | null;
+  both_players_ready?: boolean;
+  started_at?: string | null;
+  submitted_for_review_at?: string | null;
+  admin_reviewed_at?: string | null;
+  offer_expires_at?: string | null;
+  is_expired?: boolean;
+  can_accept?: boolean;
+  expiry_message?: string | null;
   game: {
     id: number;
     name: string;
@@ -31,8 +40,14 @@ export interface ApiChallengeItem {
     name: string;
     image: string;
   } | null;
-  acceptor: null;
-  winner_id: null;
+  acceptor: {
+    id: number;
+    name: string;
+    image: string;
+  } | null;
+  winner_id: number | null;
+  is_published?: boolean;
+  published_match_id?: number | null;
   created_at: string;
 }
 
@@ -67,9 +82,13 @@ export function mapApiChallengeToOffer(
 ): ChallengeMatchOffer & {
   mode: "unique" | "global";
   targetPlayerId: number | null;
+  rawApiItem: ApiChallengeItem;
 } {
   const challenger = toChallengePlayer(item.challenger);
-  const target = toChallengePlayer(item.target_player, "Open Challenge");
+  const target = toChallengePlayer(
+    item.target_player || item.acceptor,
+    "Open Challenge",
+  );
 
   // Derive a stable string id
   const id = String(item.id);
@@ -82,6 +101,7 @@ export function mapApiChallengeToOffer(
     offered: "open",
     pending: "open",
     accepted: "accepted",
+    under_review: "accepted",
     completed: "completed",
     delayed: "delayed",
   };
@@ -91,14 +111,14 @@ export function mapApiChallengeToOffer(
 
   return {
     id,
-    rank: item.rank,
+    rank: item.rank ?? 0,
     challenger,
     target,
     accepted: item?.acceptor || null,
     acceptedPlayer: item?.acceptor || null,
-    isAccepted: false,
+    isAccepted: true,
     amount: Number(item.amount),
-    game: item.game.name,
+    game: item.game?.name || "Game",
     memo: item.memo,
     durationHours: item.duration_hours,
     kind: kind as "voting" | "supporting",
@@ -110,5 +130,7 @@ export function mapApiChallengeToOffer(
     // extra fields for accept-button logic
     mode: item.mode,
     targetPlayerId: item.target_player?.id ?? null,
+    rawApiItem: item,
   };
 }
+

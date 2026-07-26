@@ -273,6 +273,48 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ChallengeManagement"],
     }),
+    confirmChallengeReady: builder.mutation<
+      { status: boolean; message: string; data: any },
+      {
+        id: number | string;
+        battery_confirmed: boolean;
+        internet_confirmed: boolean;
+        camera_confirmed: boolean;
+        rules_confirmed: boolean;
+      }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/challenges/${id}/ready`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
+    submitChallengeResult: builder.mutation<
+      { status: boolean; message: string; data: any },
+      {
+        id: number | string;
+        notes?: string;
+        evidence_image?: File | null;
+        evidence_video?: File | null;
+      }
+    >({
+      query: ({ id, notes, evidence_image, evidence_video }) => {
+        const formData = new FormData();
+        if (notes) formData.append("notes", notes);
+        if (evidence_image instanceof File)
+          formData.append("evidence_image", evidence_image);
+        if (evidence_video instanceof File)
+          formData.append("evidence_video", evidence_video);
+        return {
+          url: `/challenges/${id}/submit-result`,
+          method: "POST",
+          body: formData,
+          formData: true,
+        };
+      },
+      invalidatesTags: ["ChallengeManagement"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -295,5 +337,8 @@ export const {
   useGetUserCompletedChallengesListQuery,
   useGetReceivedChallengesListQuery,
   useMakeChallengeOfficialMutation,
+  useConfirmChallengeReadyMutation,
+  useSubmitChallengeResultMutation,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;
+
