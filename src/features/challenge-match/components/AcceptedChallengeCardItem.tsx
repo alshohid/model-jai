@@ -7,6 +7,7 @@ import ChallengeSubmitResultModal from "./ChallengeSubmitResultModal";
 import type { ChallengeMatchOffer } from "../types";
 import type { ApiChallengeItem } from "../utils/apiAdapter";
 import { Clock, ShieldAlert, Trophy, Award, CheckCircle2, AlertCircle } from "lucide-react";
+import { fa } from "zod/v4/locales";
 
 interface AcceptedChallengeCardItemProps {
   offer: ChallengeMatchOffer & {
@@ -50,7 +51,7 @@ export default function AcceptedChallengeCardItem({
   // Derive player roles
   const challengerId = rawItem?.challenger?.id ?? offer.challenger.id;
   const acceptorId = rawItem?.acceptor?.id ?? offer.acceptedPlayer?.id ?? offer.target.id;
-  
+
   const isChallenger = currentUserId !== null && currentUserId === challengerId;
   const isAcceptor = currentUserId !== null && currentUserId === acceptorId;
   const isPlayer = isChallenger || isAcceptor;
@@ -58,14 +59,14 @@ export default function AcceptedChallengeCardItem({
   const myReadyAt = isChallenger
     ? rawItem?.challenger_ready_at
     : isAcceptor
-    ? rawItem?.acceptor_ready_at
-    : null;
+      ? rawItem?.acceptor_ready_at
+      : null;
 
   const opponentReadyAt = isChallenger
     ? rawItem?.acceptor_ready_at
     : isAcceptor
-    ? rawItem?.challenger_ready_at
-    : null;
+      ? rawItem?.challenger_ready_at
+      : null;
 
   const bothPlayersReady = rawItem?.both_players_ready ?? false;
   const startedAt = rawItem?.started_at ?? null;
@@ -302,16 +303,16 @@ export default function AcceptedChallengeCardItem({
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/3 p-2.5 transition-all hover:border-white/20">
+    <div className="flex flex-col md:flex-row gap-2 rounded-2xl border border-white/10 bg-white/3 p-2.5 transition-all hover:border-white/20">
       {/* Reusable ChallengeOfferCard rendered inside wrapper */}
       <ChallengeOfferCard
         offer={offer}
         acceptVisible={false}
-        isShowAcceptedButton={true}
+        isShowAcceptedButton={false}
       />
 
       {/* Dynamic Action & Ready Status Bar */}
-      <div className="px-1">{renderActionBar()}</div>
+      <div className="w-full md:w-2/3 px-1">{renderActionBar()}</div>
 
       {/* Ready Modal */}
       {isReadyModalOpen && (
