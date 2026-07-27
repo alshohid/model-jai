@@ -5,7 +5,7 @@ import { ReactNode, useState } from "react";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, User2, Loader2, CheckCircle2, XCircle, Trophy } from "lucide-react";
+import { Gamepad2, User2, Loader2, CheckCircle2, XCircle, Trophy, View } from "lucide-react";
 import { ChallengeItem } from "@/types/challenge/challengeTypes";
 import {
     useAdminAcceptChallengeMutation,
@@ -16,6 +16,7 @@ import {
 } from "@/redux/features/challenge/challengeManagement";
 import WinnerSelectModal from "./WinnerSelectModal";
 import MakeOfficialModal from "./MakeOfficialModal";
+import ChallengeReportModal from "./ChallengeReportModal";
 import { toast } from "sonner";
 import ToggleCard from "@/features/challenge-match/components/ToggleCard";
 import Link from "next/link";
@@ -33,6 +34,8 @@ export default function ChallengeManagementContainer() {
     const [selectedChallengeForWinner, setSelectedChallengeForWinner] = useState<ChallengeItem | null>(null);
     const [officialModalOpen, setOfficialModalOpen] = useState(false);
     const [selectedChallengeForOfficial, setSelectedChallengeForOfficial] = useState<number | null>(null);
+    const [reportModalOpen, setReportModalOpen] = useState(false);
+    const [selectedChallengeForReport, setSelectedChallengeForReport] = useState<ChallengeItem | null>(null);
 
     const limit = 10;
 
@@ -192,6 +195,19 @@ export default function ChallengeManagementContainer() {
 
                 return (
                     <div className="flex items-center gap-2">
+                        {item.status === "under_review" &&
+                            <Button
+                                type="button"
+                                onClick={() => {
+                                    setSelectedChallengeForReport(item);
+                                    setReportModalOpen(true);
+                                }}
+                                className="bg-pink-500! text-black! text-xs! px-3! py-1! h-auto! hover:bg-pink-400!"
+                            >
+                                <View className="size-3.5 mr-1" />
+                                View Reports
+                            </Button>
+                        }
                         {isAccepted ? (
                             <Button
                                 type="button"
@@ -208,7 +224,7 @@ export default function ChallengeManagementContainer() {
                             {item.published_match_id ? (
                                 <Link href={`/admin/dashboard/matches?search=${item.published_match_id}`}><Button className="!text-white !bg-white/20 !border !border-white/20 !hover:!bg-white/30"> Go to Match Management </Button></Link>
                             ) : (
-                                <span className="text-white">---</span>
+                                <span className="text-white"></span>
                             )}
                         </>
                         )}
@@ -319,6 +335,16 @@ export default function ChallengeManagementContainer() {
                         challengeId={selectedChallengeForWinner.id}
                         challenger={selectedChallengeForWinner.challenger}
                         acceptor={selectedChallengeForWinner.acceptor!}
+                    />
+                )}
+                {selectedChallengeForReport && (
+                    <ChallengeReportModal
+                        open={reportModalOpen}
+                        onOpenChange={(open) => {
+                            setReportModalOpen(open);
+                            if (!open) setSelectedChallengeForReport(null);
+                        }}
+                        challenge={selectedChallengeForReport}
                     />
                 )}
                 {selectedChallengeForOfficial && (
