@@ -27,6 +27,10 @@ export interface IRawNotificationData {
   rules?: string;
   payout?: number;
   player_ids?: number[];
+  challenge_id?: number | string;
+  challenge_no?: string | number;
+  opponent_name?: string;
+  ready_expires_at?: string | null;
 }
 
 export interface INotificationApiItem {

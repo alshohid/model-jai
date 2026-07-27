@@ -4,8 +4,11 @@ import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import authApi, { useGetMeDataQuery } from "@/redux/features/auth/authapi";
 import { useGetAllNotificationsQuery } from "@/redux/features/notification/notificationManagement";
+import { baseApi } from "@/redux/api/baseApi";
+import ChallengeManagementApi from "@/redux/features/challenge/challengeManagement";
 import { useAppDispatch } from "@/redux/store";
 import { getEcho } from "@/shared/lib/echo";
+import type { ApiChallengeItem } from "@/features/challenge-match/utils/apiAdapter";
 import {
     addNotification,
     setNotifications,
@@ -222,6 +225,45 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
             }
             else if (notification.type === "challenge.opponent_ready") {
                 toast.success(notification.message);
+
+                if (userId) {
+                    dispatch(
+                        ChallengeManagementApi.util.updateQueryData(
+                            "getUserAcceptedChallengesList",
+                            { userId: Number(userId), page: 1, limit: 10 },
+                            (draft) => {
+                                if (draft?.data && Array.isArray(draft.data)) {
+                                    const items = draft.data as unknown as ApiChallengeItem[];
+                                    const challengeId = Number(notification.challenge_id);
+                                    const item = items.find((ch) => Number(ch.id) === challengeId);
+                                    if (item) {
+                                        if (notification.ready_expires_at) {
+                                            item.ready_expires_at = notification.ready_expires_at;
+                                        }
+
+                                        const isChallenger = Number(userId) === Number(item.challenger?.id);
+                                        const nowStr = new Date().toISOString();
+                                        if (isChallenger) {
+                                            item.acceptor_ready_at = nowStr;
+                                        } else {
+                                            item.challenger_ready_at = nowStr;
+                                        }
+
+                                        if (item.challenger_ready_at && item.acceptor_ready_at) {
+                                            item.both_players_ready = true;
+                                            item.status = "accepted";
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    );
+                }
+
+                // Invalidate cache with a 1 second delay to fetch fully-committed state from database
+                setTimeout(() => {
+                    dispatch(baseApi.util.invalidateTags(["ChallengeManagement"]));
+                }, 1000);
             }
         })
 
