@@ -142,7 +142,9 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
         );
 
         privateNotificationChannel.notification((notification: IRawNotificationData) => {
+            console.log("Private notification", notification);
             dispatch(addNotification(mapSocketPrivateNotification(notification)));
+
 
             // Show custom toast with sound for coin.received event
             if (notification.type === "coin.received" && notification.amount && notification.sender_name) {
@@ -217,6 +219,9 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                         position: "top-center",
                     },
                 );
+            }
+            else if (notification.type === "challenge.opponent_ready") {
+                toast.success(notification.message);
             }
         })
 

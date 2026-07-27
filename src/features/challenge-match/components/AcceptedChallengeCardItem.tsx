@@ -7,7 +7,7 @@ import ChallengeSubmitResultModal from "./ChallengeSubmitResultModal";
 import type { ChallengeMatchOffer } from "../types";
 import type { ApiChallengeItem } from "../utils/apiAdapter";
 import { Clock, ShieldAlert, Trophy, Award, CheckCircle2, AlertCircle } from "lucide-react";
-import { fa } from "zod/v4/locales";
+
 
 interface AcceptedChallengeCardItemProps {
   offer: ChallengeMatchOffer & {
@@ -38,7 +38,7 @@ export default function AcceptedChallengeCardItem({
     typeof window !== "undefined" ? Date.now() : 0,
   );
 
-  // Update current time every second for accurate countdown
+
   useEffect(() => {
     const timer = setInterval(() => {
       setNow(Date.now());
@@ -48,7 +48,6 @@ export default function AcceptedChallengeCardItem({
 
   const rawItem = offer.rawApiItem;
 
-  // Derive player roles
   const challengerId = rawItem?.challenger?.id ?? offer.challenger.id;
   const acceptorId = rawItem?.acceptor?.id ?? offer.acceptedPlayer?.id ?? offer.target.id;
 
@@ -75,7 +74,7 @@ export default function AcceptedChallengeCardItem({
   const isExpired = rawItem?.is_expired ?? false;
   const status = rawItem?.status ?? offer.status ?? "accepted";
 
-  // Parse match date & time
+
   const matchTimeMs = useMemo(() => {
     if (!offer.match_date || !offer.match_time) return 0;
     const dateStr = `${offer.match_date}T${offer.match_time}:00`;
@@ -83,8 +82,14 @@ export default function AcceptedChallengeCardItem({
     return isNaN(parsed) ? 0 : parsed;
   }, [offer.match_date, offer.match_time]);
 
-  // Determine ready window expiration (10 minutes after match time or first player ready)
+
   const readyExpiresAt = useMemo(() => {
+    if (rawItem?.ready_expires_at) {
+      const expiresMs = new Date(rawItem.ready_expires_at).getTime();
+      if (!isNaN(expiresMs)) {
+        return expiresMs;
+      }
+    }
     const firstReadyAt = rawItem?.challenger_ready_at || rawItem?.acceptor_ready_at;
     if (firstReadyAt) {
       const firstReadyMs = new Date(firstReadyAt).getTime();
@@ -93,11 +98,10 @@ export default function AcceptedChallengeCardItem({
       }
     }
     return matchTimeMs + 10 * 60 * 1000;
-  }, [rawItem?.challenger_ready_at, rawItem?.acceptor_ready_at, matchTimeMs]);
+  }, [rawItem, matchTimeMs]);
 
-  // Compute status banner / button logic
   const renderActionBar = () => {
-    // 1. Completed Match
+
     if (status === "completed") {
       if (winnerId !== null && winnerId === currentUserId) {
         return (
@@ -125,7 +129,6 @@ export default function AcceptedChallengeCardItem({
       );
     }
 
-    // 2. Both Ready / Match Started
     if (bothPlayersReady || startedAt !== null) {
       if (submittedForReviewAt || status === "under_review") {
         return (
@@ -159,7 +162,7 @@ export default function AcceptedChallengeCardItem({
       }
     }
 
-    // 3. Expired Offer
+
     if (isExpired && !bothPlayersReady && myReadyAt === null) {
       return (
         <div className="flex items-center justify-between rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-red-300">
@@ -174,9 +177,8 @@ export default function AcceptedChallengeCardItem({
       );
     }
 
-    // 4. Ready Flow for Players
+
     if (isPlayer) {
-      // Case A: I am ready, waiting for opponent
       if (myReadyAt !== null && opponentReadyAt === null) {
         if (now < readyExpiresAt) {
           const timeLeft = readyExpiresAt - now;
@@ -203,7 +205,7 @@ export default function AcceptedChallengeCardItem({
         }
       }
 
-      // Case B: Opponent is ready, I am not ready
+
       if (myReadyAt === null && opponentReadyAt !== null) {
         if (now < readyExpiresAt) {
           const timeLeft = readyExpiresAt - now;
@@ -239,7 +241,6 @@ export default function AcceptedChallengeCardItem({
         }
       }
 
-      // Case C: Neither player readied yet (Before ready / Ready window)
       if (myReadyAt === null && opponentReadyAt === null) {
         if (now < matchTimeMs) {
           const timeToMatch = matchTimeMs - now;
@@ -288,8 +289,6 @@ export default function AcceptedChallengeCardItem({
         }
       }
     }
-
-    // Default viewer info for non-players
     return (
       <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-white/60">
         <span className="text-xs font-medium">
@@ -304,17 +303,14 @@ export default function AcceptedChallengeCardItem({
 
   return (
     <div className="flex flex-col md:flex-row gap-2 rounded-2xl border border-white/10 bg-white/3 p-2.5 transition-all hover:border-white/20">
-      {/* Reusable ChallengeOfferCard rendered inside wrapper */}
       <ChallengeOfferCard
         offer={offer}
         acceptVisible={false}
         isShowAcceptedButton={false}
       />
 
-      {/* Dynamic Action & Ready Status Bar */}
       <div className="w-full md:w-2/3 px-1">{renderActionBar()}</div>
 
-      {/* Ready Modal */}
       {isReadyModalOpen && (
         <ChallengeReadyModal
           open={isReadyModalOpen}
@@ -323,7 +319,6 @@ export default function AcceptedChallengeCardItem({
         />
       )}
 
-      {/* Result Submit Modal */}
       {isSubmitModalOpen && (
         <ChallengeSubmitResultModal
           open={isSubmitModalOpen}

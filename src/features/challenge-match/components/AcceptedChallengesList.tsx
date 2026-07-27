@@ -29,7 +29,6 @@ export default function AcceptedChallengesList() {
         { userId: currentUserId ?? 0, page: currentPage, limit: PAGE_SIZE },
         { skip: !currentUserId },
     );
-    console.log("acceptedData", acceptedData);
     const acceptedOffers = useMemo(() => {
         if (!acceptedData?.data) return [];
         const rawItems = acceptedData.data as unknown as ApiChallengeItem[];

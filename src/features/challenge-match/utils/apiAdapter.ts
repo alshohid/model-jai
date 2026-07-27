@@ -18,6 +18,7 @@ export interface ApiChallengeItem {
   challenger_ready_at?: string | null;
   acceptor_ready_at?: string | null;
   both_players_ready?: boolean;
+  ready_expires_at?: string | null;
   started_at?: string | null;
   submitted_for_review_at?: string | null;
   admin_reviewed_at?: string | null;
