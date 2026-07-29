@@ -305,8 +305,8 @@ export default function ChallengeReportModal({
                             <Button
                                 type="button"
                                 onClick={handleSubmitWinner}
-                                disabled={!selectedPlayerId || isSubmitting || (hasWinner && !winnerChanged)}
-                                className={`w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all ${selectedPlayerId && !isSubmitting && (!hasWinner || winnerChanged)
+                                disabled={!selectedPlayerId || isSubmitting}
+                                className={`w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all ${selectedPlayerId && !isSubmitting
                                     ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-black hover:from-yellow-400 hover:to-yellow-500 shadow-lg shadow-yellow-500/20"
                                     : "bg-gray-700 text-gray-400 cursor-not-allowed"
                                     }`}
