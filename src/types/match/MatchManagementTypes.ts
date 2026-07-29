@@ -12,6 +12,7 @@ export interface IPlayer {
   image_url?: string;
   image?: string;
   full_name?: string | null;
+  artist_name?: string | null;
   total_votes?: number | null;
 }
 export interface ITopSupporterUser {

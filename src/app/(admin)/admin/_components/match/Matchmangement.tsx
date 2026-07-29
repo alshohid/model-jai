@@ -281,7 +281,7 @@ export default function MatchManagement() {
                 );
             }
 
-            return <span className="text-white">{item.winner?.name ?? "-"}</span>;
+            return <span className="text-white">{item.winner?.artist_name ?? item.winner?.full_name}</span>;
         },
 
         (item) => (
