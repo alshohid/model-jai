@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -10,10 +10,13 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { User2, Loader2, Trophy, Eye, Calendar, ShieldAlert } from "lucide-react";
+import { User2, Loader2, Trophy, Eye, Calendar, ShieldAlert, DollarSign } from "lucide-react";
 import { ChallengeItem } from "@/types/challenge/challengeTypes";
 import { toast } from "sonner";
-import { useWinnerSelectForChallengeByAdminMutation } from "@/redux/features/challenge/challengeManagement";
+import {
+    useWinnerSelectForChallengeByAdminMutation,
+    useReleasePayoutMutation,
+} from "@/redux/features/challenge/challengeManagement";
 
 export interface ChallengeSubmission {
     user: {
@@ -41,10 +44,23 @@ export default function ChallengeReportModal({
     challenge,
 }: ChallengeReportModalProps) {
     const [selectWinner] = useWinnerSelectForChallengeByAdminMutation();
+    const [releasePayout] = useReleasePayoutMutation();
     const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPayoutLoading, setIsPayoutLoading] = useState(false);
 
     const submissions = challenge.submissions ?? [];
+    const hasWinner = challenge.winner_id !== null && challenge.winner_id !== undefined;
+    const winnerChanged = hasWinner && selectedPlayerId !== challenge.winner_id;
+
+    // Pre-select the winner when winner_id exists
+    useEffect(() => {
+        if (open && challenge.winner_id) {
+            setSelectedPlayerId(challenge.winner_id);
+        } else if (open && !challenge.winner_id) {
+            setSelectedPlayerId(null);
+        }
+    }, [open, challenge.winner_id]);
 
     const handleSelectWinner = (winnerId: number) => {
         setSelectedPlayerId((prev) => (prev === winnerId ? null : winnerId));
@@ -69,6 +85,32 @@ export default function ChallengeReportModal({
             setIsSubmitting(false);
             setSelectedPlayerId(null);
         }
+    };
+
+    const handleReleasePayout = async () => {
+        setIsPayoutLoading(true);
+        try {
+            const response = await releasePayout({
+                id: challenge.id,
+            }).unwrap();
+            toast.success(response?.message ?? "Payout released successfully!");
+            onOpenChange(false);
+        } catch (error) {
+            const err = error as { data?: { message?: string }; message?: string };
+            toast.error(
+                err?.data?.message ?? err?.message ?? "Failed to release payout"
+            );
+        } finally {
+            setIsPayoutLoading(false);
+        }
+    };
+
+    // Determine the winner name for display
+    const getWinnerName = () => {
+        if (!challenge.winner_id) return null;
+        if (challenge.challenger?.id === challenge.winner_id) return challenge.challenger.name;
+        if (challenge.acceptor?.id === challenge.winner_id) return challenge.acceptor.name;
+        return null;
     };
 
     return (
@@ -178,10 +220,13 @@ export default function ChallengeReportModal({
                     <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t border-gray-800">
                         <h3 className="text-[11px] sm:text-sm font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-2">
                             <Trophy className="size-3 sm:size-4 text-yellow-500" />
-                            Declare Match Winner
+                            {hasWinner ? "Winner Declared" : "Declare Match Winner"}
                         </h3>
                         <p className="text-[10px] sm:text-xs text-gray-400">
-                            Based on the evidence above, select which user wins the challenge and receives the match payout.
+                            {hasWinner
+                                ? `Winner has been declared. You can release the payout to ${getWinnerName()}.`
+                                : "Based on the evidence above, select which user wins the challenge and receives the match payout."
+                            }
                         </p>
 
                         <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-4">
@@ -262,13 +307,14 @@ export default function ChallengeReportModal({
                             )}
                         </div>
 
-                        {/* Submit Button */}
-                        <div className="flex justify-center pt-2">
+                        {/* Action Buttons */}
+                        <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                            {/* Submit / Update Winner Button */}
                             <Button
                                 type="button"
                                 onClick={handleSubmitWinner}
-                                disabled={!selectedPlayerId || isSubmitting}
-                                className={`w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all ${selectedPlayerId && !isSubmitting
+                                disabled={!selectedPlayerId || isSubmitting || (hasWinner && !winnerChanged)}
+                                className={`w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all ${selectedPlayerId && !isSubmitting && (!hasWinner || winnerChanged)
                                     ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-black hover:from-yellow-400 hover:to-yellow-500 shadow-lg shadow-yellow-500/20"
                                     : "bg-gray-700 text-gray-400 cursor-not-allowed"
                                     }`}
@@ -281,10 +327,32 @@ export default function ChallengeReportModal({
                                 ) : (
                                     <span className="flex items-center justify-center gap-2">
                                         <Trophy className="size-3 sm:size-4" />
-                                        Submit Winner
+                                        {hasWinner ? "Update Winner" : "Submit Winner"}
                                     </span>
                                 )}
                             </Button>
+
+                            {/* Release Payout Button - only show if winner exists */}
+                            {hasWinner && (
+                                <Button
+                                    type="button"
+                                    onClick={handleReleasePayout}
+                                    disabled={isPayoutLoading}
+                                    className="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-400 hover:to-green-500 shadow-lg shadow-emerald-500/20"
+                                >
+                                    {isPayoutLoading ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <Loader2 className="size-3 sm:size-4 animate-spin" />
+                                            Releasing Payout...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <DollarSign className="size-3 sm:size-4" />
+                                            Release Payout
+                                        </span>
+                                    )}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -294,7 +362,7 @@ export default function ChallengeReportModal({
                         type="button"
                         variant="ghost"
                         onClick={() => onOpenChange(false)}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isPayoutLoading}
                         className="text-gray-400 hover:text-white hover:bg-white/10 text-xs sm:text-sm"
                     >
                         Close

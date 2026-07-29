@@ -290,6 +290,13 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["ChallengeManagement"],
     }),
+    releasePayout: builder.mutation<ChallengeAcceptResponse, { id: number }>({
+      query: ({ id }) => ({
+        url: `/admin/challenges/${id}/release-payout`,
+        method: "POST",
+      }),
+      invalidatesTags: ["ChallengeManagement"],
+    }),
     submitChallengeResult: builder.mutation<
       { status: boolean; message: string; data: any },
       {
@@ -339,6 +346,6 @@ export const {
   useMakeChallengeOfficialMutation,
   useConfirmChallengeReadyMutation,
   useSubmitChallengeResultMutation,
+  useReleasePayoutMutation,
 } = ChallengeManagementApi;
 export default ChallengeManagementApi;
-
