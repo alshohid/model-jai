@@ -175,7 +175,7 @@ export default function ChallengeManagementContainer() {
                 </span>
             ),
             (item) => {
-                const isAccepted = item.status?.toLowerCase() === "accepted" && item.is_published === false;
+                const isCompleted = item.status?.toLowerCase() === "completed" && item.is_published === false;
 
                 const winnerName = item.winner_id
                     ? item.challenger?.id === item.winner_id
@@ -185,7 +185,7 @@ export default function ChallengeManagementContainer() {
                             : null
                     : null;
 
-                if (winnerName) {
+                if (isCompleted) {
                     return (
                         <span className="text-yellow-400 font-medium text-sm">
                             {winnerName}
@@ -195,7 +195,7 @@ export default function ChallengeManagementContainer() {
 
                 return (
                     <div className="flex items-center gap-2">
-                        {item.status === "under_review" &&
+                        {(item.status === "under_review" || item.status === "winner_pending") &&
                             <Button
                                 type="button"
                                 onClick={() => {
@@ -208,7 +208,7 @@ export default function ChallengeManagementContainer() {
                                 View Reports
                             </Button>
                         }
-                        {isAccepted ? (
+                        {/* {isAccepted ? (
                             <Button
                                 type="button"
                                 onClick={() => {
@@ -227,7 +227,7 @@ export default function ChallengeManagementContainer() {
                                 <span className="text-white"></span>
                             )}
                         </>
-                        )}
+                        )} */}
                     </div>
                 );
             },
