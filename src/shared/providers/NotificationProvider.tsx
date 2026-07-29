@@ -21,6 +21,7 @@ import {
 } from "../lib/notificationMapper";
 import { IRawNotificationData } from "@/types/notifications/NotitficationsTypes";
 import MatchRulesModal from "../components/modal/MatchRulesModal";
+import OpponentReadyModal from "../components/modal/OpponentReadyModal";
 import CoinReceivedToast from "../components/CoinReceivedToast";
 import {
     attachRealtimeChannelDebug,
@@ -52,6 +53,7 @@ interface IRulesModalState {
 interface IOpponentReadyModalState {
     open: boolean;
     message?: string;
+    readyExpiresAt?: string;
 }
 
 export default function NotificationProvider({ children }: PropsWithChildren) {
@@ -154,7 +156,6 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
         );
 
         privateNotificationChannel.notification((notification: IRawNotificationData) => {
-            console.log("Private notification", notification);
             dispatch(addNotification(mapSocketPrivateNotification(notification)));
 
 
@@ -328,6 +329,11 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                 onClose={() => setRulesModal((prev) => ({ ...prev, open: false }))}
                 rules={rulesModal.rules}
                 message={rulesModal.message}
+            />
+            <OpponentReadyModal
+                open={opponentReadyModal.open}
+                onClose={() => setOpponentReadyModal((prev) => ({ ...prev, open: false }))}
+                message={opponentReadyModal.message}
             />
         </>
     );
