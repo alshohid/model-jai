@@ -49,6 +49,11 @@ interface IRulesModalState {
     message: string;
 }
 
+interface IOpponentReadyModalState {
+    open: boolean;
+    message?: string;
+}
+
 export default function NotificationProvider({ children }: PropsWithChildren) {
     const dispatch = useAppDispatch();
     const { data: meData } = useGetMeDataQuery();
@@ -62,6 +67,10 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
     const [rulesModal, setRulesModal] = useState<IRulesModalState>({
         open: false,
         rules: "",
+        message: "",
+    });
+    const [opponentReadyModal, setOpponentReadyModal] = useState<IOpponentReadyModalState>({
+        open: false,
         message: "",
     });
 
@@ -224,8 +233,10 @@ export default function NotificationProvider({ children }: PropsWithChildren) {
                 );
             }
             else if (notification.type === "challenge.opponent_ready") {
-                toast.success(notification.message);
-
+                setOpponentReadyModal({
+                    open: true,
+                    message: notification?.message,
+                });
                 if (userId) {
                     dispatch(
                         ChallengeManagementApi.util.updateQueryData(
