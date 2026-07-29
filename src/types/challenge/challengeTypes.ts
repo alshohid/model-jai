@@ -130,6 +130,7 @@ export interface ChallengeRequest {
   search?: string;
   page?: number;
   limit?: number;
+  status?: string;
 }
 export interface ChallengeAcceptResponse {
   success: boolean;

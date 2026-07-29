@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef, useEffect, useCallback } from "react";
 import ReuseAbleTable from "@/shared/UI/reusable/table/ReuseAbleTable";
 import AppPagination from "../topComponent/AppPagination";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,15 @@ import ChallengeReportModal from "./ChallengeReportModal";
 import { toast } from "sonner";
 import ToggleCard from "@/features/challenge-match/components/ToggleCard";
 import Link from "next/link";
+import { FiSearch } from "react-icons/fi";
+import { useDebounce } from "../../hook/useDebounce";
+import { cn } from "@/lib/utils";
 
 export default function ChallengeManagementContainer() {
     const [page, setPage] = useState(1);
     const [isToggling, setIsToggling] = useState(false);
+    const [keyword, setKeyword] = useState("");
+    const debouncedKeyword = useDebounce(keyword, 400);
     const [processingChallengeId, setProcessingChallengeId] = useState<number | null>(
         null
     );
@@ -36,12 +41,39 @@ export default function ChallengeManagementContainer() {
     const [selectedChallengeForOfficial, setSelectedChallengeForOfficial] = useState<number | null>(null);
     const [reportModalOpen, setReportModalOpen] = useState(false);
     const [selectedChallengeForReport, setSelectedChallengeForReport] = useState<ChallengeItem | null>(null);
+    const [challengeStatus, setChallengeStatus] = useState<string | null>("");
+    const [filterOpen, setFilterOpen] = useState(false);
+    const filterRef = useRef<HTMLDivElement>(null);
+
+    const statusOptions = [
+        { label: "All Status", value: "" },
+        { label: "Pending", value: "pending" },
+        { label: "Offered", value: "offered" },
+        { label: "Accepted", value: "accepted" },
+        { label: "Under Review", value: "under_review" },
+        { label: "Winner Pending", value: "winner_pending" },
+        { label: "Completed", value: "completed" },
+        { label: "Cancelled", value: "cancelled" },
+    ];
+
+    // Close filter dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+                setFilterOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const limit = 10;
 
     const { data: challengeList, isLoading } = useGetAllChallengesListQuery({
         page,
         limit,
+        search: debouncedKeyword,
+        status: challengeStatus ?? undefined,
     });
     const { data, isLoading: isAutoAcceptLoading } = useGetAutoAcceptChallengeQuery();
     const [toggleAutoAcceptChallenge] = useToggleAutoAcceptChallengeMutation();
@@ -280,7 +312,7 @@ export default function ChallengeManagementContainer() {
 
     return (
         <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
                 <h2 className="text-2xl font-bold text-white">Challenge List</h2>
                 <ToggleCard
                     title="Auto Accept"
@@ -294,6 +326,85 @@ export default function ChallengeManagementContainer() {
                     disabled={isAutoAcceptLoading}
                     onToggle={handleAutoAcceptToggle}
                 />
+            </div>
+            <div className="flex flex-row justify-between gap-4 mt-5 mb-1 md:mt-2 ">
+                <form className="flex items-center relative w-full sm:w-[320px] lg:w-[420px]">
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        className={cn(
+                            "w-full h-10 rounded-[12px]",
+                            "bg-white/5 border border-white/10",
+                            "text-white/85 placeholder:text-white/40",
+                            "pl-10 pr-3 outline-none",
+                            "focus:border-[#FF2EC8]/40"
+                        )}
+                    />
+                    <FiSearch className="absolute left-3 text-white/55" />
+                </form>
+                <div className="relative" ref={filterRef}>
+                    <button
+                        type="button"
+                        onClick={() => setFilterOpen((prev) => !prev)}
+                        className={cn(
+                            "flex items-center gap-2 h-10 px-4 rounded-[12px] text-sm font-medium transition-all",
+                            "bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10",
+                            challengeStatus && "border-[#FF2EC8]/40 text-[#FF2EC8] bg-[#FF2EC8]/5"
+                        )}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="4" y1="6" x2="20" y2="6" />
+                            <line x1="8" y1="12" x2="20" y2="12" />
+                            <line x1="12" y1="18" x2="20" y2="18" />
+                        </svg>
+                        <span className="hidden sm:inline">
+                            {challengeStatus
+                                ? statusOptions.find((o) => o.value === challengeStatus)?.label ?? "Status"
+                                : "Status"}
+                        </span>
+                        {challengeStatus && (
+                            <span
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setChallengeStatus("");
+                                    setPage(1);
+                                    setFilterOpen(false);
+                                }}
+                                className="ml-1 cursor-pointer hover:text-white"
+                            >
+                                ✕
+                            </span>
+                        )}
+                    </button>
+
+                    {filterOpen && (
+                        <div className="absolute right-0 top-full mt-2 z-50 w-48 rounded-xl bg-[#1C1F26] border border-white/10 shadow-2xl overflow-hidden">
+                            <div className="py-1">
+                                {statusOptions.map((option) => (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        onClick={() => {
+                                            setChallengeStatus(option.value || null);
+                                            setPage(1);
+                                            setFilterOpen(false);
+                                        }}
+                                        className={cn(
+                                            "w-full text-left px-4 py-2.5 text-sm transition-colors",
+                                            challengeStatus === option.value
+                                                ? "text-[#FF2EC8] bg-[#FF2EC8]/5 font-medium"
+                                                : "text-white/70 hover:text-white hover:bg-white/5"
+                                        )}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
 

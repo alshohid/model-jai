@@ -104,13 +104,6 @@ export default function ChallengeReportModal({
         }
     };
 
-    // Determine the winner name for display
-    const getWinnerName = () => {
-        if (!challenge.winner_id) return null;
-        if (challenge.challenger?.id === challenge.winner_id) return challenge.challenger.name;
-        if (challenge.acceptor?.id === challenge.winner_id) return challenge.acceptor.name;
-        return null;
-    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -331,7 +324,6 @@ export default function ChallengeReportModal({
                                 )}
                             </Button>
 
-                            {/* Release Payout Button - only show if winner exists */}
                             {hasWinner && (
                                 <Button
                                     type="button"

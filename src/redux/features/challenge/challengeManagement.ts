@@ -72,10 +72,11 @@ const ChallengeManagementApi = baseApi.injectEndpoints({
       ChallengeListResponse,
       ChallengeRequest
     >({
-      query: ({ search, page = 1, limit = 10 }) => {
+      query: ({ search, page = 1, limit = 10, status }) => {
         const params: Record<string, unknown> = { page, per_page: limit };
 
         if (search) params.search = search;
+        if (status) params.status = status;
         return {
           url: `/admin/challenges`,
           method: "GET",
