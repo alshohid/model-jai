@@ -53,7 +53,6 @@ export default function ChallengeReportModal({
     const hasWinner = challenge.winner_id !== null && challenge.winner_id !== undefined;
     const winnerChanged = hasWinner && selectedPlayerId !== challenge.winner_id;
 
-    // Pre-select the winner when winner_id exists
     useEffect(() => {
         if (open && challenge.winner_id) {
             setSelectedPlayerId(challenge.winner_id);
@@ -74,8 +73,9 @@ export default function ChallengeReportModal({
                 id: challenge.id,
                 winner_id: selectedPlayerId,
             }).unwrap();
+
             toast.success(response?.message ?? "Winner selected successfully!");
-            onOpenChange(false);
+
         } catch (error) {
             const err = error as { data?: { message?: string }; message?: string };
             toast.error(
@@ -83,7 +83,6 @@ export default function ChallengeReportModal({
             );
         } finally {
             setIsSubmitting(false);
-            setSelectedPlayerId(null);
         }
     };
 
@@ -224,7 +223,7 @@ export default function ChallengeReportModal({
                         </h3>
                         <p className="text-[10px] sm:text-xs text-gray-400">
                             {hasWinner
-                                ? `Winner has been declared. You can release the payout to ${getWinnerName()}.`
+                                ? `Winner has been declared. You can change the winner or release the payout.`
                                 : "Based on the evidence above, select which user wins the challenge and receives the match payout."
                             }
                         </p>

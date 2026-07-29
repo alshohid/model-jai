@@ -208,26 +208,11 @@ export default function ChallengeManagementContainer() {
                                 View Reports
                             </Button>
                         }
-                        {/* {isAccepted ? (
-                            <Button
-                                type="button"
-                                onClick={() => {
-                                    setSelectedChallengeForWinner(item);
-                                    setWinnerModalOpen(true);
-                                }}
-                                className="!bg-yellow-500 !text-black !text-xs !px-3 !py-1 !h-auto hover:!bg-yellow-400"
-                            >
-                                <Trophy className="size-3.5 mr-1" />
-                                Select Winner
-                            </Button>
-                        ) : (<>
-                            {item.published_match_id ? (
-                                <Link href={`/admin/dashboard/matches?search=${item.published_match_id}`}><Button className="!text-white !bg-white/20 !border !border-white/20 !hover:!bg-white/30"> Go to Match Management </Button></Link>
-                            ) : (
-                                <span className="text-white"></span>
-                            )}
-                        </>
-                        )} */}
+                        {item.is_published && <>  {item.published_match_id ? (
+                            <Link href={`/admin/dashboard/matches?search=${item.published_match_id}`}><Button className="!text-white !bg-white/20 !border !border-white/20 !hover:!bg-white/30"> Go to Match Management </Button></Link>
+                        ) : (
+                            <span className="text-white"></span>
+                        )}</>}
                     </div>
                 );
             },
