@@ -1,7 +1,12 @@
 "use client";
 
-
-import Select, { StylesConfig } from "react-select";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/shared/lib/utils/cn";
 
 export type AppSelectOption = {
@@ -16,124 +21,102 @@ type Props = {
     options: AppSelectOption[];
     placeholder?: string;
     disabled?: boolean;
-
+    /** form = match admin inputs; toolbar = list page controls */
+    variant?: "form" | "toolbar";
+    /** Adds a "Select one" style option that clears the value. Default on for form. */
+    withPlaceholderOption?: boolean;
     shape?: "rounded" | "pill";
     size?: "sm" | "md";
-
     className?: string;
+    triggerClassName?: string;
 };
+
+const EMPTY_VALUE = "__app_select_empty__";
+
+const formTriggerClassName =
+    "h-11 w-full rounded-lg border border-white/10 bg-white/5 px-3.5 text-sm text-white shadow-none outline-none transition-all duration-200 focus-visible:border-[#FF2EC8]/60 focus-visible:bg-[#FF2EC8]/5 focus-visible:ring-0 data-[placeholder]:text-white/25 data-[size=default]:h-11 [&_svg]:text-white/50";
+
+const toolbarTriggerClassName =
+    "h-10 w-full rounded-[12px] border border-white/10 bg-white/5 px-3 text-sm text-white/85 shadow-none outline-none transition-colors focus-visible:border-[#FF2EC8]/40 focus-visible:ring-0 data-[placeholder]:text-white/40 data-[size=default]:h-10 sm:h-12 sm:rounded-[18px] sm:border-white/15 sm:bg-white/10 sm:px-4 sm:data-[size=default]:h-12 sm:data-[placeholder]:text-white/70 [&_svg]:text-white/55 sm:[&_svg]:text-white";
+
+const contentClassName =
+    "z-[220] rounded-lg border border-white/10 bg-[#160F16]/95 p-1 text-white backdrop-blur-xl";
+
+const itemClassName =
+    "cursor-pointer rounded-md px-2.5 py-2 text-white focus:bg-white/10 focus:text-white data-[disabled]:opacity-40";
 
 export default function AppSelect({
     value,
     onValueChange,
     options,
-    placeholder = "Select",
+    placeholder = "Select one",
     disabled,
+    variant = "form",
+    withPlaceholderOption,
     shape = "rounded",
     size = "sm",
     className,
+    triggerClassName,
 }: Props) {
-    const selectedOption = options.find((o) => o.value === value) || null;
+    const isToolbar = variant === "toolbar";
+    const showPlaceholderOption =
+        withPlaceholderOption ?? variant === "form";
+    const heightClass =
+        isToolbar && size === "md"
+            ? "h-[70px] data-[size=default]:h-[70px] sm:h-[70px] sm:data-[size=default]:h-[70px]"
+            : null;
+    const radiusClass =
+        isToolbar && shape === "pill" ? "rounded-2xl sm:rounded-2xl" : null;
 
-    const height = size === "md" ? 70 : 48;
-    const radius = shape === "pill" ? 16 : 18;
-
-    const styles: StylesConfig<AppSelectOption, false> = {
-        control: (base, state) => ({
-            ...base,
-            minHeight: height,
-            height,
-            borderRadius: radius,
-            backgroundColor: "rgba(255,255,255,0.1)",
-            borderColor: "rgba(255,255,255,0.15)",
-            boxShadow: state.isFocused
-                ? "0 0 0 1px rgba(255,255,255,0.2)"
-                : "inset 0 1px 0 rgba(255,255,255,0.12)",
-            cursor: "pointer",
-        }),
-        valueContainer: (base) => ({
-            ...base,
-            padding: "0 16px",
-            overflow: "hidden",
-        }),
-        singleValue: (base) => ({
-            ...base,
-            color: "#fff",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: "100%",
-        }),
-        input: (base) => ({
-            ...base,
-            margin: 0,
-            padding: 0,
-            color: "#fff",
-        }),
-        placeholder: (base) => ({
-            ...base,
-            color: "rgba(255,255,255,0.85)",
-        }),
-        menu: (base) => ({
-            ...base,
-            backgroundColor: "rgba(22,15,22,0.95)",
-            backdropFilter: "blur(16px)",
-            borderRadius: 16,
-            border: "1px solid rgba(255,255,255,0.1)",
-            overflow: "hidden",
-            zIndex: 80,
-        }),
-        menuList: (base) => ({
-            ...base,
-            padding: "4px",
-            overflowX: "hidden", // Hide horizontal scrollbar
-            overflowY: "auto",
-            maxHeight: "300px",
-            "&::-webkit-scrollbar": {
-                width: "4px",
-            },
-            "&::-webkit-scrollbar-track": {
-                background: "transparent",
-            },
-            "&::-webkit-scrollbar-thumb": {
-                background: "#00C3FF",
-                borderRadius: "2px",
-            },
-        }),
-        option: (base, state) => ({
-            ...base,
-            backgroundColor: state.isFocused
-                ? "rgba(255,255,255,0.1)"
-                : "transparent",
-            color: "#fff",
-            cursor: "pointer",
-            borderRadius: 12,
-            margin: 4,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: "100%",
-        }),
-        indicatorSeparator: () => ({ display: "none" }),
-        dropdownIndicator: (base) => ({
-            ...base,
-            color: "#fff",
-        }),
-    };
+    const selectValue = value
+        ? value
+        : showPlaceholderOption
+          ? EMPTY_VALUE
+          : undefined;
 
     return (
         <div className={cn("w-full", className)}>
             <Select
-                className="text-sm react-select-no-horizontal-scroll"
-                classNamePrefix="react-select"
-                isDisabled={disabled}
-                value={selectedOption}
-                options={options}
-                placeholder={placeholder}
-                styles={styles}
-                onChange={(opt) => onValueChange?.(opt?.value || "")}
-                isOptionDisabled={(o) => o.disabled ?? false}
-            />
+                value={selectValue}
+                onValueChange={(next) => {
+                    onValueChange?.(next === EMPTY_VALUE ? "" : next);
+                }}
+                disabled={disabled}
+            >
+                <SelectTrigger
+                    className={cn(
+                        isToolbar ? toolbarTriggerClassName : formTriggerClassName,
+                        heightClass,
+                        radiusClass,
+                        !value && "text-white/25",
+                        triggerClassName,
+                    )}
+                >
+                    <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent position="popper" className={contentClassName}>
+                    {showPlaceholderOption ? (
+                        <SelectItem
+                            value={EMPTY_VALUE}
+                            className={cn(itemClassName, "text-white/40")}
+                        >
+                            {placeholder}
+                        </SelectItem>
+                    ) : null}
+                    {options
+                        .filter((option) => option.value !== "")
+                        .map((option) => (
+                            <SelectItem
+                                key={option.value}
+                                value={option.value}
+                                disabled={option.disabled}
+                                className={itemClassName}
+                            >
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                </SelectContent>
+            </Select>
         </div>
     );
 }

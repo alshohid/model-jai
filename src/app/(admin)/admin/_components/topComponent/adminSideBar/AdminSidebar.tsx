@@ -8,7 +8,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import DashboardIcon from "../../dashboardIcons/DashboardIcon";
 import UserManagementMenuIcon from "../../dashboardIcons/UserManagementMenuIcon";
 import MatchManagementMenuIcon from "../../dashboardIcons/MatchManagementMenuIcon";
-import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon, User, Key, TrophyIcon } from "lucide-react";
+import { LogOutIcon, WalletIcon, ChevronDown, CatIcon, Gamepad, GalleryVerticalIcon, NewspaperIcon, User, Key, TrophyIcon, FileText, ScrollText } from "lucide-react";
 import BrandMark from "@/app/(public)/_components/brandMark/BrandMark";
 import { useLogoutUserMutation } from "@/redux/features/auth/authapi";
 import { adminLogOut } from "@/redux/features/auth/authSlice";
@@ -41,8 +41,8 @@ const menuItems = [
             { label: "Promotional settings", href: "/admin/dashboard/promotional-settings", icon: <NewspaperIcon /> },
             { label: "All Transactions", href: "/admin/dashboard/all-transactions", icon: <WalletIcon /> },
             { label: "Account Settings", href: "/admin/dashboard/profile", icon: <User /> },
-
-
+            { label: "Privacy Policy", href: "/admin/dashboard/privacy-policy", icon: <FileText /> },
+            { label: "Terms & Conditions", href: "/admin/dashboard/terms-and-conditions", icon: <ScrollText /> },
         ],
     },
 ];
@@ -110,10 +110,8 @@ export default function AdminSidebar({
 
             <aside
                 id="admin-sidebar"
-                data-lenis-prevent
-                data-lenis-prevent-wheel
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 h-dvh max-h-dvh overflow-y-auto overflow-x-hidden",
+                    "fixed inset-y-0 left-0 z-50 flex h-dvh max-h-dvh flex-col overflow-hidden",
                     "w-[min(86vw,300px)] sm:w-[300px] xl:w-[350px]",
                     "lg:translate-x-0",
                     sidebarOpen ? "translate-x-0" : "-translate-x-full",
@@ -121,16 +119,12 @@ export default function AdminSidebar({
                     "border-r border-white/10",
                     "bg-gradient-to-b from-[#2B2B2C] to-[#171717]",
                     "shadow-[10px_0_50px_rgba(0,0,0,0.55)]",
-                    "touch-pan-y overscroll-y-contain",
-                    "[-webkit-overflow-scrolling:touch]",
-                    "[-ms-overflow-style:none] [scrollbar-width:none]",
-                    "[&::-webkit-scrollbar]:hidden"
                 )}
             >
-                <div className="flex min-h-full flex-col px-4 py-5 sm:px-5 md:px-6 md:py-6">
+                <div className="flex min-h-0 flex-1 flex-col px-4 py-5 sm:px-5 md:px-6 md:py-6">
 
                     {/* header */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex shrink-0 items-center justify-between">
                         <div>
                             <BrandMark width={130} height={90} />
                             <div className="mt-2 h-[2px] w-full bg-gradient-to-r from-[#FF2EC8]/70 to-transparent" />
@@ -147,8 +141,20 @@ export default function AdminSidebar({
                     </div>
 
                     {/* menu */}
-                    <nav className="mt-6 pr-1">
-                        <div className="space-y-2">
+                    <nav
+                        data-lenis-prevent
+                        data-lenis-prevent-wheel
+                        className={cn(
+                            "mt-6 min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y",
+                            "[-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable]",
+                            "pr-2 [scrollbar-width:thin] [scrollbar-color:#FF2EC8_rgba(255,255,255,0.08)]",
+                            "[&::-webkit-scrollbar]:w-1.5",
+                            "[&::-webkit-scrollbar-track]:my-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/10",
+                            "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#FF2EC8]",
+                            "[&::-webkit-scrollbar-thumb]:hover:bg-[#ff4fd4]",
+                        )}
+                    >
+                        <div className="space-y-2 pb-4 pr-2">
 
                             {menuItems.map((item) => {
 
@@ -204,7 +210,7 @@ export default function AdminSidebar({
                                             <div
                                                 className={cn(
                                                     "overflow-hidden transition-all duration-300",
-                                                    isOpen ? "max-h-60 mt-2" : "max-h-0"
+                                                    isOpen ? "max-h-[560px] mt-2" : "max-h-0"
                                                 )}
                                             >
                                                 <div className="ml-8 space-y-2">
@@ -284,7 +290,7 @@ export default function AdminSidebar({
                     </nav>
 
                     {/* logout */}
-                    <div className="mt-auto pt-5">
+                    <div className="mt-4 shrink-0 border-t border-white/10 pt-4">
                         <div className="w-full flex justify-end px-3 py-2">
                             <div className={cn(
                                 "flex items-center gap-1.5 rounded-[12px] border border-white/10 px-3 py-1.5 text-sm hover:bg-white/5 transition",
@@ -311,8 +317,7 @@ export default function AdminSidebar({
                             </div>
                         </div>
 
-                        {/* footer */}
-                        <div className="pt-4 border-t border-white/10">
+                        <div className="pt-2">
                             <p className="text-white/40 text-xs">
                                 &copy; {new Date().getFullYear()} Model Boss Admin
                             </p>

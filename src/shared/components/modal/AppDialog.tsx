@@ -19,6 +19,20 @@ type Props = {
     bodyClassName?: string;    // scroll body
 };
 
+const isSelectMenuTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+
+    return Boolean(
+        target.closest(".react-select__menu") ||
+            target.closest(".react-select__menu-list") ||
+            target.closest(".react-select__option") ||
+            target.closest(".react-select__menu-portal") ||
+            target.closest('[data-slot="select-content"]') ||
+            target.closest("[data-radix-select-viewport]") ||
+            target.closest("[data-radix-select-item]"),
+    );
+};
+
 export default function AppDialog({
     open,
     onOpenChange,
@@ -32,7 +46,23 @@ export default function AppDialog({
             <DialogContent
                 data-lenis-prevent
                 data-lenis-prevent-wheel
+                showCloseButton={false}
                 overlayClassName="z-[200]"
+                onPointerDownOutside={(event) => {
+                    if (isSelectMenuTarget(event.target)) {
+                        event.preventDefault();
+                    }
+                }}
+                onInteractOutside={(event) => {
+                    if (isSelectMenuTarget(event.target)) {
+                        event.preventDefault();
+                    }
+                }}
+                onFocusOutside={(event) => {
+                    if (isSelectMenuTarget(event.target)) {
+                        event.preventDefault();
+                    }
+                }}
                 className={cn(
                     "z-[200]",
                     "p-0 border-0 bg-transparent shadow-none",

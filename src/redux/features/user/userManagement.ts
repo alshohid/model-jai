@@ -142,7 +142,7 @@ const UserManagementApi = baseApi.injectEndpoints({
     adminChangeSettings: builder.mutation({
       query: (body: FormData) => ({
         url: `/admin/settings`,
-        method: "PUT",
+        method: "POST",
         body,
 
         formData: true,

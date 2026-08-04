@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import GameCategoryTable from "./GameCategoryTable";
 import CreateCategoryModal from "./CreateCategoryModal";
+import PrimaryCtaButton from "../reusable/PrimaryCtaButton";
 
 
 export default function GameCategoryContainer() {
@@ -12,13 +12,16 @@ export default function GameCategoryContainer() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 gap-4">
                 <h2 className="text-2xl font-bold text-white">Game Categories</h2>
 
-                <Button onClick={() => setCreateOpen(true)}>
-                    <PlusIcon className="mr-2 size-4" />
+                <PrimaryCtaButton
+                    onClick={() => setCreateOpen(true)}
+                    className="h-12 sm:h-12 gap-2 rounded-[18px] px-6 sm:px-8 text-sm sm:text-sm"
+                >
+                    <PlusIcon className="size-4" />
                     Add Category
-                </Button>
+                </PrimaryCtaButton>
             </div>
 
             <GameCategoryTable />

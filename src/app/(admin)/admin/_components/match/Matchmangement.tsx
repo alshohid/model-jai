@@ -328,25 +328,23 @@ export default function MatchManagement() {
                     { label: "Challenge", value: "challenge" },
                 ]}
                 onCreateMatch={() => setOpen(true)}
-            />
-            <div>
-                <form className="flex items-center relative w-full sm:w-[320px] lg:w-[420px]">
+            >
+                <form className="relative flex w-full items-center sm:w-[320px] lg:w-[420px]">
                     <input
                         type="text"
                         placeholder="Search"
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
                         className={cn(
-                            "w-full h-10 rounded-[12px]",
-                            "bg-white/5 border border-white/10",
-                            "text-white/85 placeholder:text-white/40",
-                            "pl-10 pr-3 outline-none",
-                            "focus:border-[#FF2EC8]/40"
+                            "h-10 w-full rounded-[12px]",
+                            "border border-white/10 bg-white/5",
+                            "pl-10 pr-3 text-sm text-white/85 placeholder:text-white/40 outline-none",
+                            "focus:border-[#FF2EC8]/40",
                         )}
                     />
                     <FiSearch className="absolute left-3 text-white/55" />
                 </form>
-            </div>
+            </MatchListToolbar>
             <div className="py-10">
                 <ReuseAbleTable
                     isLoadings={isLoading}

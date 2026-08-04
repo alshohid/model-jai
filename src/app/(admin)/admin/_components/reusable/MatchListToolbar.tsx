@@ -21,6 +21,10 @@ type Props = {
     ctaLabel?: string;
     selectShape?: any;
     className?: string;
+    /** Extra actions next to the primary CTA (e.g. Add User). */
+    actions?: React.ReactNode;
+    /** Renders between the filter and CTA on mobile (e.g. search). */
+    children?: React.ReactNode;
 };
 
 export default function MatchListToolbar({
@@ -35,62 +39,76 @@ export default function MatchListToolbar({
     onCreateMatch,
     ctaLabel = "Create New Match",
     className,
+    actions,
+    children,
 }: Props) {
+    const select = showSelect ? (
+        <div className="w-full sm:w-[195px]">
+            <AppSelect
+                value={matchType}
+                onValueChange={(v) => {
+                    onMatchTypeChange?.(v);
+                }}
+                placeholder={selectPlaceholder}
+                options={matchTypeOptions}
+                variant="toolbar"
+                shape={selectShape}
+                size="sm"
+            />
+        </div>
+    ) : null;
+
+    const renderCtaButton = () => (
+        <PrimaryCtaButton
+            onClick={onCreateMatch}
+            fullWidth
+            className={cn(
+                "h-10 rounded-[12px] px-4 text-sm shadow-none",
+                "sm:h-12 sm:w-auto sm:rounded-[18px] sm:px-6 sm:text-sm",
+                "sm:shadow-[0_16px_40px_rgba(255,46,200,0.22)]",
+            )}
+        >
+            {ctaLabel}
+        </PrimaryCtaButton>
+    );
+
     return (
         <div
             className={cn(
-                "w-full",
-                "flex flex-col gap-4",
-                "md:flex-row md:items-center md:justify-between",
-                className
+                "mb-4 w-full",
+                "flex flex-col gap-3",
+                "sm:mb-5 sm:gap-4",
+                className,
             )}
         >
-            {/* Left title */}
-            <h2 className={cn("text-white font-semibold", "text-[22px] md:text-[26px]")}>
-                {title}
-            </h2>
-
-            {/* Right controls */}
-            <div
-                className={cn(
-                    "flex flex-col gap-3",
-                    "sm:flex-row sm:items-center sm:justify-end",
-                    "w-full md:w-auto"
-                )}
-            >
-                {/* ✅ Select (conditionally render) */}
-                {showSelect ? (
-                    <div className={cn("w-full sm:w-[195px] focus:outline-none")}>
-                        <AppSelect
-                            value={matchType}
-                            onValueChange={(v) => {
-                                onMatchTypeChange?.(v);
-                            }}
-                            placeholder={selectPlaceholder}
-                            options={matchTypeOptions}
-                            shape={selectShape}   // "rounded" | "pill"
-                            size="sm"             // "sm" | "md"
-                            className={cn(
-                                "text-[18px] leading-[132%]"
-                                // "[font-family:Inter_Tight,Inter,system-ui,sans-serif]"
-                            )}
-                        />
-
-                    </div>
-                ) : null}
-
-                {/* CTA Button */}
-                <PrimaryCtaButton
-                    onClick={onCreateMatch}
-                    fullWidth
+            {/* Title + desktop controls */}
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <h2
                     className={cn(
-                        "h-10 rounded-[14px]",
-                        "sm:w-auto w-full",
-                        "px-6 sm:px-10"
+                        "text-white font-semibold",
+                        "text-xl leading-tight sm:text-[22px] md:text-[26px]",
                     )}
                 >
-                    {ctaLabel}
-                </PrimaryCtaButton>
+                    {title}
+                </h2>
+
+                <div className="hidden items-center justify-end gap-3 md:flex">
+                    {select}
+                    {renderCtaButton()}
+                    {actions}
+                </div>
+            </div>
+
+            {/* Mobile: select first */}
+            {showSelect ? <div className="md:hidden">{select}</div> : null}
+
+            {/* Optional middle content (search) */}
+            {children}
+
+            {/* Mobile: actions at the bottom */}
+            <div className="flex flex-col gap-2.5 md:hidden">
+                {renderCtaButton()}
+                {actions}
             </div>
         </div>
     );

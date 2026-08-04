@@ -5,12 +5,18 @@ import { useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { useCreateUserMutation } from "@/redux/features/user/userManagement";
 import { toast } from "sonner";
-import { cn } from "@/shared/lib/utils/cn";
+import AppSelect from "../reusable/AppSelect";
+import { Field, inputCls } from "../match/matchFormShared";
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
 }
+
+const roleOptions = [
+    { label: "User", value: "user" },
+    { label: "Artist", value: "artist" },
+];
 
 export default function CreateUserModal({ isOpen, onClose }: Props) {
     const [createUser, { isLoading }] = useCreateUserMutation();
@@ -41,6 +47,11 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
         setRole("user");
     };
 
+    const handleClose = () => {
+        resetForm();
+        onClose();
+    };
+
     const normalizeOptionalText = (value: string) => {
         const trimmedValue = value.trim();
         return trimmedValue ? trimmedValue : null;
@@ -48,7 +59,12 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
 
     const handleCreate = async () => {
         if (!firstName.trim() || !lastName.trim() || !email.trim() || !password) {
-            toast.error("Please fill all fields");
+            toast.error("Please fill all required fields");
+            return;
+        }
+
+        if (!role) {
+            toast.error("Please select a role");
             return;
         }
 
@@ -74,180 +90,154 @@ export default function CreateUserModal({ isOpen, onClose }: Props) {
             }).unwrap();
 
             toast.success(res?.message || "User created successfully");
-
-            resetForm();
-            onClose();
+            handleClose();
         } catch (err: any) {
             toast.error(err?.data?.message || "User creation failed");
         }
     };
 
     return (
-        <AppDialog open={isOpen} onOpenChange={onClose} title="">
-            <div className="space-y-6">
+        <AppDialog
+            open={isOpen}
+            onOpenChange={(nextOpen) => {
+                if (!nextOpen) {
+                    handleClose();
+                }
+            }}
+            title="Create User"
+            className="max-w-[560px]"
+        >
+            <div className="space-y-5 py-2">
+                <p className="-mt-1 text-sm text-white/60">
+                    Add a new user to the platform
+                </p>
 
-                {/* Header */}
-                <div className="border-b border-white/10 pb-4">
-                    <h3 className="text-lg font-semibold text-white">Create User</h3>
-                    <p className="text-sm text-white/60">
-                        Add a new user to the platform
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                        <label className="text-sm text-white/80">First Name</label>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="First Name" required>
                         <input
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             placeholder="Enter first name"
-                            className={cn(
-                                "w-full rounded-lg bg-white/5 border border-white/10",
-                                "px-4 py-3 text-white",
-                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                            )}
+                            className={inputCls}
                         />
-                    </div>
+                    </Field>
 
-                    <div className="space-y-2">
-                        <label className="text-sm text-white/80">Middle Name</label>
+                    <Field label="Middle Name">
                         <input
                             value={middleName}
                             onChange={(e) => setMiddleName(e.target.value)}
                             placeholder="Enter middle name"
-                            className={cn(
-                                "w-full rounded-lg bg-white/5 border border-white/10",
-                                "px-4 py-3 text-white",
-                                "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                            )}
+                            className={inputCls}
                         />
-                    </div>
+                    </Field>
                 </div>
 
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Last Name</label>
+                <Field label="Last Name" required>
                     <input
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Enter last name"
-                        className={cn(
-                            "w-full rounded-lg bg-white/5 border border-white/10",
-                            "px-4 py-3 text-white",
-                            "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                        )}
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Artist Name (optional)</label>
+                <Field label="Artist Name">
                     <input
                         value={artistName}
                         onChange={(e) => setArtistName(e.target.value)}
                         placeholder="Enter artist name"
-                        className={cn(
-                            "w-full rounded-lg bg-white/5 border border-white/10",
-                            "px-4 py-3 text-white",
-                            "focus:outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                        )}
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                {/* Email */}
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Email</label>
+                <Field label="Email" required>
                     <input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         type="email"
                         placeholder="Enter email"
-                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                {/* Password */}
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Password</label>
+                <Field label="Password" required>
                     <input
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         type="password"
                         placeholder="Enter password"
-                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Address (optional)</label>
+                <Field label="Address">
                     <input
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="Enter address"
-                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="space-y-2">
-                        <label className="text-sm text-white/80">City (optional)</label>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="City">
                         <input
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Enter city"
-                            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            className={inputCls}
                         />
-                    </div>
+                    </Field>
 
-                    <div className="space-y-2">
-                        <label className="text-sm text-white/80">State (optional)</label>
+                    <Field label="State">
                         <input
                             value={state}
                             onChange={(e) => setState(e.target.value)}
                             placeholder="Enter state"
-                            className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                            className={inputCls}
                         />
-                    </div>
+                    </Field>
                 </div>
 
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Zip Code (optional)</label>
+                <Field label="Zip Code">
                     <input
                         value={zipCode}
                         onChange={(e) => setZipCode(e.target.value)}
                         placeholder="Enter zip code"
-                        className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                {/* Role */}
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Role</label>
-
-                    <select
+                <Field label="Role" required>
+                    <AppSelect
                         value={role}
-                        onChange={(e) => setRole(e.target.value as "user" | "artist")}
-                        className="w-full rounded-lg bg-black/20 border border-white/10 px-4 py-3 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
-                    >
-                        <option value="user">User</option>
-                        <option value="artist">Artist</option>
-                    </select>
-                </div>
+                        onValueChange={(value) =>
+                            setRole(value as "user" | "artist")
+                        }
+                        options={roleOptions}
+                        placeholder="Select one"
+                        withPlaceholderOption={false}
+                    />
+                </Field>
 
-                {/* Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-white/10">
+                <div className="flex gap-3 pt-2">
                     <button
-                        onClick={onClose}
-                        className="flex-1 h-11 bg-white/10 hover:bg-white/15 text-white rounded-lg"
+                        type="button"
+                        onClick={handleClose}
+                        className="h-11 flex-1 rounded-lg bg-white/10 text-sm font-medium text-white transition hover:bg-white/15"
                     >
                         Cancel
                     </button>
 
                     <button
+                        type="button"
                         disabled={isLoading}
                         onClick={handleCreate}
-                        className={cn(
-                            "flex-1 h-11 rounded-lg text-white bg-[#FF2EC8] hover:bg-[#FF2EC8]/90",
-                            isLoading && "opacity-50 cursor-not-allowed"
-                        )}
+                        className={`h-11 flex-1 rounded-lg text-sm font-medium text-white transition ${
+                            isLoading
+                                ? "cursor-not-allowed bg-white/20"
+                                : "cursor-pointer bg-[#FF2EC8] hover:bg-[#ff48d0]"
+                        }`}
                     >
                         {isLoading ? "Creating..." : "Create User"}
                     </button>

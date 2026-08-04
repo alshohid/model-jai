@@ -378,45 +378,54 @@ export default function UserManagement() {
 
     return (
         <div>
-            <div className="w-full flex flex-end items-center gap-4 ">
-
-                <MatchListToolbar
-                    title="User List"
-                    ctaLabel="Select User as Player"
-                    showSelect={false}
-                    onCreateMatch={() => setShowSelectPlayerDialog(true)}
-                />
-                <Button onClick={() => setCreateUserModalOpen(true)}>
-                    <span><PlusIcon /></span> Add User
-                </Button>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 py-6 sm:py-10">
-                <form className="flex items-center relative w-full sm:w-[320px] lg:w-[420px]">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
+            <MatchListToolbar
+                title="User List"
+                ctaLabel="Select User as Player"
+                showSelect={false}
+                onCreateMatch={() => setShowSelectPlayerDialog(true)}
+                actions={
+                    <button
+                        type="button"
+                        onClick={() => setCreateUserModalOpen(true)}
                         className={cn(
-                            "w-full h-10 rounded-[12px]",
-                            "bg-white/5 border border-white/10",
-                            "text-white/85 placeholder:text-white/40",
-                            "pl-10 pr-3 outline-none",
-                            "focus:border-[#FF2EC8]/40"
+                            "inline-flex h-10 w-full items-center justify-center gap-2 rounded-[12px] px-4 text-sm font-medium text-white transition",
+                            "border border-white/15 bg-white/10 hover:bg-white/15",
+                            "sm:h-12 sm:w-auto sm:rounded-[18px] sm:px-6",
                         )}
-                    />
-                    <FiSearch className="absolute left-3 text-white/55" />
-                </form>
-                {isTotalUserCountLoading ? (
-                    <p>Loading...</p>
-                ) : (
-                    <TotalUserCard
-                        isLoading={isTotalUserCountLoading}
-                        totalUsers={totalUserCount?.data?.total_users}
-                    />
-                )}
-
-            </div>
+                    >
+                        <PlusIcon className="size-4" />
+                        Add User
+                    </button>
+                }
+            >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="order-1 sm:order-2">
+                        {isTotalUserCountLoading ? (
+                            <p className="text-sm text-white/60">Loading...</p>
+                        ) : (
+                            <TotalUserCard
+                                isLoading={isTotalUserCountLoading}
+                                totalUsers={totalUserCount?.data?.total_users}
+                            />
+                        )}
+                    </div>
+                    <form className="relative order-2 flex w-full items-center sm:order-1 sm:w-[320px] lg:w-[420px]">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            className={cn(
+                                "h-10 w-full rounded-[12px]",
+                                "border border-white/10 bg-white/5",
+                                "pl-10 pr-3 text-sm text-white/85 placeholder:text-white/40 outline-none",
+                                "focus:border-[#FF2EC8]/40",
+                            )}
+                        />
+                        <FiSearch className="absolute left-3 text-white/55" />
+                    </form>
+                </div>
+            </MatchListToolbar>
 
             <div className="py-10">
                 <ReuseAbleTable

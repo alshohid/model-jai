@@ -4,24 +4,27 @@
 import { useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
 import { useCreateGameCategoryMutation } from "@/redux/features/game/gameCategoryManagement";
-import Image from "next/image";
 import { toast } from "sonner";
+import {
+    Field,
+    inputCls,
+    LogoUploadField,
+    readImagePreview,
+} from "../match/matchFormShared";
 
 export default function CreateCategoryModal({ open, onClose }: any) {
-
     const [name, setName] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
-    const [createCategory, { isLoading }] =
-        useCreateGameCategoryMutation();
+    const [createCategory, { isLoading }] = useCreateGameCategoryMutation();
 
     const getErrorMessage = (error: any) => {
         const fieldErrors = error?.data?.errors;
 
         if (fieldErrors && typeof fieldErrors === "object") {
             const firstFieldError = Object.values(fieldErrors).find(
-                (value) => Array.isArray(value) && value.length > 0
+                (value) => Array.isArray(value) && value.length > 0,
             ) as string[] | undefined;
 
             if (firstFieldError?.[0]) {
@@ -36,86 +39,97 @@ export default function CreateCategoryModal({ open, onClose }: any) {
         );
     };
 
-    const handleImageChange = (file: File | null) => {
-        if (!file) return;
+    const resetForm = () => {
+        setName("");
+        setImage(null);
+        setPreview(null);
+    };
 
-        setImage(file);
+    const handleClose = () => {
+        resetForm();
+        onClose();
+    };
 
-        const objectUrl = URL.createObjectURL(file);
-        setPreview(objectUrl);
+    const handleImageChange = async (file: File | null) => {
+        if (!file) {
+            setImage(null);
+            setPreview(null);
+            return;
+        }
+
+        try {
+            const nextPreview = await readImagePreview(file);
+            setImage(file);
+            setPreview(nextPreview);
+        } catch {
+            toast.error("Could not preview the selected image.");
+        }
     };
 
     const handleSubmit = async () => {
+        if (!name.trim()) {
+            toast.error("Category name is required");
+            return;
+        }
+
         try {
             const formData = new FormData();
-
-            formData.append("name", name);
+            formData.append("name", name.trim());
             if (image) formData.append("image", image);
 
             const response = await createCategory(formData as any).unwrap();
             toast.success(response?.message ?? "Category created successfully");
-
-            setName("");
-            setImage(null);
-            setPreview(null);
-
-            onClose();
+            handleClose();
         } catch (error: any) {
             toast.error(getErrorMessage(error));
         }
-
-
     };
 
     return (
-        <AppDialog open={open} onOpenChange={onClose} title="Create Category">
+        <AppDialog
+            open={open}
+            onOpenChange={(nextOpen) => {
+                if (!nextOpen) {
+                    handleClose();
+                }
+            }}
+            title="Create Category"
+        >
+            <div className="space-y-5 py-2">
+                <Field label="Category Name" required>
+                    <input
+                        type="text"
+                        placeholder="Enter category name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={inputCls}
+                    />
+                </Field>
 
-            <div className="space-y-4 py-4">
-
-                {/* Category Name */}
-                <input
-                    type="text"
-                    placeholder="Category name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full h-10 rounded-md px-3 bg-white/10 text-white border border-white/10 focus:outline-none focus:ring-[0.5px] focus:ring-pink-500"
+                <LogoUploadField
+                    label="Category Image"
+                    inputId="create-category-image"
+                    previewSrc={preview}
+                    fileName={image?.name}
+                    buttonLabel={preview ? "Change image" : "Choose image"}
+                    helperText="PNG, JPG, or WEBP"
+                    onFileChange={handleImageChange}
+                    onClear={() => handleImageChange(null)}
                 />
 
-                {/* Image Preview */}
-                {preview && (
-                    <div className="flex justify-center">
-                        <Image
-                            src={preview}
-                            alt="preview"
-                            width={120}
-                            height={120}
-                            className="rounded-md object-cover border border-white/20"
-                            unoptimized
-                        />
-                    </div>
-                )}
-
-                {/* Image Input */}
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                        handleImageChange(e.target.files?.[0] ?? null)
-                    }
-                    className="text-white"
-                />
-
-                {/* Submit Button */}
                 <button
+                    type="button"
                     disabled={isLoading}
                     onClick={handleSubmit}
-                    className={`w-full h-10 rounded-md ${isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-[#FF2EC8] cursor-pointer"} text-white`}
+                    className={`h-11 w-full rounded-lg text-sm font-medium text-white transition ${
+                        isLoading
+                            ? "cursor-not-allowed bg-white/20"
+                            : "cursor-pointer bg-[#FF2EC8] hover:bg-[#ff48d0]"
+                    }`}
                 >
-                    {isLoading ? "Creating..." : "Create"}
+                    {isLoading ? "Creating..." : "Create Category"}
                 </button>
-
             </div>
-
         </AppDialog>
     );
 }

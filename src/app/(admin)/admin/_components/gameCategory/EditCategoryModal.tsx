@@ -2,21 +2,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppDialog from "@/shared/components/modal/AppDialog";
-import { useUpdateGameCategoryMutation, useViewSingleGameCategoryQuery } from "@/redux/features/game/gameCategoryManagement";
+import {
+    useUpdateGameCategoryMutation,
+    useViewSingleGameCategoryQuery,
+} from "@/redux/features/game/gameCategoryManagement";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
-import Image from "next/image";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
+import {
+    Field,
+    inputCls,
+    LogoUploadField,
+    readImagePreview,
+} from "../match/matchFormShared";
 
 export default function EditCategoryModal({ item, open, onClose }: any) {
     const [name, setName] = useState("");
     const [image, setImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+    const [existingImage, setExistingImage] = useState<string | null>(null);
 
-    const [updateCategory, { isLoading }] =
-        useUpdateGameCategoryMutation();
+    const [updateCategory, { isLoading }] = useUpdateGameCategoryMutation();
     const { data: singleCategory, isFetching: isCategoryLoading } =
         useViewSingleGameCategoryQuery(item?.id, {
             skip: !item?.id || !open,
@@ -24,9 +32,11 @@ export default function EditCategoryModal({ item, open, onClose }: any) {
 
     useEffect(() => {
         if (singleCategory?.data) {
+            const nextImage = getSafeImageSrc(singleCategory.data.image) || null;
             setName(singleCategory.data.name ?? "");
             setImage(null);
-            setPreview(getSafeImageSrc(singleCategory.data.image));
+            setExistingImage(nextImage);
+            setPreview(nextImage);
         }
     }, [singleCategory]);
 
@@ -35,15 +45,24 @@ export default function EditCategoryModal({ item, open, onClose }: any) {
             setName("");
             setImage(null);
             setPreview(null);
+            setExistingImage(null);
         }
     }, [open]);
 
-    const handleImageChange = (file: File | null) => {
-        if (!file) return;
+    const handleImageChange = async (file: File | null) => {
+        if (!file) {
+            setImage(null);
+            setPreview(existingImage);
+            return;
+        }
 
-        setImage(file);
-        const objectUrl = URL.createObjectURL(file);
-        setPreview(objectUrl);
+        try {
+            const nextPreview = await readImagePreview(file);
+            setImage(file);
+            setPreview(nextPreview);
+        } catch {
+            toast.error("Could not preview the selected image.");
+        }
     };
 
     const handleUpdate = async () => {
@@ -54,7 +73,6 @@ export default function EditCategoryModal({ item, open, onClose }: any) {
         }
 
         const formData = new FormData();
-
         formData.append("name", name.trim());
 
         if (image) {
@@ -67,7 +85,6 @@ export default function EditCategoryModal({ item, open, onClose }: any) {
                 body: formData,
             }).unwrap();
             toast.success("Category updated successfully");
-
             onClose();
         } catch (error) {
             toast.error(getErrorMessage(error));
@@ -75,51 +92,55 @@ export default function EditCategoryModal({ item, open, onClose }: any) {
     };
 
     return (
-        <AppDialog open={open} onOpenChange={onClose} title="Edit Category">
-            <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Category Name</label>
+        <AppDialog
+            open={open}
+            onOpenChange={(nextOpen) => {
+                if (!nextOpen) {
+                    onClose();
+                }
+            }}
+            title="Edit Category"
+        >
+            <div className="space-y-5 py-2">
+                <Field label="Category Name" required>
                     <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Category name"
-                        className="w-full h-11 rounded-md px-3 bg-white/10 border border-white/10 text-white outline-none focus:ring-1 focus:ring-[#FF2EC8]"
+                        placeholder="Enter category name"
+                        disabled={isCategoryLoading}
+                        className={inputCls}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-2">
-                    <label className="text-sm text-white/80">Category Image</label>
-
-                    <div className="flex items-center justify-center rounded-xl border border-dashed border-white/15 bg-white/5 p-4 min-h-[180px]">
-                        {isCategoryLoading ? (
-                            <div className="h-32 w-full animate-pulse rounded-lg bg-white/10" />
-                        ) : preview ? (
-                            <Image
-                                src={preview}
-                                alt={name || "Category preview"}
-                                width={220}
-                                height={160}
-                                className="max-h-[180px] w-auto rounded-lg object-cover border border-white/10"
-                                unoptimized
-                            />
-                        ) : (
-                            <p className="text-sm text-white/45">No image selected</p>
-                        )}
-                    </div>
-
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e.target.files?.[0] ?? null)}
-                        className="text-white"
-                    />
-                </div>
+                <LogoUploadField
+                    label="Category Image"
+                    inputId="edit-category-image"
+                    previewSrc={isCategoryLoading ? null : preview}
+                    fileName={image?.name}
+                    buttonLabel={preview ? "Change image" : "Choose image"}
+                    helperText={
+                        isCategoryLoading
+                            ? "Loading current image..."
+                            : "PNG, JPG, or WEBP"
+                    }
+                    onFileChange={handleImageChange}
+                    onClear={
+                        image || preview
+                            ? () => handleImageChange(null)
+                            : undefined
+                    }
+                />
 
                 <button
+                    type="button"
                     onClick={handleUpdate}
                     disabled={isLoading || isCategoryLoading}
-                    className={`w-full h-11 rounded-md ${isLoading || isCategoryLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 cursor-pointer"} text-white`}
+                    className={`h-11 w-full rounded-lg text-sm font-medium text-white transition ${
+                        isLoading || isCategoryLoading
+                            ? "cursor-not-allowed bg-white/20"
+                            : "cursor-pointer bg-[#FF2EC8] hover:bg-[#ff48d0]"
+                    }`}
                 >
                     {isLoading ? "Updating..." : "Update Category"}
                 </button>

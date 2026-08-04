@@ -9,8 +9,8 @@ import AppDialog from "@/shared/components/modal/AppDialog";
 import { useGetAllGamesQuery } from "@/redux/features/game/gameListManagement";
 import { useGetAllPlayerQuery } from "@/redux/features/user/userManagement";
 import { useCreateMatchMutation } from "@/redux/features/match/matchManagement";
+import AppSelect from "../reusable/AppSelect";
 import {
-    ChevronDown,
     createEmptyMatchForm,
     ErrorBanner,
     formatVotingDateTimeForApi,
@@ -24,7 +24,6 @@ import {
     MatchFormState,
     normalizeTimeValue,
     readImagePreview,
-    selectCls,
     textareaCls,
 } from "./matchFormShared";
 
@@ -186,80 +185,46 @@ export default function CreateMatchModal({
                 <ErrorBanner message={error} />
 
                 <Field label="Game" required>
-                    <div className="relative">
-                        <select
-                            value={form.game_id}
-                            onChange={(event) => setField("game_id", event.target.value)}
-                            className={selectCls}
-                        >
-                            <option value="" className="bg-[#1a1a1f]">
-                                Select a game
-                            </option>
-                            {games?.data?.map((game: IGame) => (
-                                <option
-                                    key={game.id}
-                                    value={game.id}
-                                    className="bg-[#1a1a1f]"
-                                >
-                                    {game.name}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown />
-                    </div>
+                    <AppSelect
+                        value={form.game_id}
+                        onValueChange={(value) => setField("game_id", value)}
+                        placeholder="Select one"
+                        options={
+                            games?.data?.map((game: IGame) => ({
+                                label: game.name,
+                                value: String(game.id),
+                            })) ?? []
+                        }
+                    />
                 </Field>
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     <Field label="Player One" required>
-                        <div className="relative">
-                            <select
-                                value={form.player_one_id}
-                                onChange={(event) =>
-                                    setField("player_one_id", event.target.value)
-                                }
-                                className={selectCls}
-                            >
-                                <option value="" className="bg-[#1a1a1f]">
-                                    Select player
-                                </option>
-                                {filteredPlayerOne.map((player: User) => (
-                                    <option
-                                        key={player.id}
-                                        value={player.id}
-                                        className="bg-[#1a1a1f]"
-                                    >
-                                        {player.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown />
-                        </div>
+                        <AppSelect
+                            value={form.player_one_id}
+                            onValueChange={(value) =>
+                                setField("player_one_id", value)
+                            }
+                            placeholder="Select one"
+                            options={filteredPlayerOne.map((player: User) => ({
+                                label: player.name,
+                                value: String(player.id),
+                            }))}
+                        />
                     </Field>
 
                     <Field label="Player Two" required>
-                        <div className="relative">
-                            <select
-                                value={form.player_two_id}
-                                onChange={(event) =>
-                                    setField("player_two_id", event.target.value)
-                                }
-                                className={selectCls}
-                            >
-                                <option value="" className="bg-[#1a1a1f]">
-                                    Select player
-                                </option>
-                                {filteredPlayerTwo.map((player: User) => (
-                                    <option
-                                        key={player.id}
-                                        value={player.id}
-                                        className="bg-[#1a1a1f]"
-                                    >
-                                        {player.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <ChevronDown />
-                        </div>
+                        <AppSelect
+                            value={form.player_two_id}
+                            onValueChange={(value) =>
+                                setField("player_two_id", value)
+                            }
+                            placeholder="Select one"
+                            options={filteredPlayerTwo.map((player: User) => ({
+                                label: player.name,
+                                value: String(player.id),
+                            }))}
+                        />
                     </Field>
                 </div>
 

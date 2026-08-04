@@ -11,6 +11,9 @@ import {
     useUpdateUserPostMutation,
 } from "@/redux/features/user/userManagement";
 import AppDialog from "@/shared/components/modal/AppDialog";
+import ImagePreviewDialog, {
+    ImagePreviewItem,
+} from "@/shared/components/modal/ImagePreviewDialog";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
 import { cn } from "@/shared/lib/utils/cn";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
@@ -30,6 +33,7 @@ import {
     KeyboardEvent,
     ReactNode,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from "react";
@@ -283,6 +287,9 @@ export default function UserPostsSection({ id }: { id?: string }) {
     const [editImage, setEditImage] = useState<File | null>(null);
     const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
     const [deletingPostId, setDeletingPostId] = useState<number | null>(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+        null,
+    );
 
     const { data: meData } = useGetMeDataQuery();
     const {
@@ -302,12 +309,31 @@ export default function UserPostsSection({ id }: { id?: string }) {
     const userName = getFullName(user) || user?.name || "Your profile";
     const avatarSrc = getSafeImageSrc(user?.image, AVATAR_FALLBACK);
 
-    const posts = [...(postsResponse?.data ?? [])].sort((left, right) => {
-        const leftTime = parseApiDate(left.created_at)?.getTime() ?? 0;
-        const rightTime = parseApiDate(right.created_at)?.getTime() ?? 0;
+    const posts = useMemo(
+        () =>
+            [...(postsResponse?.data ?? [])].sort((left, right) => {
+                const leftTime = parseApiDate(left.created_at)?.getTime() ?? 0;
+                const rightTime = parseApiDate(right.created_at)?.getTime() ?? 0;
 
-        return rightTime - leftTime;
-    });
+                return rightTime - leftTime;
+            }),
+        [postsResponse?.data],
+    );
+
+    const galleryImages = useMemo<ImagePreviewItem[]>(
+        () =>
+            posts.map((post) => ({
+                id: String(post.id),
+                title: post.description || "",
+                imageSrc: resolvePostImageSrc(post.image),
+            })),
+        [posts],
+    );
+
+    const isPreviewOpen =
+        selectedImageIndex !== null &&
+        selectedImageIndex >= 0 &&
+        selectedImageIndex < galleryImages.length;
 
     const latestPostLabel = posts[0]?.created_at
         ? formatPostDate(posts[0].created_at)
@@ -661,7 +687,7 @@ export default function UserPostsSection({ id }: { id?: string }) {
 
                                 {!isLoading && !isError && posts.length > 0 ? (
                                     <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
-                                        {posts.map((post) => {
+                                        {posts.map((post, postIndex) => {
                                             const isDeletingThisPost =
                                                 isDeleting && deletingPostId === post.id;
 
@@ -671,26 +697,44 @@ export default function UserPostsSection({ id }: { id?: string }) {
                                                     className="group overflow-hidden rounded-[26px] border border-white/8 bg-[#181018]/90 shadow-[0_20px_45px_rgba(0,0,0,0.24)]"
                                                 >
                                                     <div className="relative overflow-hidden">
-                                                        <img
-                                                            src={resolvePostImageSrc(post.image)}
-                                                            alt={post.description || "User post"}
-                                                            className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-[1.04]"
-                                                            onError={(event) => {
-                                                                event.currentTarget.onerror = null;
-                                                                event.currentTarget.src = POST_IMAGE_FALLBACK;
-                                                            }}
-                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                setSelectedImageIndex(postIndex)
+                                                            }
+                                                            className="block w-full cursor-zoom-in text-left"
+                                                            aria-label="View image preview"
+                                                        >
+                                                            <img
+                                                                src={resolvePostImageSrc(
+                                                                    post.image,
+                                                                )}
+                                                                alt={
+                                                                    post.description ||
+                                                                    "User post"
+                                                                }
+                                                                className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                                                                onError={(event) => {
+                                                                    event.currentTarget.onerror =
+                                                                        null;
+                                                                    event.currentTarget.src =
+                                                                        POST_IMAGE_FALLBACK;
+                                                                }}
+                                                            />
+                                                        </button>
 
                                                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
-                                                        <div className="absolute left-4 right-4 top-4 flex items-center justify-between gap-2">
+                                                        <div className="pointer-events-none absolute left-4 right-4 top-4 flex items-center justify-between gap-2">
                                                             <span className="inline-block max-w-full rounded-full border border-white/12 bg-black/45 px-2 sm:px-3 py-1 text-xs sm:text-[11px] font-medium uppercase tracking-[0.15em] text-white/80 backdrop-blur-md truncate">
                                                                 {formatPostDate(post.created_at)}
                                                             </span>
 
-                                                            <div className="flex items-center gap-2">
+                                                            <div className="pointer-events-auto flex items-center gap-2">
                                                                 <ActionButton
-                                                                    onClick={() => setEditingPost(post)}
+                                                                    onClick={() =>
+                                                                        setEditingPost(post)
+                                                                    }
                                                                 >
                                                                     <PencilLine className="size-4" />
                                                                     Edit
@@ -736,6 +780,19 @@ export default function UserPostsSection({ id }: { id?: string }) {
                     </div>
                 </div>
             </section>
+
+            <ImagePreviewDialog
+                open={isPreviewOpen}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setSelectedImageIndex(null);
+                    }
+                }}
+                items={galleryImages}
+                currentIndex={selectedImageIndex ?? 0}
+                onIndexChange={setSelectedImageIndex}
+                fallbackSrc={POST_IMAGE_FALLBACK}
+            />
 
             <AppDialog
                 open={Boolean(editingPost)}
