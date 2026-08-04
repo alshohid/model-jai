@@ -1,6 +1,8 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import { cn } from "@/shared/lib/utils/cn";
+import { useAuth } from "@/redux/features/auth/hooks";
 import type { LegalDocument } from "@/redux/features/settings/legalPages/types";
 import "./legal-public-page.css";
 
@@ -19,12 +21,23 @@ export default function LegalPublicPage({
     fallbackTitle,
     onRetry,
 }: Props) {
+    const { isAuthenticated, role } = useAuth();
+    // Guest navbar is fixed; logged-in user/artist navbar is in document flow.
+    const needsNavbarOffset = !(
+        isAuthenticated &&
+        (role === "user" || role === "artist")
+    );
+    const sectionClassName = cn(
+        "bg-black px-4 pb-10 sm:px-6 sm:pb-14",
+        needsNavbarOffset ? "pt-[120px] sm:pt-[130px]" : "pt-10 sm:pt-14",
+    );
+
     if (isLoading) {
         return (
-            <section className="bg-black px-4 py-16 sm:px-6 sm:py-20">
-                <div className="mx-auto w-full max-w-4xl animate-pulse space-y-6">
+            <section className={sectionClassName}>
+                <div className="mx-auto w-full max-w-4xl animate-pulse space-y-4">
                     <div className="h-10 w-72 max-w-full rounded bg-white/10" />
-                    <div className="space-y-3 rounded-[18px] border border-white/10 bg-[#161616]/80 p-6 sm:p-8">
+                    <div className="space-y-3 rounded-[18px] border border-white/10 bg-[#161616]/80 px-4 py-4 sm:px-5 sm:py-5">
                         <div className="h-4 w-full rounded bg-white/5" />
                         <div className="h-4 w-11/12 rounded bg-white/5" />
                         <div className="h-4 w-10/12 rounded bg-white/5" />
@@ -37,7 +50,7 @@ export default function LegalPublicPage({
 
     if (isError) {
         return (
-            <section className="bg-black px-4 py-16 sm:px-6 sm:py-20">
+            <section className={sectionClassName}>
                 <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-center space-y-4 rounded-[18px] border border-white/10 bg-[#161616]/80 px-4 py-16 text-center">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full border border-red-500/20 bg-red-500/10 text-red-400">
                         <AlertTriangle className="h-6 w-6" />
@@ -68,7 +81,7 @@ export default function LegalPublicPage({
     const content = document?.content?.trim() || "";
 
     return (
-        <section className="bg-black px-4 py-10 sm:px-6 sm:py-14">
+        <section className={sectionClassName}>
             <div className="mx-auto w-full max-w-4xl">
                 <h1 className="mb-3 text-3xl font-semibold tracking-tight text-white sm:mb-4 sm:text-4xl">
                     {title}
