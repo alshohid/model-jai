@@ -5,7 +5,7 @@ import { useGetFeaturedGalleryListQuery } from "@/redux/features/settings/galler
 import VideoCarousel, {
     VideoCarouselItem,
 } from "@/shared/UI/reusable/carousel/VideoCarousel";
-import VideoPreviewDialog from "@/shared/components/modal/VideoPreviewDialog";
+import FullscreenVideoViewer from "@/shared/components/modal/FullscreenVideoViewer";
 import { getSafeImageSrc } from "@/shared/lib/utils/imagesrcvalidator";
 
 export default function VideosSection() {
@@ -103,7 +103,7 @@ export default function VideosSection() {
                 }}
                 onCardClick={(_, index) => setSelectedVideoIndex(index)}
             />
-            <VideoPreviewDialog
+            <FullscreenVideoViewer
                 open={isPreviewOpen}
                 onOpenChange={(open) => {
                     if (!open) {
