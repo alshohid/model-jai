@@ -1,11 +1,13 @@
-import { useForm } from "react-hook-form";
+import type { FieldPath, FieldValues, UseFormRegister } from "react-hook-form";
 
-export type AuthInputProps = {
+export type AuthInputProps<
+  TFieldValues extends FieldValues = FieldValues,
+> = {
   label: string;
   type?: string;
   icon?: React.ReactNode;
-  register: ReturnType<typeof useForm>["register"];
-  name: string;
+  register: UseFormRegister<TFieldValues>;
+  name: FieldPath<TFieldValues>;
   readOnly?: boolean;
   required?: boolean;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;

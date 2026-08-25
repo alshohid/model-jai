@@ -1,5 +1,6 @@
 import { AuthInputProps } from "@/types/authType/AuthTypes";
 import { useState } from "react";
+import type { FieldValues } from "react-hook-form";
 
 function EyeOpenIcon() {
     return (
@@ -20,7 +21,9 @@ function EyeClosedIcon() {
     );
 }
 
-export function AuthInput({
+export function AuthInput<
+    TFieldValues extends FieldValues = FieldValues,
+>({
     label,
     type = "text",
     icon,
@@ -30,7 +33,7 @@ export function AuthInput({
     required = true,
     onFocus,
     onBlur,
-}: AuthInputProps) {
+}: AuthInputProps<TFieldValues>) {
     const isPassword = type === "password";
     const [showPassword, setShowPassword] = useState(false);
 

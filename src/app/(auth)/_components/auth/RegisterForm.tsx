@@ -1,40 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useAppleLoginMutation, useFacebookLoginMutation, useGoogleLoginMutation, useRegisterUserMutation } from "@/redux/features/auth/authapi";
+import { useEffect, useState } from "react";
+import { Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon, Loader2 } from "lucide-react";
 import { PrimaryButton } from "@/shared/UI/button/PrimaryButton";
-import { SocialButton } from "@/shared/UI/button/SocialButton";
-import { LockIcon, MailIcon, UserIcon } from "@/shared/UI/icon/icon";
 import { AuthInput } from "@/shared/UI/reusable/auth/AuthInput";
-import { executeSocialLogin } from "@/shared/lib/auth/socialLogin";
-import { useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
+import { LockIcon, MailIcon, UserIcon } from "@/shared/UI/icon/icon";
 import GamePickerModal from "@/shared/components/modal/GamePickerModal";
 import { IGameOption } from "@/types/game/gameList/gameListTypes";
 import { IAuthRegisterParams } from "@/types/user/auth";
-import { Edit, MailboxIcon, MapIcon, MapPinnedIcon, MicIcon, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { safeRedirect } from "@/shared/UI/reusable/redirect/safeRedirect";
+import { useForm, useWatch } from "react-hook-form";
 import { useNominatimGeocode } from "@/shared/hooks/useNominatimGeocode";
 
-const PENDING_REFERRAL_KEY = "pending_referral";
-const PENDING_AUTH_REDIRECT_KEY = "pending_auth_redirect";
-
-const getReferralFromRedirect = (rawRedirect: string | null) => {
-    const redirect = safeRedirect(rawRedirect);
-    const queryIndex = redirect.indexOf("?");
-
-    if (queryIndex === -1) return null;
-
-    return new URLSearchParams(redirect.slice(queryIndex + 1)).get("ref");
-};
+import { SocialLoginButtons } from "./SocialLoginButtons";
+import { useRegister } from "./useRegister";
 
 export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
-    const router = useRouter();
-    const [registerUser, { isLoading }] = useRegisterUserMutation();
     const { register, handleSubmit, control, setValue } = useForm<IAuthRegisterParams>({
         defaultValues: {
             first_name: "",
@@ -52,9 +33,14 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
             social_verification_number: "",
         },
     });
-    const [googleLogin] = useGoogleLoginMutation();
-    const [facebookLogin] = useFacebookLoginMutation();
-    const [appleLogin] = useAppleLoginMutation();
+
+    const {
+        isLoading,
+        handleGoogleLogin,
+        handleAppleLogin,
+        handleFacebookLogin,
+        submitRegistration,
+    } = useRegister();
 
     const [gamePickerOpen, setGamePickerOpen] = useState(false);
     const [selectedGame, setSelectedGame] = useState<IGameOption | null>(null);
@@ -82,120 +68,12 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
     }) ?? false;
 
     useEffect(() => {
-        if (typeof window === "undefined") return;
-
-        const searchParams = new URLSearchParams(window.location.search);
-        const redirectParam = searchParams.get("redirect");
-        const redirectFromUrl = safeRedirect(redirectParam);
-        const referralFromUrl =
-            searchParams.get("ref") || getReferralFromRedirect(redirectParam);
-
-        if (referralFromUrl) {
-            sessionStorage.setItem(PENDING_REFERRAL_KEY, referralFromUrl);
-        }
-
-        if (redirectFromUrl !== "/") {
-            sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, redirectFromUrl);
-        }
-    }, []);
-
-    useEffect(() => {
         register("social_verification_status");
     }, [register]);
 
-    const getReferralId = () => {
-        if (typeof window === "undefined") return null;
-
-        const searchParams = new URLSearchParams(window.location.search);
-        const redirectFromUrl = searchParams.get("redirect");
-        const redirectFromStorage = sessionStorage.getItem(PENDING_AUTH_REDIRECT_KEY);
-
-        return (
-            searchParams.get("ref") ||
-            getReferralFromRedirect(redirectFromUrl) ||
-            sessionStorage.getItem(PENDING_REFERRAL_KEY) ||
-            getReferralFromRedirect(redirectFromStorage)
-        );
-    };
-
-    const getAuthRedirect = () => {
-        if (typeof window === "undefined") return "/";
-
-        const redirectFromUrl = new URLSearchParams(window.location.search).get("redirect");
-        const redirectFromStorage = sessionStorage.getItem(PENDING_AUTH_REDIRECT_KEY);
-
-        return safeRedirect(redirectFromUrl || redirectFromStorage);
-    };
-
-    const rememberRedirectForSocialLogin = () => {
-        if (typeof window === "undefined") return;
-
-        const redirect = getAuthRedirect();
-        if (redirect !== "/") {
-            sessionStorage.setItem(PENDING_AUTH_REDIRECT_KEY, redirect);
-        }
-    };
-
-    const handleGoogleLogin = async () => {
-        rememberRedirectForSocialLogin();
-        await executeSocialLogin(() => googleLogin().unwrap());
-    };
-
-    const handleFacebookLogin = async () => {
-        rememberRedirectForSocialLogin();
-        await executeSocialLogin(() => facebookLogin().unwrap());
-    };
-
-    const handleAppleLogin = async () => {
-        rememberRedirectForSocialLogin();
-        await executeSocialLogin(() => appleLogin().unwrap());
-    };
-
-    const normalizeOptionalText = (value?: string | null) => {
-        const trimmedValue = value?.trim();
-        return trimmedValue ? trimmedValue : null;
-    };
-
-    const onSubmit = async (data: IAuthRegisterParams) => {
-        const payload: IAuthRegisterParams = {
-            ...data,
-            first_name: data.first_name.trim(),
-            middle_name: normalizeOptionalText(data.middle_name),
-            last_name: data.last_name.trim(),
-            artist_name: data.artist_name.trim(),
-            address: normalizeOptionalText(data.address),
-            city: normalizeOptionalText(data.city),
-            zip_code: normalizeOptionalText(data.zip_code),
-            state: normalizeOptionalText(data.state),
-            social_verification_status: Boolean(data.social_verification_status),
-            social_verification_number: data.social_verification_status
-                ? normalizeOptionalText(data.social_verification_number)
-                : null,
-            game_id: selectedGame?.id ?? null,
-            referral_id: getReferralId(),
-        };
-
-        const result = await registerUser(payload);
-
-        if ("data" in result) {
-            const redirect = getAuthRedirect();
-            const loginParams = new URLSearchParams();
-
-            if (redirect !== "/") {
-                loginParams.set("redirect", redirect);
-            }
-
-            if (typeof window !== "undefined") {
-                sessionStorage.removeItem(PENDING_REFERRAL_KEY);
-            }
-
-            toast.success(result.data?.message ?? "User registered successfully");
-            onGoLogin();
-            router.push("/login" + (loginParams.toString() ? "?" + loginParams.toString() : ""));
-        } else if ("error" in result) {
-            const error = result.error as any;
-            toast.error(error?.data?.message ?? "Something went wrong");
-        }
+    const onSubmit = async (values: IAuthRegisterParams) => {
+        const ok = await submitRegistration(values, selectedGame?.id);
+        if (ok) onGoLogin();
     };
 
     return (
@@ -213,34 +91,34 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         <AuthInput
                             label="First Name"
                             name="first_name"
-                            register={register as any}
+                            register={register}
                             icon={<UserIcon />}
                         />
                     </div>
                     <AuthInput
                         label="Middle Name (Optional)"
                         name="middle_name"
-                        register={register as any}
+                        register={register}
                         icon={<UserIcon />}
                         required={false}
                     />
                     <AuthInput
                         label="Last Name"
                         name="last_name"
-                        register={register as any}
+                        register={register}
                         icon={<UserIcon />}
                     />
                     <AuthInput
                         label="Artist Name"
                         name="artist_name"
-                        register={register as any}
+                        register={register}
                         icon={<Edit className="size-4 text-white" />}
                     />
                     <AuthInput
                         label="Email"
                         name="email"
                         type="email"
-                        register={register as any}
+                        register={register}
                         icon={<MailIcon />}
                     />
                     {/* ── Address with Nominatim autocomplete ── */}
@@ -248,7 +126,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         <AuthInput
                             label="Address"
                             name="address"
-                            register={register as any}
+                            register={register}
                             icon={<MapPinnedIcon className="size-4 text-white" />}
                             required={false}
                             onFocus={() => {
@@ -317,7 +195,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                     <AuthInput
                         label="City"
                         name="city"
-                        register={register as any}
+                        register={register}
                         icon={<MapIcon className="size-4 text-white" />}
                         required={false}
                     />
@@ -326,14 +204,14 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         <AuthInput
                             label="State"
                             name="state"
-                            register={register as any}
+                            register={register}
                             icon={<MapIcon className="size-4 text-white" />}
                             required={false}
                         />
                         <AuthInput
                             label="Zip Code"
                             name="zip_code"
-                            register={register as any}
+                            register={register}
                             icon={<MailboxIcon className="size-4 text-white" />}
                             required={false}
                         />
@@ -342,14 +220,14 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         label="Password"
                         name="password"
                         type="password"
-                        register={register as any}
+                        register={register}
                         icon={<LockIcon />}
                     />
                     <AuthInput
                         label="Confirm Password"
                         name="c_password"
                         type="password"
-                        register={register as any}
+                        register={register}
                         icon={<LockIcon />}
                     />
                     <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
@@ -400,7 +278,7 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                             label="Social Verification Number"
                             name="social_verification_number"
                             type="number"
-                            register={register as any}
+                            register={register}
                             icon={<MicIcon className="size-4 text-white" />}
                         />
                     )}
@@ -478,11 +356,11 @@ export function RegisterForm({ onGoLogin }: { onGoLogin: () => void }) {
                         />
                     </div>
 
-                    <div className="mt-6 flex items-center justify-center gap-3">
-                        <SocialButton kind="google" handleSocialLogin={handleGoogleLogin} />
-                        <SocialButton kind="apple" handleSocialLogin={handleAppleLogin} />
-                        <SocialButton kind="facebook" handleSocialLogin={handleFacebookLogin} />
-                    </div>
+                    <SocialLoginButtons
+                        onGoogle={handleGoogleLogin}
+                        onApple={handleAppleLogin}
+                        onFacebook={handleFacebookLogin}
+                    />
 
                     <p className="mt-6 text-center text-[13px] text-white/45">
                         Already have an account?{" "}
