@@ -54,7 +54,7 @@ The frontend is fully integrated with the Model Boss REST API through a typed RT
 
 | login | 
 | --- | --- |
-| <img src="./public/screenshots/login.png" width="100%" /> 
+| <img src="./public/screenshots/login.png" width="60%" /> 
 
 |Home | Profile |
 | --- | --- |
